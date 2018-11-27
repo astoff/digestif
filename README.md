@@ -17,11 +17,14 @@ What it does (for now)
 
 * Complete command names and key-value options.  For instance, with
   TikZ:
+  ![completion](https://user-images.githubusercontent.com/6500902/49062925-01e83e80-f216-11e8-9342-e27e820c211a.png)
   
 * Complete labels defined in the document.  Multiple-file documents
   are supported via TeXShop-style magic comments:
-
+  ![crossref](https://user-images.githubusercontent.com/6500902/49062985-2ba16580-f216-11e8-99de-5be9a74ecaa6.png)
+  
 * Popup help messages, with command signature and a short explanation:
+  ![eldoc](https://user-images.githubusercontent.com/6500902/49062989-2fcd8300-f216-11e8-9076-587eca2321d1.png)
 
 The implemented LSP methods are
 
