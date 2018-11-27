@@ -2,10 +2,11 @@ Digestif
 ========
 
 Digestif is a code analyzer of sorts, and a [language server][lsp],
-for LaTeX et caterva.  It provides context-sensitive documentation and
-completion (macro names, labels, key-value arguments, etc.).
+for LaTeX et caterva.  It can provide context-sensitive documentation and
+completion (macro names, labels, key-value arguments, etc.) to any text
+editor that speaks the protocol.
 
-The typical TeX literate programming style is ostensibly not machine
+The typical TeX literate documentation is ostensibly not machine
 readable, so lists of commands with a short explanation and a
 description of the arguments must be compiled manually or
 semi-manually for each package.  These files are in the
@@ -54,7 +55,7 @@ luarocks install https://github.com/astoff/digestif/raw/master/rockspec/digestif
 executable script will land in `~/.luarocks/bin/digestif`)
 
 Next, you will need to enable Digestif as a language server in your
-favorite text editor.  I have tested it on Emacs with [eglot][eglot].
+favorite text editor.  I have tested it on Emacs with [Eglot][eglot].
 First, make sure the eglot ELPA package is installed (`M-x
 package-install RET eglot RET`).  Then evaluate the following in your
 scratch buffer (or add it to your init file).
