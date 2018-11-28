@@ -101,8 +101,7 @@ function util.merge(...)
 end
 
 util.config = {}
-util.config.data_dir = require("digestif-data")
-util.config.dots = {...}
+util.config.data_dir = "digestif-data/"
 util.config.eol = "\n"
 
 function util.eval_with_env(str, env)

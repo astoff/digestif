@@ -31,6 +31,9 @@ build = {
       ["digestif.latex"] = "digestif/latex.lua",
       ["digestif.util"] = "digestif/util.lua",
    },
+   copy_directories = {
+      "digestif-data"
+   },
    install = {
       bin = {
          ["digestif"] = "bin/digestif.lua"

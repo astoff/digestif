@@ -1,24 +1,19 @@
+#!/usr/bin/env lua
 local json = require(pcall(require, "cjson") and "cjson" or "dkjson")
 local util = require "digestif.util"
 
---[[-- globals for debugging
-see = require'serpent'.block
-log = util.log
-pcall = function(fn, ...)
-   return xpcall(
-      fn,
-      function(err)
-         log("=== Stack trace ================================================================")
-         log(tostring(err))
-         log("================================================================================")
-      end,
-      ...)
+--- Set the right data directory when installed by luarocks
+local rock_path = debug.getinfo(1).source:match(
+   "^@(.*/luarocks/rocks/digestif/[^/]*)/bin/digestif$")
+if rock_path then
+   util.config.data_dir = rock_path .. "/digestif-data/"
 end
---]]--
 
-util.log("\n\n\n\n\n\n=== Started!! ===", os.date(), "=============")
+if not require("digestif.data")("latex") then
+   error("Could not find data files at " .. util.config.data_dir)
+end
 
--- JSONRPC functions
+--- JSONRPC functions
 
 local function write_msg(msg)
    io.write("Content-Length: " .. #msg .. "\r\n\r\n" .. msg)
@@ -311,7 +306,7 @@ local function process_request()
       rpc_send(id, result)
    end
    util.log("Request:", method_name, id or '',
-          "time: " .. (os.clock() - clock) * 1000 .. "ms")
+            "time: " .. (os.clock() - clock) * 1000 .. "ms")
 end
 
 while true do process_request() end
