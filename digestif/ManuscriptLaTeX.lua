@@ -1,5 +1,7 @@
 local lpeg = require "lpeg"
 local util = require "digestif.util"
+local Manuscript = require "digestif.Manuscript"
+local Parser = require "digestif.Parser"
 
 local path_join, path_split = util.path_join, util.path_split
 local nested_get, nested_put = util.nested_get, util.nested_put
@@ -17,7 +19,20 @@ local cat_table = {
    space = lpeg.S(" \t"),
 }
 
-local global_callbacks = {}
+local ManuscriptLaTeX = util.class(Manuscript)
+
+ManuscriptLaTeX.parser = Parser(cat_table)
+ManuscriptLaTeX.format = "latex"
+ManuscriptLaTeX.global_callbacks =
+   setmetatable({}, {__index = Manuscript.global_callbacks})
+ManuscriptLaTeX.local_callbacks =
+   setmetatable({}, {__index = Manuscript.local_callbacks})
+ManuscriptLaTeX.completion_handlers =
+   setmetatable({}, {__index = Manuscript.completion_handlers})
+
+--- Global callbacks
+
+local global_callbacks = ManuscriptLaTeX.global_callbacks
 
 --@param meta the desired meta string
 --@param args a list of arg tables
@@ -40,14 +55,14 @@ local function first_opt(args)
 end
 
 function global_callbacks.label (m, pos, cs)
-   local label_index = m.label_index
+   local idx = m.label_index
    local args = m.commands[cs].args
    local r = m:parse_cs_args(pos, cs)
    local i = first_mand(args)
    if r[i] then
       local l = m:substring_stripped(r[i])
       --m.labels[l] = {pos = r[i].pos, filename = m.filename}
-      label_index[#label_index + 1] = {
+      idx[#idx + 1] = {
          name = l,
          pos = r[i].pos,
          filename = m.filename
@@ -57,18 +72,19 @@ function global_callbacks.label (m, pos, cs)
 end
 
 function global_callbacks.heading (m, pos, cs)
-   local section_index = m.section_index
+   local idx = m.section_index
    local args = m.commands[cs].args
    local r = m:parse_cs_args(pos, cs)
    local i = first_mand(args)
    if r[i] then
-      section_index[#section_index + 1] = {
+      idx[#idx + 1] = {
          title = m:substring_stripped(r[i]),
          pos = r[i].pos,
          level = m.commands[cs].heading_level,
          filename = m.filename
       }
    end
+   log(m.filename, r.pos, r.pos+r.len)
    return r.pos + r.len
 end
 
@@ -84,7 +100,7 @@ end
 -- end
 
 function global_callbacks.input(m, pos, cs)
-   local input_index = m.input_index -- should this include the known modules, or just the filenames not know in /data?
+   local idx = m.input_index -- should this include the known modules, or just the filenames not know in /data?
    local args = m.commands[cs].args
    local filename = m.commands[cs].filename
    local r = m:parse_cs_args(pos, cs)
@@ -95,8 +111,7 @@ function global_callbacks.input(m, pos, cs)
          m:add_module(f)
          if not m.modules[f] then
             f = path_join(path_split(m.filename), f)
-            --m:add_children(f)  
-            input_index[#input_index + 1] = {
+            idx[#idx + 1] = {
                name = f,
                pos = r[i].pos,
                filename = m.filename
@@ -107,7 +122,4 @@ function global_callbacks.input(m, pos, cs)
    return r.pos + r.len
 end
 
-return {
-   cat_table = cat_table,
-   global_callbacks = global_callbacks
-}
+return ManuscriptLaTeX

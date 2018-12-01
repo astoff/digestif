@@ -1,5 +1,4 @@
 local FileCache = require "digestif.FileCache"
-local Parser = require "digestif.Parser"
 local data = require "digestif.data"
 local util = require "digestif.util"
 
@@ -9,38 +8,48 @@ local map, update, merge = util.map, util.update, util.merge
 
 local Manuscript = util.class()
 
---- Create a new manuscript object. The argument is a table with the
---- following keys:
----
----  - parent: A parent manuscript object.
----  - format: A TeX format If not provided, assumend to be same as
----    the parent's, or "latex"
----  - filename
----  - src: The contents of the file
+-- Only descendants of this class (representing various TeX formats)
+-- are ever instantiated.  So we replace the constructor by a function
+-- defering to the subclass indicated by the format field of the
+-- argument.
+local formats = {
+   latex = "digestif.ManuscriptLaTeX",
+   --- etc
+}
+
+local function ManuscriptFactory(_, args)
+   local fmt = args.format
+      or args.parent and args.parent.format
+      or "latex"
+   return require(formats[fmt])(args)
+end
+
+local mt = getmetatable(Manuscript)
+mt.__call = ManuscriptFactory
+
+--- Create a new manuscript object.
+-- The argument is a table with the following keys:
+-- - parent: a parent manuscript object (optional)
+-- - filename: the manuscript source file (optional, not used if src is given)
+-- - src: the contents of the file (optional)
+-- - cache: a FileCache object (optional, typically retrived from parent)
+-- Note also that arg.format is used by ManuscriptFactory
 function Manuscript:__init(args)
-   local parent, format, filename, src, timestamp
-      = args.parent, args.format, args.filename, args.src, args.timestamp
-   self.modules, self.commands, self.environments = {}, {}, {}
+   local parent, filename, src
+      = args.parent, args.filename, args.src
    self.filename = filename
-   self.depth = 1 + (parent and parent.depth or 0)
+   self.parent = parent
+   self.root = self.parent and self.parent.root or self
    self.cache = args.cache or parent and parent.cache or FileCache()
-   if format or not parent then
-      self.format = format or "latex"
-      local fmt = require("digestif." .. self.format)
-      self.parser = Parser(fmt.cat_table)
-      self.global_callbacks = fmt.global_callbacks
-      self:add_module(self.format)
-   elseif parent then
-      self.parser = parent.parser
-      self.global_callbacks = parent.global_callbacks
-      -- for _, field in ipairs{"modules", "commands", "environments"} do
-      --    setmetatable(self[field], {__index = parent[field]})
-      -- end
+   self.src = src or self.cache:get(filename) or ""
+   self.depth = 1 + (parent and parent.depth or 0)
+   self.modules, self.commands, self.environments = {}, {}, {}
+   if parent then
       setmetatable(self.modules,      {__index = parent.modules}     )
       setmetatable(self.commands,     {__index = parent.commands}    )
       setmetatable(self.environments, {__index = parent.environments})
    end
-   self.src = src or self.cache:get(filename) or ""
+   self:add_module(self.format)
    self:global_scan()
 end
 
@@ -94,12 +103,11 @@ function Manuscript:read_list(range)
       self:read_keys(range))
 end
 
----
--- Parse the arguments of a macro.  Returns nil if thing does not
--- point to a control sequence, or the macro is unknown.
---
--- @param thing a thing table
--- @result a table
+--- Parse the arguments of a macro.
+-- Returns nil if pos does not point to a control sequence, or the
+-- macro is unknown.
+-- @number pos
+-- @tresult tab
 function Manuscript:parse_cs_args(pos, cs)
    local cmd = self.commands[cs]
    if cmd and cmd.args then
@@ -121,7 +129,7 @@ function Manuscript:parse_env_args(pos, cs)
    end
 end
 
---- Find paragraph before a postiion
+--- Find paragraph before a position.
 -- @param pos a position in the source
 -- @return the paragraph's starting position
 function Manuscript:find_par(pos)
@@ -134,28 +142,27 @@ function Manuscript:find_par(pos)
    return i
 end
 
---- Test if position is blank
--- @param pos a position in the source
--- @return boolean
+--- Test if position is blank.
+-- @number pos a position in the source
+-- @treturn boolean
 function Manuscript:is_blank(pos)
    return self.parser:blank(self.src, pos)
 end
 
----
--- Scan the Manuscript, executing callbacks for each document element
--- found.  Each callback is a function which takes at least two
--- arguments, the Manuscript object and a source position, and returns
--- at least one value, a position to continue scanning or nil to
--- interrupt the process.  When this happens, scan function returns
--- the remaining return values of the callback.  The remaining
--- arguments and return values of a callback can be used to keep track
--- of an internal state.
+--- Scan the Manuscript, executing callbacks for each document element.
+-- Each callback is a function taking at least two arguments (a
+-- Manuscript object and a source position) and returns at least one
+-- value, a position to continue scanning or nil to interrupt the
+-- process.  When this happens, scan function returns the remaining
+-- return values of the callback.  The remaining arguments and return
+-- values of a callback can be used to keep track of an internal
+-- state.
 --
 -- Indices of the callback table can be either the "action" field of a
 -- command, or a "type" field of a thing ("cs", "mathshift" or "par").
 --
--- @param callbacks a table of callback functions
--- @param pos the starting position
+-- @tab callbacks a table of callback functions
+-- @number pos the starting position
 function Manuscript:scan(callbacks, pos, ...)
    if not pos then return ... end
    local pos1, kind, detail, pos2 = self.parser.patt.next_thing3:match(self.src, pos)
@@ -233,14 +240,16 @@ end
 ---
 -- Scan the whole document, initializing the macro and label list,
 -- outline, etc.
+
+Manuscript.global_callbacks = {}
+
 function Manuscript:global_scan()
    self.children, self.bibitems, self.labels, self.outline
       = {}, {}, {}, {}
    self.input_index, self.label_index, self.section_index = {}, {}, {} --experiment
    self:scan(self.global_callbacks, 1)
    for _, input in ipairs(self.input_index) do
-      --log("xxxxx", input.name)
-      self.children[input.name] = Manuscript{
+       self.children[input.name] = Manuscript{
          filename = input.name,
          parent = self
       }
@@ -249,7 +258,16 @@ end
 
 --- Local scanning
 
-local local_callbacks = {}
+Manuscript.local_callbacks = {}
+
+---
+-- Scan the current paragraph, returning the context.  This is a list
+-- of nested annotated ranges, starting from the innermost.
+-- @param pos a source position
+-- @return a nested list of annotated ranges
+function Manuscript:local_scan(pos)
+   return self:scan(self.local_callbacks, self:find_par(pos), nil, pos)
+end
 
 local function local_scan_parse_keys(m, context, pos)
    local keys = m:parse_keys(context)
@@ -279,6 +297,8 @@ local function local_scan_parse_keys(m, context, pos)
    end
    return context
 end
+
+local local_callbacks = Manuscript.local_callbacks
 
 function local_callbacks.cs(m, pos, cs, context, end_pos)
    if pos > end_pos then return nil, context end -- stop parse
@@ -361,16 +381,6 @@ end
 
 function local_callbacks.par (_, _, _, context)
    return nil, context
-end
-
----
--- Scan the current paragraph, returning the context.  This is a list
--- of nested annotated ranges, starting from the innermost.
---
--- @param pos a source position
--- @return a nested list of annotated ranges
-function Manuscript:local_scan(pos)
-   return self:scan(local_callbacks, self:find_par(pos), nil, pos)
 end
 
 -- recursively iterate over each (numeric index of) self.name and its

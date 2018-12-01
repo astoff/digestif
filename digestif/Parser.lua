@@ -1,12 +1,14 @@
 local lpeg = require "lpeg"
 local util = require "digestif.util"
 
-local B, P, R, S, V, C, Cc, Cp, Ct
-   = lpeg.B, lpeg.P, lpeg.R, lpeg.S, lpeg.V, lpeg.C, lpeg.Cc, lpeg.Cp, lpeg.Ct
-
+local B, P, R, S, V
+   = lpeg.B, lpeg.P, lpeg.R, lpeg.S, lpeg.V
+local C, Cc, Cp, Ct
+   = lpeg.C, lpeg.Cc, lpeg.Cp, lpeg.Ct
+   
 local Parser = util.class()
 
-local basic_cat = {
+local default_cat = {
    escape = P("\\"),
    bgroup = P("{"),
    egroup = P("}"),
@@ -23,7 +25,7 @@ local function wrap_patt(patt)
 end
 
 function Parser:__init(cat)
-   local patt, cat = {}, cat or basic_cat
+   local patt, cat = {}, cat or default_cat
    self.cat, self.patt = cat, patt
 
    patt.eol_or_end = cat.eol + P(-1)
