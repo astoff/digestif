@@ -2,46 +2,45 @@ local util = require "digestif.util"
 
 local FileCache = util.class()
 
-function FileCache:_init()
-   self.src = {}
-   self.props = {}
+function FileCache:__init()
+   self.contents = {}
+   self.properties = {}
 end
 
-function FileCache:put(filename, src, props)
-   self.src[filename] = src
-   self.props[filename] = props or {}
-end
+local weak_keys = {__mode = "k"}
 
-function FileCache:forget(filename)
-   self.src[filename] = nil
-   self.props[filename] = nil
+function FileCache:put(filename, src)
+   self.contents[filename] = src
+   self.properties[filename] = setmetatable({}, weak_keys)
 end
 
 function FileCache:get(filename)
-   if not self.src[filename] then
+   local src = self.contents[filename]
+   if not src then
       local file = io.open(filename)
       if not file then return end
-      self:put(filename, file:read("*all"))
+      src = file:read("*all")
       file:close()
+      self:put(filename, src)
    end
-   return self.src[filename]
+   return src
 end
 
--- remove?
-function FileCache:properties(filename)
-   return self.props[filename]
+function FileCache:forget(filename)
+   self.contents[filename] = nil
+   self.properties[filename] = nil
 end
 
 -- memoize a "function" f(filename) whose result depends on the
 -- content of that file
 function FileCache:memoize(f)
    return function(filename)
-      local props = self.props[filename]
+      local props = self.properties[filename]
       if not props[f] then
          props[f] = f(filename)
       end
       return props[f]
    end
 end
-     
+
 return FileCache

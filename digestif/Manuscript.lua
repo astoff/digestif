@@ -3,17 +3,21 @@ local Parser = require "digestif.Parser"
 local data = require "digestif.data"
 local util = require "digestif.util"
 
+local path_join, path_split = util.path_join, util.path_split
+local nested_get, nested_put = util.nested_get, util.nested_put
+local map, update, merge = util.map, util.update, util.merge
+
 local Manuscript = util.class()
 
 --- Create a new manuscript object. The argument is a table with the
 --- following keys:
 ---
----  * parent: A parent manuscript object.
----  * format: A TeX format If not provided, assumend to be same as
----   the parent's, or "latex"
----  * filename
----  * src: The contents of the file
-function Manuscript:_init(args)
+---  - parent: A parent manuscript object.
+---  - format: A TeX format If not provided, assumend to be same as
+---    the parent's, or "latex"
+---  - filename
+---  - src: The contents of the file
+function Manuscript:__init(args)
    local parent, format, filename, src, timestamp
       = args.parent, args.format, args.filename, args.src, args.timestamp
    self.modules, self.commands, self.environments = {}, {}, {}
@@ -203,9 +207,7 @@ end
 
 function Manuscript:add_children(filename)
    if self.depth > 15 then return end
-   if not util.filename_is_abs(filename) then
-      filename = util.dirname(self.filename) .. filename
-   end
+   filename = path_join(path_split(self.filename), filename)
    self.children[filename] = true
 end
 
@@ -256,7 +258,7 @@ local function local_scan_parse_keys(m, context, pos)
          local key = m:substring_trimmed(k.key)
          context = {
             key = key,
-            data = util.safe_get(context.data.keys, key), -- or fetch context-dependent keys, say on a usepackage
+            data = util.nested_get(context.data.keys, key), -- or fetch context-dependent keys, say on a usepackage
             pos = k.pos,
             len = k.len,
             parent = context
@@ -266,7 +268,7 @@ local function local_scan_parse_keys(m, context, pos)
             local value = m:substring_trimmed(v)
             context = {
                value = value,
-               data = util.safe_get(context.data.values, value), -- what if "value" is command-like?
+               data = util.nested_get(context.data.values, value), -- what if "value" is command-like?
                pos = v.pos,
                len = v.len,
                parent = context
@@ -312,7 +314,7 @@ function local_callbacks.cs(m, pos, cs, context, end_pos)
       if arg.pos and arg.pos <= end_pos and end_pos <= arg.pos + arg.len then
          context = {
             arg = i,
-            data = util.safe_get(context.data, "args", i),
+            data = util.nested_get(context.data, "args", i),
             pos = arg.pos,
             len = arg.len,
             parent = context

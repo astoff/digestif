@@ -22,7 +22,7 @@ local function wrap_patt(patt)
    return function(_, ...) return patt:match(...) end
 end
 
-function Parser:_init(cat)
+function Parser:__init(cat)
    local patt, cat = {}, cat or basic_cat
    self.cat, self.patt = cat, patt
 

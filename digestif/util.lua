@@ -1,81 +1,28 @@
+local lpeg = require "lpeg"
+local P, V = lpeg.P, lpeg.V
+local C, Cp = lpeg.C, lpeg.Cp
+
 local util = {}
 
-function util.class()
-   local c, mt = {}, {}
+--- Classes
+
+local function create_object (c, ...)
+   local obj = setmetatable({}, c)
+   c.__init(obj, ...)
+   return obj
+end
+
+function util.class(parent)
+   local c = {}
+   local mt = {
+      __call = create_object,
+      __index = parent
+   }
    c.__index = c
-   function mt.__call(c, ...)
-      local obj = setmetatable({}, c)
-      c._init(obj, ...)
-      return obj
-   end
    return setmetatable(c, mt)
 end
 
-local nil_marker = {}
-
-local function safe_get(t, k, ...)
-   if t then
-      if select('#', ...) == 0 then
-         return t[k or nil_marker]
-      else
-         return safe_get(t[k or nil_marker], ...)
-      end
-   end
-end
-util.safe_get = safe_get
-
-local function safe_put(val, t, k, ...)
-   local k = k or nil_marker
-   if select('#', ...) == 0 then
-      t[k] = val
-      return val
-   else
-      local q = t[k]
-      if not q then
-         q = {}
-         t[k] = q
-      end
-      return safe_put(val, q, ...)
-   end
-end
-util.safe_put = safe_put
-
-local memoize = util.class()
-util.memoize = memoize
-
-function memoize:_init(f)
-   self.fun = f
-   self.values = setmetatable({}, {__mode = "k"})
-end
-
-function memoize:__call(...)
-   local values = self.values
-   local val = safe_get(values, ...)
-   if not val then
-      val = self.fun(...)
-      safe_put(val, values, ...)
-   end
-   return val
-end
-
-function memoize:forget(...)
-   safe_put(nil, self.values, ...)
-end
-
-function util.log(...)
-   local msg = util.map(tostring, {...})
-   io.stderr:write(table.concat(msg, " ") .. "\n")
-   io.stderr:flush()
-end
-
-function util.mapkv(f, t)
-   local r = {}
-   for k, v in pairs(t) do
-      local l, w = f(k, v)
-      r[l or #r + 1] = w
-   end
-   return r
-end
+--- Table manipulation
 
 function util.map(f, t)
    local r = {}
@@ -85,20 +32,78 @@ function util.map(f, t)
    return r
 end
 
-function util.update(t, u, ...)
+local function update(t, u, ...)
    for i, v in pairs(u) do
       t[i] = v
    end
    if ... then
-      return util.update(t, ...)
+      return update(t, ...)
    else
       return t
    end
 end
+util.update = update
 
 function util.merge(...)
-   return util.update({}, ...)
+   return update({}, ...)
 end
+
+local nil_marker = {}
+
+local function nested_get(t, k, ...)
+   if t then
+      if select('#', ...) == 0 then
+         return t[k or nil_marker]
+      else
+         return nested_get(t[k or nil_marker], ...)
+      end
+   end
+end
+util.nested_get = nested_get
+
+local function nested_put(val, t, k, ...)
+   k = k or nil_marker
+   if select('#', ...) == 0 then
+      t[k] = val
+      return val
+   else
+      local q = t[k]
+      if not q then
+         q = {}
+         t[k] = q
+      end
+      return nested_put(val, q, ...)
+   end
+end
+util.nested_put = nested_put
+
+--- Memoization
+
+local memoize = util.class()
+util.memoize = memoize
+
+local weak_keys = {__mode = "k"}
+
+function memoize:__init(f)
+   self.fun = f
+   self.values = setmetatable({}, weak_keys)
+end
+
+function memoize:__call(...)
+   local values = self.values
+   local val = nested_get(values, ...)
+   if not val then
+      val = self.fun(...)
+      nested_put(val, values, ...)
+   end
+   return val
+end
+
+function memoize:forget(...)
+   nested_put(nil, self.values, ...)
+end
+
+--- Reading data and config files
 
 util.config = {}
 util.config.data_dir = "digestif-data/"
@@ -111,43 +116,58 @@ function util.eval_with_env(str, env)
    if chunk then
       ok, result = pcall(chunk)
    end
-   setmetatable(globals, nil)
    if not ok then return nil, result end
-   return result or globals
+   return result or setmetatable(globals, nil)
 end
 
-local lpeg = require "lpeg"
-local P, C = lpeg.P, lpeg.C
-
-local dirname_patt = ((P(1) - P"/")^0 * P"/")^0
-local is_abs_patt = P"/"
-
-function util.dirname(filename)
-   return C(dirname_patt):match(filename)
+function util.update_config(str)
+   local config = require"digestif.config"
+   local new_config = util.eval_with_env(str)
+   update(config, new_config)
 end
 
-function util.basename(filename)
-   return (dirname_patt * C(P(1)^0)):match(filename)
+--- Path and file manipulation
+
+local path_sep = "/"
+local path_sep_patt = P(path_sep)
+local path_is_abs_patt = path_sep_patt + P"~/"
+local path_trim_patt = C((path_sep_patt^0 * (1 - path_sep_patt)^1)^0)
+local path_last_sep_patt = P{Cp() * (1 - path_sep_patt)^0 * -1 + (1 * V(1))}
+
+local function path_join(p, q, ...)
+   if not q then return p end
+   if path_is_abs_patt:match(q) or p == "" then
+      return path_join(q, ...)
+   end
+   p = path_trim_patt:match(p) .. path_sep
+   return path_join(p .. q, ...)
+end
+util.path_join = path_join
+
+function util.path_split(p)
+   p = path_trim_patt:match(p)
+   local i = path_last_sep_patt:match(p) or 1
+   return p:sub(1, i-1), p:sub(i, -1)
 end
 
-function util.filename_is_abs(filename)
-   return is_abs_patt:match(filename) and true or false
+function util.io_open_template(template, name, mode)
+   for str in template:gmatch("[^;]+") do
+      local filename = str:gsub("?", name)
+      local f = io.open(filename, mode)
+      if f then return f end
+   end
 end
 
--- is this better?
-function util.split_filename(filename)
-   local dir, base = filename:match("(.*/)(.*)")
-   return dir or "", base or filename
-end
+--- String manipulation
 
---- Iterate over lines of a string
-function util.lines(str, pos)
+function util.lines(str, pos, sep)
    pos = pos or 1
-   local l, find, eol = 0, string.find, util.config.eol
+   sep = sep or "\n"
+   local l, find = 0, string.find
    return function()
       if not pos then return nil end
       local i = pos
-      local j, k = find(str, eol, pos, true)
+      local j, k = find(str, sep, pos, true)
       pos, l = k and k + 1, l + 1
       return l, i, j and j - 1
    end
@@ -161,6 +181,14 @@ function util.find_root(str)
       local k, v = str:match(ts_magic_comment, i)
       if k == "root" then return v end
    end
+end
+
+--- &c.
+
+function util.log(...)
+   local msg = util.map(tostring, {...})
+   io.stderr:write(table.concat(msg, " ") .. "\n")
+   io.stderr:flush()
 end
 
 return util

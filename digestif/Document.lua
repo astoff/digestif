@@ -19,7 +19,7 @@ local Document = util.class()
 --- class from Manuscript.  The Document methods are more high level,
 --- but could be moved to Manuscript.
 
-function Document:_init(args)
+function Document:__init(args)
    self.modules, self.commands, self.environments = {}, {}, {}
    self.filename = filename
    -- self.cache = args.cache or FileCache()

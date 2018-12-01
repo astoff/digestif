@@ -1,6 +1,10 @@
 local lpeg = require "lpeg"
 local util = require "digestif.util"
 
+local path_join, path_split = util.path_join, util.path_split
+local nested_get, nested_put = util.nested_get, util.nested_put
+local map, update, merge = util.map, util.update, util.merge
+
 local cat_table = {
    escape = lpeg.P("\\"),
    bgroup = lpeg.P("{"),
@@ -90,9 +94,7 @@ function global_callbacks.input(m, pos, cs)
          local f = string.format(filename, k.key)
          m:add_module(f)
          if not m.modules[f] then
-            if not util.filename_is_abs(f) then
-               f = util.dirname(m.filename) .. f
-            end
+            f = path_join(path_split(m.filename), f)
             --m:add_children(f)  
             input_index[#input_index + 1] = {
                name = f,

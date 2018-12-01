@@ -262,7 +262,7 @@ methods["textDocument/completion"] = function(params)
    --doc:resolve()
    local candidates = doc:complete(pos, filename)
    if not candidates then return null end
-   local with_snippets = util.safe_get(client_capabilities,
+   local with_snippets = util.nested_get(client_capabilities,
                                        "textDocument",
                                        "completion",
                                        "completionItem",
