@@ -84,7 +84,6 @@ function global_callbacks.heading (m, pos, cs)
          filename = m.filename
       }
    end
-   log(m.filename, r.pos, r.pos+r.len)
    return r.pos + r.len
 end
 
