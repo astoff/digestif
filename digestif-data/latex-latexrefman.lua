@@ -1,6 +1,5 @@
-module = {
-   name = "latex"
-}
+module = "latex-latexrefman"
+
 commands = {
    ["-"] = {
       doc = "Insert explicit hyphenation."
@@ -8,9 +7,10 @@ commands = {
    ["/"] = {
       doc = "Insert italic correction."
    },
+   ["@ifstar"] = {
+      doc = "Define your own commands with *-variants."
+   },
    ["@startsection"] = {
-      doc = "Redefine layout of start of sections, subsections, etc.",
-      signature = "mmmmmm",
       args = {
          {
             meta = "name"
@@ -30,40 +30,34 @@ commands = {
          {
             meta = "style"
          }
-      }
-   },
-   ["@ifstar"] = {
-      doc = "Define your own commands with *-variants."
+      },
+      doc = "Redefine layout of start of sections, subsections, etc."
    },
    Alph = {
-      doc = "Print value of a counter.",
-      signature = "m",
       args = {
          {
             meta = "counter"
          }
-      }
+      },
+      doc = "Print value of a counter."
    },
    AtBeginDocument = {
-      doc = "Hook for commands at the start of the document.",
-      signature = "m",
       args = {
          {
             meta = "code"
          }
-      }
+      },
+      doc = "Hook for commands at the start of the document."
    },
    AtEndDocument = {
-      doc = "Hook for commands at the end of the document.",
-      signature = "m",
       args = {
          {
             meta = "code"
          }
-      }
+      },
+      doc = "Hook for commands at the end of the document."
    },
    AtEndOfClass = {
-      signature = "m",
       args = {
          {
             meta = "code"
@@ -71,7 +65,6 @@ commands = {
       }
    },
    AtEndOfPackage = {
-      signature = "m",
       args = {
          {
             meta = "code"
@@ -79,16 +72,19 @@ commands = {
       }
    },
    CheckCommand = {
-      signature = "moom",
       args = {
          {
             meta = "cmd"
          },
          {
-            meta = "num"
+            delims = {"[", "]"},
+            meta = "num",
+            optional = true
          },
          {
-            meta = "default"
+            delims = {"[", "]"},
+            meta = "default",
+            optional = true
          },
          {
             meta = "definition"
@@ -96,16 +92,19 @@ commands = {
       }
    },
    ["CheckCommand*"] = {
-      signature = "moom",
       args = {
          {
             meta = "cmd"
          },
          {
-            meta = "num"
+            delims = {"[", "]"},
+            meta = "num",
+            optional = true
          },
          {
-            meta = "default"
+            delims = {"[", "]"},
+            meta = "default",
+            optional = true
          },
          {
             meta = "definition"
@@ -113,7 +112,6 @@ commands = {
       }
    },
    ClassError = {
-      signature = "mmm",
       args = {
          {
             meta = "class name"
@@ -127,7 +125,6 @@ commands = {
       }
    },
    ClassInfo = {
-      signature = "mm",
       args = {
          {
             meta = "class name"
@@ -138,7 +135,6 @@ commands = {
       }
    },
    ClassInfoNoLine = {
-      signature = "mm",
       args = {
          {
             meta = "class name"
@@ -149,7 +145,6 @@ commands = {
       }
    },
    ClassWarning = {
-      signature = "mm",
       args = {
          {
             meta = "class name"
@@ -160,7 +155,6 @@ commands = {
       }
    },
    ClassWarningNoLine = {
-      signature = "mm",
       args = {
          {
             meta = "class name"
@@ -171,7 +165,6 @@ commands = {
       }
    },
    DeclareOption = {
-      signature = "mm",
       args = {
          {
             meta = "option"
@@ -182,7 +175,6 @@ commands = {
       }
    },
    ["DeclareOption*"] = {
-      signature = "m",
       args = {
          {
             meta = "code"
@@ -190,16 +182,19 @@ commands = {
       }
    },
    DeclareRobustCommand = {
-      signature = "moom",
       args = {
          {
             meta = "cmd"
          },
          {
-            meta = "num"
+            delims = {"[", "]"},
+            meta = "num",
+            optional = true
          },
          {
-            meta = "default"
+            delims = {"[", "]"},
+            meta = "default",
+            optional = true
          },
          {
             meta = "definition"
@@ -207,16 +202,19 @@ commands = {
       }
    },
    ["DeclareRobustCommand*"] = {
-      signature = "moom",
       args = {
          {
             meta = "cmd"
          },
          {
-            meta = "num"
+            delims = {"[", "]"},
+            meta = "num",
+            optional = true
          },
          {
-            meta = "default"
+            delims = {"[", "]"},
+            meta = "default",
+            optional = true
          },
          {
             meta = "definition"
@@ -224,7 +222,6 @@ commands = {
       }
    },
    ExecuteOptions = {
-      signature = "m",
       args = {
          {
             meta = "options-list"
@@ -232,7 +229,6 @@ commands = {
       }
    },
    IfFileExists = {
-      signature = "mmm",
       args = {
          {
             meta = "file name"
@@ -246,7 +242,6 @@ commands = {
       }
    },
    InputIfFileExists = {
-      signature = "mmm",
       args = {
          {
             meta = "file name"
@@ -260,32 +255,35 @@ commands = {
       }
    },
    LoadClass = {
-      signature = "omo",
       args = {
          {
-            meta = "options list"
+            delims = {"[", "]"},
+            meta = "options list",
+            optional = true
          },
          {
             meta = "class name"
          },
          {
-            meta = "release date"
+            delims = {"[", "]"},
+            meta = "release date",
+            optional = true
          }
       }
    },
    LoadClassWithOptions = {
-      signature = "mo",
       args = {
          {
             meta = "class name"
          },
          {
-            meta = "release date"
+            delims = {"[", "]"},
+            meta = "release date",
+            optional = true
          }
       }
    },
    MakeLowercase = {
-      signature = "m",
       args = {
          {
             meta = "text"
@@ -293,7 +291,6 @@ commands = {
       }
    },
    MakeUppercase = {
-      signature = "m",
       args = {
          {
             meta = "text"
@@ -301,18 +298,18 @@ commands = {
       }
    },
    NeedsTeXFormat = {
-      signature = "mo",
       args = {
          {
             meta = "format"
          },
          {
-            meta = "format date"
+            delims = {"[", "]"},
+            meta = "format date",
+            optional = true
          }
       }
    },
    PackageError = {
-      signature = "mmm",
       args = {
          {
             meta = "package name"
@@ -326,7 +323,6 @@ commands = {
       }
    },
    PackageInfo = {
-      signature = "mm",
       args = {
          {
             meta = "package name"
@@ -337,7 +333,6 @@ commands = {
       }
    },
    PackageInfoNoLine = {
-      signature = "mm",
       args = {
          {
             meta = "package name"
@@ -348,7 +343,6 @@ commands = {
       }
    },
    PackageWarning = {
-      signature = "mm",
       args = {
          {
             meta = "package name"
@@ -359,7 +353,6 @@ commands = {
       }
    },
    PackageWarningNoLine = {
-      signature = "mm",
       args = {
          {
             meta = "package name"
@@ -370,7 +363,6 @@ commands = {
       }
    },
    PassOptionsToClass = {
-      signature = "mm",
       args = {
          {
             meta = "option list"
@@ -381,7 +373,6 @@ commands = {
       }
    },
    PassOptionsToPackage = {
-      signature = "mm",
       args = {
          {
             meta = "option list"
@@ -392,92 +383,98 @@ commands = {
       }
    },
    ProvidesClass = {
-      signature = "mo",
       args = {
          {
             meta = "class name"
          },
          {
-            meta = "release date"
+            delims = {"[", "]"},
+            meta = "release date",
+            optional = true
          }
       }
    },
    ProvidesFile = {
-      signature = "mo",
       args = {
          {
             meta = "file name"
          },
          {
-            meta = "additional information"
+            delims = {"[", "]"},
+            meta = "additional information",
+            optional = true
          }
       }
    },
    ProvidesPackage = {
-      signature = "mo",
       args = {
          {
             meta = "package name"
          },
          {
-            meta = "release date"
+            delims = {"[", "]"},
+            meta = "release date",
+            optional = true
          }
       }
    },
    RequirePackage = {
-      signature = "omo",
       args = {
          {
-            meta = "option list"
+            delims = {"[", "]"},
+            meta = "option list",
+            optional = true
          },
          {
             meta = "package name"
          },
          {
-            meta = "release date"
+            delims = {"[", "]"},
+            meta = "release date",
+            optional = true
          }
       }
    },
    RequirePackageWithOptions = {
-      signature = "mo",
       args = {
          {
             meta = "package name"
          },
          {
-            meta = "release date"
+            delims = {"[", "]"},
+            meta = "release date",
+            optional = true
          }
       }
    },
    Roman = {
-      doc = "Print value of a counter.",
-      signature = "m",
       args = {
          {
             meta = "counter"
          }
-      }
+      },
+      doc = "Print value of a counter."
    },
    ["\\"] = {
-      doc = "Start a new line.",
-      signature = "o",
       args = {
          {
-            meta = "morespace"
+            delims = {"[", "]"},
+            meta = "morespace",
+            optional = true
          }
-      }
+      },
+      doc = "Start a new line."
    },
    ["\\*"] = {
-      signature = "o",
       args = {
          {
-            meta = "morespace"
+            delims = {"[", "]"},
+            meta = "morespace",
+            optional = true
          }
       }
    },
    addcontentsline = {
-      doc = "Add an entry to table of contents, etc.",
-      signature = "mmm",
       args = {
          {
             meta = "ext"
@@ -488,7 +485,8 @@ commands = {
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Add an entry to table of contents, etc."
    },
    address = {
       doc = "Sender's return address."
@@ -497,8 +495,6 @@ commands = {
       doc = "Add text directly to table of contents file, etc."
    },
    addtocounter = {
-      doc = "Add a quantity to a counter.",
-      signature = "mm",
       args = {
          {
             meta = "counter"
@@ -506,11 +502,10 @@ commands = {
          {
             meta = "value"
          }
-      }
+      },
+      doc = "Add a quantity to a counter."
    },
    addtolength = {
-      doc = "Add a quantity to a length.",
-      signature = "mm",
       args = {
          {
             meta = "\\len"
@@ -518,31 +513,29 @@ commands = {
          {
             meta = "amount"
          }
-      }
+      },
+      doc = "Add a quantity to a length."
    },
    addvspace = {
       doc = "Add arbitrary vertical space if needed."
    },
    alph = {
-      doc = "Print value of a counter.",
-      signature = "m",
       args = {
          {
             meta = "counter"
          }
-      }
+      },
+      doc = "Print value of a counter."
    },
    arabic = {
-      doc = "Print value of a counter.",
-      signature = "m",
       args = {
          {
             meta = "counter"
          }
-      }
+      },
+      doc = "Print value of a counter."
    },
    author = {
-      signature = "m",
       args = {
          {
             meta = "names"
@@ -550,19 +543,19 @@ commands = {
       }
    },
    bibitem = {
-      doc = "Specify a bibliography item.",
-      signature = "om",
       args = {
          {
-            meta = "label"
+            delims = {"[", "]"},
+            meta = "label",
+            optional = true
          },
          {
             meta = "cite_key"
          }
-      }
+      },
+      doc = "Specify a bibliography item."
    },
    bibliography = {
-      signature = "m",
       args = {
          {
             meta = "bibfiles"
@@ -570,7 +563,6 @@ commands = {
       }
    },
    bibliographystyle = {
-      signature = "m",
       args = {
          {
             meta = "bibstyle"
@@ -581,10 +573,11 @@ commands = {
       doc = "Big vertical space."
    },
    caption = {
-      signature = "om",
       args = {
          {
-            meta = "loftitle"
+            delims = {"[", "]"},
+            meta = "loftitle",
+            optional = true
          },
          {
             meta = "title"
@@ -595,10 +588,11 @@ commands = {
       doc = "Declaration form of the {center} environment."
    },
    chapter = {
-      signature = "om",
       args = {
          {
-            meta = "toctitle"
+            delims = {"[", "]"},
+            meta = "toctitle",
+            optional = true
          },
          {
             meta = "title"
@@ -606,25 +600,25 @@ commands = {
       }
    },
    circle = {
-      doc = "Draw a circle.",
-      signature = "m",
       args = {
          {
             meta = "diameter"
          }
-      }
+      },
+      doc = "Draw a circle."
    },
    cite = {
-      doc = "Refer to a bibliography item.",
-      signature = "om",
       args = {
          {
-            meta = "subcite"
+            delims = {"[", "]"},
+            meta = "subcite",
+            optional = true
          },
          {
             meta = "keys"
          }
-      }
+      },
+      doc = "Refer to a bibliography item."
    },
    cleardoublepage = {
       doc = "Start a new right-hand page."
@@ -633,37 +627,37 @@ commands = {
       doc = "Start a new page."
    },
    cline = {
-      doc = "Draw a horizontal line spanning some columns.",
-      signature = "m",
       args = {
          {
             meta = "i-j"
          }
-      }
+      },
+      doc = "Draw a horizontal line spanning some columns."
    },
    closing = {
       doc = "Saying goodbye."
    },
    dashbox = {
-      doc = "Draw a dashed box.",
-      signature = "mr()om",
       args = {
          {
             meta = "dlen"
          },
          {
+            delims = {"(", ")"},
             meta = "rwidth, rheight"
          },
          {
-            meta = "pos"
+            delims = {"[", "]"},
+            meta = "pos",
+            optional = true
          },
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Draw a dashed box."
    },
    date = {
-      signature = "m",
       args = {
          {
             meta = "text"
@@ -674,8 +668,6 @@ commands = {
       doc = "Today's day"
    },
    discretionary = {
-      doc = "Insert explicit hyphenation with control of hyphen character.",
-      signature = "mmm",
       args = {
          {
             meta = "pre-break-text"
@@ -686,13 +678,15 @@ commands = {
          {
             meta = "no-break-text"
          }
-      }
+      },
+      doc = "Insert explicit hyphenation with control of hyphen character."
    },
    documentclass = {
-      signature = "om",
       args = {
          {
-            meta = "options"
+            delims = {"[", "]"},
+            meta = "options",
+            optional = true
          },
          {
             meta = "class"
@@ -709,37 +703,33 @@ commands = {
       doc = "Enlarge the current page a bit."
    },
    ensuremath = {
-      doc = "Ensure that math mode is active",
-      signature = "m",
       args = {
          {
             meta = "formula"
          }
-      }
+      },
+      doc = "Ensure that math mode is active"
    },
    fbox = {
-      doc = "Put a frame around a box.",
-      signature = "m",
       args = {
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Put a frame around a box."
    },
    flushbottom = {
       doc = "Make all text pages the same height."
    },
    fnsymbol = {
-      doc = "Print value of a counter.",
-      signature = "m",
       args = {
          {
             meta = "counter"
          }
-      }
+      },
+      doc = "Print value of a counter."
    },
    fontencoding = {
-      signature = "m",
       args = {
          {
             meta = "encoding"
@@ -747,7 +737,6 @@ commands = {
       }
    },
    fontfamily = {
-      signature = "m",
       args = {
          {
             meta = "family"
@@ -755,7 +744,6 @@ commands = {
       }
    },
    fontseries = {
-      signature = "m",
       args = {
          {
             meta = "series"
@@ -763,7 +751,6 @@ commands = {
       }
    },
    fontshape = {
-      signature = "m",
       args = {
          {
             meta = "shape"
@@ -771,7 +758,6 @@ commands = {
       }
    },
    fontsize = {
-      signature = "mm",
       args = {
          {
             meta = "size"
@@ -782,40 +768,42 @@ commands = {
       }
    },
    footnote = {
-      doc = "Insert a footnote.",
-      signature = "om",
       args = {
          {
-            meta = "number"
+            delims = {"[", "]"},
+            meta = "number",
+            optional = true
          },
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Insert a footnote."
    },
    footnotemark = {
-      doc = "Insert footnote mark only.",
-      signature = "o",
       args = {
          {
-            meta = "number"
+            delims = {"[", "]"},
+            meta = "number",
+            optional = true
          }
-      }
+      },
+      doc = "Insert footnote mark only."
    },
    footnotetext = {
-      doc = "Insert footnote text only.",
-      signature = "om",
       args = {
          {
-            meta = "number"
+            delims = {"[", "]"},
+            meta = "number",
+            optional = true
          },
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Insert footnote text only."
    },
    frac = {
-      signature = "mm",
       args = {
          {
             meta = "num"
@@ -826,28 +814,30 @@ commands = {
       }
    },
    frame = {
-      doc = "Draw a frame around an object.",
-      signature = "m",
       args = {
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Draw a frame around an object."
    },
    framebox = {
-      doc = "Draw a box with a frame around it.",
-      signature = "oom",
       args = {
          {
-            meta = "width"
+            delims = {"[", "]"},
+            meta = "width",
+            optional = true
          },
          {
-            meta = "position"
+            delims = {"[", "]"},
+            meta = "position",
+            optional = true
          },
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Draw a box with a frame around it."
    },
    frenchspacing = {
       doc = "Equal interword and inter-sentence space."
@@ -865,16 +855,14 @@ commands = {
       doc = "Stretchable horizontal rule."
    },
    hspace = {
-      doc = "Fixed horizontal space.  ",
-      signature = "m",
       args = {
          {
             meta = "length"
          }
-      }
+      },
+      doc = "Fixed horizontal space.  "
    },
    ["hspace*"] = {
-      signature = "m",
       args = {
          {
             meta = "length"
@@ -882,85 +870,81 @@ commands = {
       }
    },
    hyphenation = {
-      doc = "Tell LaTeX how to hyphenate a word.",
-      signature = "m",
       args = {
          {
             meta = "words"
          }
-      }
+      },
+      doc = "Tell LaTeX how to hyphenate a word."
    },
    include = {
-      doc = "Conditionally include a file.",
-      signature = "m",
       args = {
          {
             meta = "file"
          }
-      }
+      },
+      doc = "Conditionally include a file."
    },
    includeonly = {
-      doc = "Determine which files are included.",
-      signature = "m",
       args = {
          {
             meta = "files"
          }
-      }
+      },
+      doc = "Determine which files are included."
    },
    indent = {
       doc = "Indent this paragraph."
    },
    input = {
-      doc = "Unconditionally include a file.",
-      signature = "m",
       args = {
          {
             meta = "file"
          }
-      }
+      },
+      doc = "Unconditionally include a file."
    },
    item = {
-      doc = "An entry in a list.",
-      signature = "o",
       args = {
          {
-            meta = "optional label"
+            delims = {"[", "]"},
+            meta = "optional label",
+            optional = true
          }
-      }
+      },
+      doc = "An entry in a list."
    },
    label = {
-      doc = "Assign a symbolic name to a piece of text.",
-      signature = "m",
       args = {
          {
             meta = "key"
          }
-      }
+      },
+      doc = "Assign a symbolic name to a piece of text."
    },
    line = {
-      doc = "Draw a straight line.",
-      signature = "r()m",
       args = {
          {
+            delims = {"(", ")"},
             meta = "xslope, yslope"
          },
          {
             meta = "length"
          }
-      }
+      },
+      doc = "Draw a straight line."
    },
    linebreak = {
-      doc = "Force line break.",
-      signature = "o",
       args = {
          {
-            meta = "priority"
+            delims = {"[", "]"},
+            meta = "priority",
+            optional = true
          }
-      }
+      },
+      doc = "Force line break."
    },
    linespread = {
-      signature = "m",
       args = {
          {
             meta = "factor"
@@ -974,7 +958,6 @@ commands = {
       doc = "Sender's organizational location."
    },
    lowercase = {
-      signature = "m",
       args = {
          {
             meta = "text"
@@ -988,19 +971,22 @@ commands = {
       doc = "Change the status of the at-sign character."
    },
    makebox = {
-      doc = "Box, adjustable position.",
-      signature = "oom",
       args = {
          {
-            meta = "width"
+            delims = {"[", "]"},
+            meta = "width",
+            optional = true
          },
          {
-            meta = "position"
+            delims = {"[", "]"},
+            meta = "position",
+            optional = true
          },
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Box, adjustable position."
    },
    makelabels = {
       doc = "Make address labels."
@@ -1009,10 +995,11 @@ commands = {
       doc = "Generate a title page."
    },
    marginpar = {
-      signature = "om",
       args = {
          {
-            meta = "left"
+            delims = {"[", "]"},
+            meta = "left",
+            optional = true
          },
          {
             meta = "right"
@@ -1020,7 +1007,6 @@ commands = {
       }
    },
    markboth = {
-      signature = "mm",
       args = {
          {
             meta = "left"
@@ -1031,7 +1017,6 @@ commands = {
       }
    },
    markright = {
-      signature = "m",
       args = {
          {
             meta = "right"
@@ -1039,13 +1024,12 @@ commands = {
       }
    },
    mbox = {
-      doc = "Horizontal boxes.",
-      signature = "m",
       args = {
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Horizontal boxes."
    },
    medskip = {
       doc = "Medium vertical space."
@@ -1054,8 +1038,6 @@ commands = {
       doc = "Today's month"
    },
    multicolumn = {
-      doc = "Make an item spanning several columns.",
-      signature = "mmm",
       args = {
          {
             meta = "numcols"
@@ -1066,16 +1048,17 @@ commands = {
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Make an item spanning several columns."
    },
    multiput = {
-      doc = "Draw multiple instances of an object.",
-      signature = "r()r()mm",
       args = {
          {
+            delims = {"(", ")"},
             meta = "x, y"
          },
          {
+            delims = {"(", ")"},
             meta = "delta_x, delta_y"
          },
          {
@@ -1084,7 +1067,8 @@ commands = {
          {
             meta = "obj"
          }
-      }
+      },
+      doc = "Draw multiple instances of an object."
    },
    name = {
       doc = "Sender's name, for the return address."
@@ -1093,23 +1077,22 @@ commands = {
       doc = "Define a new command"
    },
    newcounter = {
-      doc = "Define a new counter.",
-      signature = "mo",
       args = {
          {
             meta = "countername"
          },
          {
-            meta = "supercounter"
+            delims = {"[", "]"},
+            meta = "supercounter",
+            optional = true
          }
-      }
+      },
+      doc = "Define a new counter."
    },
    newenvironment = {
       doc = "Define a new environment."
    },
    newfont = {
-      doc = "Define a new font name.",
-      signature = "mm",
       args = {
          {
             meta = "\\cmd"
@@ -1117,16 +1100,16 @@ commands = {
          {
             meta = "font description"
          }
-      }
+      },
+      doc = "Define a new font name."
    },
    newlength = {
-      doc = "Define a new length.",
-      signature = "m",
       args = {
          {
             meta = "\\arg"
          }
-      }
+      },
+      doc = "Define a new length."
    },
    newline = {
       doc = "Break the line"
@@ -1135,28 +1118,28 @@ commands = {
       doc = "Start a new page."
    },
    newsavebox = {
-      doc = "Define a new box.",
-      signature = "m",
       args = {
          {
             meta = "\\cmd"
          }
-      }
+      },
+      doc = "Define a new box."
    },
    newtheorem = {
-      doc = "Define a new theorem-like environment.",
-      signature = "mom",
       args = {
          {
             meta = "name"
          },
          {
-            meta = "numbered_like"
+            delims = {"[", "]"},
+            meta = "numbered_like",
+            optional = true
          },
          {
             meta = "title"
          }
-      }
+      },
+      doc = "Define a new theorem-like environment."
    },
    nocite = {
       doc = "Include an item in the bibliography."
@@ -1165,22 +1148,24 @@ commands = {
       doc = "Do not indent this paragraph."
    },
    nolinebreak = {
-      doc = "Avoid line break.",
-      signature = "o",
       args = {
          {
-            meta = "priority"
+            delims = {"[", "]"},
+            meta = "priority",
+            optional = true
          }
-      }
+      },
+      doc = "Avoid line break."
    },
    nopagebreak = {
-      doc = "Avoid page break.",
-      signature = "o",
       args = {
          {
-            meta = "priority"
+            delims = {"[", "]"},
+            meta = "priority",
+            optional = true
          }
-      }
+      },
+      doc = "Avoid page break."
    },
    obeycr = {
       doc = "Make each input line start a new output line."
@@ -1192,19 +1177,20 @@ commands = {
       doc = "Saying hello."
    },
    oval = {
-      doc = "Draw an ellipse.",
-      signature = "r()o",
       args = {
          {
+            delims = {"(", ")"},
             meta = "width, height"
          },
          {
-            meta = "portion"
+            delims = {"[", "]"},
+            meta = "portion",
+            optional = true
          }
-      }
+      },
+      doc = "Draw an ellipse."
    },
    overbrace = {
-      signature = "m",
       args = {
          {
             meta = "math"
@@ -1212,7 +1198,6 @@ commands = {
       }
    },
    overline = {
-      signature = "m",
       args = {
          {
             meta = "text"
@@ -1220,53 +1205,55 @@ commands = {
       }
    },
    pagebreak = {
-      doc = "Force page break",
-      signature = "o",
       args = {
          {
-            meta = "priority"
+            delims = {"[", "]"},
+            meta = "priority",
+            optional = true
          }
-      }
+      },
+      doc = "Force page break"
    },
    pagenumbering = {
-      doc = "Set the style used for page numbers.",
-      signature = "m",
       args = {
          {
             meta = "style"
          }
-      }
+      },
+      doc = "Set the style used for page numbers."
    },
    pageref = {
-      doc = "Refer to a page number.",
-      signature = "m",
       args = {
          {
             meta = "key"
          }
-      }
+      },
+      doc = "Refer to a page number."
    },
    pagestyle = {
-      doc = "Change the headings/footings style.",
-      signature = "m",
       args = {
          {
             meta = "style"
          }
-      }
+      },
+      doc = "Change the headings/footings style."
    },
    parbox = {
-      doc = "Box with text in paragraph mode.",
-      signature = "ooomm",
       args = {
          {
-            meta = "position"
+            delims = {"[", "]"},
+            meta = "position",
+            optional = true
          },
          {
-            meta = "height"
+            delims = {"[", "]"},
+            meta = "height",
+            optional = true
          },
          {
-            meta = "inner-pos"
+            delims = {"[", "]"},
+            meta = "inner-pos",
+            optional = true
          },
          {
             meta = "width"
@@ -1274,7 +1261,8 @@ commands = {
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Box with text in paragraph mode."
    },
    parskip = {
       doc = "Space added before paragraphs."
@@ -1283,34 +1271,40 @@ commands = {
       doc = "Using tricky commands."
    },
    providecommand = {
-      doc = "Define a new command, if name not used.",
-      signature = "moom",
       args = {
          {
             meta = "cmd"
          },
          {
-            meta = "nargs"
+            delims = {"[", "]"},
+            meta = "nargs",
+            optional = true
          },
          {
-            meta = "optargdefault"
+            delims = {"[", "]"},
+            meta = "optargdefault",
+            optional = true
          },
          {
             meta = "defn"
          }
-      }
+      },
+      doc = "Define a new command, if name not used."
    },
    ["providecommand*"] = {
-      signature = "moom",
       args = {
          {
             meta = "cmd"
          },
          {
-            meta = "nargs"
+            delims = {"[", "]"},
+            meta = "nargs",
+            optional = true
          },
          {
-            meta = "optargdefault"
+            delims = {"[", "]"},
+            meta = "optargdefault",
+            optional = true
          },
          {
             meta = "defn"
@@ -1321,13 +1315,13 @@ commands = {
       doc = "Adding a postscript."
    },
    put = {
-      doc = "Place an object at a specified place.",
-      signature = "r()",
       args = {
          {
+            delims = {"(", ")"},
             meta = "xcoord, ycoord"
          }
-      }
+      },
+      doc = "Place an object at a specified place."
    },
    raggedbottom = {
       doc = "Allow text pages of differing height."
@@ -1339,70 +1333,77 @@ commands = {
       doc = "Declaration form of the {flushleft} environment."
    },
    raisebox = {
-      doc = "Raise or lower text.",
-      signature = "moom",
       args = {
          {
             meta = "distance"
          },
          {
-            meta = "height"
+            delims = {"[", "]"},
+            meta = "height",
+            optional = true
          },
          {
-            meta = "depth"
+            delims = {"[", "]"},
+            meta = "depth",
+            optional = true
          },
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Raise or lower text."
    },
    ref = {
-      doc = "Refer to a section, figure or similar.",
-      signature = "m",
       args = {
          {
             meta = "key"
          }
-      }
+      },
+      doc = "Refer to a section, figure or similar."
    },
    refstepcounter = {
-      doc = "Add to a counter.",
-      signature = "m",
       args = {
          {
             meta = "counter"
          }
-      }
+      },
+      doc = "Add to a counter."
    },
    renewcommand = {
-      doc = "Redefine a command.",
-      signature = "moom",
       args = {
          {
             meta = "\\cmd"
          },
          {
-            meta = "nargs"
+            delims = {"[", "]"},
+            meta = "nargs",
+            optional = true
          },
          {
-            meta = "optargdefault"
+            delims = {"[", "]"},
+            meta = "optargdefault",
+            optional = true
          },
          {
             meta = "defn"
          }
-      }
+      },
+      doc = "Redefine a command."
    },
    ["renewcommand*"] = {
-      signature = "moom",
       args = {
          {
             meta = "\\cmd"
          },
          {
-            meta = "nargs"
+            delims = {"[", "]"},
+            meta = "nargs",
+            optional = true
          },
          {
-            meta = "optargdefault"
+            delims = {"[", "]"},
+            meta = "optargdefault",
+            optional = true
          },
          {
             meta = "defn"
@@ -1413,16 +1414,19 @@ commands = {
       doc = "Refine an environment."
    },
    ["renewenvironment*"] = {
-      signature = "moomm",
       args = {
          {
             meta = "env"
          },
          {
-            meta = "nargs"
+            delims = {"[", "]"},
+            meta = "nargs",
+            optional = true
          },
          {
-            meta = "optargdefault"
+            delims = {"[", "]"},
+            meta = "optargdefault",
+            optional = true
          },
          {
             meta = "begdefn"
@@ -1436,20 +1440,19 @@ commands = {
       doc = "Make each input line start a new output line."
    },
    roman = {
-      doc = "Print value of a counter.",
-      signature = "m",
       args = {
          {
             meta = "counter"
          }
-      }
+      },
+      doc = "Print value of a counter."
    },
    rule = {
-      doc = "Inserting lines and rectangles.",
-      signature = "omm",
       args = {
          {
-            meta = "raise"
+            delims = {"[", "]"},
+            meta = "raise",
+            optional = true
          },
          {
             meta = "width"
@@ -1457,29 +1460,31 @@ commands = {
          {
             meta = "thickness"
          }
-      }
+      },
+      doc = "Inserting lines and rectangles."
    },
    savebox = {
-      doc = "Like \\makebox, but save the text for later use.",
-      signature = "moom",
       args = {
          {
             meta = "\\boxcmd"
          },
          {
-            meta = "width"
+            delims = {"[", "]"},
+            meta = "width",
+            optional = true
          },
          {
-            meta = "pos"
+            delims = {"[", "]"},
+            meta = "pos",
+            optional = true
          },
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Like \\makebox, but save the text for later use."
    },
    sbox = {
-      doc = "Like \\mbox, but save the text for later use.",
-      signature = "mm",
       args = {
          {
             meta = "\\boxcmd"
@@ -1487,11 +1492,10 @@ commands = {
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Like \\mbox, but save the text for later use."
    },
    setcounter = {
-      doc = "Set the value of a counter.",
-      signature = "mm",
       args = {
          {
             meta = "counter"
@@ -1499,11 +1503,10 @@ commands = {
          {
             meta = "value"
          }
-      }
+      },
+      doc = "Set the value of a counter."
    },
    setlength = {
-      doc = "Set the value of a length.",
-      signature = "mm",
       args = {
          {
             meta = "\\len"
@@ -1511,11 +1514,10 @@ commands = {
          {
             meta = "amount"
          }
-      }
+      },
+      doc = "Set the value of a length."
    },
    settodepth = {
-      doc = "Set a length to the depth of something.",
-      signature = "mm",
       args = {
          {
             meta = "\\len"
@@ -1523,20 +1525,18 @@ commands = {
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Set a length to the depth of something."
    },
    settoheight = {
-      doc = "Set a length to the height of something.",
-      signature = "m",
       args = {
          {
             meta = "\\len"
          }
-      }
+      },
+      doc = "Set a length to the height of something."
    },
    settowidth = {
-      doc = "Set a length to the width of something.",
-      signature = "mm",
       args = {
          {
             meta = "\\len"
@@ -1544,16 +1544,18 @@ commands = {
          {
             meta = "text"
          }
-      }
+      },
+      doc = "Set a length to the width of something."
    },
    shortstack = {
-      doc = "Make a pile of objects.",
-      signature = "o",
       args = {
          {
-            meta = "position"
+            delims = {"[", "]"},
+            meta = "position",
+            optional = true
          }
-      }
+      },
+      doc = "Make a pile of objects."
    },
    signature = {
       doc = "Sender's signature."
@@ -1565,10 +1567,11 @@ commands = {
       doc = "Small vertical space."
    },
    sqrt = {
-      signature = "om",
       args = {
          {
-            meta = "root"
+            delims = {"[", "]"},
+            meta = "root",
+            optional = true
          },
          {
             meta = "arg"
@@ -1576,7 +1579,6 @@ commands = {
       }
    },
    stackrel = {
-      signature = "mm",
       args = {
          {
             meta = "text"
@@ -1587,19 +1589,17 @@ commands = {
       }
    },
    stepcounter = {
-      doc = "Add to a counter, resetting subsidiary counters.",
-      signature = "m",
       args = {
          {
             meta = "counter"
          }
-      }
+      },
+      doc = "Add to a counter, resetting subsidiary counters."
    },
    telephone = {
       doc = "Sender's phone number."
    },
    textcircled = {
-      signature = "m",
       args = {
          {
             meta = "letter"
@@ -1607,7 +1607,6 @@ commands = {
       }
    },
    thanks = {
-      signature = "m",
       args = {
          {
             meta = "text"
@@ -1624,16 +1623,14 @@ commands = {
       doc = "One-sixth of an em.  "
    },
    thispagestyle = {
-      doc = "Change the headings/footings style for this page.",
-      signature = "m",
       args = {
          {
             meta = "style"
          }
-      }
+      },
+      doc = "Change the headings/footings style for this page."
    },
    title = {
-      signature = "m",
       args = {
          {
             meta = "text"
@@ -1644,37 +1641,37 @@ commands = {
       doc = "Inserting today's date."
    },
    twocolumn = {
-      doc = "Use two-column layout.",
-      signature = "o",
       args = {
          {
-            meta = "prelim one column text"
+            delims = {"[", "]"},
+            meta = "prelim one column text",
+            optional = true
          }
-      }
+      },
+      doc = "Use two-column layout."
    },
    typein = {
-      doc = "Read text from the terminal.",
-      signature = "om",
       args = {
          {
-            meta = "\\cmd"
+            delims = {"[", "]"},
+            meta = "\\cmd",
+            optional = true
          },
          {
             meta = "msg"
          }
-      }
+      },
+      doc = "Read text from the terminal."
    },
    typeout = {
-      doc = "Write text to the terminal.",
-      signature = "m",
       args = {
          {
             meta = "msg"
          }
-      }
+      },
+      doc = "Write text to the terminal."
    },
    underbrace = {
-      signature = "m",
       args = {
          {
             meta = "math"
@@ -1682,7 +1679,6 @@ commands = {
       }
    },
    underline = {
-      signature = "m",
       args = {
          {
             meta = "text"
@@ -1690,7 +1686,6 @@ commands = {
       }
    },
    uppercase = {
-      signature = "m",
       args = {
          {
             meta = "text"
@@ -1698,25 +1693,22 @@ commands = {
       }
    },
    usebox = {
-      doc = "Print saved text.",
-      signature = "m",
       args = {
          {
             meta = "\\boxcmd"
          }
-      }
+      },
+      doc = "Print saved text."
    },
    usecounter = {
-      doc = "Use a specified counter in a list environment.",
-      signature = "m",
       args = {
          {
             meta = "counter"
          }
-      }
+      },
+      doc = "Use a specified counter in a list environment."
    },
    usefont = {
-      signature = "mmmm",
       args = {
          {
             meta = "enc"
@@ -1733,10 +1725,11 @@ commands = {
       }
    },
    usepackage = {
-      signature = "om",
       args = {
          {
-            meta = "options"
+            delims = {"[", "]"},
+            meta = "options",
+            optional = true
          },
          {
             meta = "pkg"
@@ -1744,25 +1737,24 @@ commands = {
       }
    },
    value = {
-      doc = "Use the value of a counter in an expression.  ",
-      signature = "m",
       args = {
          {
             meta = "counter"
          }
-      }
+      },
+      doc = "Use the value of a counter in an expression.  "
    },
    vector = {
-      doc = "Draw a line with an arrow.",
-      signature = "r()m",
       args = {
          {
+            delims = {"(", ")"},
             meta = "xslope, yslope"
          },
          {
             meta = "length"
          }
-      }
+      },
+      doc = "Draw a line with an arrow."
    },
    verb = {
       doc = "The macro form of the {verbatim} environment."
@@ -1774,16 +1766,14 @@ commands = {
       doc = "Draw a vertical line."
    },
    vspace = {
-      doc = "Add arbitrary vertical space.",
-      signature = "m",
       args = {
          {
             meta = "length"
          }
-      }
+      },
+      doc = "Add arbitrary vertical space."
    },
    ["vspace*"] = {
-      signature = "m",
       args = {
          {
             meta = "length"
@@ -1794,21 +1784,23 @@ commands = {
       doc = "Today's year"
    }
 }
+
 environments = {
    abstract = {
       doc = "Produce an abstract."
    },
    array = {
-      doc = "Math arrays.",
-      signature = "om",
       args = {
          {
-            meta = "pos"
+            delims = {"[", "]"},
+            meta = "pos",
+            optional = true
          },
          {
             meta = "cols"
          }
-      }
+      },
+      doc = "Math arrays."
    },
    center = {
       doc = "Centered lines."
@@ -1832,33 +1824,33 @@ environments = {
       doc = "Displayed equation."
    },
    figure = {
-      doc = "Floating figures.",
-      signature = "o",
       args = {
          {
-            meta = "placement"
+            delims = {"[", "]"},
+            meta = "placement",
+            optional = true
          }
-      }
+      },
+      doc = "Floating figures."
    },
    ["figure*"] = {
-      signature = "o",
       args = {
          {
-            meta = "placement"
+            delims = {"[", "]"},
+            meta = "placement",
+            optional = true
          }
       }
    },
    filecontents = {
-      doc = "Writing multiple files from the source.",
-      signature = "m",
       args = {
          {
             meta = "filename"
          }
-      }
+      },
+      doc = "Writing multiple files from the source."
    },
    ["filecontents*"] = {
-      signature = "m",
       args = {
          {
             meta = "filename"
@@ -1878,8 +1870,6 @@ environments = {
       doc = "Letters."
    },
    list = {
-      doc = "Generic list environment.",
-      signature = "mm",
       args = {
          {
             meta = "labeling"
@@ -1887,49 +1877,55 @@ environments = {
          {
             meta = "spacing"
          }
-      }
+      },
+      doc = "Generic list environment."
    },
    lrbox = {
-      doc = "An environment like \\sbox.",
-      signature = "m",
       args = {
          {
             meta = "\\cmd"
          }
-      }
+      },
+      doc = "An environment like \\sbox."
    },
    math = {
       doc = "In-line math."
    },
    minipage = {
-      doc = "Miniature page.",
-      signature = "ooom",
       args = {
          {
-            meta = "position"
+            delims = {"[", "]"},
+            meta = "position",
+            optional = true
          },
          {
-            meta = "height"
+            delims = {"[", "]"},
+            meta = "height",
+            optional = true
          },
          {
-            meta = "inner-pos"
+            delims = {"[", "]"},
+            meta = "inner-pos",
+            optional = true
          },
          {
             meta = "width"
          }
-      }
+      },
+      doc = "Miniature page."
    },
    picture = {
-      doc = "Picture with text, arrows, lines and circles.",
-      signature = "r()r()",
       args = {
          {
+            delims = {"(", ")"},
             meta = "width, height"
          },
          {
+            delims = {"(", ")"},
             meta = "xoffset, yoffset"
          }
-      }
+      },
+      doc = "Picture with text, arrows, lines and circles."
    },
    quotation = {
       doc = "Include a quotation."
@@ -1941,34 +1937,37 @@ environments = {
       doc = "Align text arbitrarily."
    },
    table = {
-      doc = "Floating tables.",
-      signature = "o",
       args = {
          {
-            meta = "placement"
+            delims = {"[", "]"},
+            meta = "placement",
+            optional = true
          }
-      }
+      },
+      doc = "Floating tables."
    },
    tabular = {
-      doc = "Align text in columns.",
-      signature = "om",
       args = {
          {
-            meta = "pos"
+            delims = {"[", "]"},
+            meta = "pos",
+            optional = true
          },
          {
             meta = "cols"
          }
-      }
+      },
+      doc = "Align text in columns."
    },
    ["tabular*"] = {
-      signature = "mom",
       args = {
          {
             meta = "width"
          },
          {
-            meta = "pos"
+            delims = {"[", "]"},
+            meta = "pos",
+            optional = true
          },
          {
             meta = "cols"
@@ -1976,13 +1975,12 @@ environments = {
       }
    },
    thebibliography = {
-      doc = "Bibliography or reference list.",
-      signature = "m",
       args = {
          {
             meta = "widest-label"
          }
-      }
+      },
+      doc = "Bibliography or reference list."
    },
    theorem = {
       doc = "Theorems, lemmas, etc."
@@ -1997,4 +1995,3 @@ environments = {
       doc = "For poetry and other things."
    }
 }
-

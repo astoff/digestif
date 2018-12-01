@@ -46,7 +46,7 @@ commands = {
    },
    paragraph = {
       action = "heading",
-      args = {
+      args = signature("som",
          {
             meta = "unnumbered"
          },
@@ -56,12 +56,12 @@ commands = {
          {
             meta = "title"
          }
-      },
-      heading_level = 4, signature = "som"
+      ),
+      heading_level = 4
    },
    part = {
       action = "heading",
-      args = {
+      args = signature("som",
          {
             meta = "unnumbered"
          },
@@ -71,8 +71,8 @@ commands = {
          {
             meta = "title"
          }
-      },
-      heading_level = -1, signature = "som"
+      ),
+      heading_level = -1
    },
    ref = {
       action = "ref",
@@ -80,7 +80,7 @@ commands = {
    },
    section = {
       action = "heading",
-      args = {
+      args = signature("som",
          {
             meta = "unnumbered"
          },
@@ -90,12 +90,12 @@ commands = {
          {
             meta = "title"
          }
-      },
-      heading_level = 1, signature = "som"
+      ),
+      heading_level = 1
    },
    subparagraph = {
       action = "heading",
-      args = {
+      args = signature("som",
          {
             meta = "unnumbered"
          },
@@ -105,12 +105,12 @@ commands = {
          {
             meta = "title"
          }
-      },
-      heading_level = 5, signature = "som"
+      ),
+      heading_level = 5
    },
    subsection = {
       action = "heading",
-      args = {
+      args = signature("som",
          {
             meta = "unnumbered"
          },
@@ -120,12 +120,12 @@ commands = {
          {
             meta = "title"
          }
-      },
-      heading_level = 2, signature = "som"
+      ),
+      heading_level = 2
    },
    subsubsection = {
       action = "heading",
-      args = {
+      args = signature("som",
          {
             meta = "unnumbered"
          },
@@ -135,31 +135,8 @@ commands = {
          {
             meta = "title"
          }
-      },
-      heading_level = 3, signature = "som"
-   },
-   test = {
-      args = {
-         {
-            keys = {
-               blue = {},
-               bluuue = {},
-               green = {},
-               ["line width"] = {
-                  values = {
-                     thick = {},
-                     thin = {}
-                  }
-               },
-               red = {}
-            },
-            meta = "options"
-         },
-         {
-            meta = "text"
-         }
-      },
-      signature = "om"
+      ),
+      heading_level = 3
    },
    usepackage = {
       action = "input",
@@ -186,24 +163,4 @@ environments = {
    math = {
       action = "math"
    },
-   sususu = {
-      args = {
-         {
-            keys = {
-               blue = {},
-               bluuue = {},
-               green = {},
-               ["line width"] = {
-                  values = {
-                     thick = {},
-                     thin = {}
-                  }
-               },
-               red = {}
-            },
-            meta = "options"
-         }
-      },
-      signature = "m"
-   }
 }
