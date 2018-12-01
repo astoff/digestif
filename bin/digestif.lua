@@ -2,6 +2,10 @@
 local json = require(pcall(require, "cjson") and "cjson" or "dkjson")
 local util = require "digestif.util"
 
+local path_join, path_split = util.path_join, util.path_split
+local nested_get, nested_put = util.nested_get, util.nested_put
+local map, update, merge = util.map, util.update, util.merge
+
 --- Set the right data directory when installed by luarocks
 local rock_path = debug.getinfo(1).source:match(
    "^@(.*/luarocks/rocks/digestif/[^/]*)/bin/digestif$")
@@ -89,7 +93,7 @@ get_document = cache:memoize(get_document)
 
 local function get_root(filename)
    local root = util.find_root(cache:get(filename))
-   return root and util.split_filename(filename) .. root or filename
+   return root and path_join(path_split(filename), root) or filename
 end
 get_root = cache:memoize(get_root)
 
