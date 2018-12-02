@@ -2,6 +2,7 @@
 local json = require(pcall(require, "cjson") and "cjson" or "dkjson")
 local util = require "digestif.util"
 local langserver = require "digestif.langserver"
+local config = require "digestif.config"
 
 local log, path_join = util.log, util.path_join
 
@@ -11,11 +12,12 @@ util.null = json.null
 local rock_path = debug.getinfo(1).source:match(
    "^@(.*/luarocks/rocks/digestif/[^/]*)/bin/digestif$")
 if rock_path then
-   util.config.data_dir = rock_path .. "/digestif-data/"
+   table.insert(config.data_dir, 1, path_join(rock_path, 'digestif-data'))
 end
 
 if not require("digestif.data")("latex") then
-   error("Could not find data files at " .. util.config.data_dir)
+   error("Could not find data files at\n  "
+            .. table.concat(config.data_dir, "\n  "))
 end
 
 local function write_msg(msg)

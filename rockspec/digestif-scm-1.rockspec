@@ -26,9 +26,11 @@ build = {
       ["digestif.Document"] = "digestif/Document.lua",
       ["digestif.FileCache"] = "digestif/FileCache.lua",
       ["digestif.Manuscript"] = "digestif/Manuscript.lua",
+      ["digestif.ManuscriptLaTeX"] = "digestif/ManuscriptLaTeX.lua",
       ["digestif.Parser"] = "digestif/Parser.lua",
+      ["digestif.config"] = "digestif/config.lua",
       ["digestif.data"] = "digestif/data.lua",
-      ["digestif.latex"] = "digestif/latex.lua",
+      ["digestif.langserver"] = "digestif/langserver.lua",
       ["digestif.util"] = "digestif/util.lua",
    },
    copy_directories = {

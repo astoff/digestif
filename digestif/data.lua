@@ -1,10 +1,11 @@
 local lpeg = require "lpeg"
 local util = require "digestif.util"
+local config = require "digestif.config"
 
 local P = lpeg.P
 local C, Cc = lpeg.C, lpeg.Cc
 
-local DATA_DIR = util.config.data_dir
+local DATA_DIR = config.data_dir
 
 local data = {loaded = {}}
 
@@ -35,19 +36,20 @@ function data.signature(sig, ...)
    return args
 end
 
-local load_env = {merge = util.merge, data = data, signature = data.signature}
+local load_data_mt = {
+   __index = {
+      merge = util.merge,
+      data = data,
+      signature = data.signature
+   }
+}
 
 function data.load_data(name)
-   if type(name) ~= "string" then return nil end
-   -- need to check this forms a reasonable file name
-   name = util.path_join(DATA_DIR, name .. ".lua")
-   local f = io.open(name)
-   local result, err
-   if f then
-      result, err = util.eval_with_env(f:read("*all"), load_env)
-      f:close()
-      if not result then util.log(err) end
-   end
+   if name:find('..', 1, true) then return end -- unreasonable file name
+   src = util.try_read_file(DATA_DIR, "?.lua", name)
+   if not src then return end
+   local result, err = util.eval_with_env(src, load_data_mt)
+   if not result then util.log(err) end
    data.loaded[name] = result
    return result
 end
