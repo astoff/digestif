@@ -23,7 +23,6 @@ dependencies = {
 build = {
    type = "builtin",
    modules = {
-      ["digestif.Document"] = "digestif/Document.lua",
       ["digestif.FileCache"] = "digestif/FileCache.lua",
       ["digestif.Manuscript"] = "digestif/Manuscript.lua",
       ["digestif.ManuscriptLaTeX"] = "digestif/ManuscriptLaTeX.lua",

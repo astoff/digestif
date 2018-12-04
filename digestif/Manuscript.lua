@@ -23,9 +23,7 @@ local function ManuscriptFactory(_, args)
       or "latex"
    return require(formats[fmt])(args)
 end
-
-local mt = getmetatable(Manuscript)
-mt.__call = ManuscriptFactory
+getmetatable(Manuscript).__call = ManuscriptFactory
 
 --- Create a new manuscript object.
 -- The argument is a table with the following keys:
@@ -164,26 +162,30 @@ end
 -- @tab callbacks a table of callback functions
 -- @number pos the starting position
 function Manuscript:scan(callbacks, pos, ...)
-   if not pos then return ... end
-   local pos1, kind, detail, pos2 = self.parser.patt.next_thing3:match(self.src, pos)
-   if not pos then return ... end
-
-   local cmd = kind == "cs" and self.commands[detail]
-   local callback = cmd and callbacks[cmd.action] or callbacks[kind]
-
-   if callback then
-      return self:scan(callbacks, callback(self, pos1, detail, ...))
-   else
-      return self:scan(callbacks, pos2, ...)
+   local patt = self.parser.patt.next_thing3
+   local match = patt.match
+   local commands = self.commands
+   local src = self.src
+   local function scan(callbacks, pos, ...)
+      if not pos then return ... end
+      local pos1, kind, detail, pos2 = match(patt, src, pos)
+      local cmd = (kind == "cs") and commands[detail]
+      local cb = cmd and callbacks[cmd.action] or callbacks[kind]
+      if cb then
+         return scan(callbacks, cb(self, pos1, detail, ...))
+      else
+         return scan(callbacks, pos2, ...)
+      end
    end
+   return scan(callbacks, pos, ...)
 end
 
 -- function Manuscript:scan(callbacks, pos, ...) -- with while loop instead of tail calls
 --    local patt = self.parser.patt.next_thing3
 --    local match = patt.match
 --    local src, commands = self.src, self.commands
---    local v1, v2, v3
---    while pos do -- note: this is never false (?)
+--    local v1, v2, v3 = ...
+--    while pos do
 --       local pos1, kind, detail, pos2 = match(patt, src, pos)
 --       if not pos1 then
 --          return v1, v2, v3
@@ -196,7 +198,7 @@ end
 --          pos = pos2
 --       end
 --    end
---    return v1, v2, v3 --this never happens
+--    return v1, v2, v3
 -- end
 
 --- Global scanning
@@ -459,6 +461,229 @@ function Manuscript:refresh()
       self.src = cached
       self:global_scan()
       return true
+   end
+end
+
+-- Completion
+
+local function gather(script, field, tbl)
+   update(tbl, script[field])
+   for _, child in pairs(script.children) do
+      gather(child, field, tbl)
+   end
+   return tbl
+end
+
+function Manuscript:all_commands()
+   return gather(self.root, 'commands', {})
+end
+
+function Manuscript:all_environments()
+   return gather(self.root, 'environments', {})
+end
+
+local function format_args(args)
+   local t = {}
+   for i, arg in ipairs(args or {}) do
+      local l, r
+      if arg.literal then
+         l, r = "", ""
+      elseif arg.delims == false then
+         l, r = "〈", "〉"
+      elseif arg.delims then
+         l, r = arg.delims[1] or "{", arg.delims[2] or "}"
+      else
+         l, r = "{", "}"
+      end
+      if l == "" or r == "" then
+         l, r = l .."〈", "〉" .. r
+      end
+      t[#t+1] = l .. (arg.literal or arg.meta or "#" .. i) .. r
+   end
+   return table.concat(t)
+end
+
+local function snippet_from_args(args)
+   if not args then return "" end
+   local t, i = {}, 0
+   for _, arg in ipairs(args) do
+      if arg.literal then
+         if arg.optional then
+            i = i + 1
+            t[#t+1] = "${" .. i .. ":|," .. arg.literal .. "|}"
+         else
+            t[#t+1] = arg.literal
+         end
+      else
+         i = i + 1
+         local l = arg.delims and arg.delims[1] or "\\{"
+         local r = arg.delims and arg.delims[2] or "\\}"
+         t[#t+1] = l .. "${" .. i ..
+            (arg.meta and ":" .. arg.meta) .. "}" .. r
+      end
+   end
+   return table.concat(t)
+end
+
+Manuscript.completion_handlers = {}
+
+function Manuscript.completion_handlers.cs(self, ctx)
+   local prefix = ctx.cs
+   local len = #prefix
+   local r = {
+      pos = ctx.pos + 1,
+      prefix = prefix,
+      kind = "command"
+   }
+   for cs, cmd in pairs(self.root:all_commands()) do
+      if prefix == cs:sub(1, len) then
+         r[#r+1] = {
+            text = cs,
+            summary = cmd.doc,
+            signature = format_args(cmd.args),
+            snippet = cs .. snippet_from_args(cmd.args) .. "$0"
+         }
+      end
+   end
+   return r
+end
+
+function Manuscript.completion_handlers.key(self, ctx, pos)
+   local prefix = self:substring(ctx.pos, pos - 1)
+   local len = #prefix
+   local r = {
+      pos = ctx.pos,
+      prefix = prefix,
+      kind = "key"
+   }
+   local keys = ctx.parent and ctx.parent.data and ctx.parent.data.keys
+   for text, key in pairs(keys or {}) do
+      if prefix == text:sub(1, len) then
+         r[#r+1] = {
+            text = text,
+            summary = key.doc
+         }
+      end
+   end
+   return r
+end
+
+function Manuscript.completion_handlers.value(self, ctx, pos)
+   local prefix = self:substring(ctx.pos, pos - 1)
+   local len = #prefix
+   local r = {
+      pos = ctx.pos,
+      prefix = prefix,
+      kind = "value"
+   }
+   local values = ctx.parent and ctx.parent.data and ctx.parent.data.values
+   for text, value in pairs(values or {}) do
+      if prefix == text:sub(1, len) then
+         r[#r+1] = {
+            text = text,
+            summary = value.doc
+         }
+      end
+   end
+   return r
+end
+
+function Manuscript.completion_handlers.begin(self, ctx, pos)
+   local prefix = self:substring(ctx.pos, pos - 1)
+   local len = #prefix
+   local r = {
+      pos = ctx.pos,
+      prefix = prefix,
+      kind = "environment"
+   }
+   for text, env in pairs(self.root:all_environments()) do
+      if prefix == text:sub(1, len) then
+         r[#r+1] = {
+            text = text,
+            summary = env.doc,
+            signature = format_args(env.args),
+         }
+      end
+   end
+   return r
+end
+
+function Manuscript.completion_handlers.ref(self, ctx, pos)
+   local prefix = self:substring(ctx.pos, pos - 1)
+   local len = #prefix
+   local r = {
+      pos = ctx.pos,
+      prefix = prefix,
+      kind = "label"
+   }
+   for label in self.root:each_of "label_index" do
+      if prefix == label.name:sub(1, len) then
+         r[#r+1] = {
+            text = label.name
+         }
+      end
+   end
+   return r
+end
+
+-- should this take into account the Manuscript of filename, or
+-- directly on the current content of filename?
+function Manuscript:complete(pos)
+   local ctx = self:local_scan(pos - 1)
+   if ctx == nil then return nil end
+   if ctx.cs and pos == 1 + ctx.pos + #ctx.cs then -- the 1 accounts for escape char
+      return self.completion_handlers.cs(self, ctx)
+   elseif ctx.arg then
+      local action = ctx.parent and ctx.parent.data and ctx.parent.data.action
+      if self.completion_handlers[action] then
+         return self.completion_handlers[action](self, ctx, pos)
+      end
+   elseif ctx.key and pos == ctx.pos + #ctx.key then
+      return self.completion_handlers.key(self, ctx, pos)
+   elseif ctx.value and pos == ctx.pos + #ctx.value then
+      return self.completion_handlers.value(self, ctx, pos)
+   end
+end
+
+-- Context help
+
+function Manuscript:get_help(pos)
+   local ctx = self:local_scan(pos)
+   return ctx and self:get_help_aux(ctx)
+end
+
+function Manuscript:get_help_aux(ctx)
+   local parent = ctx.parent
+   local parent_action = parent and parent.data and parent.data.action
+   if parent_action == "ref" then
+      return {
+         pos = ctx.pos, len = ctx.len,
+         type = "label",
+         text = "Label: " .. self:substring(ctx)
+      }
+   elseif parent_action == "begin" then
+      return {
+         pos = ctx.pos, len = ctx.len,
+         type = "environment",
+         text = "\\begin{" .. self:substring(ctx) .. "}",
+         data = ctx.data
+      }
+   elseif ctx.cs then
+      return ctx.data and {
+         pos = ctx.pos, len = ctx.len,
+         type = "command",
+         text = "\\" .. ctx.cs .. format_args(ctx.data and ctx.data.args),
+         data = ctx.data
+      }
+   elseif ctx.arg then
+      return update(
+         self:get_help_aux(parent) or {},
+         {pos = ctx.pos, len = ctx.len, arg = ctx.arg}
+      )
+   elseif parent then
+      return self:get_help_aux(parent)
+   else
+      return nil
    end
 end
 

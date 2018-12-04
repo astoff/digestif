@@ -5,7 +5,7 @@ local config = require "digestif.config"
 local P = lpeg.P
 local C, Cc = lpeg.C, lpeg.Cc
 
-local DATA_DIR = config.data_dir
+local data_dirs = config.data_dirs
 
 local data = {loaded = {}}
 
@@ -46,7 +46,7 @@ local load_data_mt = {
 
 function data.load_data(name)
    if name:find('..', 1, true) then return end -- unreasonable file name
-   src = util.try_read_file(DATA_DIR, "?.lua", name)
+   local src = util.try_read_file(data_dirs, name .. ".lua")
    if not src then return end
    local result, err = util.eval_with_env(src, load_data_mt)
    if not result then util.log(err) end

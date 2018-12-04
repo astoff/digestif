@@ -3,14 +3,12 @@ local path_join, path_split = util.path_join, util.path_split
 
 local HOME = os.getenv("HOME")
 
-local data_dir = {
+local data_dirs = {
    "./digestif-data",
-   path_join(HOME, ".local/share/digestif-data"),
-   "/usr/local/share/digestif-data",
-   "/usr/share/digestif-data"
+   path_join(HOME, ".local/share/digestif-data")
 }
 
 return {
-   data_dir = data_dir,
+   data_dirs = data_dirs,
    eol = "\n"
 }

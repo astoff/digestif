@@ -1,4 +1,3 @@
-local Document = require "digestif.Document"
 local FileCache = require "digestif.FileCache"
 local Manuscript = require "digestif.Manuscript"
 local util = require "digestif.util"
@@ -24,17 +23,14 @@ local function escape_uri(s)
    return "file://" .. s
 end
 
-local function get_document(filename)
-   return Document{
-      root = Manuscript{
-         filename = filename,
-         cache = cache
-      },
+local function get_manuscript(filename)
+   return Manuscript{
       filename = filename,
-      cache = cache
+      cache = cache,
+      format = "latex"
    }
 end
-get_document = cache:memoize(get_document)
+get_manuscript = cache:memoize(get_manuscript)
 
 local function get_root(filename)
    local root = util.find_root(cache:get(filename))
@@ -165,7 +161,7 @@ methods['textDocument/didChange'] = function(params)
    for _, change in ipairs(params.contentChanges) do
       cache:put(filename, change.text) --make checks, implement incremental
    end
-   get_document(filename):refresh()
+   get_manuscript(filename):refresh()
 end
 
 methods["textDocument/didClose"] = function(params)
@@ -174,9 +170,12 @@ methods["textDocument/didClose"] = function(params)
 end
 
 methods["textDocument/signatureHelp"] = function(params)
-   local pos, filename, rootname = from_TextDocumentPositionParams(params)
-   local doc = get_document(rootname)
-   local help = doc:get_help(pos, filename)
+   local pos, filename = from_TextDocumentPositionParams(params)
+   local rootname = get_root(filename) or filename
+   local root = get_manuscript(rootname)
+   root:refresh()
+   local script = root:find_manuscript(filename)
+   local help = script:get_help(pos)
    return not help and null or {
       signatures = {
          [1] = {
@@ -198,18 +197,22 @@ methods["textDocument/signatureHelp"] = function(params)
 end
 
 methods["textDocument/hover"] = function(params)
-   local pos, filename, rootname = from_TextDocumentPositionParams(params)
-   local doc = get_document(rootname)
-   local help = doc:get_help(pos, filename)
+   local pos, filename = from_TextDocumentPositionParams(params)
+   local rootname = get_root(filename) or filename
+   local root = get_manuscript(rootname)
+   root:refresh()
+   local script = root:find_manuscript(filename)
+   local help = script:get_help(pos)
    return help and {contents = to_MarkupContent(help.text)} or null
 end
 
 methods["textDocument/completion"] = function(params)
-   local pos, filename, rootname = from_TextDocumentPositionParams(params)
-   local doc = get_document(rootname)
-   doc:refresh()
-   --doc:resolve()
-   local candidates = doc:complete(pos, filename)
+   local pos, filename = from_TextDocumentPositionParams(params)
+   local rootname = get_root(filename) or filename
+   local root = get_manuscript(rootname)
+   root:refresh()
+   local script = root:find_manuscript(filename)
+   local candidates = script:complete(pos)
    if not candidates then return null end
    local with_snippets = util.nested_get(client_capabilities,
                                        "textDocument",

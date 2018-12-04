@@ -170,24 +170,17 @@ end
 
 --- Try to read a file in several locations.
 --@function try_read_file
---@tparam ?string|{string,...} path a directory or list of directories
---@tparam[opt] string template works as in package.path
+--@tparam[opt] string|{string,...} path base path or list of paths
 --@tparam string name the file name
 --@treturn ?string contents of the file, if found
-local function try_read_file(path, template, name)
+local function try_read_file(path, name)
    if type(path) == "table" then
       for i = 1, #path do
-         local s = try_read_file(path[i], template, name)
+         local s = try_read_file(path[i], name)
          if s then return s end
       end
-   elseif name then -- template arg is given
-      for str in template:gmatch("[^;]+") do
-         str = str:gsub("?", name)
-         local s = try_read_file(path, str)
-         if s then return s end
-      end
-   else -- template actually carries the name
-      local f = io.open(path_join(path, template))
+   else
+      local f = io.open(path_join(path, name))
       if f then
          local s = f:read("*all")
          f:close()
