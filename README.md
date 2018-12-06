@@ -2,16 +2,9 @@ Digestif
 ========
 
 Digestif is a code analyzer of sorts, and a [language server][lsp],
-for LaTeX et caterva.  It can provide context-sensitive documentation and
-completion (macro names, labels, key-value arguments, etc.) to any text
-editor that speaks the protocol.
-
-The typical TeX literate documentation is ostensibly not machine
-readable, so lists of commands with a short explanation and a
-description of the arguments must be compiled manually or
-semi-manually for each package.  These files are in the
-`digestif-data/` folder, and their format should be more or less self
-explanatory.
+for LaTeX et caterva.  It can provide context-sensitive documentation
+and completion (macro names, labels, key-value arguments, etc.) to any
+text editor that speaks the LSP protocol.
 
 What it does (for now)
 ----------------------
@@ -26,6 +19,9 @@ What it does (for now)
   
 * Popup help messages, with command signature and a short explanation:
   ![eldoc](https://user-images.githubusercontent.com/6500902/49062989-2fcd8300-f216-11e8-9076-587eca2321d1.png)
+
+* Parse BibTeX files and provide completion for citations:
+  ![cite](https://user-images.githubusercontent.com/6500902/49612569-64270900-f9a5-11e8-9fc5-20c974136209.png)
 
 The implemented LSP methods are
 
@@ -83,11 +79,15 @@ this point include:
 - Rename labels (cross-references and bibitems)
 
 This program can't be useful without a larger collection of data
-files.  These can be made by hand and/or extracted from suitable
-sources:
+files.  The typical TeX literate documentation is ostensibly not
+machine readable, so in most cases lists of commands with a short
+explanation and a description of the arguments must be compiled
+manually.  These files are in the `digestif-data` folder, and their
+format should be more or less self explanatory.  Some sources that
+seem suitable for automatic extraction include:
 
-- For plain TeX from [TeX for the impatient](https://www.gnu.org/software/teximpatient/) 
-- For ConTeXt from whatever the source of [this
+- For plain TeX: [TeX for the impatient](https://www.gnu.org/software/teximpatient/)
+- For ConTeXt: whatever the source of [this
   pdf](http://www.pragma-ade.nl/general/qrcs/setup-en.pdf) is
 
 Further things to do and some open questions:
@@ -110,7 +110,7 @@ License
 The software itself (everything outside `digestif-data/`) is under the
 MIT license.
 
-Some of the files in the `digestif-data/` folder are extracted or
+Some of the files in the `digestif-data` folder are extracted or
 adapted from other sources, such as package manuals or books, and
 therefore may inherit specific license details.  At a minimum, they
 should be free to use, redistribute and modify.
