@@ -19,6 +19,21 @@ commands = {
    begin = {
       action = "begin",
       args = signature("m", "environment")},
+   bibitem = {
+     action = "bibitem",
+     args = signature("om", "label", "key"),
+     doc = "Create a bibliography item."
+   },
+   cite = {
+     action = "cite",
+     args = signature("om", "text", "key"),
+     doc = "Cite a bibliography item."
+   },
+   bibliography = {
+      action = "input",
+      args = signature("m", "bib files"),
+      filename = "%s.bib"
+   },
    chapter = {
       action = "heading",
       heading_level = 0,

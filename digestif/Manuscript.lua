@@ -13,8 +13,8 @@ local Manuscript = util.class()
 -- defering to the subclass indicated by the format field of the
 -- argument.
 local formats = {
-   latex = "digestif.ManuscriptLaTeX",
-   --- etc
+  latex = "digestif.ManuscriptLaTeX",
+  bibtex = "digestif.ManuscriptBibTeX"
 }
 
 local function ManuscriptFactory(_, args)
@@ -33,22 +33,27 @@ getmetatable(Manuscript).__call = ManuscriptFactory
 -- - cache: a FileCache object (optional, typically retrived from parent)
 -- Note also that arg.format is used by ManuscriptFactory
 function Manuscript:__init(args)
-   local parent, filename, src
-      = args.parent, args.filename, args.src
-   self.filename = filename
-   self.parent = parent
-   self.root = self.parent and self.parent.root or self
-   self.cache = args.cache or parent and parent.cache or FileCache()
-   self.src = src or self.cache:get(filename) or ""
-   self.depth = 1 + (parent and parent.depth or 0)
-   self.modules, self.commands, self.environments = {}, {}, {}
-   if parent then
-      setmetatable(self.modules,      {__index = parent.modules}     )
-      setmetatable(self.commands,     {__index = parent.commands}    )
-      setmetatable(self.environments, {__index = parent.environments})
-   end
-   self:add_module(self.format)
-   self:global_scan()
+  local parent, filename, src
+    = args.parent, args.filename, args.src
+  self.filename = filename
+  self.parent = parent
+  self.root = self.parent and self.parent.root or self
+  self.cache = args.cache or parent and parent.cache or FileCache()
+  self.src = src or self.cache:get(filename) or ""
+  self.depth = 1 + (parent and parent.depth or 0)
+  self.modules, self.commands, self.environments = {}, {}, {}
+  if parent then
+    setmetatable(self.modules,      {__index = parent.modules}     )
+    setmetatable(self.commands,     {__index = parent.commands}    )
+    setmetatable(self.environments, {__index = parent.environments})
+  end
+  self.children = {}
+  self.input_index = {}
+  self.label_index = {}
+  self.section_index = {}
+  self.bib_index = {}
+  self:add_module(self.format)
+  self:global_scan()
 end
 
 --- Get a substring of the manuscript.
@@ -245,17 +250,21 @@ end
 
 Manuscript.global_callbacks = {}
 
+local function guess_format(filename)
+  if filename:match("%.bib$") then
+    return "bibtex"
+  end
+end
+
 function Manuscript:global_scan()
-   self.children, self.bibitems, self.labels, self.outline
-      = {}, {}, {}, {}
-   self.input_index, self.label_index, self.section_index = {}, {}, {} --experiment
-   self:scan(self.global_callbacks, 1)
-   for _, input in ipairs(self.input_index) do
-       self.children[input.name] = Manuscript{
-         filename = input.name,
-         parent = self
-      }
-   end
+  self:scan(self.global_callbacks, 1)
+  for _, input in ipairs(self.input_index) do
+    self.children[input.name] = Manuscript{
+      filename = input.name,
+      parent = self,
+      format = guess_format(input.name)
+    }
+  end
 end
 
 --- Local scanning
@@ -415,53 +424,20 @@ function Manuscript:each_of(name)
    return f
 end
 
---- Resolution
-
-function Manuscript:get_resolution()
-   local resol = {}
-   local child_resol = util.map(Manuscript.get_resolution, self.children)
-   for _, field in ipairs{"labels", "commands", "environments", "bibitems"} do
-      local f = function(r) return r[field] end
-      resol[field] = util.update({}, self[field], table.unpack(util.map(f, child_resol)))
-   end
-   return resol
+function Manuscript:is_current()
+  return (self.cache:get(self.filename) == self.src)
 end
---- Return a copy of the Manuscript, with all dependencies resolved
---- explicitly
--- function Manuscript:resolved()
---    local copy = util.update({}, self)
---    setmetatable(copy, getmetatable(self))
---    return util.update(copy, copy:get_resolution())
--- end
 
--- function Manuscript:refresh()
---    local cached = self.cache:get(self.filename) or ""
---    if cached ~= self.src then
---       -- rewrite the constructor so that this is the same as self = Manuscript(self)
---       self.src = cached
---       self:global_scan()
---    else
---       for _, m in ipairs(self.children) do
---          m:refresh()
---       end
---    end
--- end
-
--- version that returns true if something changed
+--- Reconstruct children if their cached source changed.
 function Manuscript:refresh()
-   local cached = self.cache:get(self.filename) or ""
-   if cached == self.src then
-      local v = false
-      for _, m in pairs(self.children) do
-         v = m:refresh() or v
-      end
-      return v
-   else
-      -- rewrite the constructor so that this is the same as self = Manuscript(self)
-      self.src = cached
-      self:global_scan()
-      return true
-   end
+  for name, script in pairs(self.children) do
+    if script:is_current() then
+      script:refresh()
+    else
+      script.src = nil
+      self.children[name] = Manuscript(script)
+    end
+  end
 end
 
 -- Completion
@@ -626,6 +602,28 @@ function Manuscript.completion_handlers.ref(self, ctx, pos)
    return r
 end
 
+function Manuscript.completion_handlers.cite(self, ctx, pos)
+  if ctx.data.optional then return end
+  local prefix = self:substring(ctx.pos, pos - 1)
+  local len = #prefix
+  local r = {
+    pos = ctx.pos,
+    prefix = prefix,
+    kind = "bibitem"
+  }
+  for item in self.root:each_of "bib_index" do
+    if prefix == item.name:sub(1, len) then
+      r[#r+1] = {
+        text = item.name,
+        summary = item.bibitem:pretty_print(), --rename this field to detail
+        signature = item.bibitem:pretty_print()
+      }
+    end
+  end
+  return r
+end
+
+
 -- should this take into account the Manuscript of filename, or
 -- directly on the current content of filename?
 function Manuscript:complete(pos)
@@ -653,38 +651,43 @@ function Manuscript:get_help(pos)
 end
 
 function Manuscript:get_help_aux(ctx)
-   local parent = ctx.parent
-   local parent_action = parent and parent.data and parent.data.action
-   if parent_action == "ref" then
-      return {
-         pos = ctx.pos, len = ctx.len,
-         type = "label",
-         text = "Label: " .. self:substring(ctx)
-      }
-   elseif parent_action == "begin" then
-      return {
-         pos = ctx.pos, len = ctx.len,
-         type = "environment",
-         text = "\\begin{" .. self:substring(ctx) .. "}",
-         data = ctx.data
-      }
-   elseif ctx.cs then
-      return ctx.data and {
-         pos = ctx.pos, len = ctx.len,
-         type = "command",
-         text = "\\" .. ctx.cs .. format_args(ctx.data and ctx.data.args),
-         data = ctx.data
-      }
-   elseif ctx.arg then
-      return update(
-         self:get_help_aux(parent) or {},
-         {pos = ctx.pos, len = ctx.len, arg = ctx.arg}
-      )
-   elseif parent then
-      return self:get_help_aux(parent)
-   else
-      return nil
-   end
+  local parent = ctx.parent
+  local parent_action = parent and parent.data and parent.data.action
+  if parent_action == "cite" then
+    local name = self:substring(ctx)
+    for item in self.root:each_of "bib_index" do
+      if name == item.name then
+        return {
+          pos = ctx.pos, len = ctx.len,
+          type = "bibitem",
+          text = item.bibitem:pretty_print()
+        }
+      end
+    end
+  elseif parent_action == "begin" then
+    return {
+      pos = ctx.pos, len = ctx.len,
+      type = "environment",
+      text = "\\begin{" .. self:substring(ctx) .. "}",
+      data = ctx.data
+    }
+  elseif ctx.cs then
+    return ctx.data and {
+      pos = ctx.pos, len = ctx.len,
+      type = "command",
+      text = "\\" .. ctx.cs .. format_args(ctx.data and ctx.data.args),
+      data = ctx.data
+                        }
+  elseif ctx.arg then
+    return update(
+      self:get_help_aux(parent) or {},
+      {pos = ctx.pos, len = ctx.len, arg = ctx.arg}
+    )
+  elseif parent then
+    return self:get_help_aux(parent)
+  else
+    return nil
+  end
 end
 
 return Manuscript

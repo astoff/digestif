@@ -87,6 +87,21 @@ function global_callbacks.heading (m, pos, cs)
    return r.pos + r.len
 end
 
+function global_callbacks.bibitem (m, pos, cs)
+  local idx = m.bib_index
+  local args = m.commands[cs].args
+  local r = m:parse_cs_args(pos, cs)
+  local i = first_mand(args)
+  if r[i] then
+    idx[#idx + 1] = {
+      name = m:substring_stripped(r[i]),
+      pos = r[i].pos,
+      filename = m.filename
+    }
+  end
+  return r.pos + r.len
+end
+
 -- function global_callbacks.begin(m, pos, cs)
 --    local r = m:parse_cs_args(pos, cs)
 --    if r[1] then

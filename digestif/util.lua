@@ -35,14 +35,14 @@ function util.map(f, t)
 end
 
 local function update(t, u, ...)
-   for i, v in pairs(u) do
+  if u then
+    for i, v in pairs(u) do
       t[i] = v
-   end
-   if ... then
-      return update(t, ...)
-   else
-      return t
-   end
+    end
+    return update(t, ...)
+  else
+    return t
+  end
 end
 util.update = update
 
