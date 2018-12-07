@@ -14,6 +14,9 @@ end
 
 local bibtex = {}
 
+-- Parser
+-- ======
+
 -- case insensitive literal
 local function Pi(s)
   local patt = P(true)
@@ -36,59 +39,71 @@ local function Fail(msg)
   return Cmt(P(1), raise_error)
 end
 
-function t(patt)
-  return lpeg.Cmt(patt, function(s,p) print(p) return p end)
-end
-
-local at = P"@"
+local char = P(1)
+local at_sign = P"@"
 local newline = P"\n"
 local space = S" \r\n\t"
 local whitespace = space^0
 local comment = P"%" * (1 - newline)^0 * newline
-local junk = (comment + 1 - at)^0
-local number = whitespace * C(R"09"^1)
-local name = whitespace * C((R"az" + R"AZ" + R"09" + S"!$&*+-./:;<>?[]^_`|")^1)
-local lbrace = whitespace * P"{"
-local rbrace = whitespace * P"}"
-local lparen = whitespace * P"("
-local rparen = whitespace * P")"
-local equals = whitespace * P"="
-local hash = whitespace * P"#"
-local comma = whitespace * P","
-local quote = whitespace * P'"'
-local lit_string = whitespace * C(Pi"string")
-local lit_comment = whitespace * C(Pi"comment")
-local lit_preamble = whitespace * C(Pi"preamble")
+local junk = (comment + 1 - at_sign)^0
+local number = C(R"09"^1) * whitespace
+local name = C((R"az" + R"AZ" + R"09" + S"!$&*+-./:;<>?[]^_`|")^1) * whitespace
+local lbrace = P"{" * whitespace
+local rbrace = P"}" * whitespace
+local lparen = P"(" * whitespace
+local rparen = P")" * whitespace
+local equals = P"=" * whitespace
+local hash = P"#" * whitespace
+local comma = P"," * whitespace
+local quote = P'"' * whitespace
+local lit_string = C(Pi"string") * whitespace
+local lit_comment = C(Pi"comment") * whitespace
+local lit_preamble = C(Pi"preamble") * whitespace
 
-local l = Cg(Cp(), "start")
-local r = Cg(Cp(), "stop")
+local Cstart = Cg(Cp(), "start")
+local Cstop = Cg(Cp(), "stop")
 
-local function braced(patt)
-  return lbrace * patt * rbrace + lparen * patt * rparen
-end
-
-local curly_braced_string = P{"{" * C(((1 - S"{}") + V(1)/0)^0) * "}"}
-local round_braced_string = P{"(" * C(((1 - S"()") + V(1)/0)^0) * ")"}
-local braced_string = whitespace * (curly_braced_string + round_braced_string)
-local quoted_string = quote * C((1 - P'"')^0) * P'"'
+local curly_braced_string = util.balanced("{", "}")
+local round_braced_string = util.balanced("(", ")")
+local braced_string = (curly_braced_string + round_braced_string) * whitespace
+local quoted_string = util.delimited('"', '"') * whitespace
 local simple_value = quoted_string + braced_string + number + Ct(name)
 local value = simple_value * (hash * simple_value)^0
 local field = Ct(name * equals * value) + whitespace
 local fields = field * (comma * field)^0
-local token = curly_braced_string/0 + P(1)
+local token = curly_braced_string/0 + char
 local nonspace = token - space
 
-local comment_entry = at * lit_comment * braced_string
-local preamble_entry = at * lit_preamble * braced(value)
-local regular_entry = at * name * braced(name * comma * fields)
-local string_entry = at * lit_string * braced(fields)
+-- either curly or round braced
+local function braced(patt)
+  return lbrace * patt * rbrace + lparen * patt * rparen
+end
+
+local string_entry = at_sign * lit_string * braced(fields)
+local comment_entry = at_sign * lit_comment * braced_string
+local preamble_entry = at_sign * lit_preamble * braced(value)
+local regular_entry = at_sign * name * braced(name * comma * fields)
 local entry = string_entry + comment_entry + preamble_entry + regular_entry
 
-local all_entries = Ct((junk * Ct(l * entry * r))^0)
+-- this pattern produces the parse tree
+-- TODO: catch premature end on invalid entry
+local all_entries = Ct((junk * Ct(Cstart * entry * Cstop))^0)
 
+-- Translate parse tree
+-- ====================
+
+-- BibItem class
+local BibItem = {}
+local mt = {__index = BibItem}
+setmetatable(
+  BibItem, {
+    __call = function(_,t) return setmetatable(t, mt) end
+})
+
+-- replace user-defined strings and concatenate
 local function process_value(val, strings, i)
   i = i or 2
-  t = {}
+  local t = {}
   for _, v in ipairs_from(val, i) do
     if type(v) == "table" then
       t[#t+1] = strings[v[1]] or ""
@@ -104,14 +119,7 @@ local default_options = {
   with_title = true
 }
 
-local BibItem = {}
-local mt = {__index = BibItem}
-setmetatable(
-  BibItem, {
-    __call = function(_,t) return setmetatable(t, mt) end
-})
-
---- Parse a bibtex file
+--- Parse a bibtex file.
 function bibtex.parse(src, options)
   options = merge(default_options, options)
   local entries = all_entries:match(src)
@@ -157,23 +165,94 @@ function bibtex.parse(src, options)
   return items
 end
 
-local function search_patt(patt)
-  return P{patt + 1 * V(1)}
+-- Deuglify strings
+-- ================
+
+local tex_symbols = {
+  oe = "œ",
+  OE = "Œ",
+  ae = "ӕ",
+  AE = "Ӕ",
+  aa = "å",
+  AA = "Å",
+  ss = "ß",
+   o = "ø",
+   O = "Ø",
+   l = "ł",
+   L = "Ł",
+   -- corner cases
+   i = "{i}",
+   [" "] = " ",
+}
+
+local tex_accents = util.map(
+  util.gsub("◌", ""),
+  {
+    ['"'] = "◌̈",
+    ["'"] = "◌́",
+    ["."] = "◌̇",
+    ["="] = "◌̄",
+    ["^"] = "◌̂",
+    ["`"] = "◌̀",
+    ["~"] = "◌̃",
+    ["c"] = "◌̧",
+    ["d"] = "◌̣",
+    ["H"] = "◌̋",
+    ["u"] = "◌̆",
+    ["b"] = "◌̱",
+    ["v"] = "◌̌",
+  }
+)
+
+local tex_letter = (R"AZ" + R"az")
+local tex_char_or_math = util.delimited("$", "$")/0 + char -- for deuglification purposes
+local tex_cs_patt = "\\" * C(tex_letter^1 + char)* whitespace
+local tex_accent_patt = tex_cs_patt * (curly_braced_string + C(char))
+local function repl_accents_fun(cs, arg)
+  local acc = tex_accents[cs]
+  if not acc then
+    return -- must return 0 values!
+  else
+    return arg .. acc
+  end
 end
 
-local function make_split_patt(sep)
-  return Ct((C((token - P(sep))^1) + P(sep))^1)
+local detexify_symbols = util.gsub(tex_cs_patt, tex_symbols, tex_char_or_math)
+local detexify_accents = util.gsub(tex_accent_patt, repl_accents_fun, tex_char_or_math)
+local debracify = util.gsub(curly_braced_string, 1, tex_char_or_math)
+local detitlify = util.gsub(B(space) * C(tex_letter), string.lower, tex_char_or_math)
+local trim = util.trim(whitespace)
+local onespace = util.gsub(space^1, " ")
+
+local function deuglify_name (s)
+  return
+    trim(
+      debracify(
+        detexify_accents(
+          detexify_symbols(s))))
 end
 
-local split_authors = make_split_patt(space * "and" * space)
-local split_name = make_split_patt("," * whitespace)
-local split_last = search_patt(Cp() * C(nonspace^1) * whitespace * P(-1))
+local function deuglify_title (s)
+  return
+    trim(
+      debracify(
+        detitlify(
+          detexify_accents(
+            detexify_symbols(s)))))
+end
+
+-- Pretty-printing
+-- ===============
+
+local each_author = util.gaps_of(space * "and" * space, token)
+local split_name = Ct(util.gaps(comma, token))
+local split_last = util.search(Cp() * C(nonspace^1) * whitespace * P(-1))
 
 function BibItem:authors()
   local t = {}
   local author = self.fields.author
   if not author then return {} end
-  for i, name in ipairs(split_authors:match(author)) do
+  for name in each_author(author) do
     local u = {}
     local parts = split_name:match(name)
     if #parts == 3 then
@@ -192,7 +271,7 @@ function BibItem:authors()
         u.last = name
       end
     end
-    t[i] = u
+    t[#t + 1] = u
   end
   return t
 end
@@ -200,11 +279,11 @@ end
 function BibItem:pretty_print()
   local t, a = {}, {}
   for _, name in ipairs(self:authors()) do
-    a[#a + 1] = name.last
+    a[#a + 1] = deuglify_name(name.last)
   end
   t[#t + 1] = concat(a, ", ")
-  t[#t + 1] = self.fields.year or self.fields.date
-  t[#t + 1] = self.fields.title
+  t[#t + 1] = (self.fields.year or self.fields.date or "(n.d.)") .. ";"
+  t[#t + 1] = deuglify_title(self.fields.title or "")
   return concat(t, " ")
 end
 

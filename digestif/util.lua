@@ -2,11 +2,119 @@
 --@module digestif.util
 local lpeg = require "lpeg"
 local P, V = lpeg.P, lpeg.V
-local C, Cp = lpeg.C, lpeg.Cp
+local C, Cp, Cs, Cmt = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cmt
+local match, lpeg_locale = lpeg.match, lpeg.locale
 
 local util = {}
 
+-- Cool combinators and friendly functions for LPeg
+-- ================================================
+
+-- general purpose
+
+util.default_token = P(1)
+
+function util.search(patt, token)
+  token = token and P(token) or util.default_token
+  return P{P(patt) + token * V(1)}
+end
+local search = util.search
+
+function util.search_all(patt, token)
+  return search(patt, token)^1
+end
+local search_all = util.search_all
+
+-- capturing strings
+
+function util.first_occurence(patt, token)
+  return search(C(P(patt)), token)
+end
+
+function util.occurences(patt, token)
+  return search_all(C(P(patt)), token)
+end
+
+function util.first_gap(patt, token)
+  token = token and P(token) or util.default_token
+  patt = P(patt)/0
+  return search(C((token - patt)^1), patt)
+end
+local first_gap = util.first_gap
+
+function util.gaps(patt, token)
+  return first_gap(patt, token)^0
+end
+
+function util.balanced(l, r, token)
+  token = token and P(token) or util.default_token
+  l, r = P(l), P(r)
+  return P{l * C(((token - l - r) + V(1)/0)^0) * r}
+end
+
+function util.delimited(l, r, token)
+  return P(l) * first_gap(r, token) * P(r)
+end
+
+-- substitution
+
+function util.gsub (patt, repl, token)
+  token = token and P(token) or util.default_token
+  patt = Cs((P(patt) / repl + token)^0)
+  return function(...) return match(patt, ...) end
+end
+
+function util.triml (patt)
+  patt = patt and P(patt) or lpeg_locale().space^0
+  patt = patt/0 * Cp()
+  return function(...)
+    local i = match(patt, ...)
+    return string.sub(..., i)
+  end
+end
+local triml = util.triml
+
+function util.trimr (patt, token)
+  patt = patt and P(patt) or lpeg_locale().space^0
+  patt = search(Cp() * (patt/0) * P(-1), token)
+  return function(...)
+    local i = match(patt, ...)
+    return string.sub(..., 1, i - 1)
+  end
+end
+local trimr = util.trimr
+
+function util.trim(patt, token)
+  local l, r = triml(patt), trimr(patt, token)
+  return function(s) return r(l(s)) end
+end
+
+-- iterators
+
+function util.matches_of(patt, token)
+  patt = search(patt, token)
+  return function(s, i)
+    i = i or 1
+    local f = function (_, j, ...)
+      i = j
+      return true, ...
+    end
+    local p = Cmt(patt, f)
+    return function()
+      return match(p, s, i)
+    end
+  end
+end
+local matches_of = util.matches_of
+
+function util.gaps_of(patt, token)
+  token = token and P(token) or util.default_token
+  patt = P(patt)/0
+  return matches_of(C((token - patt)^1), patt)
+end
+
 -- Classes
+-- =======
 
 local function create_object (c, ...)
    local obj = setmetatable({}, c)
@@ -25,6 +133,7 @@ function util.class(parent)
 end
 
 -- Table manipulation
+-- ==================
 
 function util.map(f, t)
    local r = {}
@@ -80,6 +189,7 @@ end
 util.nested_put = nested_put
 
 -- Memoization
+-- ===========
 
 local memoize = util.class()
 util.memoize = memoize
@@ -106,6 +216,7 @@ function memoize:forget(...)
 end
 
 -- Reading data and config files
+-- =============================
 
 --- Evaluate string in a restricted environment.
 --@tparam string str code to evaluate
@@ -136,6 +247,7 @@ function util.update_config(str)
 end
 
 -- Path and file manipulation
+-- ==========================
 
 local path_sep = "/"
 local path_sep_patt = P(path_sep)
@@ -191,6 +303,7 @@ end
 util.try_read_file = try_read_file
 
 -- String manipulation
+-- ===================
 
 function util.lines(str, pos, sep)
    pos = pos or 1
@@ -216,6 +329,7 @@ function util.find_root(str)
 end
 
 -- &c.
+-- ===
 
 function util.log(...)
    local msg = util.map(tostring, {...})
