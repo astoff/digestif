@@ -225,7 +225,7 @@ methods["textDocument/completion"] = function(params)
       result[i] = {
          label = cand.text,
          documentation = cand.summary,
-         detail = cand.signature,
+         detail = cand.detail,
          insertTextFormat = snippet and 2 or 1,
          textEdit = to_TextEdit(filename,
                                 candidates.pos,

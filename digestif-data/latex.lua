@@ -1,12 +1,10 @@
 name = "latex"
+
 dependencies = {
-   "latex-latexrefman"}
-module = {
-   dependencies = {
-      "latex-latexrefman"
-   },
-   name = "latex"
+  "latex-latexrefman",
+  "plain-symbols"
 }
+
 commands = {
    ["("] = {
       action = "math"},
@@ -157,7 +155,25 @@ commands = {
       action = "input",
       args = signature("om", "options", "packages"),
       filename = "%s.sty"
-   }
+   },
+  -- the few extra latex math symbols, from
+  -- https://github.com/wspr/unicode-math/ 
+  cong = {
+    doc = "congruent with",
+    symbol = "≅"
+  },
+  doteq = {
+    doc = "equals, single dot above",
+    symbol = "≐"
+  },
+  notin = {
+    doc = "negated set membership",
+    symbol = "∉"
+  },
+  rightleftharpoons = {
+    doc = "right harpoon over left",
+    symbol = "⇌"
+  }
 }
 environments = {
    description = {

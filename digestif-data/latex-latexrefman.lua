@@ -1,5 +1,11 @@
 module = "latex-latexrefman"
 
+source = {
+  name = "LaTeX2e Unofficial Reference Manual",
+  url = "https://latexref.xyz/",
+  license = "https://gnu.org/licenses/fdl.html"
+}
+
 commands = {
    ["-"] = {
       doc = "Insert explicit hyphenation."

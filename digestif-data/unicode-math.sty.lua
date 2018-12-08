@@ -1,0 +1,3 @@
+dependencies = {
+  "unicode-math-symbols"
+}

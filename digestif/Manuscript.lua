@@ -459,6 +459,7 @@ function Manuscript:all_environments()
 end
 
 local function format_args(args)
+  if not args then return nil end
    local t = {}
    for i, arg in ipairs(args or {}) do
       local l, r
@@ -516,7 +517,7 @@ function Manuscript.completion_handlers.cs(self, ctx)
          r[#r+1] = {
             text = cs,
             summary = cmd.doc,
-            signature = format_args(cmd.args),
+            detail = format_args(cmd.args) or cmd.symbol,
             snippet = cs .. snippet_from_args(cmd.args) .. "$0"
          }
       end
@@ -577,7 +578,7 @@ function Manuscript.completion_handlers.begin(self, ctx, pos)
          r[#r+1] = {
             text = text,
             summary = env.doc,
-            signature = format_args(env.args),
+            detail = format_args(env.args),
          }
       end
    end
@@ -616,7 +617,7 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
       r[#r+1] = {
         text = item.name,
         summary = item.bibitem:pretty_print(), --rename this field to detail
-        signature = item.bibitem:pretty_print()
+        detail = item.bibitem:pretty_print()
       }
     end
   end
@@ -675,7 +676,7 @@ function Manuscript:get_help_aux(ctx)
     return ctx.data and {
       pos = ctx.pos, len = ctx.len,
       type = "command",
-      text = "\\" .. ctx.cs .. format_args(ctx.data and ctx.data.args),
+      text = "\\" .. ctx.cs .. (format_args(ctx.data and ctx.data.args) or ""),
       data = ctx.data
                         }
   elseif ctx.arg then
