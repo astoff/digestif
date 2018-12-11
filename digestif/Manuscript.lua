@@ -522,6 +522,16 @@ function Manuscript.completion_handlers.cs(self, ctx)
          }
       end
    end
+   for cs, cmd in pairs(self.root:all_environments()) do
+      if prefix == cs:sub(1, len) then
+         r[#r+1] = {
+           text = "begin{" .. cs .. "}",
+           filter_text = cs,
+            summary = cmd.doc,
+            detail = format_args(cmd.args) or cmd.symbol,
+         }
+      end
+   end
    return r
 end
 
