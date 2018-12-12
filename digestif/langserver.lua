@@ -224,6 +224,7 @@ methods["textDocument/completion"] = function(params)
       local snippet = with_snippets and cand.snippet
       result[i] = {
          label = cand.text,
+         filterText = cand.filter_text,
          documentation = cand.summary,
          detail = cand.detail,
          insertTextFormat = snippet and 2 or 1,

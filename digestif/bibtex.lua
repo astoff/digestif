@@ -63,10 +63,10 @@ local lit_preamble = C(Pi"preamble") * whitespace
 local Cstart = Cg(Cp(), "start")
 local Cstop = Cg(Cp(), "stop")
 
-local curly_braced_string = util.balanced("{", "}")
-local round_braced_string = util.balanced("(", ")")
+local curly_braced_string = util.between_balanced("{", "}")
+local round_braced_string = util.between_balanced("(", ")")
 local braced_string = (curly_braced_string + round_braced_string) * whitespace
-local quoted_string = util.delimited('"', '"') * whitespace
+local quoted_string = util.between('"', '"') * whitespace
 local simple_value = quoted_string + braced_string + number + Ct(name)
 local value = simple_value * (hash * simple_value)^0
 local field = Ct(name * equals * value) + whitespace
@@ -186,7 +186,7 @@ local tex_symbols = {
 }
 
 local tex_accents = util.map(
-  util.gsub("◌", ""),
+  util.replace("◌", ""),
   {
     ['"'] = "◌̈",
     ["'"] = "◌́",
@@ -205,7 +205,7 @@ local tex_accents = util.map(
 )
 
 local tex_letter = (R"AZ" + R"az")
-local tex_char_or_math = util.delimited("$", "$")/0 + char -- for deuglification purposes
+local tex_char_or_math = util.between("$", "$")/0 + char -- for deuglification purposes
 local tex_cs_patt = "\\" * C(tex_letter^1 + char)* whitespace
 local tex_accent_patt = tex_cs_patt * (curly_braced_string + C(char))
 local function repl_accents_fun(cs, arg)
@@ -217,16 +217,16 @@ local function repl_accents_fun(cs, arg)
   end
 end
 
-local detexify_symbols = util.gsub(tex_cs_patt, tex_symbols, tex_char_or_math)
-local detexify_accents = util.gsub(tex_accent_patt, repl_accents_fun, tex_char_or_math)
-local debracify = util.gsub(curly_braced_string, 1, tex_char_or_math)
-local detitlify = util.gsub(B(space) * C(tex_letter), string.lower, tex_char_or_math)
-local trim = util.trim(whitespace)
-local onespace = util.gsub(space^1, " ")
+local detexify_symbols = util.replace(tex_cs_patt, tex_symbols, tex_char_or_math)
+local detexify_accents = util.replace(tex_accent_patt, repl_accents_fun, tex_char_or_math)
+local debracify = util.replace(curly_braced_string, 1, tex_char_or_math)
+local detitlify = util.replace(B(space) * C(tex_letter), string.lower, tex_char_or_math)
+local trim = util.trim(space)
+local clean = util.clean(space)
 
 local function deuglify_name (s)
   return
-    trim(
+    clean(
       debracify(
         detexify_accents(
           detexify_symbols(s))))
@@ -234,7 +234,7 @@ end
 
 local function deuglify_title (s)
   return
-    trim(
+    clean(
       debracify(
         detitlify(
           detexify_accents(
@@ -245,7 +245,7 @@ end
 -- ===============
 
 local each_author = util.gaps_of(space * "and" * space, token)
-local split_name = Ct(util.gaps(comma, token))
+local split_name = Ct(util.search_gaps(comma, token))
 local split_last = util.search(Cp() * C(nonspace^1) * whitespace * P(-1))
 
 function BibItem:authors()

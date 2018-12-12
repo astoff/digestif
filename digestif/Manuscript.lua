@@ -622,8 +622,14 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
     prefix = prefix,
     kind = "bibitem"
   }
+  local scores = {}
+  local exact_match = util.matcher(prefix)
+  local fuzzy_match = util.fuzzy_matcher(prefix)
   for item in self.root:each_of "bib_index" do
-    if prefix == item.name:sub(1, len) then
+    local score = exact_match(item.name) and math.huge
+      or fuzzy_match(item.bibitem:pretty_print())
+    if score then
+      scores[item.name] = score
       r[#r+1] = {
         text = item.name,
         summary = item.bibitem:pretty_print(), --rename this field to detail
@@ -631,6 +637,19 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
       }
     end
   end
+  require"globals_for_debug"
+  local cmp = function(a, b)
+    local na, nb = a.text, b.text
+    log(na,nb)
+    local sa, sb = scores[na], scores[nb]
+    log(sa, sb)
+    if sa == sb then
+      return (na < nb)
+    else
+      return (sa > sb)
+    end
+  end
+  table.sort(r, cmp)
   return r
 end
 

@@ -1,9 +1,13 @@
 --- Assorted useful functions
 --@module digestif.util
 local lpeg = require "lpeg"
-local P, V = lpeg.P, lpeg.V
-local C, Cp, Cs, Cmt = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cmt
-local match, lpeg_locale = lpeg.match, lpeg.locale
+
+local P, V, R = lpeg.P, lpeg.V, lpeg.R
+local C, Cp, Cs, Cmt, Cf = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cmt, lpeg.Cf
+local match, locale_table = lpeg.match, lpeg.locale()
+local lpeg_mul = getmetatable(P(true)).__mul
+
+local to_upper = string.upper
 
 local util = {}
 
@@ -12,86 +16,116 @@ local util = {}
 
 -- general purpose
 
-util.default_token = P(1)
+local default_token = P(1) -- in most cases, this works with utf8 too
+local utf8_token = R("\0\127") + R("\194\244") * R("\128\191")^-3
 
-function util.search(patt, token)
-  token = token and P(token) or util.default_token
+local function search(patt, token)
+  token = token and P(token) or default_token
   return P{P(patt) + token * V(1)}
 end
-local search = util.search
+util.search = search
 
-function util.search_all(patt, token)
+local function search_all(patt, token)
   return search(patt, token)^1
 end
-local search_all = util.search_all
+util.search_all = search_all
 
--- capturing strings
-
-function util.first_occurence(patt, token)
-  return search(C(P(patt)), token)
+-- like search, but captures the preceding text
+local function before(patt, token)
+  patt = P(patt)
+  token = token and P(token) or default_token
+  return C((token - patt)^0) * patt
 end
+util.before = before
 
-function util.occurences(patt, token)
-  return search_all(C(P(patt)), token)
-end
-
-function util.first_gap(patt, token)
-  token = token and P(token) or util.default_token
+local function search_gap(patt, token)
   patt = P(patt)/0
+  token = token and P(token) or default_token
   return search(C((token - patt)^1), patt)
 end
-local first_gap = util.first_gap
+util.search_gap = search_gap
 
-function util.gaps(patt, token)
-  return first_gap(patt, token)^0
+function util.search_gaps(patt, token)
+  return search_gap(patt, token)^0
 end
 
-function util.balanced(l, r, token)
-  token = token and P(token) or util.default_token
+function util.between(l, r, token)
   l, r = P(l), P(r)
+  return l * before(r, token) * r
+end
+
+function util.between_balanced(l, r, token)
+  l, r = P(l), P(r)
+  token = token and P(token) or default_token
   return P{l * C(((token - l - r) + V(1)/0)^0) * r}
 end
 
-function util.delimited(l, r, token)
-  return P(l) * first_gap(r, token) * P(r)
+-- depends on string.upper which doesn't work for non-ASCII
+-- characters...
+local function case_fold(c)
+  local u = to_upper(c)
+  if c == u then
+    return P(c)
+  else
+    return P(c) + P(u)
+  end
 end
+util.case_fold = case_fold
 
--- substitution
+-- make a function from a pattern
 
-function util.gsub (patt, repl, token)
-  token = token and P(token) or util.default_token
-  patt = Cs((P(patt) / repl + token)^0)
+function util.matcher(patt)
   return function(...) return match(patt, ...) end
 end
 
-function util.triml (patt)
-  patt = patt and P(patt) or lpeg_locale().space^0
-  patt = patt/0 * Cp()
-  return function(...)
-    local i = match(patt, ...)
-    return string.sub(..., i)
+local function replace(patt, repl, token)
+  token = token and P(token) or default_token
+  patt = Cs((P(patt) / repl + token)^0)
+  return function(...) return match(patt, ...) end
+end
+util.replace = replace
+
+util.lpeg_escape = replace("%", "%%%%")
+
+--- Returns a function that fuzzy-matches against the given string.
+-- p0 is an extra penalty parameter.  Higher values reduce the
+-- relative penalty for long gaps.  This is a made-up scoring
+-- algorith, there might be better ones.
+--
+-- This function assumes all strings are is UTF-8.
+function util.fuzzy_matcher(str, token, p0)
+  token = token and P(token) or utf8_token
+  p0 = p0 or 2
+  local aux_patt = C(token) / function(c) return search(Cp() * case_fold(c)) end
+  local build_patt = Cf(search_all(aux_patt, token), lpeg_mul)
+  local search_patt = match(build_patt, str)
+  return function(s, i)
+    local score, old_pos = 0, 0
+    for _, pos in ipairs{match(search_patt, s, i)} do
+      score = score + 1 / (p0 + pos - old_pos)
+      old_pos = pos
+    end
+    return score ~= 0 and score
   end
 end
-local triml = util.triml
 
-function util.trimr (patt, token)
-  patt = patt and P(patt) or lpeg_locale().space^0
-  patt = search(Cp() * (patt/0) * P(-1), token)
-  return function(...)
-    local i = match(patt, ...)
-    return string.sub(..., 1, i - 1)
-  end
+function util.trim(space, token)
+  space = space and P(space) or locale_table.space
+  token = token and P(token) or default_token
+  local patt = space^0 * C((space^0 * (token - space)^1)^0)
+  return function(...) return match(patt, ...) end
 end
-local trimr = util.trimr
 
-function util.trim(patt, token)
-  local l, r = triml(patt), trimr(patt, token)
-  return function(s) return r(l(s)) end
+function util.clean(space, token)
+  space = space and P(space) or locale_table.space
+  token = token and P(token) or default_token
+  local patt = space^0 * Cs(((space^1 / " " + true) * (token - space)^1)^0)
+  return function(...) return match(patt, ...) end
 end
 
 -- iterators
 
-function util.matches_of(patt, token)
+local function matches_of(patt, token)
   patt = search(patt, token)
   return function(s, i)
     i = i or 1
@@ -105,11 +139,11 @@ function util.matches_of(patt, token)
     end
   end
 end
-local matches_of = util.matches_of
+util.matches_of = matches_of
 
 function util.gaps_of(patt, token)
-  token = token and P(token) or util.default_token
   patt = P(patt)/0
+  token = token and P(token) or default_token
   return matches_of(C((token - patt)^1), patt)
 end
 
@@ -304,6 +338,8 @@ util.try_read_file = try_read_file
 
 -- String manipulation
 -- ===================
+
+-- should just use instead: Ct(Cp() * search_all("\n" * Cp()))
 
 function util.lines(str, pos, sep)
    pos = pos or 1
