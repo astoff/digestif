@@ -637,12 +637,9 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
       }
     end
   end
-  require"globals_for_debug"
   local cmp = function(a, b)
     local na, nb = a.text, b.text
-    log(na,nb)
     local sa, sb = scores[na], scores[nb]
-    log(sa, sb)
     if sa == sb then
       return (na < nb)
     else
