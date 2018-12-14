@@ -5,7 +5,7 @@ local B, P, R, S, V
    = lpeg.B, lpeg.P, lpeg.R, lpeg.S, lpeg.V
 local C, Cc, Cp, Ct
    = lpeg.C, lpeg.Cc, lpeg.Cp, lpeg.Ct
-   
+  
 local Parser = util.class()
 
 local default_cat = {

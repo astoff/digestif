@@ -1,11 +1,11 @@
 #!/usr/bin/env lua
-local json = require(pcall(require, "cjson") and "cjson" or "dkjson")
+local json = require "dkjson"
 local util = require "digestif.util"
 local langserver = require "digestif.langserver"
 local config = require "digestif.config"
 
 local log, path_join = util.log, util.path_join
-
+local is_optional = util.matcher("$/")
 util.null = json.null
 
 -- Set the right data directory when installed by luarocks
@@ -21,7 +21,7 @@ if not require("digestif.data")("latex") then
 end
 
 local function write_msg(msg)
-   io.write("Content-Length: " .. #msg .. "\r\n\r\n" .. msg)
+   io.write("Content-Length: ", #msg, "\r\n\r\n", msg)
    io.flush()
 end
 
@@ -48,37 +48,35 @@ local function rpc_send(id, result, error_code)
 end
 
 local function rpc_receive()
-   local msg = read_msg()
-   local success, request = pcall(json.decode, msg)
-   if not success then
-      util.log("Error: " .. request .. "\n")
-      rpc_send(json.null, request, -32700)
-      return
-   end
-   return request.id, request.method, request.params
+  local msg = read_msg()
+  local success, request = pcall(json.decode, msg)
+  if not success then
+    rpc_send(json.null, request, -32700)
+    return
+  end
+  return request.id, request.method, request.params
 end
 
 local function process_request()
-   local clock = os.clock()
-   local id, method_name, params = rpc_receive()
-   local method = langserver[method_name]
-   if not method then
-      if not method_name:match("^%$/") then
-         util.log("Error: method " .. method_name .. " does not exist\n")
-         rpc_send(id, "method " .. method_name .. " does not exist", -32601)
-      end
-      return
-   end
-   local success, result = pcall(method, params)
-   if not success then
-      rpc_send(id, result, 1)
-      return
-   end
-   if id then
-      rpc_send(id, result)
-   end
-   util.log("Request:", method_name, id or '',
-            "time: " .. (os.clock() - clock) * 1000 .. "ms")
+  local clock = os.clock()
+  local id, method_name, params = rpc_receive()
+  local method = langserver[method_name]
+  if not method then
+    if not is_optional(method_name) then
+      rpc_send(id, "unknown method " .. method_name, -32601)
+    end
+    return
+  end
+  local success, result = pcall(method, params)
+  if not success then
+    rpc_send(id, result, 1)
+    return
+  end
+  if id then
+    rpc_send(id, result)
+  end
+  log(string.format("Request: %4s %-40s %6.2f ms",
+                    id or "*", method_name, (os.clock() - clock) * 1000))
 end
 
 while true do process_request() end

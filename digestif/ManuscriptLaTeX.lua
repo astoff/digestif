@@ -72,7 +72,7 @@ function global_callbacks.label (m, pos, cs)
 end
 
 function global_callbacks.heading (m, pos, cs)
-   local idx = m.section_index
+   local idx = m.heading_index
    local args = m.commands[cs].args
    local r = m:parse_cs_args(pos, cs)
    local i = first_mand(args)
@@ -114,7 +114,7 @@ end
 -- end
 
 function global_callbacks.input(m, pos, cs)
-   local idx = m.input_index -- should this include the known modules, or just the filenames not know in /data?
+   local idx = m.child_index -- should this include the known modules, or just the filenames not know in /data?
    local args = m.commands[cs].args
    local filename = m.commands[cs].filename
    local r = m:parse_cs_args(pos, cs)

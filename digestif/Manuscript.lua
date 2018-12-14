@@ -37,7 +37,7 @@ function Manuscript:__init(args)
     = args.parent, args.filename, args.src
   self.filename = filename
   self.parent = parent
-  self.root = self.parent and self.parent.root or self
+  self.root = parent and parent.root or self
   self.cache = args.cache or parent and parent.cache or FileCache()
   self.src = src or self.cache:get(filename) or ""
   self.depth = 1 + (parent and parent.depth or 0)
@@ -48,10 +48,10 @@ function Manuscript:__init(args)
     setmetatable(self.environments, {__index = parent.environments})
   end
   self.children = {}
-  self.input_index = {}
-  self.label_index = {}
-  self.section_index = {}
   self.bib_index = {}
+  self.child_index = {}
+  self.heading_index = {}
+  self.label_index = {}
   self:add_module(self.format)
   self:global_scan()
 end
@@ -167,22 +167,22 @@ end
 -- @tab callbacks a table of callback functions
 -- @number pos the starting position
 function Manuscript:scan(callbacks, pos, ...)
-   local patt = self.parser.patt.next_thing3
-   local match = patt.match
-   local commands = self.commands
-   local src = self.src
-   local function scan(callbacks, pos, ...)
-      if not pos then return ... end
-      local pos1, kind, detail, pos2 = match(patt, src, pos)
-      local cmd = (kind == "cs") and commands[detail]
-      local cb = cmd and callbacks[cmd.action] or callbacks[kind]
-      if cb then
-         return scan(callbacks, cb(self, pos1, detail, ...))
-      else
-         return scan(callbacks, pos2, ...)
-      end
-   end
-   return scan(callbacks, pos, ...)
+  local patt = self.parser.patt.next_thing3
+  local match = patt.match
+  local commands = self.commands
+  local src = self.src
+  local function scan(pos0, ...)
+    if not pos0 then return ... end
+    local pos1, kind, detail, pos2 = match(patt, src, pos0)
+    local cmd = (kind == "cs") and commands[detail]
+    local cb = cmd and callbacks[cmd.action] or callbacks[kind]
+    if cb then
+      return scan(cb(self, pos1, detail, ...))
+    else
+      return scan(pos2, ...)
+    end
+  end
+  return scan(pos, ...)
 end
 
 -- function Manuscript:scan(callbacks, pos, ...) -- with while loop instead of tail calls
@@ -258,7 +258,7 @@ end
 
 function Manuscript:global_scan()
   self:scan(self.global_callbacks, 1)
-  for _, input in ipairs(self.input_index) do
+  for _, input in ipairs(self.child_index) do
     self.children[input.name] = Manuscript{
       filename = input.name,
       parent = self,
@@ -399,7 +399,7 @@ end
 function Manuscript:each_of(name)
    local stack = {}
    local script = self
-   local items, inputs = script[name], script.input_index
+   local items, inputs = script[name], script.child_index
    local i, j = 1, 1
    local function f()
       local item, input = items[i], inputs[j]
@@ -627,13 +627,13 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
   local fuzzy_match = util.fuzzy_matcher(prefix)
   for item in self.root:each_of "bib_index" do
     local score = exact_match(item.name) and math.huge
-      or fuzzy_match(item.bibitem:pretty_print())
+      or fuzzy_match(item.text)
     if score then
       scores[item.name] = score
       r[#r+1] = {
         text = item.name,
-        summary = item.bibitem:pretty_print(), --rename this field to detail
-        detail = item.bibitem:pretty_print()
+        summary = item.text, --rename this field to detail
+        detail = item.text
       }
     end
   end
@@ -687,15 +687,18 @@ function Manuscript:get_help_aux(ctx)
         return {
           pos = ctx.pos, len = ctx.len,
           type = "bibitem",
-          text = item.bibitem:pretty_print()
+          text = item.text
         }
       end
     end
   elseif parent_action == "begin" then
+    local env_name = self:substring(ctx)
+    local env_data = self.environments[env_name]
     return {
       pos = ctx.pos, len = ctx.len,
       type = "environment",
-      text = "\\begin{" .. self:substring(ctx) .. "}",
+      text = "\\begin{" .. env_name .. "}"
+        .. (format_args(env_data and env_data.args) or ""),
       data = ctx.data
     }
   elseif ctx.cs then

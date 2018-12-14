@@ -21,6 +21,7 @@ function ManuscriptBibTeX:global_scan()
       filename = self.filename,
       pos = item.pos,
       len = item.len,
+      text = item:pretty_print(),
       bibitem = item,
     }
   end

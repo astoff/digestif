@@ -7,37 +7,17 @@ local C, Cc, Cp, Ct, Cmt, Cg
    = lpeg.C, lpeg.Cc, lpeg.Cp, lpeg.Ct, lpeg.Cmt, lpeg.Cg
 local concat = table.concat
 local merge = util.merge
+local search, gobble_until, case_fold = util.search, util.gobble_until, util.case_fold
+local split, replace = util.split, util.replace
+
+local bibtex = {}
 
 local function ipairs_from(t, i)
   return ipairs(t), t, i - 1
 end
 
-local bibtex = {}
-
 -- Parser
 -- ======
-
--- case insensitive literal
-local function Pi(s)
-  local patt = P(true)
-  for c in s:gmatch(".") do
-    local l, u = c:lower(), c:upper()
-    if l == u then
-      patt = patt * P(c)
-    else
-      patt = patt * S(l .. u)
-    end
-  end
-  return patt
-end
-
-local function Fail(msg)
-  local raise_error = function(s,p)
-    error("bibtex parse error at position " .. p .. ": " .. msg)
-    return true
-  end
-  return Cmt(P(1), raise_error)
-end
 
 local char = P(1)
 local at_sign = P"@"
@@ -56,9 +36,9 @@ local equals = P"=" * whitespace
 local hash = P"#" * whitespace
 local comma = P"," * whitespace
 local quote = P'"' * whitespace
-local lit_string = C(Pi"string") * whitespace
-local lit_comment = C(Pi"comment") * whitespace
-local lit_preamble = C(Pi"preamble") * whitespace
+local lit_string = C(case_fold "string") * whitespace
+local lit_comment = C(case_fold "comment") * whitespace
+local lit_preamble = C(case_fold "preamble") * whitespace
 
 local Cstart = Cg(Cp(), "start")
 local Cstop = Cg(Cp(), "stop")
@@ -66,13 +46,16 @@ local Cstop = Cg(Cp(), "stop")
 local curly_braced_string = util.between_balanced("{", "}")
 local round_braced_string = util.between_balanced("(", ")")
 local braced_string = (curly_braced_string + round_braced_string) * whitespace
-local quoted_string = util.between('"', '"') * whitespace
+local quoted_string = '"' * C(gobble_until('"')) * '"' * whitespace
 local simple_value = quoted_string + braced_string + number + Ct(name)
 local value = simple_value * (hash * simple_value)^0
 local field = Ct(name * equals * value) + whitespace
 local fields = field * (comma * field)^0
+
 local token = curly_braced_string/0 + char
 local nonspace = token - space
+local author_sep = space * "and" * space
+local etal_marker = P("et al") * whitespace * P(-1)
 
 -- either curly or round braced
 local function braced(patt)
@@ -186,7 +169,7 @@ local tex_symbols = {
 }
 
 local tex_accents = util.map(
-  util.replace("◌", ""),
+  replace("◌", ""),
   {
     ['"'] = "◌̈",
     ["'"] = "◌́",
@@ -205,7 +188,7 @@ local tex_accents = util.map(
 )
 
 local tex_letter = (R"AZ" + R"az")
-local tex_char_or_math = util.between("$", "$")/0 + char -- for deuglification purposes
+local tex_char_or_math =  "$" * gobble_until("$") * "$" + char -- for deuglification purposes
 local tex_cs_patt = "\\" * C(tex_letter^1 + char)* whitespace
 local tex_accent_patt = tex_cs_patt * (curly_braced_string + C(char))
 local function repl_accents_fun(cs, arg)
@@ -217,10 +200,10 @@ local function repl_accents_fun(cs, arg)
   end
 end
 
-local detexify_symbols = util.replace(tex_cs_patt, tex_symbols, tex_char_or_math)
-local detexify_accents = util.replace(tex_accent_patt, repl_accents_fun, tex_char_or_math)
-local debracify = util.replace(curly_braced_string, 1, tex_char_or_math)
-local detitlify = util.replace(B(space) * C(tex_letter), string.lower, tex_char_or_math)
+local detexify_symbols = replace(tex_cs_patt, tex_symbols, tex_char_or_math)
+local detexify_accents = replace(tex_accent_patt, repl_accents_fun, tex_char_or_math)
+local debracify = replace(curly_braced_string, 1, tex_char_or_math)
+local detitlify = replace(B(space) * C(tex_letter), string.lower, tex_char_or_math)
 local trim = util.trim(space)
 local clean = util.clean(space)
 
@@ -244,17 +227,17 @@ end
 -- Pretty-printing
 -- ===============
 
-local each_author = util.gaps_of(space * "and" * space, token)
-local split_name = Ct(util.search_gaps(comma, token))
-local split_last = util.search(Cp() * C(nonspace^1) * whitespace * P(-1))
+local split_authors = split(author_sep, token)
+local split_name = split(comma, token)
+local split_last = search(Cp() * C(nonspace^1) * whitespace * P(-1))
 
 function BibItem:authors()
   local t = {}
   local author = self.fields.author
   if not author then return {} end
-  for name in each_author(author) do
+  for _, name in ipairs(split_authors(author)) do
     local u = {}
-    local parts = split_name:match(name)
+    local parts = split_name(name)
     if #parts == 3 then
       u.first = parts[3]
       u.last = parts[1]
