@@ -493,8 +493,8 @@ local function snippet_from_args(args)
          end
       else
          i = i + 1
-         local l = arg.delims and arg.delims[1] or "\\{"
-         local r = arg.delims and arg.delims[2] or "\\}"
+         local l = arg.delims and arg.delims[1] or "{"
+         local r = arg.delims and arg.delims[2] or "}"
          t[#t+1] = l .. "${" .. i ..
             (arg.meta and ":" .. arg.meta) .. "}" .. r
       end
