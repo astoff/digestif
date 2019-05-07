@@ -10,14 +10,14 @@ util.null = json.null
 
 -- Set the right data directory when installed by luarocks
 local rock_path = debug.getinfo(1).source:match(
-   "^@(.*/luarocks/rocks/digestif/[^/]*)/bin/digestif$")
+  "^@(.*/luarocks/.*)/bin/digestif$")
 if rock_path then
-   table.insert(config.data_dirs, path_join(rock_path, 'digestif-data'))
+  table.insert(config.data_dirs, path_join(rock_path, 'digestif-data'))
 end
 
 if not require("digestif.data")("latex") then
-   error("Could not find data files at the following locations:\n  "
-            .. table.concat(config.data_dirs, "\n  "))
+  error("Could not find data files at the following locations:\n  "
+          .. table.concat(config.data_dirs, "\n  "))
 end
 
 local function write_msg(msg)
