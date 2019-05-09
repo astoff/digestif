@@ -25,8 +25,8 @@ ManuscriptLaTeX.parser = Parser(cat_table)
 ManuscriptLaTeX.format = "latex"
 ManuscriptLaTeX.global_callbacks =
    setmetatable({}, {__index = Manuscript.global_callbacks})
-ManuscriptLaTeX.local_callbacks =
-   setmetatable({}, {__index = Manuscript.local_callbacks})
+ManuscriptLaTeX.context_callbacks =
+   setmetatable({}, {__index = Manuscript.context_callbacks})
 ManuscriptLaTeX.completion_handlers =
    setmetatable({}, {__index = Manuscript.completion_handlers})
 

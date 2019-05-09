@@ -1,7 +1,9 @@
 local FileCache = require "digestif.FileCache"
+local config = require "digestif.config"
 local data = require "digestif.data"
 local util = require "digestif.util"
 
+local concat, sort, unpack = table.concat, table.sort, table.unpack
 local path_join, path_split = util.path_join, util.path_split
 local nested_get, nested_put = util.nested_get, util.nested_put
 local map, update, merge = util.map, util.update, util.merge
@@ -12,6 +14,7 @@ local Manuscript = util.class()
 -- are ever instantiated.  So we replace the constructor by a function
 -- defering to the subclass indicated by the format field of the
 -- argument.
+
 local formats = {
   latex = "digestif.ManuscriptLaTeX",
   bibtex = "digestif.ManuscriptBibTeX"
@@ -26,12 +29,15 @@ end
 getmetatable(Manuscript).__call = ManuscriptFactory
 
 --- Create a new manuscript object.
+--
 -- The argument is a table with the following keys:
 -- - parent: a parent manuscript object (optional)
 -- - filename: the manuscript source file (optional, not used if src is given)
 -- - src: the contents of the file (optional)
 -- - cache: a FileCache object (optional, typically retrived from parent)
--- Note also that arg.format is used by ManuscriptFactory
+--
+-- Note also that args.format is used by ManuscriptFactory
+--
 function Manuscript:__init(args)
   local parent, filename, src
     = args.parent, args.filename, args.src
@@ -57,9 +63,14 @@ function Manuscript:__init(args)
 end
 
 --- Get a substring of the manuscript.
--- @param i the intial position, or a table range table (with fields
--- `pos` and `len`).
--- @param j the final position (ignored if i is a table)
+--
+-- The argument can be a pair of integers or a table with fields `pos`
+-- and `len`.
+--
+-- @param i The intial position, or a table
+-- @param j The final position (ignored if i is a table)
+-- @return A string
+--
 function Manuscript:substring(i, j)
    if not i then return nil end
    if type(i) == "table" then
@@ -69,20 +80,32 @@ function Manuscript:substring(i, j)
    return self.src:sub(i,j)
 end
 
---- Get a substring of the manuscript, with surrounding white space
---- and comments removed.
+--- Get a substring of the manuscript, trimmed
+--
+-- Surrounding white space and comments removed.
+--
+-- @param i The intial position, or a table
+-- @param j The final position (ignored if i is a table)
+-- @return A string
+--
 function Manuscript:substring_trimmed(i, j)
    return self.parser:trim(self:substring(i,j))
 end
 
---- Get a substring of the manuscript, with surrounding white space
---- and interspersed comments removed.
+--- Get a substring of the manuscript, stripped
+--
+-- Surrounding white space and interspersed comments removed.
+--
+-- @param i The intial position, or a table
+-- @param j The final position (ignored if i is a table)
+-- @return A string
+
 function Manuscript:substring_stripped(i, j)
    return self.parser:trim(self.parser:strip_comments(self:substring(i,j)))
 end
 
---- Returns a list of ranges, with nested ranges `key` and, if
---- present, `value`.
+-- Returns a list of ranges, with nested ranges `key` and, if
+-- present, `value`.
 function Manuscript:parse_keys(range)
    return self.parser:parse_keys(self.src, range.pos, range.len)
 end
@@ -107,10 +130,13 @@ function Manuscript:read_list(range)
 end
 
 --- Parse the arguments of a macro.
+--
 -- Returns nil if pos does not point to a control sequence, or the
 -- macro is unknown.
--- @number pos
--- @tresult tab
+--
+-- @param pos A position in the source
+-- @return A list of ranges
+--
 function Manuscript:parse_cs_args(pos, cs)
    local cmd = self.commands[cs]
    if cmd and cmd.args then
@@ -133,8 +159,10 @@ function Manuscript:parse_env_args(pos, cs)
 end
 
 --- Find paragraph before a position.
+--
 -- @param pos a position in the source
 -- @return the paragraph's starting position
+--
 function Manuscript:find_par(pos)
    local i, j = 1, 1
    local patt, src = self.parser.patt.next_par, self.src
@@ -146,13 +174,69 @@ function Manuscript:find_par(pos)
 end
 
 --- Test if position is blank.
--- @number pos a position in the source
--- @treturn boolean
+--
+-- @param pos A position in the source
+-- @return A boolean, true if position is blank space
+--
 function Manuscript:is_blank(pos)
    return self.parser:blank(self.src, pos)
 end
 
+--- Iterator to transverse a given index documentwise.
+--
+-- This recursevely iterates over entries of `self.name` and
+-- `child.name` for each child of the manuscript, depth first.  `name`
+-- refers to an index, that is, a list of tables containing an entry
+-- `pos`.
+--
+-- @param name The name of an index (a string)
+
+function Manuscript:each_of(name)
+   local stack = {}
+   local script = self
+   local items, inputs = script[name], script.child_index
+   local i, j = 1, 1
+   local function f()
+      local item, input = items[i], inputs[j]
+      if item and not (input and item.pos > input.pos) then
+         i = i + 1
+         return item
+      elseif input then
+         stack[#stack+1] = {i, j + 1, script, items, inputs}
+         script = script.children[input.name]
+         items = script and script[name] or {}
+         inputs = script and script.inputs or {}
+         i, j = 1, 1
+         return f()
+      elseif #stack > 0 then
+         i, j, script, items, inputs = unpack(stack[#stack])
+         stack[#stack] = nil
+         return f()
+      else
+         return nil
+      end
+   end
+   return f
+end
+
+function Manuscript:is_current()
+  return (self.cache:get(self.filename) == self.src)
+end
+
+--- Reconstruct children if their cached source changed.
+function Manuscript:refresh()
+  for name, script in pairs(self.children) do
+    if script:is_current() then
+      script:refresh()
+    else
+      script.src = nil
+      self.children[name] = Manuscript(script)
+    end
+  end
+end
+
 --- Scan the Manuscript, executing callbacks for each document element.
+--
 -- Each callback is a function taking at least two arguments (a
 -- Manuscript object and a source position) and returns at least one
 -- value, a position to continue scanning or nil to interrupt the
@@ -164,8 +248,9 @@ end
 -- Indices of the callback table can be either the "action" field of a
 -- command, or a "type" field of a thing ("cs", "mathshift" or "par").
 --
--- @tab callbacks a table of callback functions
--- @number pos the starting position
+-- @param callbacks A table of callback functions
+-- @param pos Starting position of the scan
+--
 function Manuscript:scan(callbacks, pos, ...)
   local patt = self.parser.patt.next_thing3
   local match = patt.match
@@ -206,7 +291,7 @@ end
 --    return v1, v2, v3
 -- end
 
---- Global scanning
+---- Global scanning ----
 
 function Manuscript:add_module(name)
    local m = data(name)
@@ -244,10 +329,6 @@ function Manuscript:add_outline(e, tree)
    end
 end
 
----
--- Scan the whole document, initializing the macro and label list,
--- outline, etc.
-
 Manuscript.global_callbacks = {}
 
 local function guess_format(filename)
@@ -256,6 +337,8 @@ local function guess_format(filename)
   end
 end
 
+--- Scan the whole document, initializing the macro and label list
+-- outline, etc.
 function Manuscript:global_scan()
   self:scan(self.global_callbacks, 1)
   for _, input in ipairs(self.child_index) do
@@ -267,17 +350,18 @@ function Manuscript:global_scan()
   end
 end
 
---- Local scanning
+---- Local scanning (get local context) ----
 
-Manuscript.local_callbacks = {}
-
----
--- Scan the current paragraph, returning the context.  This is a list
--- of nested annotated ranges, starting from the innermost.
--- @param pos a source position
--- @return a nested list of annotated ranges
-function Manuscript:local_scan(pos)
-   return self:scan(self.local_callbacks, self:find_par(pos), nil, pos)
+--- Scan the current paragraph, returning the context.
+--
+-- This is a list of nested annotated ranges, starting from the
+-- innermost.
+-- 
+-- @param pos A source position
+-- @return A nested list of annotated ranges
+--
+function Manuscript:get_context(pos)
+   return self:scan(self.context_callbacks, self:find_par(pos), nil, pos)
 end
 
 local function local_scan_parse_keys(m, context, pos)
@@ -309,9 +393,9 @@ local function local_scan_parse_keys(m, context, pos)
    return context
 end
 
-local local_callbacks = Manuscript.local_callbacks
+Manuscript.context_callbacks = {}
 
-function local_callbacks.cs(m, pos, cs, context, end_pos)
+function Manuscript.context_callbacks.cs(m, pos, cs, context, end_pos)
    if pos > end_pos then return nil, context end -- stop parse
    local r = m:parse_cs_args(pos, cs)
    if end_pos <= r.pos + r.len then
@@ -359,7 +443,7 @@ function local_callbacks.cs(m, pos, cs, context, end_pos)
    return nil, context -- stop parse
 end
 
-function local_callbacks.tikzpath(m, pos, cs, context, end_pos)
+function Manuscript.context_callbacks.tikzpath(m, pos, cs, context, end_pos)
    if pos > end_pos then return nil, context end -- stop parse
    local r = m:parse_cs_args(pos, cs)
    if end_pos <= r.pos + r.len then
@@ -390,57 +474,11 @@ function local_callbacks.tikzpath(m, pos, cs, context, end_pos)
    return r.pos + r.len, context, end_pos
 end
 
-function local_callbacks.par (_, _, _, context)
+function Manuscript.context_callbacks.par (_, _, _, context)
    return nil, context
 end
 
--- recursively iterate over each (numeric index of) self.name and its
--- children
-function Manuscript:each_of(name)
-   local stack = {}
-   local script = self
-   local items, inputs = script[name], script.child_index
-   local i, j = 1, 1
-   local function f()
-      local item, input = items[i], inputs[j]
-      if item and not (input and item.pos > input.pos) then
-         i = i + 1
-         return item
-      elseif input then
-         stack[#stack+1] = {i, j + 1, script, items, inputs}
-         script = script.children[input.name]
-         items = script and script[name] or {}
-         inputs = script and script.inputs or {}
-         i, j = 1, 1
-         return f()
-      elseif #stack > 0 then
-         i, j, script, items, inputs = table.unpack(stack[#stack])
-         stack[#stack] = nil
-         return f()
-      else
-         return nil
-      end
-   end
-   return f
-end
-
-function Manuscript:is_current()
-  return (self.cache:get(self.filename) == self.src)
-end
-
---- Reconstruct children if their cached source changed.
-function Manuscript:refresh()
-  for name, script in pairs(self.children) do
-    if script:is_current() then
-      script:refresh()
-    else
-      script.src = nil
-      self.children[name] = Manuscript(script)
-    end
-  end
-end
-
--- Completion
+---- Completion ----
 
 local function gather(script, field, tbl)
    update(tbl, script[field])
@@ -458,81 +496,107 @@ function Manuscript:all_environments()
    return gather(self.root, 'environments', {})
 end
 
+--- Pretty-print an argument list
+--
+-- @param args An argument list
+-- @return A string
+
 local function format_args(args)
   if not args then return nil end
-   local t = {}
-   for i, arg in ipairs(args or {}) do
-      local l, r
-      if arg.literal then
-         l, r = "", ""
-      elseif arg.delims == false then
-         l, r = "〈", "〉"
-      elseif arg.delims then
-         l, r = arg.delims[1] or "{", arg.delims[2] or "}"
-      else
-         l, r = "{", "}"
-      end
-      if l == "" or r == "" then
-         l, r = l .."〈", "〉" .. r
-      end
-      t[#t+1] = l .. (arg.literal or arg.meta or "#" .. i) .. r
-   end
-   return table.concat(t)
+  local t = {}
+  for i, arg in ipairs(args) do
+    local l, r
+    if arg.literal then
+      l, r = "", ""
+    elseif arg.delims == false then
+      l, r = "〈", "〉"
+    elseif arg.delims then
+      l, r = arg.delims[1] or "{", arg.delims[2] or "}"
+    else
+      l, r = "{", "}"
+    end
+    if l == "" or r == "" then
+      l, r = l .."〈", "〉" .. r
+    end
+    t[#t+1] = l .. (arg.literal or arg.meta or "#" .. i) .. r
+  end
+  return concat(t)
 end
 
-local function snippet_from_args(args)
-   if not args then return "" end
-   local t, i = {}, 0
+--- Make a snippet string from args.
+--
+-- @param before A string added at the beginning, typically the command
+-- name
+-- @param after A string added at the end; default value is "$0"
+-- @return The snippet string
+
+local function make_snippet(before, args, after)
+   local t, i = {before}, 0
    for _, arg in ipairs(args) do
       if arg.literal then
          if arg.optional then
             i = i + 1
-            t[#t+1] = "${" .. i .. ":|," .. arg.literal .. "|}"
+            t[#t+1] = "${" .. i .. ":" .. arg.literal .. "}"
          else
             t[#t+1] = arg.literal
          end
       else
          i = i + 1
-         local l = arg.delims and arg.delims[1] or "{"
-         local r = arg.delims and arg.delims[2] or "}"
-         t[#t+1] = l .. "${" .. i ..
-            (arg.meta and ":" .. arg.meta) .. "}" .. r
+         if arg.optional then -- include delimiter in selection, to allow deletion
+           local l = arg.delims and arg.delims[1] or "{"
+           local r = arg.delims and arg.delims[2] or "\\}"
+           t[#t+1] = "${" .. i .. ":" .. l .. (arg.meta or "") .. r .. "}"
+         else
+           local l = arg.delims and arg.delims[1] or "{"
+           local r = arg.delims and arg.delims[2] or "}"
+           t[#t+1] = l .. "${" .. i .. (arg.meta and ":" .. arg.meta or "") .. "}" .. r
+         end
       end
    end
-   return table.concat(t)
+   t[#t+1] = after or "$0"
+   return concat(t)
 end
 
 Manuscript.completion_handlers = {}
 
 function Manuscript.completion_handlers.cs(self, ctx)
-   local prefix = ctx.cs
-   local len = #prefix
-   local r = {
-      pos = ctx.pos + 1,
-      prefix = prefix,
-      kind = "command"
-   }
-   for cs, cmd in pairs(self.root:all_commands()) do
-      if prefix == cs:sub(1, len) then
-         r[#r+1] = {
-            text = cs,
-            summary = cmd.doc,
-            detail = format_args(cmd.args) or cmd.symbol,
-            snippet = cs .. snippet_from_args(cmd.args) .. "$0"
-         }
-      end
-   end
-   for cs, cmd in pairs(self.root:all_environments()) do
-      if prefix == cs:sub(1, len) then
-         r[#r+1] = {
-           text = "begin{" .. cs .. "}",
-           filter_text = cs,
-            summary = cmd.doc,
-            detail = format_args(cmd.args) or cmd.symbol,
-         }
-      end
-   end
-   return r
+  local extra_snippets = config.extra_snippets
+  local prefix = ctx.cs
+  local len = #prefix
+  local r = {
+    pos = ctx.pos + 1,
+    prefix = prefix,
+    kind = "command"
+  }
+  for cs, cmd in pairs(self.root:all_commands()) do
+    if prefix == cs:sub(1, len) then
+      local args = cmd.args
+      local user_snippet = extra_snippets[cs]
+      r[#r+1] = {
+        text = cs,
+        summary = cmd.doc,
+        detail = args and format_args(args) or cmd.symbol,
+        snippet = user_snippet or args and make_snippet(cs, args)
+      }
+    end
+  end
+  for cs, cmd in pairs(self.root:all_environments()) do
+    if prefix == cs:sub(1, len) then
+      local args = cmd.args or {}
+      local user_snippet = extra_snippets[cs]
+      local snippet_begin = "begin{" .. cs .. "}"
+      local snippet_end = "\n\t$0\n\\end{" .. cs .. "}"
+      local detail = args and format_args(args)
+      r[#r+1] = {
+        text = cs, -- "begin{" .. cs .. "}",
+        filter_text = cs,
+        summary = cmd.doc,
+        detail = (detail or "") .. (detail and " " or "") .. "(environment)",
+        snippet = user_snippet or make_snippet(snippet_begin, args, snippet_end)
+      }
+    end
+  end
+  return r
 end
 
 function Manuscript.completion_handlers.key(self, ctx, pos)
@@ -646,7 +710,7 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
       return (sa > sb)
     end
   end
-  table.sort(r, cmp)
+  sort(r, cmp)
   return r
 end
 
@@ -654,7 +718,7 @@ end
 -- should this take into account the Manuscript of filename, or
 -- directly on the current content of filename?
 function Manuscript:complete(pos)
-   local ctx = self:local_scan(pos - 1)
+   local ctx = self:get_context(pos - 1)
    if ctx == nil then return nil end
    if ctx.cs and pos == 1 + ctx.pos + #ctx.cs then -- the 1 accounts for escape char
       return self.completion_handlers.cs(self, ctx)
@@ -670,14 +734,14 @@ function Manuscript:complete(pos)
    end
 end
 
--- Context help
+---- Context help ----
 
 function Manuscript:get_help(pos)
-   local ctx = self:local_scan(pos)
-   return ctx and self:get_help_aux(ctx)
+   local ctx = self:get_context(pos)
+   return ctx and self:get_help_from_context(ctx)
 end
 
-function Manuscript:get_help_aux(ctx)
+function Manuscript:get_help_from_context(ctx)
   local parent = ctx.parent
   local parent_action = parent and parent.data and parent.data.action
   if parent_action == "cite" then
@@ -710,11 +774,11 @@ function Manuscript:get_help_aux(ctx)
                         }
   elseif ctx.arg then
     return update(
-      self:get_help_aux(parent) or {},
+      self:get_help_from_context(parent) or {},
       {pos = ctx.pos, len = ctx.len, arg = ctx.arg}
     )
   elseif parent then
-    return self:get_help_aux(parent)
+    return self:get_help_from_context(parent)
   else
     return nil
   end
