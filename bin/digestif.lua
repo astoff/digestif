@@ -1,12 +1,13 @@
 #!/usr/bin/env lua
 local json = require "dkjson"
 local util = require "digestif.util"
+util.null = json.null -- make json.null available to digestif.langserver
+
 local langserver = require "digestif.langserver"
 local config = require "digestif.config"
 
 local log, path_join = util.log, util.path_join
 local is_optional = util.matcher("$/")
-util.null = json.null
 
 -- Set the right data directory when installed by luarocks
 local rock_path = debug.getinfo(1).source:match(
