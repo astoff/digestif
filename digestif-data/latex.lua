@@ -54,8 +54,9 @@ commands = {
       filename = "%s.tex"
    },
    label = {
-      action = "label",
-      args = signature("m", "reference")
+     action = "label",
+     doc = "Create a label for this point of the text, for reference with \\ref, etc.",
+     args = signature("m", "reference")
    },
    paragraph = {
       action = "heading",
@@ -88,20 +89,28 @@ commands = {
       heading_level = -1
    },
    ref = {
-      action = "ref",
-      args = signature("m", "reference")
+     action = "ref",
+     doc = "Make a cross-reference.",
+     args = signature("m",
+       {
+         meta = "reference",
+         doc = "A reference defined elsewhere with \\label."})
    },
    section = {
-      action = "heading",
+     action = "heading",
+     doc = "Start a new section.",
       args = signature("som",
          {
-            meta = "unnumbered"
+           meta = "unnumbered",
+           doc = "If present, make section unnumbered."
          },
          {
-            meta = "short title"
+           meta = "short title",
+           doc = "Short title for headers and table of contents."
          },
          {
-            meta = "title"
+           meta = "title",
+           doc = "The section title."
          }
       ),
       heading_level = 1

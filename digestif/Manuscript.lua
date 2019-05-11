@@ -737,51 +737,103 @@ end
 ---- Context help ----
 
 function Manuscript:get_help(pos)
-   local ctx = self:get_context(pos)
-   return ctx and self:get_help_from_context(ctx)
-end
-
-function Manuscript:get_help_from_context(ctx)
-  local parent = ctx.parent
-  local parent_action = parent and parent.data and parent.data.action
-  if parent_action == "cite" then
-    local name = self:substring(ctx)
-    for item in self.root:each_of "bib_index" do
-      if name == item.name then
-        return {
-          pos = ctx.pos, len = ctx.len,
-          type = "bibitem",
-          text = item.text
-        }
-      end
-    end
-  elseif parent_action == "begin" then
-    local env_name = self:substring(ctx)
-    local env_data = self.environments[env_name]
-    return {
-      pos = ctx.pos, len = ctx.len,
-      type = "environment",
-      text = "\\begin{" .. env_name .. "}"
-        .. (format_args(env_data and env_data.args) or ""),
-      data = ctx.data
-    }
+  local ctx = self:get_context(pos)
+  if not ctx then return nil end
+  local action = nested_get(ctx, "parent", "data", "action")
+  local help_handlers = self.help_handlers
+  if help_handlers[action] then
+    return help_handlers[action](self, ctx)
   elseif ctx.cs then
-    return ctx.data and {
-      pos = ctx.pos, len = ctx.len,
-      type = "command",
-      text = "\\" .. ctx.cs .. (format_args(ctx.data and ctx.data.args) or ""),
-      data = ctx.data
-                        }
+    return help_handlers.cs(self, ctx)
   elseif ctx.arg then
-    return update(
-      self:get_help_from_context(parent) or {},
-      {pos = ctx.pos, len = ctx.len, arg = ctx.arg}
-    )
-  elseif parent then
-    return self:get_help_from_context(parent)
+    return help_handlers.arg(self, ctx)
   else
     return nil
   end
+end
+
+Manuscript.help_handlers = {}
+
+function Manuscript.help_handlers.cite(self, ctx)
+  local name = self:substring(ctx)
+  for item in self.root:each_of "bib_index" do
+    if name == item.name then
+      return {
+        pos = ctx.pos, len = ctx.len,
+        kind = "bibitem",
+        text = item.name,
+        detail = item.text
+      }
+    end
+  end
+end
+
+function Manuscript.help_handlers.ref(self, ctx)
+  local name = self:substring(ctx)
+  for item in self.root:each_of "label_index" do
+    if name == item.name then
+      return {
+        pos = ctx.pos, len = ctx.len,
+        kind = "label",
+        text = name,
+      }
+    end
+  end
+  return {
+    pos = ctx.pos, len = ctx.len,
+    kind = "label",
+    text = name,
+    detail = "Unknown label"
+  }
+end
+
+function Manuscript.help_handlers.begin(self, ctx)
+  local env_name = self:substring(ctx)
+  local data = self.environments[env_name]
+  if not data then return nil end
+  local args = data.args
+  return {
+    pos = ctx.pos, len = ctx.len,
+    kind = "environment",
+    text = "\\begin{" .. env_name .. "}" .. (args and format_args(args) or ""),
+    detail = data.doc,
+    data = data
+  }
+end
+
+Manuscript.help_handlers['end'] = function(self, ctx)
+  local env_name = self:substring(ctx)
+  local data = self.environments[env_name]
+  if not data then return nil end
+  return {
+    pos = ctx.pos, len = ctx.len,
+    kind = "environment",
+    text = "\\end{" .. env_name .. "}",
+    detail = data.doc,
+    data = data
+  }
+end
+
+function Manuscript.help_handlers.cs(self, ctx)
+  local data = ctx.data
+  if not data then return nil end
+  local args = data and data.args
+  local doc = data.doc
+  local symbol = data.symbol
+  return {
+    pos = ctx.pos, len = ctx.len,
+    kind = "command",
+    text = "\\" .. ctx.cs .. (args and format_args(args) or ""),
+    detail = (doc or "") .. (symbol and " (" .. symbol .. ")" or ""),
+    data = data
+  }
+end
+
+function Manuscript.help_handlers.arg(self, ctx)
+  return update(
+    self.help_handlers.cs(self, ctx.parent),
+      {pos = ctx.pos, len = ctx.len, arg = ctx.arg}
+  )
 end
 
 return Manuscript

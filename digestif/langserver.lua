@@ -116,7 +116,7 @@ methods["textDocument/didChange"] = function(params)
       if len ~= change.rangeLength then
         error("Range length mismatch in textdocument/didChange operation")
       end
-      src = concat{src:sub(1, pos - 1), change.text, src:sub(pos + len)}
+      src = src:sub(1, pos - 1) .. change.text .. src:sub(pos + len)
       cache:put(filename, src)
     else
       cache:put(filename, change.text)
@@ -172,7 +172,8 @@ methods["textDocument/hover"] = function(params)
    local script = root:find_manuscript(filename)
    local help = script:get_help(pos)
    if not help then return null end
-   return {contents = to_MarkupContent(help.text)}
+   local contents = help.text .. (help.detail and ": " .. help.detail or "")
+   return {contents = to_MarkupContent(contents)}
 end
 
 methods["textDocument/completion"] = function(params)
