@@ -73,7 +73,6 @@ To do
 Contributions are welcome!  Some relatively simple things to do at
 this point include:
 
-- Support incremental document changes
 - Goto definition
 - Find references
 - Rename labels (cross-references and bibitems)
@@ -92,7 +91,6 @@ seem suitable for automatic extraction include:
 
 Further things to do and some open questions:
 
-- Bibliography support: parse bibtex files, etc.
 - Test on more editors (VS Code plugin?)
 - On Emacs, an ivy-based interface, more on the lines of RefTeX, might
   be nice
@@ -107,7 +105,7 @@ Further things to do and some open questions:
 License
 -------
 
-The software itself (everything outside `digestif-data/`) is under the
+The software itself (everything outside the `digestif-data` folder) is under the
 MIT license.
 
 Some of the files in the `digestif-data` folder are extracted or
