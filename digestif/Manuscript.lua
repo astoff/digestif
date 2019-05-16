@@ -7,6 +7,9 @@ local concat, sort, unpack = table.concat, table.sort, table.unpack
 local path_join, path_split = util.path_join, util.path_split
 local nested_get, nested_put = util.nested_get, util.nested_put
 local map, update, merge = util.map, util.update, util.merge
+local min, max = math.min, math.max
+
+local clean = util.clean() -- should be handled by parser
 
 local Manuscript = util.class()
 
@@ -158,6 +161,18 @@ function Manuscript:parse_env_args(pos, cs)
    end
 end
 
+function Manuscript:line_number_at(pos)
+  local src_len = #self.src
+  if pos < 1 then pos = src_len + pos + 1 end
+  return self.cache:get_line_number(self.filename, min(pos, src_len))
+end
+
+function Manuscript:position_at(line, col)
+  local filename = self.filename
+  -- needs bound tests
+  return self.cache:get_position(filename, line, col)
+end
+
 --- Find paragraph before a position.
 --
 -- @param pos a position in the source
@@ -171,6 +186,28 @@ function Manuscript:find_par(pos)
       if j and j <= pos then i = j end
    end
    return i
+end
+
+local preceding_command_callbacks = {}
+
+function preceding_command_callbacks.cs(m, pos, cs, end_pos)
+   if pos > end_pos then return nil end
+   local r = m:parse_cs_args(pos, cs)
+   if r.pos + r.len <= end_pos then
+     local next_pos = m.parser:next_nonblank(m.src, r.pos + r.len)
+     if next_pos == end_pos then
+       return nil, pos, cs, r
+     else
+       return r.pos + r.len, end_pos
+     end
+   else
+     return pos + #cs, end_pos
+   end
+end
+
+function Manuscript:find_preceding_command(pos)
+  local par_pos = self:find_par(pos)
+  return self:scan(preceding_command_callbacks, par_pos, pos)
 end
 
 --- Test if position is blank.
@@ -291,7 +328,7 @@ end
 --    return v1, v2, v3
 -- end
 
----- Global scanning ----
+-- ¶ Global scanning
 
 function Manuscript:add_module(name)
    local m = data(name)
@@ -350,7 +387,7 @@ function Manuscript:global_scan()
   end
 end
 
----- Local scanning (get local context) ----
+-- ¶ Local scanning (get local context)
 
 --- Scan the current paragraph, returning the context.
 --
@@ -478,7 +515,7 @@ function Manuscript.context_callbacks.par (_, _, _, context)
    return nil, context
 end
 
----- Completion ----
+-- ¶ Completion
 
 local function gather(script, field, tbl)
    update(tbl, script[field])
@@ -659,6 +696,16 @@ function Manuscript.completion_handlers.begin(self, ctx, pos)
    return r
 end
 
+-- move to ManuscriptLaTeX?
+function Manuscript:label_context_short(item)
+  local pos, cs, r = self:find_preceding_command(item.cmd_pos)
+  local cmd = self.commands[cs]
+  if not cmd then
+    pos = self.parser:next_nonblank(self.src, item.after_cmd)
+  end
+  return clean(self:substring_trimmed(pos, pos + 100))
+end
+
 function Manuscript.completion_handlers.ref(self, ctx, pos)
    local prefix = self:substring(ctx.pos, pos - 1)
    local len = #prefix
@@ -670,7 +717,8 @@ function Manuscript.completion_handlers.ref(self, ctx, pos)
    for label in self.root:each_of "label_index" do
       if prefix == label.name:sub(1, len) then
          r[#r+1] = {
-            text = label.name
+            text = label.name,
+            detail = label.manuscript:label_context_short(label)
          }
       end
    end
@@ -734,19 +782,19 @@ function Manuscript:complete(pos)
    end
 end
 
----- Context help ----
+-- ¶ Context help
 
 function Manuscript:get_help(pos)
   local ctx = self:get_context(pos)
   if not ctx then return nil end
   local action = nested_get(ctx, "parent", "data", "action")
-  local help_handlers = self.help_handlers
-  if help_handlers[action] then
-    return help_handlers[action](self, ctx)
+  local handlers = self.help_handlers
+  if handlers[action] then
+    return handlers[action](self, ctx)
   elseif ctx.cs then
-    return help_handlers.cs(self, ctx)
+    return handlers.cs(self, ctx)
   elseif ctx.arg then
-    return help_handlers.arg(self, ctx)
+    return handlers.arg(self, ctx)
   else
     return nil
   end
@@ -768,14 +816,29 @@ function Manuscript.help_handlers.cite(self, ctx)
   end
 end
 
+function Manuscript:label_context_long(item)
+  local pos, cs, r = self:find_preceding_command(item.cmd_pos)
+  if not pos then pos = item.cmd_pos end
+  local l = self:line_number_at(pos)
+  local lines = self.cache:get_lines(self.filename)
+  local end_pos = lines[l + 5]
+  if end_pos then
+    return self:substring_trimmed(pos, end_pos - 1)
+  else
+    return self:substring_trimmed(pos, -1)
+  end
+end
+
 function Manuscript.help_handlers.ref(self, ctx)
   local name = self:substring(ctx)
   for item in self.root:each_of "label_index" do
     if name == item.name then
+      local script = self.root:find_manuscript(item.filename)
       return {
         pos = ctx.pos, len = ctx.len,
         kind = "label",
         text = name,
+        detail = script:label_context_long(item)
       }
     end
   end
@@ -834,6 +897,167 @@ function Manuscript.help_handlers.arg(self, ctx)
     self.help_handlers.cs(self, ctx.parent),
       {pos = ctx.pos, len = ctx.len, arg = ctx.arg}
   )
+end
+
+-- ¶ Find definition
+
+function Manuscript:find_definition(pos)
+  local ctx = self:get_context(pos)
+  if not ctx then return nil end
+  local action = nested_get(ctx, "parent", "data", "action")
+  local handlers = self.find_definition_handlers
+  if handlers[action] then
+    return handlers[action](self, ctx)
+  -- elseif ctx.cs then
+  --   return handlers.cs(self, ctx)
+  else
+    return nil
+  end
+end
+
+Manuscript.find_definition_handlers = {}
+
+function Manuscript.find_definition_handlers.ref(self, ctx)
+  local name = self:substring(ctx)
+  for item in self.root:each_of "label_index" do
+    if name == item.name then
+      local script = self.root:find_manuscript(item.filename)
+      return {
+        pos = item.pos,
+        len = #item.name,
+        filename = item.filename,
+        kind = "label"
+      }
+    end
+  end
+end
+
+function Manuscript.find_definition_handlers.cite(self, ctx)
+  local name = self:substring(ctx)
+  for item in self.root:each_of "bib_index" do
+    if name == item.name then
+      return {
+        pos = item.pos,
+        len = item.len,
+        filename = item.filename,
+        kind = "bibitem"
+      }
+    end
+  end
+end
+
+-- ¶ Find references
+
+function Manuscript:scan_references()
+  if not self.ref_index then
+    self.ref_index = {}
+    self.cite_index = {}
+    self:scan(self.scan_references_callbacks, 1)
+  end
+  for _, script in pairs(self.children) do
+    script:scan_references()
+  end
+end
+
+Manuscript.scan_references_callbacks = {}
+
+function Manuscript:scan_control_sequences()
+  if not self.cs_index then
+    self.cs_index = {}
+    self:scan(self.scan_cs_callbacks, 1)
+  end
+  for _, script in pairs(self.children) do
+    script:scan_control_sequences()
+  end
+end
+
+Manuscript.scan_cs_callbacks = {}
+
+function Manuscript.scan_cs_callbacks.cs(self, pos, cs)
+  local idx = self.cs_index
+  local len = #cs + 1
+  idx[#idx + 1] = {
+    name = cs,
+    pos = pos,
+    len = len,
+    filename = self.filename,
+    manuscript = self,
+  }
+  return pos + len
+end
+
+function Manuscript:find_references(pos)
+  local ctx = self:get_context(pos)
+  if not ctx then return nil end
+  local action = nested_get(ctx, "parent", "data", "action")
+  local handlers = self.find_references_handlers
+  if handlers[action] then
+    self.root:scan_references()
+    return handlers[action](self, ctx)
+  elseif ctx.cs then
+    self.root:scan_control_sequences()
+    return handlers.cs(self, ctx)
+  else
+    return nil
+  end
+end
+
+Manuscript.find_references_handlers = {}
+
+function Manuscript.find_references_handlers.cs(self, ctx)
+  local name = ctx.cs
+  local r = {}
+  for item in self.root:each_of "cs_index" do
+    if name == item.name then
+      r[#r + 1] = {
+        pos = item.pos,
+        len = #item.name,
+        filename = item.filename,
+        manuscript = item.manuscript,
+        kind = "cs"
+      }
+    end
+  end
+  return r
+end
+
+function Manuscript.find_references_handlers.ref(self, ctx)
+  local name = self:substring(ctx)
+  local r = {}
+  for item in self.root:each_of "ref_index" do
+    if name == item.name then
+      local script = self.root:find_manuscript(item.filename)
+      r[#r + 1] = {
+        pos = item.pos,
+        len = #item.name,
+        filename = item.filename,
+        manuscript = script,
+        kind = "label"
+      }
+    end
+  end
+  return r
+end
+
+Manuscript.find_references_handlers.label =
+  Manuscript.find_references_handlers.ref
+
+function Manuscript.find_references_handlers.cite(self, ctx)
+  local name = self:substring(ctx)
+  local r = {}
+  for item in self.root:each_of "cite_index" do
+    if name == item.name then
+      local script = self.root:find_manuscript(item.filename)
+      r[#r + 1] = {
+        pos = item.pos,
+        len = #item.name,
+        filename = item.filename,
+        manuscript = script,
+        kind = "bibitem"
+      }
+    end
+  end
+  return r
 end
 
 return Manuscript

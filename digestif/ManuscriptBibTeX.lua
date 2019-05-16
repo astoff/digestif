@@ -27,4 +27,8 @@ function ManuscriptBibTeX:global_scan()
   end
 end
 
+function ManuscriptBibTeX:scan()
+  return nil
+end
+
 return ManuscriptBibTeX

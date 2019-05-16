@@ -84,6 +84,21 @@ local function get_rootname(self, filename)
 end
 FileCache.get_rootname = memoize(get_rootname)
 
+function FileCache:get_line_number(filename, pos)
+  local src = self:get(filename) or error("File " .. filename .. " not found")
+  local lines = self:get_lines(filename)
+  local j, l = 1, #lines -- top and bottom bounds for line search
+  while pos < lines[l] do
+    local k = (j + l + 1) // 2
+    if pos < lines[k] then
+      l = k - 1
+    else
+      j = k
+    end
+  end -- now l = correct line, 1-based indexing
+  return l, lines[l]
+end
+
 function FileCache:get_line_col(filename, pos)
   local src = self:get(filename) or error("File " .. filename .. " not found")
   local lines = self:get_lines(filename)

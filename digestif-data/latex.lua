@@ -58,6 +58,11 @@ commands = {
      doc = "Create a label for this point of the text, for reference with \\ref, etc.",
      args = signature("m", "reference")
    },
+   caption = {
+     action = "caption",
+     doc = "Create a caption for a floating figure or table.",
+     args = signature("om", "short text", "text")
+   },
    paragraph = {
       action = "heading",
       args = signature("som",

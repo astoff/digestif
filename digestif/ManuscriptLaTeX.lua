@@ -23,16 +23,12 @@ local ManuscriptLaTeX = util.class(Manuscript)
 
 ManuscriptLaTeX.parser = Parser(cat_table)
 ManuscriptLaTeX.format = "latex"
+
 ManuscriptLaTeX.global_callbacks =
    setmetatable({}, {__index = Manuscript.global_callbacks})
-ManuscriptLaTeX.context_callbacks =
-   setmetatable({}, {__index = Manuscript.context_callbacks})
-ManuscriptLaTeX.completion_handlers =
-   setmetatable({}, {__index = Manuscript.completion_handlers})
+Manuscript.scan_references_callbacks = {}
 
---- Global callbacks
-
-local global_callbacks = ManuscriptLaTeX.global_callbacks
+-- ¶ Helper functions
 
 --@param meta the desired meta string
 --@param args a list of arg tables
@@ -54,24 +50,28 @@ local function first_opt(args)
    end
 end
 
-function global_callbacks.label (m, pos, cs)
+-- ¶ Global scan callbacks
+
+function ManuscriptLaTeX.global_callbacks.label (m, pos, cs)
    local idx = m.label_index
    local args = m.commands[cs].args
    local r = m:parse_cs_args(pos, cs)
    local i = first_mand(args)
    if r[i] then
       local l = m:substring_stripped(r[i])
-      --m.labels[l] = {pos = r[i].pos, filename = m.filename}
       idx[#idx + 1] = {
          name = l,
          pos = r[i].pos,
-         filename = m.filename
+         filename = m.filename,
+         cmd_pos = pos,
+         manuscript = m,
+         after_cmd = r.pos + r.len
       }
    end
    return r.pos + r.len
 end
 
-function global_callbacks.heading (m, pos, cs)
+function ManuscriptLaTeX.global_callbacks.heading (m, pos, cs)
    local idx = m.heading_index
    local args = m.commands[cs].args
    local r = m:parse_cs_args(pos, cs)
@@ -87,7 +87,7 @@ function global_callbacks.heading (m, pos, cs)
    return r.pos + r.len
 end
 
-function global_callbacks.bibitem (m, pos, cs)
+function ManuscriptLaTeX.global_callbacks.bibitem (m, pos, cs)
   local idx = m.bib_index
   local args = m.commands[cs].args
   local r = m:parse_cs_args(pos, cs)
@@ -102,7 +102,7 @@ function global_callbacks.bibitem (m, pos, cs)
   return r.pos + r.len
 end
 
--- function global_callbacks.begin(m, pos, cs)
+-- function ManuscriptLaTeX.global_callbacks.begin(m, pos, cs)
 --    local r = m:parse_cs_args(pos, cs)
 --    if r[1] then
 --       m:add_outline({
@@ -113,7 +113,7 @@ end
 --    return r.pos + r.len
 -- end
 
-function global_callbacks.input(m, pos, cs)
+function ManuscriptLaTeX.global_callbacks.input(m, pos, cs)
    local idx = m.child_index -- should this include the known modules, or just the filenames not know in /data?
    local args = m.commands[cs].args
    local filename = m.commands[cs].filename
@@ -134,6 +134,46 @@ function global_callbacks.input(m, pos, cs)
       end
    end
    return r.pos + r.len
+end
+
+-- ¶ Scan reference callbacks
+
+function ManuscriptLaTeX.scan_references_callbacks.ref(self, pos, cs)
+  local idx = self.ref_index
+  local args = self.commands[cs].args
+  local r = self:parse_cs_args(pos, cs)
+  local i = first_mand(args)
+  if r[i] then
+    local l = self:substring_stripped(r[i])
+    idx[#idx + 1] = {
+      name = l,
+      pos = r[i].pos,
+      filename = self.filename,
+      cmd_pos = pos,
+      manuscript = self,
+      after_cmd = r.pos + r.len
+    }
+  end
+  return r.pos + r.len
+end
+
+function ManuscriptLaTeX.scan_references_callbacks.cite(self, pos, cs)
+  local idx = self.cite_index
+  local args = self.commands[cs].args
+  local r = self:parse_cs_args(pos, cs)
+  local i = first_mand(args)
+  if r[i] then
+    local l = self:substring_stripped(r[i])
+    idx[#idx + 1] = {
+      name = l,
+      pos = r[i].pos,
+      filename = self.filename,
+      cmd_pos = pos,
+      manuscript = self,
+      after_cmd = r.pos + r.len
+    }
+  end
+  return r.pos + r.len
 end
 
 return ManuscriptLaTeX

@@ -91,6 +91,7 @@ function Parser:__init(cat)
    self.blank = wrap_patt(patt.blank)
    self.next_par = wrap_patt(patt.next_par)
    self.next_thing = wrap_patt(patt.next_thing2)
+   self.next_nonblank = wrap_patt(patt.skipped * Cp())
    self.trim = wrap_patt(patt.trim)
    self.strip_comments = wrap_patt(patt.strip_comments)
 end

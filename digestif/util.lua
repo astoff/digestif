@@ -2,16 +2,16 @@
 -- @module digestif.util
 local lpeg = require "lpeg"
 
-local to_upper = string.upper
+local to_upper, gsub = string.upper, string.gsub
 local P, V, R = lpeg.P, lpeg.V, lpeg.R
 local C, Cp, Cs, Cmt, Cf, Ct = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cmt, lpeg.Cf, lpeg.Ct
 local match, locale_table = lpeg.match, lpeg.locale()
 local lpeg_mul = getmetatable(P(true)).__mul
+local lpeg_add = getmetatable(P(true)).__add
 
 local util = {}
 
--- Cool combinators and friendly functions for LPeg
--- ================================================
+-- ¶ Cool combinators and friendly functions for LPeg
 
 -- general purpose
 
@@ -34,6 +34,23 @@ function util.between_balanced(l, r, token) --nicer name?
   l, r = P(l), P(r)
   token = token and P(token) or char
   return P{l * C(((token - l - r) + V(1)/0)^0) * r}
+end
+
+function util.trimmer(space, token)
+  space = space and P(space) or locale_table.space
+  token = token and P(token) or char
+  return space^0 * C((space^0 * (token - space)^1)^0)
+end
+
+function util.cleaner(space, token)
+  space = space and P(space) or locale_table.space
+  token = token and P(token) or char
+  return space^0 * Cs(((space^1 / " " + true) * (token - space)^1)^0)
+end
+
+function util.replacer(patt, repl, token)
+  token = token and P(token) or char
+  return Cs((P(patt) / repl + token)^0)
 end
 
 -- string.upper doesn't handle well non-ASCII characters...
@@ -100,7 +117,6 @@ function util.split(sep, token, nulls)
   return function (...) return match(patt, ...) end
 end
 
--- call them trimmer and cleaner? or just do regular functions that trim act on normal whitespace
 function util.trim(space, token)
   space = space and P(space) or locale_table.space
   token = token and P(token) or char
@@ -132,8 +148,7 @@ function util.matches_of(patt, token)
   end
 end
 
--- Classes
--- =======
+-- ¶ Classes
 
 local function create_object (c, ...)
    local obj = setmetatable({}, c)
@@ -151,8 +166,7 @@ function util.class(parent)
    return setmetatable(c, mt)
 end
 
--- Table manipulation
--- ==================
+-- ¶ Table manipulation
 
 function util.map(f, t)
    local r = {}
@@ -208,8 +222,7 @@ local function nested_put(val, t, k, ...)
 end
 util.nested_put = nested_put
 
--- Memoization
--- ===========
+-- ¶ Memoization
 
 local memoize = util.class()
 util.memoize = memoize
@@ -235,8 +248,7 @@ function memoize:forget(...)
    nested_put(nil, self.values, ...)
 end
 
--- Reading data and config files
--- =============================
+-- ¶ Reading data and config files
 
 --- Evaluate string in a restricted environment.
 -- @tparam string str code to evaluate
@@ -266,8 +278,7 @@ function util.update_config(str)
    update(config, new_config)
 end
 
--- Path and file manipulation
--- ==========================
+-- ¶ Path and file manipulation
 
 local path_sep = "/"
 local path_sep_patt = P(path_sep)
@@ -300,6 +311,11 @@ function util.path_split(p)
   return p:sub(1, i-1), p:sub(i)
 end
 
+function util.format_filename_template(template, name)
+  name = gsub(name, "%%", "%%%%")
+  return gsub(template, "?", name)
+end
+
 --- Try to read a file in several locations.
 -- @function try_read_file
 -- @tparam[opt] string|{string,...} path base path or list of paths
@@ -322,8 +338,7 @@ local function try_read_file(path, name)
 end
 util.try_read_file = try_read_file
 
--- &c.
--- ===
+-- ¶ &c.
 
 function util.log(...)
    local msg = util.map(tostring, {...})

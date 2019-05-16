@@ -33,14 +33,39 @@ local function get_manuscript(filename, tex_format)
 end
 get_manuscript = util.memoize(get_manuscript)
 
--- Convert LSP API objects to/from internal representations
+-- ¶ Convert LSP API objects to/from internal representations
 
+local function from_Range(filename, range)
+  local l1, c1 = range.start.line + 1, range.start.character + 1
+  local l2, c2 = range["end"].line + 1, range["end"].character + 1
+  local pos1 = cache:get_position(filename, l1, c1) -- inclusive
+  local pos2 = cache:get_position(filename, l2, c2) -- exclusive
+  return pos1, pos2 - pos1
+end
+
+--- Convert from a TextDocumentPositionParams object
 --@param arg a TextDocumentPositionParam object
 --@return a position in bytes, filename, root's filename
 local function from_TextDocumentPositionParams(arg)
   local filename = unescape_uri(arg.textDocument.uri)
   local l, c = arg.position.line + 1, arg.position.character + 1
   return filename, cache:get_position(filename, l, c)
+end
+
+local function to_Range(item)
+  local l1, c1 = cache:get_line_col(item.filename, item.pos)
+  local l2, c2 = cache:get_line_col(item.filename, item.pos + item.len)
+  return {
+    start = {line = l1 - 1, character = c1 - 1},
+    ["end"] = {line = l2 - 1, character = c2 - 1},
+  }
+end
+
+local function to_Location(item)
+  return {
+    uri = escape_uri(item.filename),
+    range = to_Range(item)
+  }
 end
 
 local function to_MarkupContent(str)
@@ -59,14 +84,7 @@ local function to_TextEdit(filename, pos, old, new)
   }
 end
 
-local function from_Range(filename, range)
-  local l1, c1 = range.start.line + 1, range.start.character + 1
-  local l2, c2 = range["end"].line + 1, range["end"].character + 1
-  local pos1 = cache:get_position(filename, l1, c1) -- inclusive
-  local pos2 = cache:get_position(filename, l2, c2) -- exclusive
-  return pos1, pos2 - pos1
-end
---- LSP methods
+-- ¶ LSP methods
 
 local methods = {}
 
@@ -87,6 +105,8 @@ methods["initialize"] = function(params)
         triggerCharacters = {"\\", "="},
       },
       hoverProvider = true,
+      definitionProvider = true,
+      referencesProvider = true
     }
   }
 end
@@ -206,6 +226,44 @@ methods["textDocument/completion"] = function(params)
       }
    end
    return result
+end
+
+methods["textDocument/definition"] = function(params)
+  local filename, pos = from_TextDocumentPositionParams(params)
+  local rootname = cache:get_rootname(filename) or filename
+  local tex_format = cache:get_property(filename, "tex_format")
+  local root = get_manuscript(rootname, tex_format)
+  root:refresh()
+  local script = root:find_manuscript(filename)
+  local definition = script:find_definition(pos)
+  return definition and to_Location(definition) or null
+end
+
+methods["textDocument/references"] = function(params)
+  local filename, pos = from_TextDocumentPositionParams(params)
+  local rootname = cache:get_rootname(filename) or filename
+  local tex_format = cache:get_property(filename, "tex_format")
+  local root = get_manuscript(rootname, tex_format)
+  root:refresh()
+  local script = root:find_manuscript(filename)
+  local result = {}
+  if params.context and params.context.includeDeclaration then
+    local definition = script:find_definition(pos)
+    if definition then
+      result[#result + 1] = to_Location(definition)
+    end
+  end
+  local references = script:find_references(pos)
+  if references then
+    for i, ref in ipairs(references) do
+      result[#result + 1] = to_Location(ref)
+    end
+  end
+  if #result > 0 then
+    return result
+  else
+    return null
+  end
 end
 
 return methods

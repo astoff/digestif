@@ -23,6 +23,8 @@ What it does (for now)
 * Parse BibTeX files and provide completion for citations:
   ![cite](https://user-images.githubusercontent.com/6500902/49612569-64270900-f9a5-11e8-9fc5-20c974136209.png)
 
+* Jump to definition and find references to labels and. bibliography items.
+
 The implemented LSP methods are
 
 - `initialize`
@@ -35,6 +37,8 @@ The implemented LSP methods are
 - `textDocument/signatureHelp`
 - `textDocument/hover`
 - `textDocument/completion`
+- `textDocument/definition`
+- `textDocument/references`
 
 Installation and set-up
 -----------------------
@@ -67,15 +71,19 @@ Voilà!  To get popup suggestions, make sure `company-mode` is on.  To
 insert snippets upon completion, activate `yas-minor-mode` before
 starting up `eglot`.
 
+For Vim with the [Coc][coc] plugin, see instructions
+[here](https://github.com/neoclide/coc.nvim/wiki/Language-servers#latex).
+
 To do
 -----
 
 Contributions are welcome!  Some relatively simple things to do at
 this point include:
 
-- Goto definition
-- Find references
-- Rename labels (cross-references and bibitems)
+- [x] Support incremental document changes
+- [x] Goto definition
+- [x] Find references
+- [ ] Rename labels (cross-references and bibitems)
 
 This program can't be useful without a larger collection of data
 files.  The typical TeX literate documentation is ostensibly not
@@ -85,28 +93,29 @@ manually.  These files are in the `digestif-data` folder, and their
 format should be more or less self explanatory.  Some sources that
 seem suitable for automatic extraction include:
 
-- For plain TeX: [TeX for the impatient](https://www.gnu.org/software/teximpatient/)
-- For ConTeXt: whatever the source of [this
-  pdf](http://www.pragma-ade.nl/general/qrcs/setup-en.pdf) is
+- For plain TeX: [TeX for the impatient](https://www.gnu.org/software/teximpatient/).
+- For ConTeXt: whatever the source of [this pdf](http://www.pragma-ade.nl/general/qrcs/setup-en.pdf) is.
+- For Texinfo: from the [reference card](git.savannah.gnu.org/cgit/texinfo.git/plain/doc/refcard/txirefcard.pdf).
 
 Further things to do and some open questions:
 
-- Test on more editors (VS Code plugin?)
-- On Emacs, an ivy-based interface, more on the lines of RefTeX, might
+- [x] Bibliography support: parse bibtex files, etc.
+- [ ] Test on more editors (VS Code plugin?)
+- [ ] On Emacs, an ivy-based interface, more on the lines of RefTeX, might
   be nice
-- Provide diagnostics?
-- Extract data files from LaTeX literate code?  For packages using
+- [ ] Provide diagnostics?
+- [ ] Extract data files from LaTeX literate code?  For packages using
   xparse, it is possible to at least obtain the signature of commands
   systematically
-- How to integrate with texdoc?
-- Provide a Lua API, for use in editors capable of loading Lua
+- [ ] How to integrate with texdoc?
+- [ ] Provide a Lua API, for use in editors capable of loading Lua
   modules
 
 License
 -------
 
-The software itself (everything outside the `digestif-data` folder) is under the
-MIT license.
+The software itself (everything outside the `digestif-data` folder) is
+under the MIT license.
 
 Some of the files in the `digestif-data` folder are extracted or
 adapted from other sources, such as package manuals or books, and
@@ -115,3 +124,4 @@ should be free to use, redistribute and modify.
 
 [lsp]: https://microsoft.github.io/language-server-protocol/
 [eglot]: https://github.com/joaotavora/eglot
+[coc]: https://github.com/neoclide/coc.nvim
