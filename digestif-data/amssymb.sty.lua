@@ -5,667 +5,667 @@ source = {
 
 commands = {
   Bbbk = {
-    doc = "mathematical double-struck small k",
+    summary = "mathematical double-struck small k",
     symbol = "𝕜"
   },
   Bumpeq = {
-    doc = "bumpy equals",
+    summary = "bumpy equals",
     symbol = "≎"
   },
   Cap = {
-    doc = "/cap /doublecap b: double intersection",
+    summary = "/cap /doublecap b: double intersection",
     symbol = "⋒"
   },
   Cup = {
-    doc = "/cup /doublecup b: double union",
+    summary = "/cup /doublecup b: double union",
     symbol = "⋓"
   },
   Doteq = {
-    doc = "/doteqdot /doteq r: equals, even dots",
+    summary = "/doteqdot /doteq r: equals, even dots",
     symbol = "≑"
   },
   Finv = {
-    doc = "turned capital f",
+    summary = "turned capital f",
     symbol = "Ⅎ"
   },
   Game = {
-    doc = "turned sans-serif capital g",
+    summary = "turned sans-serif capital g",
     symbol = "⅁"
   },
   Lleftarrow = {
-    doc = "left triple arrow",
+    summary = "left triple arrow",
     symbol = "⇚"
   },
   Lsh = {
-    doc = "/lsh a:",
+    summary = "/lsh a:",
     symbol = "↰"
   },
   Rrightarrow = {
-    doc = "right triple arrow",
+    summary = "right triple arrow",
     symbol = "⇛"
   },
   Rsh = {
-    doc = "/rsh a:",
+    summary = "/rsh a:",
     symbol = "↱"
   },
   Subset = {
-    doc = "double subset",
+    summary = "double subset",
     symbol = "⋐"
   },
   Supset = {
-    doc = "double superset",
+    summary = "double superset",
     symbol = "⋑"
   },
   Vdash = {
-    doc = "double vertical, dash",
+    summary = "double vertical, dash",
     symbol = "⊩"
   },
   Vvdash = {
-    doc = "triple vertical, dash",
+    summary = "triple vertical, dash",
     symbol = "⊪"
   },
   approxeq = {
-    doc = "approximate, equals",
+    summary = "approximate, equals",
     symbol = "≊"
   },
   backprime = {
-    doc = "reverse prime, not superscripted",
+    summary = "reverse prime, not superscripted",
     symbol = "‵"
   },
   backsim = {
-    doc = "reverse similar",
+    summary = "reverse similar",
     symbol = "∽"
   },
   backsimeq = {
-    doc = "reverse similar, equals",
+    summary = "reverse similar, equals",
     symbol = "⋍"
   },
   barwedge = {
-    doc = "bar, wedge (large wedge)",
+    summary = "bar, wedge (large wedge)",
     symbol = "⊼"
   },
   because = {
-    doc = "because",
+    summary = "because",
     symbol = "∵"
   },
   beth = {
-    doc = "beth, hebrew",
+    summary = "beth, hebrew",
     symbol = "ℶ"
   },
   between = {
-    doc = "between",
+    summary = "between",
     symbol = "≬"
   },
   bigstar = {
-    doc = "star, filled",
+    summary = "star, filled",
     symbol = "★"
   },
   blacktriangle = {
-    doc = "up triangle, filled",
+    summary = "up triangle, filled",
     symbol = "▴"
   },
   blacktriangledown = {
-    doc = "down triangle, filled",
+    summary = "down triangle, filled",
     symbol = "▾"
   },
   blacktriangleleft = {
-    doc = "(large) left triangle, filled",
+    summary = "(large) left triangle, filled",
     symbol = "◀"
   },
   blacktriangleright = {
-    doc = "(large) right triangle, filled",
+    summary = "(large) right triangle, filled",
     symbol = "▶"
   },
   boxdot = {
-    doc = "/dotsquare /boxdot b: small dot in box",
+    summary = "/dotsquare /boxdot b: small dot in box",
     symbol = "⊡"
   },
   boxminus = {
-    doc = "minus sign in box",
+    summary = "minus sign in box",
     symbol = "⊟"
   },
   boxplus = {
-    doc = "plus sign in box",
+    summary = "plus sign in box",
     symbol = "⊞"
   },
   boxtimes = {
-    doc = "multiply sign in box",
+    summary = "multiply sign in box",
     symbol = "⊠"
   },
   bumpeq = {
-    doc = "bumpy equals, equals",
+    summary = "bumpy equals, equals",
     symbol = "≏"
   },
   circeq = {
-    doc = "circle, equals",
+    summary = "circle, equals",
     symbol = "≗"
   },
   circledast = {
-    doc = "asterisk in circle",
+    summary = "asterisk in circle",
     symbol = "⊛"
   },
   circledcirc = {
-    doc = "small circle in circle",
+    summary = "small circle in circle",
     symbol = "⊚"
   },
   circleddash = {
-    doc = "hyphen in circle",
+    summary = "hyphen in circle",
     symbol = "⊝"
   },
   complement = {
-    doc = "complement sign",
+    summary = "complement sign",
     symbol = "∁"
   },
   curlyeqprec = {
-    doc = "curly equals, precedes",
+    summary = "curly equals, precedes",
     symbol = "⋞"
   },
   curlyeqsucc = {
-    doc = "curly equals, succeeds",
+    summary = "curly equals, succeeds",
     symbol = "⋟"
   },
   curlyvee = {
-    doc = "curly logical or",
+    summary = "curly logical or",
     symbol = "⋎"
   },
   curlywedge = {
-    doc = "curly logical and",
+    summary = "curly logical and",
     symbol = "⋏"
   },
   curvearrowleft = {
-    doc = "left curved arrow",
+    summary = "left curved arrow",
     symbol = "↶"
   },
   curvearrowright = {
-    doc = "right curved arrow",
+    summary = "right curved arrow",
     symbol = "↷"
   },
   daleth = {
-    doc = "daleth, hebrew",
+    summary = "daleth, hebrew",
     symbol = "ℸ"
   },
   divideontimes = {
-    doc = "division on times",
+    summary = "division on times",
     symbol = "⋇"
   },
   dotplus = {
-    doc = "plus sign, dot above",
+    summary = "plus sign, dot above",
     symbol = "∔"
   },
   doublebarwedge = {
-    doc = "logical and with double overbar",
+    summary = "logical and with double overbar",
     symbol = "⩞"
   },
   downdownarrows = {
-    doc = "two down arrows",
+    summary = "two down arrows",
     symbol = "⇊"
   },
   downharpoonleft = {
-    doc = "down harpoon-left",
+    summary = "down harpoon-left",
     symbol = "⇃"
   },
   downharpoonright = {
-    doc = "down harpoon-right",
+    summary = "down harpoon-right",
     symbol = "⇂"
   },
   eqcirc = {
-    doc = "circle on equals sign",
+    summary = "circle on equals sign",
     symbol = "≖"
   },
   eqsim = {
-    doc = "equals, similar",
+    summary = "equals, similar",
     symbol = "≂"
   },
   eqslantgtr = {
-    doc = "slanted equal to or greater-than",
+    summary = "slanted equal to or greater-than",
     symbol = "⪖"
   },
   eqslantless = {
-    doc = "slanted equal to or less-than",
+    summary = "slanted equal to or less-than",
     symbol = "⪕"
   },
   fallingdotseq = {
-    doc = "equals, falling dots",
+    summary = "equals, falling dots",
     symbol = "≒"
   },
   geqq = {
-    doc = "greater, double equals",
+    summary = "greater, double equals",
     symbol = "≧"
   },
   geqslant = {
-    doc = "greater-than or slanted equal to",
+    summary = "greater-than or slanted equal to",
     symbol = "⩾"
   },
   ggg = {
-    doc = "/ggg /gg /gggtr r: triple greater-than",
+    summary = "/ggg /gg /gggtr r: triple greater-than",
     symbol = "⋙"
   },
   gimel = {
-    doc = "gimel, hebrew",
+    summary = "gimel, hebrew",
     symbol = "ℷ"
   },
   gnapprox = {
-    doc = "greater-than and not approximate",
+    summary = "greater-than and not approximate",
     symbol = "⪊"
   },
   gneq = {
-    doc = "greater-than and single-line not equal to",
+    summary = "greater-than and single-line not equal to",
     symbol = "⪈"
   },
   gneqq = {
-    doc = "greater, not double equals",
+    summary = "greater, not double equals",
     symbol = "≩"
   },
   gnsim = {
-    doc = "greater, not similar",
+    summary = "greater, not similar",
     symbol = "⋧"
   },
   gtrapprox = {
-    doc = "greater-than or approximate",
+    summary = "greater-than or approximate",
     symbol = "⪆"
   },
   gtrdot = {
-    doc = "greater than, with dot",
+    summary = "greater than, with dot",
     symbol = "⋗"
   },
   gtreqless = {
-    doc = "greater, equals, less",
+    summary = "greater, equals, less",
     symbol = "⋛"
   },
   gtreqqless = {
-    doc = "greater-than above double-line equal above less-than",
+    summary = "greater-than above double-line equal above less-than",
     symbol = "⪌"
   },
   gtrless = {
-    doc = "greater, less",
+    summary = "greater, less",
     symbol = "≷"
   },
   gtrsim = {
-    doc = "greater, similar",
+    summary = "greater, similar",
     symbol = "≳"
   },
   hslash = {
-    doc = "/hslash - variant planck's over 2pi",
+    summary = "/hslash - variant planck's over 2pi",
     symbol = "ℏ"
   },
   intercal = {
-    doc = "intercal",
+    summary = "intercal",
     symbol = "⊺"
   },
   leftarrowtail = {
-    doc = "left arrow-tailed",
+    summary = "left arrow-tailed",
     symbol = "↢"
   },
   leftleftarrows = {
-    doc = "two left arrows",
+    summary = "two left arrows",
     symbol = "⇇"
   },
   leftrightarrows = {
-    doc = "left arrow over right arrow",
+    summary = "left arrow over right arrow",
     symbol = "⇆"
   },
   leftrightharpoons = {
-    doc = "left harpoon over right",
+    summary = "left harpoon over right",
     symbol = "⇋"
   },
   leftrightsquigarrow = {
-    doc = "left and right arr-wavy",
+    summary = "left and right arr-wavy",
     symbol = "↭"
   },
   leftthreetimes = {
-    doc = "left semidirect product",
+    summary = "left semidirect product",
     symbol = "⋋"
   },
   leqq = {
-    doc = "less, double equals",
+    summary = "less, double equals",
     symbol = "≦"
   },
   leqslant = {
-    doc = "less-than or slanted equal to",
+    summary = "less-than or slanted equal to",
     symbol = "⩽"
   },
   lessapprox = {
-    doc = "less-than or approximate",
+    summary = "less-than or approximate",
     symbol = "⪅"
   },
   lessdot = {
-    doc = "less than, with dot",
+    summary = "less than, with dot",
     symbol = "⋖"
   },
   lesseqgtr = {
-    doc = "less, equals, greater",
+    summary = "less, equals, greater",
     symbol = "⋚"
   },
   lesseqqgtr = {
-    doc = "less-than above double-line equal above greater-than",
+    summary = "less-than above double-line equal above greater-than",
     symbol = "⪋"
   },
   lessgtr = {
-    doc = "less, greater",
+    summary = "less, greater",
     symbol = "≶"
   },
   lesssim = {
-    doc = "less, similar",
+    summary = "less, similar",
     symbol = "≲"
   },
   lll = {
-    doc = "/ll /lll /llless r: triple less-than",
+    summary = "/ll /lll /llless r: triple less-than",
     symbol = "⋘"
   },
   lnapprox = {
-    doc = "less-than and not approximate",
+    summary = "less-than and not approximate",
     symbol = "⪉"
   },
   lneq = {
-    doc = "less-than and single-line not equal to",
+    summary = "less-than and single-line not equal to",
     symbol = "⪇"
   },
   lneqq = {
-    doc = "less, not double equals",
+    summary = "less, not double equals",
     symbol = "≨"
   },
   lnsim = {
-    doc = "less, not similar",
+    summary = "less, not similar",
     symbol = "⋦"
   },
   looparrowleft = {
-    doc = "left arrow-looped",
+    summary = "left arrow-looped",
     symbol = "↫"
   },
   looparrowright = {
-    doc = "right arrow-looped",
+    summary = "right arrow-looped",
     symbol = "↬"
   },
   ltimes = {
-    doc = "times sign, left closed",
+    summary = "times sign, left closed",
     symbol = "⋉"
   },
   measuredangle = {
-    doc = "angle-measured",
+    summary = "angle-measured",
     symbol = "∡"
   },
   multimap = {
-    doc = "/multimap a:",
+    summary = "/multimap a:",
     symbol = "⊸"
   },
   nLeftarrow = {
-    doc = "not implied by",
+    summary = "not implied by",
     symbol = "⇍"
   },
   nLeftrightarrow = {
-    doc = "not left and right double arrows",
+    summary = "not left and right double arrows",
     symbol = "⇎"
   },
   nRightarrow = {
-    doc = "not implies",
+    summary = "not implies",
     symbol = "⇏"
   },
   nVDash = {
-    doc = "not double vert, double dash",
+    summary = "not double vert, double dash",
     symbol = "⊯"
   },
   nVdash = {
-    doc = "not double vertical, dash",
+    summary = "not double vertical, dash",
     symbol = "⊮"
   },
   ncong = {
-    doc = "not congruent with",
+    summary = "not congruent with",
     symbol = "≇"
   },
   nexists = {
-    doc = "negated exists",
+    summary = "negated exists",
     symbol = "∄"
   },
   ngeq = {
-    doc = "not greater-than-or-equal",
+    summary = "not greater-than-or-equal",
     symbol = "≱"
   },
   ngtr = {
-    doc = "not greater-than",
+    summary = "not greater-than",
     symbol = "≯"
   },
   nleftarrow = {
-    doc = "not left arrow",
+    summary = "not left arrow",
     symbol = "↚"
   },
   nleftrightarrow = {
-    doc = "not left and right arrow",
+    summary = "not left and right arrow",
     symbol = "↮"
   },
   nleq = {
-    doc = "not less-than-or-equal",
+    summary = "not less-than-or-equal",
     symbol = "≰"
   },
   nless = {
-    doc = "not less-than",
+    summary = "not less-than",
     symbol = "≮"
   },
   nmid = {
-    doc = "negated mid",
+    summary = "negated mid",
     symbol = "∤"
   },
   nparallel = {
-    doc = "not parallel",
+    summary = "not parallel",
     symbol = "∦"
   },
   nprec = {
-    doc = "not precedes",
+    summary = "not precedes",
     symbol = "⊀"
   },
   nrightarrow = {
-    doc = "not right arrow",
+    summary = "not right arrow",
     symbol = "↛"
   },
   nsim = {
-    doc = "not similar",
+    summary = "not similar",
     symbol = "≁"
   },
   nsubseteq = {
-    doc = "not subset, equals",
+    summary = "not subset, equals",
     symbol = "⊈"
   },
   nsucc = {
-    doc = "not succeeds",
+    summary = "not succeeds",
     symbol = "⊁"
   },
   nsupseteq = {
-    doc = "not superset, equals",
+    summary = "not superset, equals",
     symbol = "⊉"
   },
   ntrianglelefteq = {
-    doc = "not left triangle, equals",
+    summary = "not left triangle, equals",
     symbol = "⋬"
   },
   ntrianglerighteq = {
-    doc = "not right triangle, equals",
+    summary = "not right triangle, equals",
     symbol = "⋭"
   },
   nvDash = {
-    doc = "not vertical, double dash",
+    summary = "not vertical, double dash",
     symbol = "⊭"
   },
   nvdash = {
-    doc = "not vertical, dash",
+    summary = "not vertical, dash",
     symbol = "⊬"
   },
   pitchfork = {
-    doc = "pitchfork",
+    summary = "pitchfork",
     symbol = "⋔"
   },
   precapprox = {
-    doc = "precedes above almost equal to",
+    summary = "precedes above almost equal to",
     symbol = "⪷"
   },
   preccurlyeq = {
-    doc = "precedes, curly equals",
+    summary = "precedes, curly equals",
     symbol = "≼"
   },
   precnapprox = {
-    doc = "precedes above not almost equal to",
+    summary = "precedes above not almost equal to",
     symbol = "⪹"
   },
   precneqq = {
-    doc = "precedes above not equal to",
+    summary = "precedes above not equal to",
     symbol = "⪵"
   },
   precnsim = {
-    doc = "precedes, not similar",
+    summary = "precedes, not similar",
     symbol = "⋨"
   },
   precsim = {
-    doc = "precedes, similar",
+    summary = "precedes, similar",
     symbol = "≾"
   },
   rightarrowtail = {
-    doc = "right arrow-tailed",
+    summary = "right arrow-tailed",
     symbol = "↣"
   },
   rightleftarrows = {
-    doc = "right arrow over left arrow",
+    summary = "right arrow over left arrow",
     symbol = "⇄"
   },
   rightrightarrows = {
-    doc = "two right arrows",
+    summary = "two right arrows",
     symbol = "⇉"
   },
   rightsquigarrow = {
-    doc = "rightwards squiggle arrow",
+    summary = "rightwards squiggle arrow",
     symbol = "⇝"
   },
   rightthreetimes = {
-    doc = "right semidirect product",
+    summary = "right semidirect product",
     symbol = "⋌"
   },
   risingdotseq = {
-    doc = "equals, rising dots",
+    summary = "equals, rising dots",
     symbol = "≓"
   },
   rtimes = {
-    doc = "times sign, right closed",
+    summary = "times sign, right closed",
     symbol = "⋊"
   },
   smallsetminus = {
-    doc = "small set minus (cf. reverse solidus)",
+    summary = "small set minus (cf. reverse solidus)",
     symbol = "∖"
   },
   sphericalangle = {
-    doc = "angle-spherical",
+    summary = "angle-spherical",
     symbol = "∢"
   },
   subseteqq = {
-    doc = "subset of above equals sign",
+    summary = "subset of above equals sign",
     symbol = "⫅"
   },
   subsetneq = {
-    doc = "subset, not equals",
+    summary = "subset, not equals",
     symbol = "⊊"
   },
   subsetneqq = {
-    doc = "subset of above not equal to",
+    summary = "subset of above not equal to",
     symbol = "⫋"
   },
   succapprox = {
-    doc = "succeeds above almost equal to",
+    summary = "succeeds above almost equal to",
     symbol = "⪸"
   },
   succcurlyeq = {
-    doc = "succeeds, curly equals",
+    summary = "succeeds, curly equals",
     symbol = "≽"
   },
   succnapprox = {
-    doc = "succeeds above not almost equal to",
+    summary = "succeeds above not almost equal to",
     symbol = "⪺"
   },
   succneqq = {
-    doc = "succeeds above not equal to",
+    summary = "succeeds above not equal to",
     symbol = "⪶"
   },
   succnsim = {
-    doc = "succeeds, not similar",
+    summary = "succeeds, not similar",
     symbol = "⋩"
   },
   succsim = {
-    doc = "succeeds, similar",
+    summary = "succeeds, similar",
     symbol = "≿"
   },
   supseteqq = {
-    doc = "superset of above equals sign",
+    summary = "superset of above equals sign",
     symbol = "⫆"
   },
   supsetneq = {
-    doc = "superset, not equals",
+    summary = "superset, not equals",
     symbol = "⊋"
   },
   supsetneqq = {
-    doc = "superset of above not equal to",
+    summary = "superset of above not equal to",
     symbol = "⫌"
   },
   therefore = {
-    doc = "therefore",
+    summary = "therefore",
     symbol = "∴"
   },
   triangledown = {
-    doc = "down triangle, open",
+    summary = "down triangle, open",
     symbol = "▿"
   },
   trianglelefteq = {
-    doc = "left triangle, equals",
+    summary = "left triangle, equals",
     symbol = "⊴"
   },
   triangleq = {
-    doc = "triangle, equals",
+    summary = "triangle, equals",
     symbol = "≜"
   },
   trianglerighteq = {
-    doc = "right triangle, equals",
+    summary = "right triangle, equals",
     symbol = "⊵"
   },
   twoheadleftarrow = {
-    doc = "left two-headed arrow",
+    summary = "left two-headed arrow",
     symbol = "↞"
   },
   twoheadrightarrow = {
-    doc = "right two-headed arrow",
+    summary = "right two-headed arrow",
     symbol = "↠"
   },
   upharpoonleft = {
-    doc = "up harpoon-left",
+    summary = "up harpoon-left",
     symbol = "↿"
   },
   upharpoonright = {
-    doc = "/upharpoonright /restriction a: up harpoon-right",
+    summary = "/upharpoonright /restriction a: up harpoon-right",
     symbol = "↾"
   },
   upuparrows = {
-    doc = "two up arrows",
+    summary = "two up arrows",
     symbol = "⇈"
   },
   vDash = {
-    doc = "vertical, double dash",
+    summary = "vertical, double dash",
     symbol = "⊨"
   },
   varkappa = {
-    doc = "rounded small kappa, greek",
+    summary = "rounded small kappa, greek",
     symbol = "ϰ"
   },
   varnothing = {
-    doc = "circle, slash",
+    summary = "circle, slash",
     symbol = "∅"
   },
   vartriangle = {
-    doc = "/triangle - up triangle, open",
+    summary = "/triangle - up triangle, open",
     symbol = "▵"
   },
   vartriangleleft = {
-    doc = "left triangle, open, variant",
+    summary = "left triangle, open, variant",
     symbol = "⊲"
   },
   vartriangleright = {
-    doc = "right triangle, open, variant",
+    summary = "right triangle, open, variant",
     symbol = "⊳"
   },
   veebar = {
-    doc = "logical or, bar below (large vee); exclusive disjunction",
+    summary = "logical or, bar below (large vee); exclusive disjunction",
     symbol = "⊻"
   }
 }

@@ -8,16 +8,16 @@ source = {
 
 commands = {
    ["-"] = {
-      doc = "Insert explicit hyphenation."
+      summary = "Insert explicit hyphenation."
    },
    ["/"] = {
-      doc = "Insert italic correction."
+      summary = "Insert italic correction."
    },
    ["@ifstar"] = {
-      doc = "Define your own commands with *-variants."
+      summary = "Define your own commands with *-variants."
    },
    ["@startsection"] = {
-      args = {
+      arguments = {
          {
             meta = "name"
          },
@@ -37,48 +37,48 @@ commands = {
             meta = "style"
          }
       },
-      doc = "Redefine layout of start of sections, subsections, etc."
+      summary = "Redefine layout of start of sections, subsections, etc."
    },
    Alph = {
-      args = {
+      arguments = {
          {
             meta = "counter"
          }
       },
-      doc = "Print value of a counter."
+      summary = "Print value of a counter."
    },
    AtBeginDocument = {
-      args = {
+      arguments = {
          {
             meta = "code"
          }
       },
-      doc = "Hook for commands at the start of the document."
+      summary = "Hook for commands at the start of the document."
    },
    AtEndDocument = {
-      args = {
+      arguments = {
          {
             meta = "code"
          }
       },
-      doc = "Hook for commands at the end of the document."
+      summary = "Hook for commands at the end of the document."
    },
    AtEndOfClass = {
-      args = {
+      arguments = {
          {
             meta = "code"
          }
       }
    },
    AtEndOfPackage = {
-      args = {
+      arguments = {
          {
             meta = "code"
          }
       }
    },
    CheckCommand = {
-      args = {
+      arguments = {
          {
             meta = "cmd"
          },
@@ -98,7 +98,7 @@ commands = {
       }
    },
    ["CheckCommand*"] = {
-      args = {
+      arguments = {
          {
             meta = "cmd"
          },
@@ -118,7 +118,7 @@ commands = {
       }
    },
    ClassError = {
-      args = {
+      arguments = {
          {
             meta = "class name"
          },
@@ -131,7 +131,7 @@ commands = {
       }
    },
    ClassInfo = {
-      args = {
+      arguments = {
          {
             meta = "class name"
          },
@@ -141,7 +141,7 @@ commands = {
       }
    },
    ClassInfoNoLine = {
-      args = {
+      arguments = {
          {
             meta = "class name"
          },
@@ -151,7 +151,7 @@ commands = {
       }
    },
    ClassWarning = {
-      args = {
+      arguments = {
          {
             meta = "class name"
          },
@@ -161,7 +161,7 @@ commands = {
       }
    },
    ClassWarningNoLine = {
-      args = {
+      arguments = {
          {
             meta = "class name"
          },
@@ -171,7 +171,7 @@ commands = {
       }
    },
    DeclareOption = {
-      args = {
+      arguments = {
          {
             meta = "option"
          },
@@ -181,14 +181,14 @@ commands = {
       }
    },
    ["DeclareOption*"] = {
-      args = {
+      arguments = {
          {
             meta = "code"
          }
       }
    },
    DeclareRobustCommand = {
-      args = {
+      arguments = {
          {
             meta = "cmd"
          },
@@ -208,7 +208,7 @@ commands = {
       }
    },
    ["DeclareRobustCommand*"] = {
-      args = {
+      arguments = {
          {
             meta = "cmd"
          },
@@ -228,14 +228,14 @@ commands = {
       }
    },
    ExecuteOptions = {
-      args = {
+      arguments = {
          {
             meta = "options-list"
          }
       }
    },
    IfFileExists = {
-      args = {
+      arguments = {
          {
             meta = "file name"
          },
@@ -248,7 +248,7 @@ commands = {
       }
    },
    InputIfFileExists = {
-      args = {
+      arguments = {
          {
             meta = "file name"
          },
@@ -261,7 +261,7 @@ commands = {
       }
    },
    LoadClass = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "options list",
@@ -278,7 +278,7 @@ commands = {
       }
    },
    LoadClassWithOptions = {
-      args = {
+      arguments = {
          {
             meta = "class name"
          },
@@ -290,21 +290,21 @@ commands = {
       }
    },
    MakeLowercase = {
-      args = {
+      arguments = {
          {
             meta = "text"
          }
       }
    },
    MakeUppercase = {
-      args = {
+      arguments = {
          {
             meta = "text"
          }
       }
    },
    NeedsTeXFormat = {
-      args = {
+      arguments = {
          {
             meta = "format"
          },
@@ -316,7 +316,7 @@ commands = {
       }
    },
    PackageError = {
-      args = {
+      arguments = {
          {
             meta = "package name"
          },
@@ -329,7 +329,7 @@ commands = {
       }
    },
    PackageInfo = {
-      args = {
+      arguments = {
          {
             meta = "package name"
          },
@@ -339,7 +339,7 @@ commands = {
       }
    },
    PackageInfoNoLine = {
-      args = {
+      arguments = {
          {
             meta = "package name"
          },
@@ -349,7 +349,7 @@ commands = {
       }
    },
    PackageWarning = {
-      args = {
+      arguments = {
          {
             meta = "package name"
          },
@@ -359,7 +359,7 @@ commands = {
       }
    },
    PackageWarningNoLine = {
-      args = {
+      arguments = {
          {
             meta = "package name"
          },
@@ -369,7 +369,7 @@ commands = {
       }
    },
    PassOptionsToClass = {
-      args = {
+      arguments = {
          {
             meta = "option list"
          },
@@ -379,7 +379,7 @@ commands = {
       }
    },
    PassOptionsToPackage = {
-      args = {
+      arguments = {
          {
             meta = "option list"
          },
@@ -389,7 +389,7 @@ commands = {
       }
    },
    ProvidesClass = {
-      args = {
+      arguments = {
          {
             meta = "class name"
          },
@@ -401,7 +401,7 @@ commands = {
       }
    },
    ProvidesFile = {
-      args = {
+      arguments = {
          {
             meta = "file name"
          },
@@ -413,7 +413,7 @@ commands = {
       }
    },
    ProvidesPackage = {
-      args = {
+      arguments = {
          {
             meta = "package name"
          },
@@ -425,7 +425,7 @@ commands = {
       }
    },
    RequirePackage = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "option list",
@@ -442,7 +442,7 @@ commands = {
       }
    },
    RequirePackageWithOptions = {
-      args = {
+      arguments = {
          {
             meta = "package name"
          },
@@ -454,25 +454,25 @@ commands = {
       }
    },
    Roman = {
-      args = {
+      arguments = {
          {
             meta = "counter"
          }
       },
-      doc = "Print value of a counter."
+      summary = "Print value of a counter."
    },
    ["\\"] = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "morespace",
             optional = true
          }
       },
-      doc = "Start a new line."
+      summary = "Start a new line."
    },
    ["\\*"] = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "morespace",
@@ -481,7 +481,7 @@ commands = {
       }
    },
    addcontentsline = {
-      args = {
+      arguments = {
          {
             meta = "ext"
          },
@@ -492,16 +492,16 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Add an entry to table of contents, etc."
+      summary = "Add an entry to table of contents, etc."
    },
    address = {
-      doc = "Sender's return address."
+      summary = "Sender's return address."
    },
    addtocontents = {
-      doc = "Add text directly to table of contents file, etc."
+      summary = "Add text directly to table of contents file, etc."
    },
    addtocounter = {
-      args = {
+      arguments = {
          {
             meta = "counter"
          },
@@ -509,10 +509,10 @@ commands = {
             meta = "value"
          }
       },
-      doc = "Add a quantity to a counter."
+      summary = "Add a quantity to a counter."
    },
    addtolength = {
-      args = {
+      arguments = {
          {
             meta = "\\len"
          },
@@ -520,36 +520,36 @@ commands = {
             meta = "amount"
          }
       },
-      doc = "Add a quantity to a length."
+      summary = "Add a quantity to a length."
    },
    addvspace = {
-      doc = "Add arbitrary vertical space if needed."
+      summary = "Add arbitrary vertical space if needed."
    },
    alph = {
-      args = {
+      arguments = {
          {
             meta = "counter"
          }
       },
-      doc = "Print value of a counter."
+      summary = "Print value of a counter."
    },
    arabic = {
-      args = {
+      arguments = {
          {
             meta = "counter"
          }
       },
-      doc = "Print value of a counter."
+      summary = "Print value of a counter."
    },
    author = {
-      args = {
+      arguments = {
          {
             meta = "names"
          }
       }
    },
    bibitem = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "label",
@@ -559,27 +559,27 @@ commands = {
             meta = "cite_key"
          }
       },
-      doc = "Specify a bibliography item."
+      summary = "Specify a bibliography item."
    },
    bibliography = {
-      args = {
+      arguments = {
          {
             meta = "bibfiles"
          }
       }
    },
    bibliographystyle = {
-      args = {
+      arguments = {
          {
             meta = "bibstyle"
          }
       }
    },
    bigskip = {
-      doc = "Big vertical space."
+      summary = "Big vertical space."
    },
    caption = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "loftitle",
@@ -591,10 +591,10 @@ commands = {
       }
    },
    centering = {
-      doc = "Declaration form of the {center} environment."
+      summary = "Declaration form of the {center} environment."
    },
    chapter = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "toctitle",
@@ -606,15 +606,15 @@ commands = {
       }
    },
    circle = {
-      args = {
+      arguments = {
          {
             meta = "diameter"
          }
       },
-      doc = "Draw a circle."
+      summary = "Draw a circle."
    },
    cite = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "subcite",
@@ -624,27 +624,27 @@ commands = {
             meta = "keys"
          }
       },
-      doc = "Refer to a bibliography item."
+      summary = "Refer to a bibliography item."
    },
    cleardoublepage = {
-      doc = "Start a new right-hand page."
+      summary = "Start a new right-hand page."
    },
    clearpage = {
-      doc = "Start a new page."
+      summary = "Start a new page."
    },
    cline = {
-      args = {
+      arguments = {
          {
             meta = "i-j"
          }
       },
-      doc = "Draw a horizontal line spanning some columns."
+      summary = "Draw a horizontal line spanning some columns."
    },
    closing = {
-      doc = "Saying goodbye."
+      summary = "Saying goodbye."
    },
    dashbox = {
-      args = {
+      arguments = {
          {
             meta = "dlen"
          },
@@ -661,20 +661,20 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Draw a dashed box."
+      summary = "Draw a dashed box."
    },
    date = {
-      args = {
+      arguments = {
          {
             meta = "text"
          }
       }
    },
    day = {
-      doc = "Today's day"
+      summary = "Today's day"
    },
    discretionary = {
-      args = {
+      arguments = {
          {
             meta = "pre-break-text"
          },
@@ -685,10 +685,10 @@ commands = {
             meta = "no-break-text"
          }
       },
-      doc = "Insert explicit hyphenation with control of hyphen character."
+      summary = "Insert explicit hyphenation with control of hyphen character."
    },
    documentclass = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "options",
@@ -700,71 +700,71 @@ commands = {
       }
    },
    dotfill = {
-      doc = "Stretchable horizontal dots."
+      summary = "Stretchable horizontal dots."
    },
    encl = {
-      doc = "List of enclosed material."
+      summary = "List of enclosed material."
    },
    enlargethispage = {
-      doc = "Enlarge the current page a bit."
+      summary = "Enlarge the current page a bit."
    },
    ensuremath = {
-      args = {
+      arguments = {
          {
             meta = "formula"
          }
       },
-      doc = "Ensure that math mode is active"
+      summary = "Ensure that math mode is active"
    },
    fbox = {
-      args = {
+      arguments = {
          {
             meta = "text"
          }
       },
-      doc = "Put a frame around a box."
+      summary = "Put a frame around a box."
    },
    flushbottom = {
-      doc = "Make all text pages the same height."
+      summary = "Make all text pages the same height."
    },
    fnsymbol = {
-      args = {
+      arguments = {
          {
             meta = "counter"
          }
       },
-      doc = "Print value of a counter."
+      summary = "Print value of a counter."
    },
    fontencoding = {
-      args = {
+      arguments = {
          {
             meta = "encoding"
          }
       }
    },
    fontfamily = {
-      args = {
+      arguments = {
          {
             meta = "family"
          }
       }
    },
    fontseries = {
-      args = {
+      arguments = {
          {
             meta = "series"
          }
       }
    },
    fontshape = {
-      args = {
+      arguments = {
          {
             meta = "shape"
          }
       }
    },
    fontsize = {
-      args = {
+      arguments = {
          {
             meta = "size"
          },
@@ -774,7 +774,7 @@ commands = {
       }
    },
    footnote = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "number",
@@ -784,20 +784,20 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Insert a footnote."
+      summary = "Insert a footnote."
    },
    footnotemark = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "number",
             optional = true
          }
       },
-      doc = "Insert footnote mark only."
+      summary = "Insert footnote mark only."
    },
    footnotetext = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "number",
@@ -807,10 +807,10 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Insert footnote text only."
+      summary = "Insert footnote text only."
    },
    frac = {
-      args = {
+      arguments = {
          {
             meta = "num"
          },
@@ -820,15 +820,15 @@ commands = {
       }
    },
    frame = {
-      args = {
+      arguments = {
          {
             meta = "text"
          }
       },
-      doc = "Draw a frame around an object."
+      summary = "Draw a frame around an object."
    },
    framebox = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "width",
@@ -843,93 +843,93 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Draw a box with a frame around it."
+      summary = "Draw a box with a frame around it."
    },
    frenchspacing = {
-      doc = "Equal interword and inter-sentence space."
+      summary = "Equal interword and inter-sentence space."
    },
    fussy = {
-      doc = "Be fussy about line breaking."
+      summary = "Be fussy about line breaking."
    },
    hfill = {
-      doc = "Stretchable horizontal space.  "
+      summary = "Stretchable horizontal space.  "
    },
    hline = {
-      doc = "Draw a horizontal line spanning all columns."
+      summary = "Draw a horizontal line spanning all columns."
    },
    hrulefill = {
-      doc = "Stretchable horizontal rule."
+      summary = "Stretchable horizontal rule."
    },
    hspace = {
-      args = {
+      arguments = {
          {
             meta = "length"
          }
       },
-      doc = "Fixed horizontal space.  "
+      summary = "Fixed horizontal space.  "
    },
    ["hspace*"] = {
-      args = {
+      arguments = {
          {
             meta = "length"
          }
       }
    },
    hyphenation = {
-      args = {
+      arguments = {
          {
             meta = "words"
          }
       },
-      doc = "Tell LaTeX how to hyphenate a word."
+      summary = "Tell LaTeX how to hyphenate a word."
    },
    include = {
-      args = {
+      arguments = {
          {
             meta = "file"
          }
       },
-      doc = "Conditionally include a file."
+      summary = "Conditionally include a file."
    },
    includeonly = {
-      args = {
+      arguments = {
          {
             meta = "files"
          }
       },
-      doc = "Determine which files are included."
+      summary = "Determine which files are included."
    },
    indent = {
-      doc = "Indent this paragraph."
+      summary = "Indent this paragraph."
    },
    input = {
-      args = {
+      arguments = {
          {
             meta = "file"
          }
       },
-      doc = "Unconditionally include a file."
+      summary = "Unconditionally include a file."
    },
    item = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "optional label",
             optional = true
          }
       },
-      doc = "An entry in a list."
+      summary = "An entry in a list."
    },
    label = {
-      args = {
+      arguments = {
          {
             meta = "key"
          }
       },
-      doc = "Assign a symbolic name to a piece of text."
+      summary = "Assign a symbolic name to a piece of text."
    },
    line = {
-      args = {
+      arguments = {
          {
             delims = {"(", ")"},
             meta = "xslope, yslope"
@@ -938,46 +938,46 @@ commands = {
             meta = "length"
          }
       },
-      doc = "Draw a straight line."
+      summary = "Draw a straight line."
    },
    linebreak = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "priority",
             optional = true
          }
       },
-      doc = "Force line break."
+      summary = "Force line break."
    },
    linespread = {
-      args = {
+      arguments = {
          {
             meta = "factor"
          }
       }
    },
    linethickness = {
-      doc = "Set the line thickness."
+      summary = "Set the line thickness."
    },
    location = {
-      doc = "Sender's organizational location."
+      summary = "Sender's organizational location."
    },
    lowercase = {
-      args = {
+      arguments = {
          {
             meta = "text"
          }
       }
    },
    makeatletter = {
-      doc = "Change the status of the at-sign character."
+      summary = "Change the status of the at-sign character."
    },
    makeatother = {
-      doc = "Change the status of the at-sign character."
+      summary = "Change the status of the at-sign character."
    },
    makebox = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "width",
@@ -992,16 +992,16 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Box, adjustable position."
+      summary = "Box, adjustable position."
    },
    makelabels = {
-      doc = "Make address labels."
+      summary = "Make address labels."
    },
    maketitle = {
-      doc = "Generate a title page."
+      summary = "Generate a title page."
    },
    marginpar = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "left",
@@ -1013,7 +1013,7 @@ commands = {
       }
    },
    markboth = {
-      args = {
+      arguments = {
          {
             meta = "left"
          },
@@ -1023,28 +1023,28 @@ commands = {
       }
    },
    markright = {
-      args = {
+      arguments = {
          {
             meta = "right"
          }
       }
    },
    mbox = {
-      args = {
+      arguments = {
          {
             meta = "text"
          }
       },
-      doc = "Horizontal boxes."
+      summary = "Horizontal boxes."
    },
    medskip = {
-      doc = "Medium vertical space."
+      summary = "Medium vertical space."
    },
    month = {
-      doc = "Today's month"
+      summary = "Today's month"
    },
    multicolumn = {
-      args = {
+      arguments = {
          {
             meta = "numcols"
          },
@@ -1055,10 +1055,10 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Make an item spanning several columns."
+      summary = "Make an item spanning several columns."
    },
    multiput = {
-      args = {
+      arguments = {
          {
             delims = {"(", ")"},
             meta = "x, y"
@@ -1074,16 +1074,16 @@ commands = {
             meta = "obj"
          }
       },
-      doc = "Draw multiple instances of an object."
+      summary = "Draw multiple instances of an object."
    },
    name = {
-      doc = "Sender's name, for the return address."
+      summary = "Sender's name, for the return address."
    },
    newcommand = {
-      doc = "Define a new command"
+      summary = "Define a new command"
    },
    newcounter = {
-      args = {
+      arguments = {
          {
             meta = "countername"
          },
@@ -1093,13 +1093,13 @@ commands = {
             optional = true
          }
       },
-      doc = "Define a new counter."
+      summary = "Define a new counter."
    },
    newenvironment = {
-      doc = "Define a new environment."
+      summary = "Define a new environment."
    },
    newfont = {
-      args = {
+      arguments = {
          {
             meta = "\\cmd"
          },
@@ -1107,32 +1107,32 @@ commands = {
             meta = "font description"
          }
       },
-      doc = "Define a new font name."
+      summary = "Define a new font name."
    },
    newlength = {
-      args = {
+      arguments = {
          {
             meta = "\\arg"
          }
       },
-      doc = "Define a new length."
+      summary = "Define a new length."
    },
    newline = {
-      doc = "Break the line"
+      summary = "Break the line"
    },
    newpage = {
-      doc = "Start a new page."
+      summary = "Start a new page."
    },
    newsavebox = {
-      args = {
+      arguments = {
          {
             meta = "\\cmd"
          }
       },
-      doc = "Define a new box."
+      summary = "Define a new box."
    },
    newtheorem = {
-      args = {
+      arguments = {
          {
             meta = "name"
          },
@@ -1145,45 +1145,45 @@ commands = {
             meta = "title"
          }
       },
-      doc = "Define a new theorem-like environment."
+      summary = "Define a new theorem-like environment."
    },
    nocite = {
-      doc = "Include an item in the bibliography."
+      summary = "Include an item in the bibliography."
    },
    noindent = {
-      doc = "Do not indent this paragraph."
+      summary = "Do not indent this paragraph."
    },
    nolinebreak = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "priority",
             optional = true
          }
       },
-      doc = "Avoid line break."
+      summary = "Avoid line break."
    },
    nopagebreak = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "priority",
             optional = true
          }
       },
-      doc = "Avoid page break."
+      summary = "Avoid page break."
    },
    obeycr = {
-      doc = "Make each input line start a new output line."
+      summary = "Make each input line start a new output line."
    },
    onecolumn = {
-      doc = "Use one-column layout."
+      summary = "Use one-column layout."
    },
    opening = {
-      doc = "Saying hello."
+      summary = "Saying hello."
    },
    oval = {
-      args = {
+      arguments = {
          {
             delims = {"(", ")"},
             meta = "width, height"
@@ -1194,58 +1194,58 @@ commands = {
             optional = true
          }
       },
-      doc = "Draw an ellipse."
+      summary = "Draw an ellipse."
    },
    overbrace = {
-      args = {
+      arguments = {
          {
             meta = "math"
          }
       }
    },
    overline = {
-      args = {
+      arguments = {
          {
             meta = "text"
          }
       }
    },
    pagebreak = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "priority",
             optional = true
          }
       },
-      doc = "Force page break"
+      summary = "Force page break"
    },
    pagenumbering = {
-      args = {
+      arguments = {
          {
             meta = "style"
          }
       },
-      doc = "Set the style used for page numbers."
+      summary = "Set the style used for page numbers."
    },
    pageref = {
-      args = {
+      arguments = {
          {
             meta = "key"
          }
       },
-      doc = "Refer to a page number."
+      summary = "Refer to a page number."
    },
    pagestyle = {
-      args = {
+      arguments = {
          {
             meta = "style"
          }
       },
-      doc = "Change the headings/footings style."
+      summary = "Change the headings/footings style."
    },
    parbox = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "position",
@@ -1268,16 +1268,16 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Box with text in paragraph mode."
+      summary = "Box with text in paragraph mode."
    },
    parskip = {
-      doc = "Space added before paragraphs."
+      summary = "Space added before paragraphs."
    },
    protect = {
-      doc = "Using tricky commands."
+      summary = "Using tricky commands."
    },
    providecommand = {
-      args = {
+      arguments = {
          {
             meta = "cmd"
          },
@@ -1295,10 +1295,10 @@ commands = {
             meta = "defn"
          }
       },
-      doc = "Define a new command, if name not used."
+      summary = "Define a new command, if name not used."
    },
    ["providecommand*"] = {
-      args = {
+      arguments = {
          {
             meta = "cmd"
          },
@@ -1318,28 +1318,28 @@ commands = {
       }
    },
    ps = {
-      doc = "Adding a postscript."
+      summary = "Adding a postscript."
    },
    put = {
-      args = {
+      arguments = {
          {
             delims = {"(", ")"},
             meta = "xcoord, ycoord"
          }
       },
-      doc = "Place an object at a specified place."
+      summary = "Place an object at a specified place."
    },
    raggedbottom = {
-      doc = "Allow text pages of differing height."
+      summary = "Allow text pages of differing height."
    },
    raggedleft = {
-      doc = "Declaration form of the {flushright} environment."
+      summary = "Declaration form of the {flushright} environment."
    },
    raggedright = {
-      doc = "Declaration form of the {flushleft} environment."
+      summary = "Declaration form of the {flushleft} environment."
    },
    raisebox = {
-      args = {
+      arguments = {
          {
             meta = "distance"
          },
@@ -1357,26 +1357,26 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Raise or lower text."
+      summary = "Raise or lower text."
    },
    ref = {
-      args = {
+      arguments = {
          {
             meta = "key"
          }
       },
-      doc = "Refer to a section, figure or similar."
+      summary = "Refer to a section, figure or similar."
    },
    refstepcounter = {
-      args = {
+      arguments = {
          {
             meta = "counter"
          }
       },
-      doc = "Add to a counter."
+      summary = "Add to a counter."
    },
    renewcommand = {
-      args = {
+      arguments = {
          {
             meta = "\\cmd"
          },
@@ -1394,10 +1394,10 @@ commands = {
             meta = "defn"
          }
       },
-      doc = "Redefine a command."
+      summary = "Redefine a command."
    },
    ["renewcommand*"] = {
-      args = {
+      arguments = {
          {
             meta = "\\cmd"
          },
@@ -1417,10 +1417,10 @@ commands = {
       }
    },
    renewenvironment = {
-      doc = "Refine an environment."
+      summary = "Refine an environment."
    },
    ["renewenvironment*"] = {
-      args = {
+      arguments = {
          {
             meta = "env"
          },
@@ -1443,18 +1443,18 @@ commands = {
       }
    },
    restorecr = {
-      doc = "Make each input line start a new output line."
+      summary = "Make each input line start a new output line."
    },
    roman = {
-      args = {
+      arguments = {
          {
             meta = "counter"
          }
       },
-      doc = "Print value of a counter."
+      summary = "Print value of a counter."
    },
    rule = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "raise",
@@ -1467,10 +1467,10 @@ commands = {
             meta = "thickness"
          }
       },
-      doc = "Inserting lines and rectangles."
+      summary = "Inserting lines and rectangles."
    },
    savebox = {
-      args = {
+      arguments = {
          {
             meta = "\\boxcmd"
          },
@@ -1488,10 +1488,10 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Like \\makebox, but save the text for later use."
+      summary = "Like \\makebox, but save the text for later use."
    },
    sbox = {
-      args = {
+      arguments = {
          {
             meta = "\\boxcmd"
          },
@@ -1499,10 +1499,10 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Like \\mbox, but save the text for later use."
+      summary = "Like \\mbox, but save the text for later use."
    },
    setcounter = {
-      args = {
+      arguments = {
          {
             meta = "counter"
          },
@@ -1510,10 +1510,10 @@ commands = {
             meta = "value"
          }
       },
-      doc = "Set the value of a counter."
+      summary = "Set the value of a counter."
    },
    setlength = {
-      args = {
+      arguments = {
          {
             meta = "\\len"
          },
@@ -1521,10 +1521,10 @@ commands = {
             meta = "amount"
          }
       },
-      doc = "Set the value of a length."
+      summary = "Set the value of a length."
    },
    settodepth = {
-      args = {
+      arguments = {
          {
             meta = "\\len"
          },
@@ -1532,18 +1532,18 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Set a length to the depth of something."
+      summary = "Set a length to the depth of something."
    },
    settoheight = {
-      args = {
+      arguments = {
          {
             meta = "\\len"
          }
       },
-      doc = "Set a length to the height of something."
+      summary = "Set a length to the height of something."
    },
    settowidth = {
-      args = {
+      arguments = {
          {
             meta = "\\len"
          },
@@ -1551,29 +1551,29 @@ commands = {
             meta = "text"
          }
       },
-      doc = "Set a length to the width of something."
+      summary = "Set a length to the width of something."
    },
    shortstack = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "position",
             optional = true
          }
       },
-      doc = "Make a pile of objects."
+      summary = "Make a pile of objects."
    },
    signature = {
-      doc = "Sender's signature."
+      summary = "Sender's signature."
    },
    sloppy = {
-      doc = "Be sloppy about line breaking."
+      summary = "Be sloppy about line breaking."
    },
    smallskip = {
-      doc = "Small vertical space."
+      summary = "Small vertical space."
    },
    sqrt = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "root",
@@ -1585,7 +1585,7 @@ commands = {
       }
    },
    stackrel = {
-      args = {
+      arguments = {
          {
             meta = "text"
          },
@@ -1595,69 +1595,69 @@ commands = {
       }
    },
    stepcounter = {
-      args = {
+      arguments = {
          {
             meta = "counter"
          }
       },
-      doc = "Add to a counter, resetting subsidiary counters."
+      summary = "Add to a counter, resetting subsidiary counters."
    },
    telephone = {
-      doc = "Sender's phone number."
+      summary = "Sender's phone number."
    },
    textcircled = {
-      args = {
+      arguments = {
          {
             meta = "letter"
          }
       }
    },
    thanks = {
-      args = {
+      arguments = {
          {
             meta = "text"
          }
       }
    },
    thicklines = {
-      doc = "A heavier line thickness."
+      summary = "A heavier line thickness."
    },
    thinlines = {
-      doc = "The default line thickness."
+      summary = "The default line thickness."
    },
    thinspace = {
-      doc = "One-sixth of an em.  "
+      summary = "One-sixth of an em.  "
    },
    thispagestyle = {
-      args = {
+      arguments = {
          {
             meta = "style"
          }
       },
-      doc = "Change the headings/footings style for this page."
+      summary = "Change the headings/footings style for this page."
    },
    title = {
-      args = {
+      arguments = {
          {
             meta = "text"
          }
       }
    },
    today = {
-      doc = "Inserting today's date."
+      summary = "Inserting today's date."
    },
    twocolumn = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "prelim one column text",
             optional = true
          }
       },
-      doc = "Use two-column layout."
+      summary = "Use two-column layout."
    },
    typein = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "\\cmd",
@@ -1667,55 +1667,55 @@ commands = {
             meta = "msg"
          }
       },
-      doc = "Read text from the terminal."
+      summary = "Read text from the terminal."
    },
    typeout = {
-      args = {
+      arguments = {
          {
             meta = "msg"
          }
       },
-      doc = "Write text to the terminal."
+      summary = "Write text to the terminal."
    },
    underbrace = {
-      args = {
+      arguments = {
          {
             meta = "math"
          }
       }
    },
    underline = {
-      args = {
+      arguments = {
          {
             meta = "text"
          }
       }
    },
    uppercase = {
-      args = {
+      arguments = {
          {
             meta = "text"
          }
       }
    },
    usebox = {
-      args = {
+      arguments = {
          {
             meta = "\\boxcmd"
          }
       },
-      doc = "Print saved text."
+      summary = "Print saved text."
    },
    usecounter = {
-      args = {
+      arguments = {
          {
             meta = "counter"
          }
       },
-      doc = "Use a specified counter in a list environment."
+      summary = "Use a specified counter in a list environment."
    },
    usefont = {
-      args = {
+      arguments = {
          {
             meta = "enc"
          },
@@ -1731,7 +1731,7 @@ commands = {
       }
    },
    usepackage = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "options",
@@ -1743,15 +1743,15 @@ commands = {
       }
    },
    value = {
-      args = {
+      arguments = {
          {
             meta = "counter"
          }
       },
-      doc = "Use the value of a counter in an expression.  "
+      summary = "Use the value of a counter in an expression.  "
    },
    vector = {
-      args = {
+      arguments = {
          {
             delims = {"(", ")"},
             meta = "xslope, yslope"
@@ -1760,43 +1760,43 @@ commands = {
             meta = "length"
          }
       },
-      doc = "Draw a line with an arrow."
+      summary = "Draw a line with an arrow."
    },
    verb = {
-      doc = "The macro form of the {verbatim} environment."
+      summary = "The macro form of the {verbatim} environment."
    },
    vfill = {
-      doc = "Infinitely stretchable vertical space."
+      summary = "Infinitely stretchable vertical space."
    },
    vline = {
-      doc = "Draw a vertical line."
+      summary = "Draw a vertical line."
    },
    vspace = {
-      args = {
+      arguments = {
          {
             meta = "length"
          }
       },
-      doc = "Add arbitrary vertical space."
+      summary = "Add arbitrary vertical space."
    },
    ["vspace*"] = {
-      args = {
+      arguments = {
          {
             meta = "length"
          }
       }
    },
    year = {
-      doc = "Today's year"
+      summary = "Today's year"
    }
 }
 
 environments = {
    abstract = {
-      doc = "Produce an abstract."
+      summary = "Produce an abstract."
    },
    array = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "pos",
@@ -1806,41 +1806,41 @@ environments = {
             meta = "cols"
          }
       },
-      doc = "Math arrays."
+      summary = "Math arrays."
    },
    center = {
-      doc = "Centered lines."
+      summary = "Centered lines."
    },
    description = {
-      doc = "Labelled lists."
+      summary = "Labelled lists."
    },
    displaymath = {
-      doc = "Formulas that appear on their own line."
+      summary = "Formulas that appear on their own line."
    },
    document = {
-      doc = "Enclose the whole document."
+      summary = "Enclose the whole document."
    },
    enumerate = {
-      doc = "Numbered lists."
+      summary = "Numbered lists."
    },
    eqnarray = {
-      doc = "Sequences of aligned equations."
+      summary = "Sequences of aligned equations."
    },
    equation = {
-      doc = "Displayed equation."
+      summary = "Displayed equation."
    },
    figure = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "placement",
             optional = true
          }
       },
-      doc = "Floating figures."
+      summary = "Floating figures."
    },
    ["figure*"] = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "placement",
@@ -1849,34 +1849,34 @@ environments = {
       }
    },
    filecontents = {
-      args = {
+      arguments = {
          {
             meta = "filename"
          }
       },
-      doc = "Writing multiple files from the source."
+      summary = "Writing multiple files from the source."
    },
    ["filecontents*"] = {
-      args = {
+      arguments = {
          {
             meta = "filename"
          }
       }
    },
    flushleft = {
-      doc = "Flushed left lines."
+      summary = "Flushed left lines."
    },
    flushright = {
-      doc = "Flushed right lines."
+      summary = "Flushed right lines."
    },
    itemize = {
-      doc = "Bulleted lists."
+      summary = "Bulleted lists."
    },
    letter = {
-      doc = "Letters."
+      summary = "Letters."
    },
    list = {
-      args = {
+      arguments = {
          {
             meta = "labeling"
          },
@@ -1884,21 +1884,21 @@ environments = {
             meta = "spacing"
          }
       },
-      doc = "Generic list environment."
+      summary = "Generic list environment."
    },
    lrbox = {
-      args = {
+      arguments = {
          {
             meta = "\\cmd"
          }
       },
-      doc = "An environment like \\sbox."
+      summary = "An environment like \\sbox."
    },
    math = {
-      doc = "In-line math."
+      summary = "In-line math."
    },
    minipage = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "position",
@@ -1918,10 +1918,10 @@ environments = {
             meta = "width"
          }
       },
-      doc = "Miniature page."
+      summary = "Miniature page."
    },
    picture = {
-      args = {
+      arguments = {
          {
             delims = {"(", ")"},
             meta = "width, height"
@@ -1931,29 +1931,29 @@ environments = {
             meta = "xoffset, yoffset"
          }
       },
-      doc = "Picture with text, arrows, lines and circles."
+      summary = "Picture with text, arrows, lines and circles."
    },
    quotation = {
-      doc = "Include a quotation."
+      summary = "Include a quotation."
    },
    quote = {
-      doc = "Include a quotation."
+      summary = "Include a quotation."
    },
    tabbing = {
-      doc = "Align text arbitrarily."
+      summary = "Align text arbitrarily."
    },
    table = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "placement",
             optional = true
          }
       },
-      doc = "Floating tables."
+      summary = "Floating tables."
    },
    tabular = {
-      args = {
+      arguments = {
          {
             delims = {"[", "]"},
             meta = "pos",
@@ -1963,10 +1963,10 @@ environments = {
             meta = "cols"
          }
       },
-      doc = "Align text in columns."
+      summary = "Align text in columns."
    },
    ["tabular*"] = {
-      args = {
+      arguments = {
          {
             meta = "width"
          },
@@ -1981,23 +1981,23 @@ environments = {
       }
    },
    thebibliography = {
-      args = {
+      arguments = {
          {
             meta = "widest-label"
          }
       },
-      doc = "Bibliography or reference list."
+      summary = "Bibliography or reference list."
    },
    theorem = {
-      doc = "Theorems, lemmas, etc."
+      summary = "Theorems, lemmas, etc."
    },
    titlepage = {
-      doc = "For hand crafted title pages."
+      summary = "For hand crafted title pages."
    },
    verbatim = {
-      doc = "Simulating typed input."
+      summary = "Simulating typed input."
    },
    verse = {
-      doc = "For poetry and other things."
+      summary = "For poetry and other things."
    }
 }

@@ -11,16 +11,17 @@ local ManuscriptBibTeX = util.class(Manuscript)
 
 ManuscriptBibTeX.format = "bibtex"
 
-function ManuscriptBibTeX:global_scan()
+function ManuscriptBibTeX:__init(args)
+  Manuscript.__init(self, args)
   local bibitems = bibtex.parse(self.src)
   local idx = {}
   self.bib_index = idx
   for i, item in ipairs(bibitems) do
     idx[i] = {
       name = item.id,
-      filename = self.filename,
       pos = item.pos,
-      len = item.len,
+      cont = item.cont,
+      manuscript = self,
       text = item:pretty_print(),
       bibitem = item,
     }

@@ -5,819 +5,819 @@ source = {
 
 commands = {
   Delta = {
-    doc = "capital delta, greek",
+    summary = "capital delta, greek",
     symbol = "Δ"
   },
   Downarrow = {
-    doc = "down double arrow",
+    summary = "down double arrow",
     symbol = "⇓"
   },
   Gamma = {
-    doc = "capital gamma, greek",
+    summary = "capital gamma, greek",
     symbol = "Γ"
   },
   Im = {
-    doc = "imaginary part",
+    summary = "imaginary part",
     symbol = "ℑ"
   },
   Lambda = {
-    doc = "capital lambda, greek",
+    summary = "capital lambda, greek",
     symbol = "Λ"
   },
   Leftarrow = {
-    doc = "is implied by",
+    summary = "is implied by",
     symbol = "⇐"
   },
   Leftrightarrow = {
-    doc = "left and right double arrow",
+    summary = "left and right double arrow",
     symbol = "⇔"
   },
   Longleftarrow = {
-    doc = "long leftwards double arrow",
+    summary = "long leftwards double arrow",
     symbol = "⟸"
   },
   Longleftrightarrow = {
-    doc = "long left right double arrow",
+    summary = "long left right double arrow",
     symbol = "⟺"
   },
   Longrightarrow = {
-    doc = "long rightwards double arrow",
+    summary = "long rightwards double arrow",
     symbol = "⟹"
   },
   Omega = {
-    doc = "capital omega, greek",
+    summary = "capital omega, greek",
     symbol = "Ω"
   },
   Phi = {
-    doc = "capital phi, greek",
+    summary = "capital phi, greek",
     symbol = "Φ"
   },
   Pi = {
-    doc = "capital pi, greek",
+    summary = "capital pi, greek",
     symbol = "Π"
   },
   Psi = {
-    doc = "capital psi, greek",
+    summary = "capital psi, greek",
     symbol = "Ψ"
   },
   Re = {
-    doc = "real part",
+    summary = "real part",
     symbol = "ℜ"
   },
   Rightarrow = {
-    doc = "implies",
+    summary = "implies",
     symbol = "⇒"
   },
   Sigma = {
-    doc = "capital sigma, greek",
+    summary = "capital sigma, greek",
     symbol = "Σ"
   },
   Theta = {
-    doc = "capital theta, greek",
+    summary = "capital theta, greek",
     symbol = "Θ"
   },
   Uparrow = {
-    doc = "up double arrow",
+    summary = "up double arrow",
     symbol = "⇑"
   },
   Updownarrow = {
-    doc = "up and down double arrow",
+    summary = "up and down double arrow",
     symbol = "⇕"
   },
   Upsilon = {
-    doc = "capital upsilon, greek",
+    summary = "capital upsilon, greek",
     symbol = "Υ"
   },
   Vert = {
-    doc = "double vertical bar",
+    summary = "double vertical bar",
     symbol = "‖"
   },
   Xi = {
-    doc = "capital xi, greek",
+    summary = "capital xi, greek",
     symbol = "Ξ"
   },
   acute = {
-    doc = "acute accent",
+    summary = "acute accent",
     symbol = "◌́"
   },
   aleph = {
-    doc = "aleph, hebrew",
+    summary = "aleph, hebrew",
     symbol = "ℵ"
   },
   alpha = {
-    doc = "small alpha, greek",
+    summary = "small alpha, greek",
     symbol = "α"
   },
   amalg = {
-    doc = "amalgamation or coproduct",
+    summary = "amalgamation or coproduct",
     symbol = "⨿"
   },
   angle = {
-    doc = "angle",
+    summary = "angle",
     symbol = "∠"
   },
   approx = {
-    doc = "approximate",
+    summary = "approximate",
     symbol = "≈"
   },
   ast = {
-    doc = "centered asterisk",
+    summary = "centered asterisk",
     symbol = "∗"
   },
   asymp = {
-    doc = "asymptotically equal to",
+    summary = "asymptotically equal to",
     symbol = "≍"
   },
   backslash = {
-    doc = "reverse solidus",
+    summary = "reverse solidus",
     symbol = "\\"
   },
   bar = {
-    doc = "macron",
+    summary = "macron",
     symbol = "◌̄"
   },
   beta = {
-    doc = "small beta, greek",
+    summary = "small beta, greek",
     symbol = "β"
   },
   bigcap = {
-    doc = "intersection operator",
+    summary = "intersection operator",
     symbol = "⋂"
   },
   bigcup = {
-    doc = "union operator",
+    summary = "union operator",
     symbol = "⋃"
   },
   bigodot = {
-    doc = "n-ary circled dot operator",
+    summary = "n-ary circled dot operator",
     symbol = "⨀"
   },
   bigoplus = {
-    doc = "n-ary circled plus operator",
+    summary = "n-ary circled plus operator",
     symbol = "⨁"
   },
   bigotimes = {
-    doc = "n-ary circled times operator",
+    summary = "n-ary circled times operator",
     symbol = "⨂"
   },
   bigsqcup = {
-    doc = "n-ary square union operator",
+    summary = "n-ary square union operator",
     symbol = "⨆"
   },
   bigtriangledown = {
-    doc = "big down triangle, open",
+    summary = "big down triangle, open",
     symbol = "▽"
   },
   bigtriangleup = {
-    doc = "big up triangle, open",
+    summary = "big up triangle, open",
     symbol = "△"
   },
   biguplus = {
-    doc = "n-ary union operator with plus",
+    summary = "n-ary union operator with plus",
     symbol = "⨄"
   },
   bigvee = {
-    doc = "logical or operator",
+    summary = "logical or operator",
     symbol = "⋁"
   },
   bigwedge = {
-    doc = "logical and operator",
+    summary = "logical and operator",
     symbol = "⋀"
   },
   bot = {
-    doc = "bottom",
+    summary = "bottom",
     symbol = "⊥"
   },
   bowtie = {
-    doc = "bowtie",
+    summary = "bowtie",
     symbol = "⋈"
   },
   breve = {
-    doc = "breve",
+    summary = "breve",
     symbol = "◌̆"
   },
   cap = {
-    doc = "intersection",
+    summary = "intersection",
     symbol = "∩"
   },
   cdot = {
-    doc = "small middle dot",
+    summary = "small middle dot",
     symbol = "⋅"
   },
   cdotp = {
-    doc = "/centerdot b: middle dot",
+    summary = "/centerdot b: middle dot",
     symbol = "·"
   },
   check = {
-    doc = "caron",
+    summary = "caron",
     symbol = "◌̌"
   },
   chi = {
-    doc = "small chi, greek",
+    summary = "small chi, greek",
     symbol = "χ"
   },
   clubsuit = {
-    doc = "club suit symbol",
+    summary = "club suit symbol",
     symbol = "♣"
   },
   coprod = {
-    doc = "coproduct operator",
+    summary = "coproduct operator",
     symbol = "∐"
   },
   cup = {
-    doc = "union or logical sum",
+    summary = "union or logical sum",
     symbol = "∪"
   },
   dagger = {
-    doc = "dagger relation",
+    summary = "dagger relation",
     symbol = "†"
   },
   dashv = {
-    doc = "dash, vertical",
+    summary = "dash, vertical",
     symbol = "⊣"
   },
   ddagger = {
-    doc = "double dagger relation",
+    summary = "double dagger relation",
     symbol = "‡"
   },
   ddot = {
-    doc = "dieresis",
+    summary = "dieresis",
     symbol = "◌̈"
   },
   ddots = {
-    doc = "three dots, descending",
+    summary = "three dots, descending",
     symbol = "⋱"
   },
   delta = {
-    doc = "small delta, greek",
+    summary = "small delta, greek",
     symbol = "δ"
   },
   diamondsuit = {
-    doc = "diamond suit symbol",
+    summary = "diamond suit symbol",
     symbol = "♢"
   },
   div = {
-    doc = "divide sign",
+    summary = "divide sign",
     symbol = "÷"
   },
   dot = {
-    doc = "dot above",
+    summary = "dot above",
     symbol = "◌̇"
   },
   downarrow = {
-    doc = "downward arrow",
+    summary = "downward arrow",
     symbol = "↓"
   },
   ell = {
-    doc = "cursive small l",
+    summary = "cursive small l",
     symbol = "ℓ"
   },
   epsilon = {
-    doc = "greek lunate varepsilon symbol",
+    summary = "greek lunate varepsilon symbol",
     symbol = "ϵ"
   },
   equiv = {
-    doc = "identical with",
+    summary = "identical with",
     symbol = "≡"
   },
   eta = {
-    doc = "small eta, greek",
+    summary = "small eta, greek",
     symbol = "η"
   },
   exists = {
-    doc = "at least one exists",
+    summary = "at least one exists",
     symbol = "∃"
   },
   flat = {
-    doc = "musical flat",
+    summary = "musical flat",
     symbol = "♭"
   },
   forall = {
-    doc = "for all",
+    summary = "for all",
     symbol = "∀"
   },
   frown = {
-    doc = "down curve",
+    summary = "down curve",
     symbol = "⌢"
   },
   gamma = {
-    doc = "small gamma, greek",
+    summary = "small gamma, greek",
     symbol = "γ"
   },
   geq = {
-    doc = "/geq /ge r: greater-than-or-equal",
+    summary = "/geq /ge r: greater-than-or-equal",
     symbol = "≥"
   },
   gg = {
-    doc = "much greater than, type 2",
+    summary = "much greater than, type 2",
     symbol = "≫"
   },
   grave = {
-    doc = "grave accent",
+    summary = "grave accent",
     symbol = "◌̀"
   },
   hat = {
-    doc = "circumflex accent",
+    summary = "circumflex accent",
     symbol = "◌̂"
   },
   heartsuit = {
-    doc = "heart suit symbol",
+    summary = "heart suit symbol",
     symbol = "♡"
   },
   hookleftarrow = {
-    doc = "left arrow-hooked",
+    summary = "left arrow-hooked",
     symbol = "↩"
   },
   hookrightarrow = {
-    doc = "right arrow-hooked",
+    summary = "right arrow-hooked",
     symbol = "↪"
   },
   imath = {
-    doc = "mathematical italic small dotless i",
+    summary = "mathematical italic small dotless i",
     symbol = "𝚤"
   },
   ["in"] = {
-    doc = "set membership, variant",
+    summary = "set membership, variant",
     symbol = "∈"
   },
   infty = {
-    doc = "infinity",
+    summary = "infinity",
     symbol = "∞"
   },
   int = {
-    doc = "integral operator",
+    summary = "integral operator",
     symbol = "∫"
   },
   iota = {
-    doc = "small iota, greek",
+    summary = "small iota, greek",
     symbol = "ι"
   },
   jmath = {
-    doc = "mathematical italic small dotless j",
+    summary = "mathematical italic small dotless j",
     symbol = "𝚥"
   },
   kappa = {
-    doc = "small kappa, greek",
+    summary = "small kappa, greek",
     symbol = "κ"
   },
   lambda = {
-    doc = "small lambda, greek",
+    summary = "small lambda, greek",
     symbol = "λ"
   },
   langle = {
-    doc = "mathematical left angle bracket",
+    summary = "mathematical left angle bracket",
     symbol = "⟨"
   },
   lbrace = {
-    doc = "left curly bracket",
+    summary = "left curly bracket",
     symbol = "{"
   },
   lceil = {
-    doc = "left ceiling",
+    summary = "left ceiling",
     symbol = "⌈"
   },
   leftarrow = {
-    doc = "/leftarrow /gets a: leftward arrow",
+    summary = "/leftarrow /gets a: leftward arrow",
     symbol = "←"
   },
   leftharpoondown = {
-    doc = "left harpoon-down",
+    summary = "left harpoon-down",
     symbol = "↽"
   },
   leftharpoonup = {
-    doc = "left harpoon-up",
+    summary = "left harpoon-up",
     symbol = "↼"
   },
   leftrightarrow = {
-    doc = "left and right arrow",
+    summary = "left and right arrow",
     symbol = "↔"
   },
   leq = {
-    doc = "/leq /le r: less-than-or-equal",
+    summary = "/leq /le r: less-than-or-equal",
     symbol = "≤"
   },
   lfloor = {
-    doc = "left floor",
+    summary = "left floor",
     symbol = "⌊"
   },
   lgroup = {
-    doc = "mathematical left flattened parenthesis",
+    summary = "mathematical left flattened parenthesis",
     symbol = "⟮"
   },
   ll = {
-    doc = "much less than, type 2",
+    summary = "much less than, type 2",
     symbol = "≪"
   },
   lmoustache = {
-    doc = "upper left or lower right curly bracket section",
+    summary = "upper left or lower right curly bracket section",
     symbol = "⎰"
   },
   longleftarrow = {
-    doc = "long leftwards arrow",
+    summary = "long leftwards arrow",
     symbol = "⟵"
   },
   longleftrightarrow = {
-    doc = "long left right arrow",
+    summary = "long left right arrow",
     symbol = "⟷"
   },
   longmapsto = {
-    doc = "long rightwards arrow from bar",
+    summary = "long rightwards arrow from bar",
     symbol = "⟼"
   },
   longrightarrow = {
-    doc = "long rightwards arrow",
+    summary = "long rightwards arrow",
     symbol = "⟶"
   },
   mapsto = {
-    doc = "maps to, rightward",
+    summary = "maps to, rightward",
     symbol = "↦"
   },
   mid = {
-    doc = "/mid r:",
+    summary = "/mid r:",
     symbol = "∣"
   },
   models = {
-    doc = "models (vertical, short double dash)",
+    summary = "models (vertical, short double dash)",
     symbol = "⊧"
   },
   mp = {
-    doc = "minus-or-plus sign",
+    summary = "minus-or-plus sign",
     symbol = "∓"
   },
   mu = {
-    doc = "small mu, greek",
+    summary = "small mu, greek",
     symbol = "μ"
   },
   nabla = {
-    doc = "nabla, del, hamilton operator",
+    summary = "nabla, del, hamilton operator",
     symbol = "∇"
   },
   natural = {
-    doc = "music natural",
+    summary = "music natural",
     symbol = "♮"
   },
   ne = {
-    doc = "/ne /neq r: not equal",
+    summary = "/ne /neq r: not equal",
     symbol = "≠"
   },
   nearrow = {
-    doc = "ne pointing arrow",
+    summary = "ne pointing arrow",
     symbol = "↗"
   },
   neg = {
-    doc = "/neg /lnot not sign",
+    summary = "/neg /lnot not sign",
     symbol = "¬"
   },
   ni = {
-    doc = "contains, variant",
+    summary = "contains, variant",
     symbol = "∋"
   },
   nu = {
-    doc = "small nu, greek",
+    summary = "small nu, greek",
     symbol = "ν"
   },
   nwarrow = {
-    doc = "nw pointing arrow",
+    summary = "nw pointing arrow",
     symbol = "↖"
   },
   odot = {
-    doc = "middle dot in circle",
+    summary = "middle dot in circle",
     symbol = "⊙"
   },
   oint = {
-    doc = "contour integral operator",
+    summary = "contour integral operator",
     symbol = "∮"
   },
   omega = {
-    doc = "small omega, greek",
+    summary = "small omega, greek",
     symbol = "ω"
   },
   ominus = {
-    doc = "minus sign in circle",
+    summary = "minus sign in circle",
     symbol = "⊖"
   },
   oplus = {
-    doc = "plus sign in circle",
+    summary = "plus sign in circle",
     symbol = "⊕"
   },
   oslash = {
-    doc = "solidus in circle",
+    summary = "solidus in circle",
     symbol = "⊘"
   },
   otimes = {
-    doc = "multiply sign in circle",
+    summary = "multiply sign in circle",
     symbol = "⊗"
   },
   overbrace = {
-    doc = "top curly bracket (mathematical use)",
+    summary = "top curly bracket (mathematical use)",
     symbol = "⏞"
   },
   overleftarrow = {
-    doc = "combining left arrow above",
+    summary = "combining left arrow above",
     symbol = "⃖"
   },
   overrightarrow = {
-    doc = "combining left arrow above",
+    summary = "combining left arrow above",
     symbol = "⃗"
   },
   parallel = {
-    doc = "parallel",
+    summary = "parallel",
     symbol = "∥"
   },
   partial = {
-    doc = "partial differential",
+    summary = "partial differential",
     symbol = "∂"
   },
   perp = {
-    doc = "perpendicular",
+    summary = "perpendicular",
     symbol = "⟂"
   },
   phi = {
-    doc = "/straightphi - small phi, greek",
+    summary = "/straightphi - small phi, greek",
     symbol = "ϕ"
   },
   pi = {
-    doc = "small pi, greek",
+    summary = "small pi, greek",
     symbol = "π"
   },
   pm = {
-    doc = "plus-or-minus sign",
+    summary = "plus-or-minus sign",
     symbol = "±"
   },
   prec = {
-    doc = "precedes",
+    summary = "precedes",
     symbol = "≺"
   },
   preceq = {
-    doc = "precedes above single-line equals sign",
+    summary = "precedes above single-line equals sign",
     symbol = "⪯"
   },
   prime = {
-    doc = "prime or minute, not superscripted",
+    summary = "prime or minute, not superscripted",
     symbol = "′"
   },
   prod = {
-    doc = "product operator",
+    summary = "product operator",
     symbol = "∏"
   },
   propto = {
-    doc = "is proportional to",
+    summary = "is proportional to",
     symbol = "∝"
   },
   psi = {
-    doc = "small psi, greek",
+    summary = "small psi, greek",
     symbol = "ψ"
   },
   rangle = {
-    doc = "mathematical right angle bracket",
+    summary = "mathematical right angle bracket",
     symbol = "⟩"
   },
   rbrace = {
-    doc = "right curly bracket",
+    summary = "right curly bracket",
     symbol = "}"
   },
   rceil = {
-    doc = "right ceiling",
+    summary = "right ceiling",
     symbol = "⌉"
   },
   rfloor = {
-    doc = "right floor",
+    summary = "right floor",
     symbol = "⌋"
   },
   rgroup = {
-    doc = "mathematical right flattened parenthesis",
+    summary = "mathematical right flattened parenthesis",
     symbol = "⟯"
   },
   rho = {
-    doc = "small rho, greek",
+    summary = "small rho, greek",
     symbol = "ρ"
   },
   rightarrow = {
-    doc = "/rightarrow /to a: rightward arrow",
+    summary = "/rightarrow /to a: rightward arrow",
     symbol = "→"
   },
   rightharpoondown = {
-    doc = "right harpoon-down",
+    summary = "right harpoon-down",
     symbol = "⇁"
   },
   rightharpoonup = {
-    doc = "right harpoon-up",
+    summary = "right harpoon-up",
     symbol = "⇀"
   },
   rmoustache = {
-    doc = "upper right or lower left curly bracket section",
+    summary = "upper right or lower left curly bracket section",
     symbol = "⎱"
   },
   searrow = {
-    doc = "se pointing arrow",
+    summary = "se pointing arrow",
     symbol = "↘"
   },
   setminus = {
-    doc = "reverse solidus operator",
+    summary = "reverse solidus operator",
     symbol = "⧵"
   },
   sharp = {
-    doc = "musical sharp",
+    summary = "musical sharp",
     symbol = "♯"
   },
   sigma = {
-    doc = "small sigma, greek",
+    summary = "small sigma, greek",
     symbol = "σ"
   },
   sim = {
-    doc = "similar",
+    summary = "similar",
     symbol = "∼"
   },
   simeq = {
-    doc = "similar, equals",
+    summary = "similar, equals",
     symbol = "≃"
   },
   smile = {
-    doc = "up curve",
+    summary = "up curve",
     symbol = "⌣"
   },
   spadesuit = {
-    doc = "spades suit symbol",
+    summary = "spades suit symbol",
     symbol = "♠"
   },
   sqcap = {
-    doc = "square intersection",
+    summary = "square intersection",
     symbol = "⊓"
   },
   sqcup = {
-    doc = "square union",
+    summary = "square union",
     symbol = "⊔"
   },
   sqrt = {
-    doc = "radical",
+    summary = "radical",
     symbol = "√"
   },
   sqsubseteq = {
-    doc = "square subset, equals",
+    summary = "square subset, equals",
     symbol = "⊑"
   },
   sqsupseteq = {
-    doc = "square superset, equals",
+    summary = "square superset, equals",
     symbol = "⊒"
   },
   star = {
-    doc = "small star, filled, low",
+    summary = "small star, filled, low",
     symbol = "⋆"
   },
   subset = {
-    doc = "subset or is implied by",
+    summary = "subset or is implied by",
     symbol = "⊂"
   },
   subseteq = {
-    doc = "subset, equals",
+    summary = "subset, equals",
     symbol = "⊆"
   },
   succ = {
-    doc = "succeeds",
+    summary = "succeeds",
     symbol = "≻"
   },
   succeq = {
-    doc = "succeeds above single-line equals sign",
+    summary = "succeeds above single-line equals sign",
     symbol = "⪰"
   },
   sum = {
-    doc = "summation operator",
+    summary = "summation operator",
     symbol = "∑"
   },
   supset = {
-    doc = "superset or implies",
+    summary = "superset or implies",
     symbol = "⊃"
   },
   supseteq = {
-    doc = "superset, equals",
+    summary = "superset, equals",
     symbol = "⊇"
   },
   surd = {
-    doc = "radical",
+    summary = "radical",
     symbol = "√"
   },
   swarrow = {
-    doc = "sw pointing arrow",
+    summary = "sw pointing arrow",
     symbol = "↙"
   },
   tau = {
-    doc = "small tau, greek",
+    summary = "small tau, greek",
     symbol = "τ"
   },
   theta = {
-    doc = "straight theta, small theta, greek",
+    summary = "straight theta, small theta, greek",
     symbol = "θ"
   },
   tilde = {
-    doc = "tilde",
+    summary = "tilde",
     symbol = "◌̃"
   },
   times = {
-    doc = "multiply sign",
+    summary = "multiply sign",
     symbol = "×"
   },
   top = {
-    doc = "top",
+    summary = "top",
     symbol = "⊤"
   },
   triangleleft = {
-    doc = "(large) left triangle, open; z notation domain restriction",
+    summary = "(large) left triangle, open; z notation domain restriction",
     symbol = "◁"
   },
   triangleright = {
-    doc = "(large) right triangle, open; z notation range restriction",
+    summary = "(large) right triangle, open; z notation range restriction",
     symbol = "▷"
   },
   underbrace = {
-    doc = "bottom curly bracket (mathematical use)",
+    summary = "bottom curly bracket (mathematical use)",
     symbol = "⏟"
   },
   uparrow = {
-    doc = "upward arrow",
+    summary = "upward arrow",
     symbol = "↑"
   },
   updownarrow = {
-    doc = "up and down arrow",
+    summary = "up and down arrow",
     symbol = "↕"
   },
   uplus = {
-    doc = "plus sign in union",
+    summary = "plus sign in union",
     symbol = "⊎"
   },
   upsilon = {
-    doc = "small upsilon, greek",
+    summary = "small upsilon, greek",
     symbol = "υ"
   },
   varepsilon = {
-    doc = "rounded small varepsilon    , greek",
+    summary = "rounded small varepsilon    , greek",
     symbol = "ε"
   },
   varphi = {
-    doc = "curly or open small phi, greek",
+    summary = "curly or open small phi, greek",
     symbol = "φ"
   },
   varpi = {
-    doc = "rounded small pi (pomega), greek",
+    summary = "rounded small pi (pomega), greek",
     symbol = "ϖ"
   },
   varrho = {
-    doc = "rounded small rho, greek",
+    summary = "rounded small rho, greek",
     symbol = "ϱ"
   },
   varsigma = {
-    doc = "terminal sigma, greek",
+    summary = "terminal sigma, greek",
     symbol = "ς"
   },
   vartheta = {
-    doc = "/vartheta - curly or open theta",
+    summary = "/vartheta - curly or open theta",
     symbol = "ϑ"
   },
   vdash = {
-    doc = "vertical, dash",
+    summary = "vertical, dash",
     symbol = "⊢"
   },
   vdots = {
-    doc = "vertical ellipsis",
+    summary = "vertical ellipsis",
     symbol = "⋮"
   },
   vec = {
-    doc = "combining right arrow above",
+    summary = "combining right arrow above",
     symbol = "◌⃗"
   },
   vee = {
-    doc = "/vee /lor b: logical or",
+    summary = "/vee /lor b: logical or",
     symbol = "∨"
   },
   vert = {
-    doc = "vertical bar",
+    summary = "vertical bar",
     symbol = "|"
   },
   wedge = {
-    doc = "/wedge /land b: logical and",
+    summary = "/wedge /land b: logical and",
     symbol = "∧"
   },
   widehat = {
-    doc = "circumflex accent",
+    summary = "circumflex accent",
     symbol = "̂"
   },
   widetilde = {
-    doc = "tilde",
+    summary = "tilde",
     symbol = "̃"
   },
   wp = {
-    doc = "weierstrass p",
+    summary = "weierstrass p",
     symbol = "℘"
   },
   wr = {
-    doc = "wreath product",
+    summary = "wreath product",
     symbol = "≀"
   },
   xi = {
-    doc = "small xi, greek",
+    summary = "small xi, greek",
     symbol = "ξ"
   },
   zeta = {
-    doc = "small zeta, greek",
+    summary = "small zeta, greek",
     symbol = "ζ"
   }
 }

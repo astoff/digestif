@@ -36,22 +36,22 @@ function util.between_balanced(l, r, token) --nicer name?
   return P{l * C(((token - l - r) + V(1)/0)^0) * r}
 end
 
-function util.trimmer(space, token)
-  space = space and P(space) or locale_table.space
-  token = token and P(token) or char
-  return space^0 * C((space^0 * (token - space)^1)^0)
-end
+-- function util.trimmer(space, token)
+--   space = space and P(space) or locale_table.space
+--   token = token and P(token) or char
+--   return space^0 * C((space^0 * (token - space)^1)^0)
+-- end
 
-function util.cleaner(space, token)
-  space = space and P(space) or locale_table.space
-  token = token and P(token) or char
-  return space^0 * Cs(((space^1 / " " + true) * (token - space)^1)^0)
-end
+-- function util.cleaner(space, token)
+--   space = space and P(space) or locale_table.space
+--   token = token and P(token) or char
+--   return space^0 * Cs(((space^1 / " " + true) * (token - space)^1)^0)
+-- end
 
-function util.replacer(patt, repl, token)
-  token = token and P(token) or char
-  return Cs((P(patt) / repl + token)^0)
-end
+-- function util.replacer(patt, repl, token)
+--   token = token and P(token) or char
+--   return Cs((P(patt) / repl + token)^0)
+-- end
 
 -- string.upper doesn't handle well non-ASCII characters...
 local function case_fold_char(c)
@@ -112,7 +112,7 @@ function util.split(sep, token, nulls)
     local item = C(gobble_until(sep, token))
     patt = Ct((item * sep)^0 * item)
   else
-    patt = Ct(search(sep^0 * C((token - sep)^1))^0)
+    patt = Ct(search(sep^0 * C((token - sep)^1))^0) -- need to use token argument?
   end
   return function (...) return match(patt, ...) end
 end

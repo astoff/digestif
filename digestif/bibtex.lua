@@ -139,7 +139,7 @@ function bibtex.parse(src, options)
         type = entry_type,
         fields = fields,
         pos = t.start,
-        len = t.stop - t.start
+        cont = t.stop
       }
       ids[id] = item
       items[#items + 1] = item

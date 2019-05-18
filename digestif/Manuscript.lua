@@ -1,6 +1,9 @@
+--- Manuscript class
+-- @classmod digestif.Manuscript
+
 local FileCache = require "digestif.FileCache"
 local config = require "digestif.config"
-local data = require "digestif.data"
+local require_data = require "digestif.data".require
 local util = require "digestif.util"
 
 local concat, sort, unpack = table.concat, table.sort, table.unpack
@@ -9,7 +12,8 @@ local nested_get, nested_put = util.nested_get, util.nested_put
 local map, update, merge = util.map, util.update, util.merge
 local min, max = math.min, math.max
 
-local clean = util.clean() -- should be handled by parser
+local matcher = util.matcher
+local fuzzy_matcher = util.fuzzy_matcher
 
 local Manuscript = util.class()
 
@@ -31,6 +35,12 @@ local function ManuscriptFactory(_, args)
 end
 getmetatable(Manuscript).__call = ManuscriptFactory
 
+local function guess_format(filename)
+  if filename:match("%.bib$") then
+    return "bibtex"
+  end
+end
+
 --- Create a new manuscript object.
 --
 -- The argument is a table with the following keys:
@@ -50,70 +60,101 @@ function Manuscript:__init(args)
   self.cache = args.cache or parent and parent.cache or FileCache()
   self.src = src or self.cache:get(filename) or ""
   self.depth = 1 + (parent and parent.depth or 0)
-  self.modules, self.commands, self.environments = {}, {}, {}
-  if parent then
-    setmetatable(self.modules,      {__index = parent.modules}     )
-    setmetatable(self.commands,     {__index = parent.commands}    )
-    setmetatable(self.environments, {__index = parent.environments})
-  end
+  self.modules = {}
+  self.commands = {}
+  self.environments = {}
   self.children = {}
   self.bib_index = {}
   self.child_index = {}
   self.heading_index = {}
   self.label_index = {}
+  if parent then
+    setmetatable(self.modules,      {__index = parent.modules}     )
+    setmetatable(self.commands,     {__index = parent.commands}    )
+    setmetatable(self.environments, {__index = parent.environments})
+  end
   self:add_module(self.format)
-  self:global_scan()
+  self:scan(self.init_callbacks)
+  for _, item in ipairs(self.child_index) do
+    self.children[item.name] = Manuscript{
+      filename = item.name,
+      parent = self,
+      format = guess_format(item.name)
+    }
+  end
 end
+
+Manuscript.init_callbacks = {}
 
 --- Get a substring of the manuscript.
 --
--- The argument can be a pair of integers or a table with fields `pos`
--- and `len`.
+-- The argument can be a pair of integers or a table with fields pos
+-- and cont.
 --
--- @param i The intial position, or a table
+-- @param i The intial position, or a range table
 -- @param j The final position (ignored if i is a table)
 -- @return A string
 --
 function Manuscript:substring(i, j)
-   if not i then return nil end
-   if type(i) == "table" then
-      j = i.len and (i.pos + i.len - 1)
-      i = i.pos
-   end
-   return self.src:sub(i,j)
+  if not i then return nil end
+  if type(i) == "table" then
+    j = i.cont - 1
+    i = i.pos
+  end
+  return self.src:sub(i, j)
 end
 
 --- Get a substring of the manuscript, trimmed
 --
--- Surrounding white space and comments removed.
---
--- @param i The intial position, or a table
+-- @param i The intial position, or a range table
 -- @param j The final position (ignored if i is a table)
 -- @return A string
 --
 function Manuscript:substring_trimmed(i, j)
-   return self.parser:trim(self:substring(i,j))
+  return self.parser.trim(self:substring(i,j))
 end
 
---- Get a substring of the manuscript, stripped
+--- Get a substring of the manuscript, trimmed and without comments.
 --
--- Surrounding white space and interspersed comments removed.
---
--- @param i The intial position, or a table
+-- @param i The intial position, or a range table
 -- @param j The final position (ignored if i is a table)
 -- @return A string
-
+--
 function Manuscript:substring_stripped(i, j)
-   return self.parser:trim(self.parser:strip_comments(self:substring(i,j)))
+  local parser = self.parser
+  return parser.trim(parser.strip_comments(self:substring(i,j)))
 end
 
--- Returns a list of ranges, with nested ranges `key` and, if
--- present, `value`.
-function Manuscript:parse_keys(range)
-   return self.parser:parse_keys(self.src, range.pos, range.len)
+--- Get a substring of the manuscript, without commments and reduced
+-- to one line.
+--
+-- @param i The intial position, or a range table
+-- @param j The final position (ignored if i is a table)
+-- @return A string
+--
+function Manuscript:substring_clean(i, j)
+  local parser = self.parser
+  return parser.clean(parser.strip_comments(self:substring(i,j)))
 end
 
---- Returns a nested list of key/value tables
+--- Parse a key-value list in a given range.
+--
+-- Returns a list of ranges, with additional fields "key" and "value"
+-- (if present).  These are range tables as well.
+--
+-- @param range The range to scan
+-- @return a list of annotated ranges
+--
+function Manuscript:parse_kvlist(range)
+  local s = self:substring(1, range.cont - 1)
+  return self.parser.parse_kvlist(s, range.pos)
+end
+
+--- Read the contents of a key-value list in the manuscript.
+--
+-- Returns a nested list of tables with fields "key" and "value" (if
+-- present), containing the corresponding text in the source.
+--
 function Manuscript:read_keys(range)
    local tbl = self:parse_keys(range)
    local r = {}
@@ -126,108 +167,111 @@ function Manuscript:read_keys(range)
    return r
 end
 
---- Returns a list of strings.
-function Manuscript:read_list(range)
-   return util.map(function (x) return x.key end,
-      self:read_keys(range))
+--- Read the contents of a list in the manuscript.
+--
+-- Returns a list of strings.
+--
+function Manuscript:read_list(i, j)
+  local parser = self.parser
+  local s = self:substring(i, j)
+  return parser.read_list(s)
 end
 
---- Parse the arguments of a macro.
---
--- Returns nil if pos does not point to a control sequence, or the
--- macro is unknown.
+--- Parse the arguments of a command.
 --
 -- @param pos A position in the source
+-- @param cs The command name (optional)
 -- @return A list of ranges
 --
-function Manuscript:parse_cs_args(pos, cs)
-   local cmd = self.commands[cs]
-   if cmd and cmd.args then
-      pos = 1 + pos + string.len(cs)
-      return self.parser:parse_args(self.src, pos, cmd.args)
-   else
-      return {pos = pos, len = string.len(cs or "")}
-   end
+function Manuscript:parse_command(pos, cs)
+  local parser = self.parser
+  if not cs then
+    cs = parser.csname:match(self.src, pos) or ""
+  end
+  local cmd = self.commands[cs]
+  local args = cmd and cmd.arguments
+  local cont = 1 + pos + #cs
+  if args then
+    local val = parser.parse_args(args, self.src, cont)
+    val.pos = pos
+    return val
+  else
+    return {pos = pos, cont = cont}
+  end
 end
 
-function Manuscript:parse_env_args(pos, cs)
-   local r = self:parse_cs_args(pos, cs)
-   local env = self.environments[self:substring(r[1])]
-   if env and env.args then
-      local pos = 1 + r.pos + r.len
-      return r, self.parser:parse_args(self.src, pos, env.args)
-   else
-      return {pos = r.pos, len = r.len}
-   end
-end
-
+--- Find the line number (and its location) of a given position.
+--
+-- @param pos A position in the source
+-- @return The line number
+-- @return The line's starting position
+--
 function Manuscript:line_number_at(pos)
   local src_len = #self.src
   if pos < 1 then pos = src_len + pos + 1 end
   return self.cache:get_line_number(self.filename, min(pos, src_len))
 end
 
-function Manuscript:position_at(line, col)
-  local filename = self.filename
-  -- needs bound tests
-  return self.cache:get_position(filename, line, col)
-end
-
 --- Find paragraph before a position.
 --
--- @param pos a position in the source
--- @return the paragraph's starting position
+-- @param pos A position in the source
+-- @return The paragraph's starting position
 --
 function Manuscript:find_par(pos)
-   local i, j = 1, 1
-   local patt, src = self.parser.patt.next_par, self.src
-   while i == j do
-      j = patt:match(src, i)
-      if j and j <= pos then i = j end
-   end
-   return i
+  local src = self.src
+  if pos < 1 then pos = #src + pos + 1 end
+  local lines = self.cache:get_lines(self.filename, min(pos, #src))
+  local l = self:line_number_at(pos)
+  for k = l, 1, -1 do
+    if self.parser.is_blank_line(src, lines[k]) then
+      return lines[k]
+    end
+  end
+  return 1
 end
+--    local i, j = 1, 1
+--    local patt, src = self.parser.next_par, self.src
+--    while i == j do
+--       j = patt:match(src, i)
+--       if j and j <= pos then i = j end
+--    end
+--    return i
+-- end
 
 local preceding_command_callbacks = {}
 
-function preceding_command_callbacks.cs(m, pos, cs, end_pos)
-   if pos > end_pos then return nil end
-   local r = m:parse_cs_args(pos, cs)
-   if r.pos + r.len <= end_pos then
-     local next_pos = m.parser:next_nonblank(m.src, r.pos + r.len)
-     if next_pos == end_pos then
-       return nil, pos, cs, r
-     else
-       return r.pos + r.len, end_pos
-     end
-   else
-     return pos + #cs, end_pos
-   end
-end
-
+--- Find the preceding command, if any.
+--
+-- If there is a command whose arguments end right before the given
+-- position, returns the position, command name, and parse data of
+-- the preceding command.
+--
 function Manuscript:find_preceding_command(pos)
   local par_pos = self:find_par(pos)
   return self:scan(preceding_command_callbacks, par_pos, pos)
 end
 
---- Test if position is blank.
---
--- @param pos A position in the source
--- @return A boolean, true if position is blank space
---
-function Manuscript:is_blank(pos)
-   return self.parser:blank(self.src, pos)
+function preceding_command_callbacks.cs(self, pos, cs, end_pos)
+  if pos > end_pos then return nil end
+  local r = self:parse_command(pos, cs)
+  if r.cont <= end_pos then
+    local next_pos = self.parser.next_nonblank(self.src, r.cont)
+    if next_pos == end_pos then
+      return nil, pos, cs, r
+    end
+  end
+  return r.cont, end_pos
 end
 
 --- Iterator to transverse a given index documentwise.
 --
--- This recursevely iterates over entries of `self.name` and
--- `child.name` for each child of the manuscript, depth first.  `name`
+-- This recursevely iterates over entries of "self.name" and
+-- "child.name" for each child of the manuscript, depth first.  "name"
 -- refers to an index, that is, a list of tables containing an entry
--- `pos`.
+-- "pos".
 --
 -- @param name The name of an index (a string)
-
+--
 function Manuscript:each_of(name)
    local stack = {}
    local script = self
@@ -289,7 +333,7 @@ end
 -- @param pos Starting position of the scan
 --
 function Manuscript:scan(callbacks, pos, ...)
-  local patt = self.parser.patt.next_thing3
+  local patt = self.parser.next_thing
   local match = patt.match
   local commands = self.commands
   local src = self.src
@@ -304,41 +348,25 @@ function Manuscript:scan(callbacks, pos, ...)
       return scan(pos2, ...)
     end
   end
-  return scan(pos, ...)
+  return scan(pos or 1, ...)
 end
 
--- function Manuscript:scan(callbacks, pos, ...) -- with while loop instead of tail calls
---    local patt = self.parser.patt.next_thing3
---    local match = patt.match
---    local src, commands = self.src, self.commands
---    local v1, v2, v3 = ...
---    while pos do
---       local pos1, kind, detail, pos2 = match(patt, src, pos)
---       if not pos1 then
---          return v1, v2, v3
---       end
---       local cmd = kind == "cs" and commands[detail]
---       local callback = cmd and callbacks[cmd.action] or callbacks[kind]
---       if callback then
---          pos, v1, v2, v3 = callback(self, pos1, detail, v1, v2, v3)
---       else
---          pos = pos2
---       end
---    end
---    return v1, v2, v3
--- end
-
--- ¶ Global scanning
-
 function Manuscript:add_module(name)
-   local m = data(name)
-   if (not m) or self.modules[name] then return end
-   self.modules[name] = m
-   for _, n in ipairs(m.dependencies or {}) do
+  if self.modules[name] then return end
+  local mod = require_data(name)
+  if not mod then return end
+  self.modules[name] = mod
+  if mod.dependencies then
+    for _, n in ipairs(mod.dependencies) do
       self:add_module(n)
-   end
-   if m.commands then util.update(self.commands, m.commands) end
-   if m.environments then util.update(self.environments, m.environments) end
+    end
+  end
+  if mod.commands then
+    update(self.commands, mod.commands)
+  end
+  if mod.environments then
+    update(self.environments, mod.environments)
+  end
 end
 
 function Manuscript:add_children(filename)
@@ -366,35 +394,14 @@ function Manuscript:add_outline(e, tree)
    end
 end
 
-Manuscript.global_callbacks = {}
-
-local function guess_format(filename)
-  if filename:match("%.bib$") then
-    return "bibtex"
-  end
-end
-
---- Scan the whole document, initializing the macro and label list
--- outline, etc.
-function Manuscript:global_scan()
-  self:scan(self.global_callbacks, 1)
-  for _, input in ipairs(self.child_index) do
-    self.children[input.name] = Manuscript{
-      filename = input.name,
-      parent = self,
-      format = guess_format(input.name)
-    }
-  end
-end
-
 -- ¶ Local scanning (get local context)
 
 --- Scan the current paragraph, returning the context.
 --
 -- This is a list of nested annotated ranges, starting from the
 -- innermost.
--- 
--- @param pos A source position
+--
+-- @param pos A position in the source
 -- @return A nested list of annotated ranges
 --
 function Manuscript:get_context(pos)
@@ -402,113 +409,114 @@ function Manuscript:get_context(pos)
 end
 
 local function local_scan_parse_keys(m, context, pos)
-   local keys = m:parse_keys(context)
-   for _, k in ipairs(keys) do -- are we inside a key/list item?
-      if k.pos and k.pos <= pos and pos <= k.pos + k.len then
-         local key = m:substring_trimmed(k.key)
-         context = {
-            key = key,
-            data = util.nested_get(context.data.keys, key), -- or fetch context-dependent keys, say on a usepackage
-            pos = k.pos,
-            len = k.len,
-            parent = context
-         }
-         local v = k.value
-         if v and v.pos and v.pos <= pos and pos <= v.pos + v.len then -- are we inside the value of a key?
-            local value = m:substring_trimmed(v)
-            context = {
-               value = value,
-               data = util.nested_get(context.data.values, value), -- what if "value" is command-like?
-               pos = v.pos,
-               len = v.len,
-               parent = context
-            }
-         end
-         break
+  local items = m:parse_kvlist(context)
+  for _, it in ipairs(items) do -- are we inside a key/list item?
+    if it.pos and it.pos <= pos and pos <= it.cont then
+      local key = m:substring_trimmed(it.key)
+      context = {
+        key = key,
+        data = util.nested_get(context.data.keys, key), -- or fetch context-dependent keys, say on a usepackage
+        pos = it.pos,
+        cont = it.cont,
+        parent = context
+      }
+      local v = it.value
+      if v and v.pos and v.pos <= pos and pos <= v.cont then -- are we inside the value of a key?
+        local value = m:substring_trimmed(v)
+        context = {
+          value = value,
+          data = util.nested_get(context.data.values, value), -- what if "value" is command-like?
+          pos = v.pos,
+          cont = v.cont,
+          parent = context
+        }
       end
-   end
-   return context
+      break
+    end
+  end
+  return context
 end
 
 Manuscript.context_callbacks = {}
 
-function Manuscript.context_callbacks.cs(m, pos, cs, context, end_pos)
-   if pos > end_pos then return nil, context end -- stop parse
-   local r = m:parse_cs_args(pos, cs)
-   if end_pos <= r.pos + r.len then
-      context = {
-         cs = cs,
-         data = m.commands[cs],
-         pos = pos,
-         len = r.pos + r.len - pos,
-         parent = context
-      }
-   elseif cs == "begin" then
-      local env_name = m:substring(r[1])
-      local env = m.environments[env_name] or {}
-      local q = m.parser:parse_args(m.src, r.pos + r.len, env.args or {})
-      if q.pos + q.len < end_pos then
-         return q.pos + q.len, context, end_pos -- end_pos is after current thing
-      end
-      context = {
-         env = env_name,
-         data = m.environments[env_name],
-         pos = pos,
-         len = r.pos + r.len - pos,
-         parent = context
-      }
-      r = q
-   else -- pos is after current thing
-      return r.pos + r.len, context, end_pos
-   end
+function Manuscript.context_callbacks.cs(self, pos, cs, context, end_pos)
+  if pos > end_pos then return nil, context end -- stop parse
+  local r = self:parse_command(pos, cs)
+  if end_pos <= r.cont then
+    context = {
+      cs = cs,
+      data = self.commands[cs],
+      pos = pos,
+      cont = r.cont,
+      parent = context
+    }
+  elseif cs == "begin" then
+    local env_name = self:substring(r[1])
+    local env = self.environments[env_name]
+    local args = env and env.arguments
+    if not args then return r.cont, context, end_pos end
+    local q = self.parser.parse_args(args, self.src, r.cont)
+    if q.cont < end_pos then
+      return q.cont, context, end_pos -- end_pos is after current thing
+    end
+    context = {
+      env = env_name,
+      data = self.environments[env_name],
+      pos = pos,
+      cont = q.cont,
+      parent = context
+    }
+    r = q
+  else -- pos is after current thing
+    return r.cont, context, end_pos
+  end
 
-   for i, arg in ipairs(r) do -- are we inside an argument?
-      if arg.pos and arg.pos <= end_pos and end_pos <= arg.pos + arg.len then
-         context = {
-            arg = i,
-            data = util.nested_get(context.data, "args", i),
-            pos = arg.pos,
-            len = arg.len,
-            parent = context
-         }
-         if context.data and context.data.keys then
-            context = local_scan_parse_keys(m, context, end_pos)
-         end
-         return context.pos, context, end_pos
+  for i, arg in ipairs(r) do -- are we inside an argument?
+    if arg.pos and arg.pos <= end_pos and end_pos <= arg.cont then
+      context = {
+        arg = i,
+        data = nested_get(context.data, "arguments", i),
+        pos = arg.pos,
+        cont = arg.cont,
+        parent = context
+      }
+      if context.data and context.data.keys then
+        context = local_scan_parse_keys(self, context, end_pos)
       end
-   end
-   return nil, context -- stop parse
+      return context.pos, context, end_pos
+    end
+  end
+  return nil, context -- stop parse
 end
 
 function Manuscript.context_callbacks.tikzpath(m, pos, cs, context, end_pos)
-   if pos > end_pos then return nil, context end -- stop parse
-   local r = m:parse_cs_args(pos, cs)
-   if end_pos <= r.pos + r.len then
-      context = {
-         cs = cs,
-         data = m.commands[cs],
-         pos = pos,
-         len = r.pos + r.len - pos,
-         parent = context
-      }
-      local p = r[1].pos
-      local args = {{delims={"","["}}, {delims={"","]"}}}
-      while p <= end_pos do
-         local q = m.parser:parse_args(m.src, p, args)
-         if q and q[2].pos <= end_pos and end_pos <= q[2].pos + q[2].len then
-            context = {
-               arg = true,
-               data = {keys = data"tikz-extracted".keys},
-               pos = q[2].pos,
-               len = q[2].len,
-               parent = context
-            }
-            context = local_scan_parse_keys(m, context, end_pos)
-         end
-         p = q and q.pos + q.len or math.huge
+  if pos > end_pos then return nil, context end -- stop parse
+  local r = m:parse_command(pos, cs)
+  if end_pos <= r.cont then
+    context = {
+      cs = cs,
+      data = m.commands[cs],
+      pos = pos,
+      cont = r.cont,
+      parent = context
+    }
+    local p = r[1].pos
+    while p <= end_pos do
+      local q = m.parser.skip_to_bracketed(m.src, p)
+      if q and q.pos <= end_pos and end_pos <= q.cont then
+        context = {
+          arg = true,
+          data = {keys = require_data"tikz-extracted".keys},
+          pos = q.pos,
+          cont = q.cont,
+          parent = context
+        }
+        context = local_scan_parse_keys(m, context, end_pos)
       end
-   end
-   return r.pos + r.len, context, end_pos
+      p = q and q.cont or math.huge
+    end
+  end
+  return r.cont, context, end_pos
 end
 
 function Manuscript.context_callbacks.par (_, _, _, context)
@@ -518,26 +526,26 @@ end
 -- ¶ Completion
 
 local function gather(script, field, tbl)
-   update(tbl, script[field])
-   for _, child in pairs(script.children) do
-      gather(child, field, tbl)
-   end
-   return tbl
+  update(tbl, script[field])
+  for _, child in pairs(script.children) do
+    gather(child, field, tbl)
+  end
+  return tbl
 end
 
 function Manuscript:all_commands()
-   return gather(self.root, 'commands', {})
+  return gather(self.root, 'commands', {})
 end
 
 function Manuscript:all_environments()
-   return gather(self.root, 'environments', {})
+  return gather(self.root, 'environments', {})
 end
 
 --- Pretty-print an argument list
 --
 -- @param args An argument list
 -- @return A string
-
+--
 local function format_args(args)
   if not args then return nil end
   local t = {}
@@ -594,6 +602,28 @@ local function make_snippet(before, args, after)
    return concat(t)
 end
 
+--- Calculate completions for the manuscript at the given point.
+--
+-- @param pos A position in the source
+-- @return A list of completions
+--
+function Manuscript:complete(pos)
+  local ctx = self:get_context(pos - 1)
+   if ctx == nil then return nil end
+   if ctx.cs and pos == 1 + ctx.pos + #ctx.cs then -- the 1 accounts for escape char
+      return self.completion_handlers.cs(self, ctx)
+   elseif ctx.arg then
+      local action = ctx.parent and ctx.parent.data and ctx.parent.data.action
+      if self.completion_handlers[action] then
+         return self.completion_handlers[action](self, ctx, pos)
+      end
+   elseif ctx.key then --and pos == ctx.pos + #ctx.key then
+      return self.completion_handlers.key(self, ctx, pos)
+   elseif ctx.value and pos == ctx.pos + #ctx.value then
+      return self.completion_handlers.value(self, ctx, pos)
+   end
+end
+
 Manuscript.completion_handlers = {}
 
 function Manuscript.completion_handlers.cs(self, ctx)
@@ -605,29 +635,30 @@ function Manuscript.completion_handlers.cs(self, ctx)
     prefix = prefix,
     kind = "command"
   }
-  for cs, cmd in pairs(self.root:all_commands()) do
+  local s = string.sub
+  for cs, cmd in pairs(self:all_commands()) do
     if prefix == cs:sub(1, len) then
-      local args = cmd.args
+      local args = cmd.arguments
       local user_snippet = extra_snippets[cs]
       r[#r+1] = {
         text = cs,
-        summary = cmd.doc,
+        summary = cmd.summary,
         detail = args and format_args(args) or cmd.symbol,
         snippet = user_snippet or args and make_snippet(cs, args)
       }
     end
   end
-  for cs, cmd in pairs(self.root:all_environments()) do
+  for cs, cmd in pairs(self:all_environments()) do
     if prefix == cs:sub(1, len) then
-      local args = cmd.args or {}
+      local args = cmd.arguments or {}
       local user_snippet = extra_snippets[cs]
       local snippet_begin = "begin{" .. cs .. "}"
       local snippet_end = "\n\t$0\n\\end{" .. cs .. "}"
       local detail = args and format_args(args)
       r[#r+1] = {
-        text = cs, -- "begin{" .. cs .. "}",
+        text = cs,
         filter_text = cs,
-        summary = cmd.doc,
+        summary = cmd.summary,
         detail = (detail or "") .. (detail and " " or "") .. "(environment)",
         snippet = user_snippet or make_snippet(snippet_begin, args, snippet_end)
       }
@@ -649,7 +680,7 @@ function Manuscript.completion_handlers.key(self, ctx, pos)
       if prefix == text:sub(1, len) then
          r[#r+1] = {
             text = text,
-            summary = key.doc
+            summary = key.summary
          }
       end
    end
@@ -669,7 +700,7 @@ function Manuscript.completion_handlers.value(self, ctx, pos)
       if prefix == text:sub(1, len) then
          r[#r+1] = {
             text = text,
-            summary = value.doc
+            summary = value.summary
          }
       end
    end
@@ -688,8 +719,8 @@ function Manuscript.completion_handlers.begin(self, ctx, pos)
       if prefix == text:sub(1, len) then
          r[#r+1] = {
             text = text,
-            summary = env.doc,
-            detail = format_args(env.args),
+            summary = env.summary,
+            detail = format_args(env.arguments),
          }
       end
    end
@@ -698,12 +729,12 @@ end
 
 -- move to ManuscriptLaTeX?
 function Manuscript:label_context_short(item)
-  local pos, cs, r = self:find_preceding_command(item.cmd_pos)
+  local pos, cs, r = self:find_preceding_command(item.outer_pos)
   local cmd = self.commands[cs]
   if not cmd then
-    pos = self.parser:next_nonblank(self.src, item.after_cmd)
+    pos = self.parser.next_nonblank(self.src, item.outer_pos)
   end
-  return clean(self:substring_trimmed(pos, pos + 100))
+  return self:substring_clean(pos, pos + 100)
 end
 
 function Manuscript.completion_handlers.ref(self, ctx, pos)
@@ -718,7 +749,8 @@ function Manuscript.completion_handlers.ref(self, ctx, pos)
       if prefix == label.name:sub(1, len) then
          r[#r+1] = {
             text = label.name,
-            detail = label.manuscript:label_context_short(label)
+            detail = label.manuscript:label_context_short(label),
+            summary = label.manuscript:label_context_long(label),
          }
       end
    end
@@ -728,15 +760,14 @@ end
 function Manuscript.completion_handlers.cite(self, ctx, pos)
   if ctx.data.optional then return end
   local prefix = self:substring(ctx.pos, pos - 1)
-  local len = #prefix
   local r = {
     pos = ctx.pos,
     prefix = prefix,
     kind = "bibitem"
   }
   local scores = {}
-  local exact_match = util.matcher(prefix)
-  local fuzzy_match = util.fuzzy_matcher(prefix)
+  local exact_match = matcher(prefix)
+  local fuzzy_match = fuzzy_matcher(prefix)
   for item in self.root:each_of "bib_index" do
     local score = exact_match(item.name) and math.huge
       or fuzzy_match(item.text)
@@ -762,28 +793,12 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
   return r
 end
 
-
--- should this take into account the Manuscript of filename, or
--- directly on the current content of filename?
-function Manuscript:complete(pos)
-   local ctx = self:get_context(pos - 1)
-   if ctx == nil then return nil end
-   if ctx.cs and pos == 1 + ctx.pos + #ctx.cs then -- the 1 accounts for escape char
-      return self.completion_handlers.cs(self, ctx)
-   elseif ctx.arg then
-      local action = ctx.parent and ctx.parent.data and ctx.parent.data.action
-      if self.completion_handlers[action] then
-         return self.completion_handlers[action](self, ctx, pos)
-      end
-   elseif ctx.key and pos == ctx.pos + #ctx.key then
-      return self.completion_handlers.key(self, ctx, pos)
-   elseif ctx.value and pos == ctx.pos + #ctx.value then
-      return self.completion_handlers.value(self, ctx, pos)
-   end
-end
-
 -- ¶ Context help
 
+--- Get information about the thing at the given position.
+--
+-- @param pos A position in the source
+--
 function Manuscript:get_help(pos)
   local ctx = self:get_context(pos)
   if not ctx then return nil end
@@ -795,6 +810,8 @@ function Manuscript:get_help(pos)
     return handlers.cs(self, ctx)
   elseif ctx.arg then
     return handlers.arg(self, ctx)
+  elseif ctx.key then
+    return handlers.key(self, ctx)
   else
     return nil
   end
@@ -807,7 +824,8 @@ function Manuscript.help_handlers.cite(self, ctx)
   for item in self.root:each_of "bib_index" do
     if name == item.name then
       return {
-        pos = ctx.pos, len = ctx.len,
+        pos = ctx.pos,
+        cont = ctx.cont,
         kind = "bibitem",
         text = item.name,
         detail = item.text
@@ -817,8 +835,8 @@ function Manuscript.help_handlers.cite(self, ctx)
 end
 
 function Manuscript:label_context_long(item)
-  local pos, cs, r = self:find_preceding_command(item.cmd_pos)
-  if not pos then pos = item.cmd_pos end
+  local pos, cs, r = self:find_preceding_command(item.outer_pos)
+  if not pos then pos = item.outer_pos end
   local l = self:line_number_at(pos)
   local lines = self.cache:get_lines(self.filename)
   local end_pos = lines[l + 5]
@@ -833,9 +851,10 @@ function Manuscript.help_handlers.ref(self, ctx)
   local name = self:substring(ctx)
   for item in self.root:each_of "label_index" do
     if name == item.name then
-      local script = self.root:find_manuscript(item.filename)
+      local script = item.manuscript
       return {
-        pos = ctx.pos, len = ctx.len,
+        pos = ctx.pos,
+        cont = ctx.cont,
         kind = "label",
         text = name,
         detail = script:label_context_long(item)
@@ -843,7 +862,8 @@ function Manuscript.help_handlers.ref(self, ctx)
     end
   end
   return {
-    pos = ctx.pos, len = ctx.len,
+    pos = ctx.pos,
+    cont = ctx.cont,
     kind = "label",
     text = name,
     detail = "Unknown label"
@@ -854,12 +874,13 @@ function Manuscript.help_handlers.begin(self, ctx)
   local env_name = self:substring(ctx)
   local data = self.environments[env_name]
   if not data then return nil end
-  local args = data.args
+  local args = data.arguments
   return {
-    pos = ctx.pos, len = ctx.len,
+    pos = ctx.pos,
+    cont = ctx.cont,
     kind = "environment",
     text = "\\begin{" .. env_name .. "}" .. (args and format_args(args) or ""),
-    detail = data.doc,
+    detail = data.summary,
     data = data
   }
 end
@@ -869,10 +890,11 @@ Manuscript.help_handlers['end'] = function(self, ctx)
   local data = self.environments[env_name]
   if not data then return nil end
   return {
-    pos = ctx.pos, len = ctx.len,
+    pos = ctx.pos,
+    cont = ctx.cont,
     kind = "environment",
     text = "\\end{" .. env_name .. "}",
-    detail = data.doc,
+    detail = data.summary,
     data = data
   }
 end
@@ -880,11 +902,12 @@ end
 function Manuscript.help_handlers.cs(self, ctx)
   local data = ctx.data
   if not data then return nil end
-  local args = data and data.args
-  local doc = data.doc
+  local args = data and data.arguments
+  local doc = data.summary
   local symbol = data.symbol
   return {
-    pos = ctx.pos, len = ctx.len,
+    pos = ctx.pos,
+    cont = ctx.cont,
     kind = "command",
     text = "\\" .. ctx.cs .. (args and format_args(args) or ""),
     detail = (doc or "") .. (symbol and " (" .. symbol .. ")" or ""),
@@ -893,14 +916,36 @@ function Manuscript.help_handlers.cs(self, ctx)
 end
 
 function Manuscript.help_handlers.arg(self, ctx)
-  return update(
-    self.help_handlers.cs(self, ctx.parent),
-      {pos = ctx.pos, len = ctx.len, arg = ctx.arg}
-  )
+  if ctx.parent.cs then
+    return update(
+      self.help_handlers.cs(self, ctx.parent),
+      {pos = ctx.pos, cont = ctx.cont, arg = ctx.arg})
+  end
 end
+
+function Manuscript.help_handlers.key(self, ctx)
+  local key = ctx.key
+  local data = nested_get(ctx.parent, "data", "keys", key)
+  if not data then return nil end
+  return {
+    pos = ctx.pos,
+    cont = ctx.cont,
+    kind = "key",
+    text = key,
+    detail = data.summary,
+    data = data
+  }
+end
+
 
 -- ¶ Find definition
 
+--- Find the location where the thing at the given position is
+--- defined.
+--
+-- @param pos A position in the source
+-- @return An annotated range table
+--
 function Manuscript:find_definition(pos)
   local ctx = self:get_context(pos)
   if not ctx then return nil end
@@ -908,7 +953,7 @@ function Manuscript:find_definition(pos)
   local handlers = self.find_definition_handlers
   if handlers[action] then
     return handlers[action](self, ctx)
-  -- elseif ctx.cs then
+  -- elseif ctx.cs then -- TODO
   --   return handlers.cs(self, ctx)
   else
     return nil
@@ -921,11 +966,10 @@ function Manuscript.find_definition_handlers.ref(self, ctx)
   local name = self:substring(ctx)
   for item in self.root:each_of "label_index" do
     if name == item.name then
-      local script = self.root:find_manuscript(item.filename)
       return {
         pos = item.pos,
-        len = #item.name,
-        filename = item.filename,
+        cont = item.cont,
+        manuscript = item.manuscript,
         kind = "label"
       }
     end
@@ -938,8 +982,8 @@ function Manuscript.find_definition_handlers.cite(self, ctx)
     if name == item.name then
       return {
         pos = item.pos,
-        len = item.len,
-        filename = item.filename,
+        cont = item.cont,
+        manuscript = item.manuscript,
         kind = "bibitem"
       }
     end
@@ -952,7 +996,7 @@ function Manuscript:scan_references()
   if not self.ref_index then
     self.ref_index = {}
     self.cite_index = {}
-    self:scan(self.scan_references_callbacks, 1)
+    self:scan(self.scan_references_callbacks)
   end
   for _, script in pairs(self.children) do
     script:scan_references()
@@ -964,7 +1008,7 @@ Manuscript.scan_references_callbacks = {}
 function Manuscript:scan_control_sequences()
   if not self.cs_index then
     self.cs_index = {}
-    self:scan(self.scan_cs_callbacks, 1)
+    self:scan(self.scan_cs_callbacks)
   end
   for _, script in pairs(self.children) do
     script:scan_control_sequences()
@@ -975,17 +1019,21 @@ Manuscript.scan_cs_callbacks = {}
 
 function Manuscript.scan_cs_callbacks.cs(self, pos, cs)
   local idx = self.cs_index
-  local len = #cs + 1
+  local cont = pos + 1 + #cs
   idx[#idx + 1] = {
     name = cs,
     pos = pos,
-    len = len,
-    filename = self.filename,
+    cont = cont,
     manuscript = self,
   }
-  return pos + len
+  return cont
 end
 
+--- List all references to the thing at the given position
+--
+-- @param pos A position in the source
+-- @return A list of annotated ranges
+--
 function Manuscript:find_references(pos)
   local ctx = self:get_context(pos)
   if not ctx then return nil end
@@ -1011,8 +1059,7 @@ function Manuscript.find_references_handlers.cs(self, ctx)
     if name == item.name then
       r[#r + 1] = {
         pos = item.pos,
-        len = #item.name,
-        filename = item.filename,
+        cont = item.cont,
         manuscript = item.manuscript,
         kind = "cs"
       }
@@ -1026,12 +1073,10 @@ function Manuscript.find_references_handlers.ref(self, ctx)
   local r = {}
   for item in self.root:each_of "ref_index" do
     if name == item.name then
-      local script = self.root:find_manuscript(item.filename)
       r[#r + 1] = {
         pos = item.pos,
-        len = #item.name,
-        filename = item.filename,
-        manuscript = script,
+        cont = item.cont,
+        manuscript = item.manuscript,
         kind = "label"
       }
     end
@@ -1047,12 +1092,10 @@ function Manuscript.find_references_handlers.cite(self, ctx)
   local r = {}
   for item in self.root:each_of "cite_index" do
     if name == item.name then
-      local script = self.root:find_manuscript(item.filename)
       r[#r + 1] = {
         pos = item.pos,
-        len = #item.name,
-        filename = item.filename,
-        manuscript = script,
+        cont = item.cont,
+        manuscript = item.manuscript,
         kind = "bibitem"
       }
     end

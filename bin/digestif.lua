@@ -16,7 +16,7 @@ if rock_path then
   table.insert(config.data_dirs, path_join(rock_path, 'digestif-data'))
 end
 
-if not require("digestif.data")("latex") then
+if not require("digestif.data").require("latex") then
   error("Could not find data files at the following locations:\n  "
           .. table.concat(config.data_dirs, "\n  "))
 end

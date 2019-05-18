@@ -36,26 +36,41 @@ function data.signature(sig, ...)
    return args
 end
 
+function data.require(name)
+   return data.loaded[name] or data.load(name)
+end
+
 local load_data_mt = {
    __index = {
       merge = util.merge,
-      data = data,
+      data = data.require,
       signature = data.signature
    }
 }
 
-function data.load_data(name)
+local function rename_fields(t)
+  if t.doc then
+    t.summary = t.doc
+    t.doc = nil
+  end
+  if t.args then
+    t.arguments = t.args
+    t.args = nil
+  end
+  for _, v in pairs(t) do
+    if type(v) == "table" then rename_fields(v) end
+  end
+end
+
+function data.load(name)
    if name:find('..', 1, true) then return end -- unreasonable file name
    local src = util.try_read_file(data_dirs, name .. ".lua")
    if not src then return end
    local result, err = util.eval_with_env(src, load_data_mt)
    if not result then util.log(err) end
+   rename_fields(result)
    data.loaded[name] = result
    return result
 end
 
-local function get_data(_, name)
-   return data.loaded[name] or data.load_data(name)
-end
-
-return setmetatable(data, {__call = get_data})
+return data

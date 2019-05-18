@@ -1,180 +1,198 @@
+--- Parser class
+-- @classmod digestif.Parser
+
 local lpeg = require "lpeg"
 local util = require "digestif.util"
 
-local B, P, R, S, V
-   = lpeg.B, lpeg.P, lpeg.R, lpeg.S, lpeg.V
-local C, Cc, Cp, Ct
-   = lpeg.C, lpeg.Cc, lpeg.Cp, lpeg.Ct
-  
-local Parser = util.class()
+local C = lpeg.C
+local Cc = lpeg.Cc
+local Cg = lpeg.Cg
+local Cs = lpeg.Cs
+local Ct = lpeg.Ct
+local P = lpeg.P
+local R = lpeg.R
+local S = lpeg.S
+local V = lpeg.V
+local match = lpeg.match
 
-local default_cat = {
-   escape = P("\\"),
-   bgroup = P("{"),
-   egroup = P("}"),
-   mathshift = P("$"),
-   eol = P("\n"),
-   letter = R("az", "AZ"),
-   comment = P("%"),
-   char = P(1), -- are we utf-8 agnostic?
-   space = S(" \t"),
+local I = lpeg.Cp()
+local Ipos = Cg(I, "pos")
+local Icont = Cg(I, "cont")
+local Iouter_pos = Cg(I, "outer_pos")
+local Iouter_cont = Cg(I, "outer_cont")
+local Kcs = Cc("cs")
+local Kmathshift = Cc("mathshift")
+local Knil = Cc(nil)
+local Kpar = Cc("par")
+local Ktrue = Cc(true)
+local Pend = P(-1)
+
+local gobble_until = util.gobble_until
+local matcher = util.matcher
+local search = util.search
+local trim = util.trim
+
+local weak_keys = {__mode = "k"}
+
+local default_catcodes = {
+  escape = P("\\"),
+  bgroup = P("{"),
+  egroup = P("}"),
+  mathshift = P("$"),
+  eol = P("\n"),
+  letter = R("az", "AZ"),
+  comment = P("%"),
+  char = P(1), -- are we utf-8 agnostic?
+  space = S(" \t"),
+  listsep = P(","),
+  valsep = P("=")
 }
 
-local function wrap_patt(patt)
-   return function(_, ...) return patt:match(...) end
-end
+local Parser = util.class()
 
-function Parser:__init(cat)
-   local patt, cat = {}, cat or default_cat
-   self.cat, self.patt = cat, patt
+function Parser:__init(catcodes)
+  catcodes = catcodes or default_catcodes
 
-   patt.eol_or_end = cat.eol + P(-1)
-   patt.blank = cat.space + cat.eol + P(-1)
-   patt.nonbrace = cat.char - (cat.bgroup + cat.egroup)
-   patt.cs = cat.escape * C(cat.letter^1 + cat.char)
-   --patt.before_blank_line = cat.eol * cat.space^0 * cat.eol -- probably can replace this by blank_line anywhere needed
-   patt.blank_line = B(cat.eol) * cat.space^0 * cat.eol -- how about blank first line in string?
-   patt.comment = cat.comment * (cat.char - cat.eol)^0 * patt.eol_or_end --one comment
-   -- patt.par = (cat.space + cat.eol + patt.comment - patt.blank_line)^0
-   --    * patt.blank_line * (cat.space + cat.eol + patt.comment)^0
-   patt.par = patt.blank_line * (cat.space + cat.eol + patt.comment)^0
-      -- both patts end at the beginning of the new par; which do we want?
-   patt.skipped = (cat.space + cat.eol + patt.comment - patt.blank_line)^0
-   patt.token_or_braced = P{ -- fails at end of paragraph
-      [1] = Cp() * (patt.cs/0 + patt.nonbrace) * Cp() + V(2) - patt.blank_line,
-      [2] = cat.bgroup * Cp() * (patt.comment + V(1)/0)^0 * Cp() * cat.egroup
-   }
-   patt.token_or_braced_partial = P{ -- similar, but successfully stops at end of paragraph or string
-      [1] = Cp() * (patt.cs/0 + patt.nonbrace) * Cp() + V(2) - patt.blank_line,
-      [2] = cat.bgroup * Cp() * (patt.comment + V(1)/0)^0
-         * Cp() * (cat.egroup + P(-1) + #patt.blank_line)
-   }
-   patt.token_or_braced_long = P{ -- crosses paragraph boundaries
-      [1] = Cp() * (patt.cs/0 + patt.nonbrace) * Cp() + V(2),
-      [2] = cat.bgroup * Cp() * (patt.comment + V(1)/0)^0 * Cp() * cat.egroup
-   }
-   patt.next_thing = P{
-      [1] = V"uninteresting"^0 * (V"cs" + V"mathshift" + V"par") * Cp(),
-      uninteresting = patt.comment + cat.char - (cat.escape + cat.mathshift + patt.blank_line),
-      cs = Cp() * patt.cs / function (pos, cs) return {pos = pos, type = "cs", cs = cs} end,
-      par = Cp() * patt.par / function (pos) return {pos = pos, type = "par"} end,
-      mathshift = Cp() * cat.mathshift / function (pos) return {pos = pos, type = "mathshift"} end,
-   }
-   patt.next_thing3 = P{
-      Cp()
-      * ( Cc"cs" * patt.cs
-          + cat.mathshift * Cc("mathshift", nil)
-          + patt.par * Cc("par", nil)
-      )
-      * Cp()
-      + (patt.comment + cat.char) * V(1)
-   }
-   patt.next_thing2 = P{ -- this is faster, doesn't need to create tables as above
-      [1] = Cp() * (V"cs" + V"mathshift" + V"par") * Cp() + V"skip" * V(1),
-      skip = patt.comment + cat.char,
-      cs = Cc"cs" * patt.cs,
-      par = patt.par * Cc("par", nil),
-      mathshift = cat.mathshift * Cc("mathshift", nil),
-   }
-   patt.next_par =
-      (patt.comment + cat.char - patt.blank_line)^0
-      * (cat.eol + cat.space + patt.comment)^0 * Cp() * cat.char
-   patt.strip_comments =
-      Ct((patt.comment * cat.space^0 + C((cat.char - cat.comment)^1))^0) / table.concat -- or use Cs()
-   patt.trim =
-      patt.skipped * C((cat.char - (patt.skipped * P(-1)))^0) * patt.skipped
-   patt.parse_keys =
-      patt.skipped * Cp() * (patt.token_or_braced_long/0 - S",=")^1 * Cp()
-      * (P"=" * patt.skipped * Cp() * (patt.token_or_braced_long/0 - P",")^0)^-1
-      * Cp() * (P"," + P(-1))
+  -- single characters
+  local escape    = P(catcodes.escape    or default_catcodes.escape)
+  local bgroup    = P(catcodes.bgroup    or default_catcodes.bgroup)
+  local egroup    = P(catcodes.egroup    or default_catcodes.egroup)
+  local mathshift = P(catcodes.mathshift or default_catcodes.mathshift)
+  local eol       = P(catcodes.eol       or default_catcodes.eol)
+  local letter    = P(catcodes.letter    or default_catcodes.letter)
+  local comment   = P(catcodes.comment   or default_catcodes.comment)
+  local char      = P(catcodes.char      or default_catcodes.char)
+  local space     = P(catcodes.space     or default_catcodes.space)
+  local listsep   = P(catcodes.listsep   or default_catcodes.listsep)
+  local valsep    = P(catcodes.valsep    or default_catcodes.valsep)
 
-   self.blank = wrap_patt(patt.blank)
-   self.next_par = wrap_patt(patt.next_par)
-   self.next_thing = wrap_patt(patt.next_thing2)
-   self.next_nonblank = wrap_patt(patt.skipped * Cp())
-   self.trim = wrap_patt(patt.trim)
-   self.strip_comments = wrap_patt(patt.strip_comments)
-end
+  -- basic elements
+  local eol_or_end = eol + Pend
+  local blank = space + eol
+  local nonbrace = char - (bgroup + egroup)
+  local cs = escape * (letter^1 + char)
+  local csname = escape * C(letter^1 + char)
+  local blank_line = eol * space^0 * eol
+  local single_eol = eol * space^0 * -eol
+  local comment_line = comment * gobble_until(eol, char)
+  local par = blank_line * (space + eol + comment_line)^0
+  local skipped = (space + single_eol + comment_line)^0
 
-function Parser:arg_delims(l, r)
-   local patt = self.patt
-   return l * Cp() * (patt.comment + patt.token_or_braced_partial/0 - r)^0
-      * Cp() * (r + P(-1) + #patt.blank_line) * Cp()
-end
---Parser:_memoize("arg_delims")
+  -- larger units of text
+  local token_or_braced = P{ -- fails at end of paragraph
+      [1] = I * (cs + nonbrace) * I + V(2) - blank_line,
+      [2] = bgroup * I * (comment_line + V(1)/0)^0 * I * egroup
+   }
+  local token_or_braced_partial = P{ -- similar, but successfully stops at end of paragraph or string
+      [1] = Ipos * (cs + nonbrace) * Icont + V(2) - blank_line,
+      [2] = Iouter_pos * bgroup * Ipos
+        * (comment_line + V(1)/0)^0
+        * Icont * (egroup + Pend + #blank_line) * Iouter_cont
+  }
+  local token_or_braced_long = P{ -- crosses paragraph boundaries
+      [1] = I * (cs + nonbrace) * I + V(2),
+      [2] = bgroup * I * (comment_line + V(1)/0)^0 * I * egroup
+   }
+  -- patterns that search ahead
+  local next_thing = search(
+    I * (Kcs * csname + mathshift * Kmathshift * Knil + par * Kpar * Knil) * I,
+    comment_line + char
+  )
+  local next_par = search(blank_line, comment + char)
+    * (eol + space + comment_line)^0 * I * char
 
---- Parse a macro's arguments
--- @param src a string
--- @param pos a position in src (after the control sequence)
--- @param args a list of `arg` tables
-function Parser:parse_args(src, pos, args)
-   local patt = self.patt
-   local result = {}
-   -- result.pos = (patt.skipped * Cp()):match(src, pos)
-   result.pos = pos
-   for i, arg in ipairs(args) do
-      pos = (patt.skipped * Cp()):match(src, pos)
-      if patt.blank_line:match(src, pos) then
-         result.len = pos - result.pos
-         return result -- stop at end of paragraph
-      else
-         result[i], pos = self:parse_one_arg(src, pos, arg)
-         if not result[i] then
-            result.len = pos - result.pos
-            return result
-         end
-      end
-   end
-   result.len = pos - result.pos
-   result.complete = true
-   return result
-end
+  -- trimming, cleaning, and cropping
+  local trimmer = blank^0 * C((blank^0 * (char - blank)^1)^0)
+  local cleaner = blank^0 * Cs(((blank^1 / " " + true) * (char - blank)^1)^0)
+  local comment_block = ((eol * space^0)^-1 * comment_line)^1
+  local comment_stripper = Cs((comment_block / "" + char)^0)
 
-function Parser:parse_one_arg(src, pos, arg)
-   local patt = self.patt
-   local s, e, cont
-   if arg.delims == nil then -- plain mandatory argument
-      s, e, cont = (patt.token_or_braced_partial * Cp()):match(src, pos)
-      if cont then return {pos = s, len = e - s}, cont end
-   elseif arg.delims == false then
+  -- parsing lists
+  local skim_unit = comment_line + token_or_braced_long/0
+  local skipped_long = (space + eol + comment_line)^0
+  local listsep_skip = listsep * skipped_long
+
+  local list_item = Ct(Ipos * (skim_unit - listsep)^1 * Icont)
+  local list_parser = skipped_long * Ct((listsep_skip^0 * list_item)^0)
+
+  local list_reader = skipped_long * Ct(
+    (listsep_skip^0 * C((skim_unit - listsep)^1)
+       / trim(space + eol + comment_line, char))^0)
+
+  local key = Ct(Ipos * (skim_unit - listsep - valsep)^1 * Icont)
+  local value = Ct(valsep * skipped_long * Ipos * (skim_unit - listsep)^0 * Icont)
+  local kvlist_item = Ct(Ipos * Cg(key, "key") * Cg(value, "value")^-1 * Icont)
+  local kvlist_parser = skipped_long * Ct((listsep_skip^0 * kvlist_item)^0)
+
+  local patt_from_arg = function(arg)
+    local val = skipped
+    if arg.delims == nil then -- plain mandatory argument
+      val = val * Ct(token_or_braced_partial)
+    elseif arg.delims == false then
       if arg.type == "literal" then
-         cont = (P(arg.literal) * Cp()):match(src, pos)
-         if cont then return {pos = pos, len = cont - pos}, cont end
+        val = val * Ct(Ipos * P(arg.literal) * Icont)
       elseif arg.type == "cs" then
-         cont = (patt.cs/0 * Cp()):match(src, pos)
-         if cont then return {pos = pos, len = cont - pos}, cont end
+        val = val * Ct(Ipos * cs * Icont)
       end
-   else -- assume delims is a tuple
-      s, e, cont = self:arg_delims(arg.delims[1], arg.delims[2]):match(src, pos)
-      if cont then return {pos = s, len = e - s}, cont end
-   end
-   if arg.optional then
-      return {omitted = true}, pos
-   else
-      return nil, pos
-   end
+    else -- assume delims is a tuple
+      local l, r = arg.delims[1], arg.delims[2]
+      local patt = Iouter_pos * l * Ipos
+        * (comment_line + token_or_braced_partial/0 - r)^0
+        * Icont * (r + Pend + #blank_line) * Iouter_cont
+      val = val * Ct(patt)
+    end
+    if arg.optional then
+      val = val + Ct(Cg(Ktrue, "ommited"))
+    end
+    return val
+  end
+
+  local patt_from_arglist = function(args)
+    local patt = Ipos
+    for i = 1, #args do
+      patt = patt * (patt_from_arg(args[i]) + Cg(Ktrue, "incomplete"))
+    end
+    return Ct(patt * Icont)
+  end
+
+  local patt_store = setmetatable({}, weak_keys)
+
+  self.parse_args = function(arglist, str, pos)
+    local patt = patt_store[arglist]
+    if not patt then
+      patt = patt_from_arglist(arglist)
+      patt_store[arglist] = patt
+    end
+    return match(patt, str, pos)
+  end
+
+  -- public patterns
+  self.next_par = next_par
+  self.comment_line = comment_line
+  self.cs = cs
+  self.csname = csname
+  self.token_or_braced_partial = token_or_braced_partial
+  self.skipped = skipped
+  self.blank_line = blank_line
+  self.next_thing = next_thing
+
+  -- public functions from patterns
+  self.is_blank_line = matcher(space^0 * eol)
+  self.next_nonblank = matcher(skipped * I)
+  self.trim = matcher(trimmer)
+  self.clean = matcher(cleaner)
+  self.strip_comments = matcher(comment_stripper)
+  self.skip_to_bracketed = matcher( -- for tikz paths
+    search(
+      patt_from_arg{delims = {"[", "]"}},
+      skim_unit - blank_line))
+
+  --- Parse a list.
+  -- @function Parser.parse_list
+  self.parse_list = matcher(list_parser)
+  self.read_list = matcher(list_reader)
+  self.parse_kvlist = matcher(kvlist_parser)
+
 end
-
-function Parser:parse_keys(src, pos, len)
-   pos = pos or 1
-   local format_match = function(p1, p2, p3, p4)
-      return {
-         pos = pos + p1 - 1,
-         len = (p4 or p2) - p1,
-         key = {pos = pos + p1 - 1, len = p2 - p1},
-         value = p4 and {pos = pos + p3 - 1, len = p4 - p3}}
-   end
-   return Ct((self.patt.parse_keys / format_match)^1):match(
-      string.sub(src, pos, len and pos + len - 1)) or {}
-end
-
---- Strip comments from a string
--- function Parser:strip_comments(src)
---    return self.patt.strip_comments:match(src)
--- end
-
--- function Parser:trim(src)
---    return self.patt.trim:match(src)
--- end
 
 return Parser

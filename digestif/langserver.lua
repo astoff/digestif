@@ -53,8 +53,9 @@ local function from_TextDocumentPositionParams(arg)
 end
 
 local function to_Range(item)
-  local l1, c1 = cache:get_line_col(item.filename, item.pos)
-  local l2, c2 = cache:get_line_col(item.filename, item.pos + item.len)
+  local filename = item.manuscript.filename
+  local l1, c1 = cache:get_line_col(filename, item.pos)
+  local l2, c2 = cache:get_line_col(filename, item.cont)
   return {
     start = {line = l1 - 1, character = c1 - 1},
     ["end"] = {line = l2 - 1, character = c2 - 1},
@@ -63,7 +64,7 @@ end
 
 local function to_Location(item)
   return {
-    uri = escape_uri(item.filename),
+    uri = escape_uri(item.manuscript.filename),
     range = to_Range(item)
   }
 end
@@ -162,20 +163,20 @@ methods["textDocument/signatureHelp"] = function(params)
    root:refresh()
    local script = root:find_manuscript(filename)
    local help = script:get_help(pos)
-   if not nested_get(help, "data", "args") then return null end
+   if not nested_get(help, "data", "arguments") then return null end
    return {
       signatures = {
          [1] = {
             label = help.text,
-            documentation = help.data.doc,
+            documentation = help.data.summary,
             parameters = map(
               function (arg)
                 return {
                   label = arg.meta,
-                  documentation = arg.doc
+                  documentation = arg.summary
                 }
               end,
-              help.data.args),
+              help.data.arguments),
          }
       },
       activeSignature = 0,
