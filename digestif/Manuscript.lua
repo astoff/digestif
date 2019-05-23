@@ -23,6 +23,7 @@ local Manuscript = util.class()
 -- argument.
 
 local formats = {
+  plain = "digestif.ManuscriptPlainTeX",
   latex = "digestif.ManuscriptLaTeX",
   bibtex = "digestif.ManuscriptBibTeX"
 }
@@ -73,7 +74,7 @@ function Manuscript:__init(args)
     setmetatable(self.commands,     {__index = parent.commands}    )
     setmetatable(self.environments, {__index = parent.environments})
   end
-  self:add_module(self.format)
+  self:add_module(self.format) -- do this only once, for the root
   self:scan(self.init_callbacks)
   for _, item in ipairs(self.child_index) do
     self.children[item.name] = Manuscript{
@@ -903,14 +904,20 @@ function Manuscript.help_handlers.cs(self, ctx)
   local data = ctx.data
   if not data then return nil end
   local args = data and data.arguments
-  local doc = data.summary
+  local detail = data.summary or ""
   local symbol = data.symbol
+  if symbol then
+    detail = detail .. " (" .. symbol .. ")"
+  end
+  if data.details then
+    detail = detail .. "\n\n" .. data.details
+  end
   return {
     pos = ctx.pos,
     cont = ctx.cont,
     kind = "command",
     text = "\\" .. ctx.cs .. (args and format_args(args) or ""),
-    detail = (doc or "") .. (symbol and " (" .. symbol .. ")" or ""),
+    detail = detail,
     data = data
   }
 end

@@ -71,6 +71,7 @@ end
 -- make a function from a pattern
 
 function util.matcher(patt)
+  patt = P(patt)
   return function(...) return match(patt, ...) end
 end
 
@@ -109,10 +110,10 @@ function util.split(sep, token, nulls)
   token = token and P(token) or char
   local patt
   if nulls then
-    local item = C(gobble_until(sep, token))
-    patt = Ct((item * sep)^0 * item)
+    local item = C((token - sep)^0)
+    patt = Ct(item * (sep * item)^0)
   else
-    patt = Ct(search(sep^0 * C((token - sep)^1))^0) -- need to use token argument?
+    patt = Ct((sep^0 * C((token - sep)^1))^0)
   end
   return function (...) return match(patt, ...) end
 end

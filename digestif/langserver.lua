@@ -33,6 +33,22 @@ local function get_manuscript(filename, tex_format)
 end
 get_manuscript = util.memoize(get_manuscript)
 
+local function get_manuscript2(filename)
+  local tex_format = cache:get_property(filename, "tex_format")
+  local rootname = cache:get_rootname(filename) or filename
+  local root = cache:get_property(rootname, tex_format)
+  if not root then
+    root = Manuscript{
+      filename = rootname,
+      cache = cache,
+      format = tex_format
+    }
+    cache:put_property(rootname, tex_format, root)
+  end
+  root:refresh()
+  return root:find_manuscript(filename)
+end
+
 -- ¶ Convert LSP API objects to/from internal representations
 
 local function from_Range(filename, range)
@@ -70,7 +86,7 @@ local function to_Location(item)
 end
 
 local function to_MarkupContent(str)
-  return {kind = "plaintext", value = str}
+  return {kind = "markdown", value = str}
 end
 
 local function to_TextEdit(filename, pos, old, new)
@@ -84,6 +100,16 @@ local function to_TextEdit(filename, pos, old, new)
     newText = new
   }
 end
+
+local languageId_table = {
+  tex = "latex", -- this is for vim; maybe "tex" should mean "tex file, undecided format"
+  latex = "latex",
+  plain = "plain",
+  plaintex = "plain",
+  ["plain-tex"] = "plain",
+  context = context,
+  bibtex = bibtex,
+}
 
 -- ¶ LSP methods
 
@@ -122,14 +148,17 @@ methods["workspace/didChangeConfiguration"] = function() return end
 
 methods["textDocument/didOpen"] = function(params)
   local filename = unescape_uri(params.textDocument.uri)
+  local version = params.textDocument.version
+  local tex_format = languageId_table[params.textDocument.languageId] or "tex"
   cache:put(filename, params.textDocument.text)
-  cache:put_property(filename, "tex_format", params.textDocument.languageId)
-  cache:put_property(filename, "version", params.textDocument.version)
-  get_manuscript:forget(filename)
+  cache:put_property(filename, "tex_format", tex_format)
+  cache:put_property(filename, "version", version)
 end
 
 methods["textDocument/didChange"] = function(params)
   local filename = unescape_uri(params.textDocument.uri)
+  local version = params.textDocument.version
+  local tex_format = cache:get_property(filename, "tex_format")
   for _, change in ipairs(params.contentChanges) do
     if change.range then
       local src = cache:get(filename)
@@ -143,8 +172,8 @@ methods["textDocument/didChange"] = function(params)
       cache:put(filename, change.text)
     end
   end
-  cache:put_property(filename, "tex_format", params.textDocument.languageId)
-  cache:put_property(filename, "version", params.textDocument.version)
+  cache:put_property(filename, "tex_format", tex_format)
+  cache:put_property(filename, "version", version)
   get_manuscript:forget(filename)
 end
 
@@ -156,54 +185,42 @@ methods["textDocument/didClose"] = function(params)
 end
 
 methods["textDocument/signatureHelp"] = function(params)
-   local filename, pos = from_TextDocumentPositionParams(params)
-   local rootname = cache:get_rootname(filename) or filename
-   local tex_format = cache:get_property(filename, "tex_format")
-   local root = get_manuscript(rootname, tex_format)
-   root:refresh()
-   local script = root:find_manuscript(filename)
-   local help = script:get_help(pos)
-   if not nested_get(help, "data", "arguments") then return null end
-   return {
-      signatures = {
-         [1] = {
-            label = help.text,
-            documentation = help.data.summary,
-            parameters = map(
-              function (arg)
-                return {
-                  label = arg.meta,
-                  documentation = arg.summary
-                }
-              end,
-              help.data.arguments),
-         }
-      },
-      activeSignature = 0,
-      activeParameter = help.arg and help.arg - 1
-   }
+  local filename, pos = from_TextDocumentPositionParams(params)
+  local script = get_manuscript2(filename)
+  local help = script:get_help(pos)
+  if not nested_get(help, "data", "arguments") then return null end
+  local parameters = {}
+  for i, arg in ipairs(help.data.arguments) do
+    parameters[i] = {
+      label = arg.meta,
+      documentation = arg.summary
+    }
+  end
+  return {
+    signatures = {
+      [1] = {
+        label = help.text,
+        documentation = help.data.summary,
+        parameters = parameters
+      }
+    },
+    activeSignature = 0,
+    activeParameter = help.arg and help.arg - 1
+  }
 end
 
 methods["textDocument/hover"] = function(params)
-   local filename, pos = from_TextDocumentPositionParams(params)
-   local rootname = cache:get_rootname(filename) or filename
-   local tex_format = cache:get_property(filename, "tex_format")
-   local root = get_manuscript(rootname, tex_format)
-   root:refresh()
-   local script = root:find_manuscript(filename)
-   local help = script:get_help(pos)
-   if not help then return null end
-   local contents = help.text .. (help.detail and ": " .. help.detail or "")
-   return {contents = to_MarkupContent(contents)}
+  local filename, pos = from_TextDocumentPositionParams(params)
+  local script = get_manuscript2(filename)
+  local help = script:get_help(pos)
+  if not help then return null end
+  local contents = help.text .. (help.detail and ": " .. help.detail or "")
+  return {contents = to_MarkupContent(contents)}
 end
 
 methods["textDocument/completion"] = function(params)
    local filename, pos = from_TextDocumentPositionParams(params)
-   local rootname = cache:get_rootname(filename) or filename
-   local tex_format = cache:get_property(filename, "tex_format")
-   local root = get_manuscript(rootname, tex_format)
-   root:refresh()
-   local script = root:find_manuscript(filename)
+   local script = get_manuscript2(filename)
    local candidates = script:complete(pos)
    if not candidates then return null end
    local with_snippets = nested_get(client_capabilities,
@@ -231,22 +248,14 @@ end
 
 methods["textDocument/definition"] = function(params)
   local filename, pos = from_TextDocumentPositionParams(params)
-  local rootname = cache:get_rootname(filename) or filename
-  local tex_format = cache:get_property(filename, "tex_format")
-  local root = get_manuscript(rootname, tex_format)
-  root:refresh()
-  local script = root:find_manuscript(filename)
+  local script = get_manuscript2(filename)
   local definition = script:find_definition(pos)
   return definition and to_Location(definition) or null
 end
 
 methods["textDocument/references"] = function(params)
   local filename, pos = from_TextDocumentPositionParams(params)
-  local rootname = cache:get_rootname(filename) or filename
-  local tex_format = cache:get_property(filename, "tex_format")
-  local root = get_manuscript(rootname, tex_format)
-  root:refresh()
-  local script = root:find_manuscript(filename)
+  local script = get_manuscript2(filename)
   local result = {}
   if params.context and params.context.includeDeclaration then
     local definition = script:find_definition(pos)
