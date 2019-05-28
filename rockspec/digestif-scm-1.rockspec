@@ -7,9 +7,9 @@ source = {
 description = {
   summary = "Code analyzer for TeX.",
   detailed = [[
-    A code analyzer for LaTeX documents (and eventually perhaps also
-    plain TeX and ConTeXt).  It includes a Language Server Protocol
-    implementation, so it can run on many different text editors.
+    A code analyzer for TeX documents, including LaTeX and BibTeX.  It
+    comes with a Language Server Protocol implementation, so it can
+    run on many different text editors.
   ]],
   homepage = "https://github.com/astoff/digestif/",
   license = "MIT"
@@ -25,8 +25,9 @@ build = {
   modules = {
     ["digestif.FileCache"] = "digestif/FileCache.lua",
     ["digestif.Manuscript"] = "digestif/Manuscript.lua",
-    ["digestif.ManuscriptLaTeX"] = "digestif/ManuscriptLaTeX.lua",
     ["digestif.ManuscriptBibTeX"] = "digestif/ManuscriptBibTeX.lua",
+    ["digestif.ManuscriptLaTeX"] = "digestif/ManuscriptLaTeX.lua",
+    ["digestif.ManuscriptPlainTeX"] = "digestif/ManuscriptPlainTeX.lua",
     ["digestif.Parser"] = "digestif/Parser.lua",
     ["digestif.bibtex"] = "digestif/bibtex.lua",
     ["digestif.config"] = "digestif/config.lua",
