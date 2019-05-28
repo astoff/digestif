@@ -6,12 +6,37 @@ local to_upper, gsub = string.upper, string.gsub
 local P, V, R = lpeg.P, lpeg.V, lpeg.R
 local C, Cp, Cs, Cmt, Cf, Ct = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cmt, lpeg.Cf, lpeg.Ct
 local match, locale_table = lpeg.match, lpeg.locale()
-local lpeg_mul = getmetatable(P(true)).__mul
 local lpeg_add = getmetatable(P(true)).__add
+local lpeg_mul = getmetatable(P(true)).__mul
+local lpeg_pow = getmetatable(P(true)).__pow
 
 local util = {}
 
 -- ¶ Cool combinators and friendly functions for LPeg
+
+-- simple things for better legibility of complicated constructions
+
+local function choice(p, q, ...)
+  if q == nil then
+    return P(p)
+  else
+    return choice(lpeg_add(p, q), ...)
+  end
+end
+util.choice = choice
+
+local function sequence(p, q, ...)
+  if q == nil then
+    return P(p)
+  else
+    return sequence(lpeg_mul(p, q), ...)
+  end
+end
+util.sequence = sequence
+
+function util.many(p)
+  return lpeg_pow(p,0)
+end
 
 -- general purpose
 
