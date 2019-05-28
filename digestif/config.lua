@@ -15,6 +15,7 @@ local extra_snippets = {
 
 return {
   data_dirs = data_dirs,
+  eol = "\n",
   extra_snippets = extra_snippets,
-  eol = "\n"
+  info_command = "info %q"
 }

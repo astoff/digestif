@@ -164,7 +164,8 @@ local tex_symbols = {
    l = "ł",
    L = "Ł",
    -- corner cases
-   i = "{i}",
+   i = "{i}", -- not "ı"
+   j = "j", -- not "ȷ"
    [" "] = " ",
 }
 
@@ -184,6 +185,7 @@ local tex_accents = util.map(
     ["u"] = "◌̆",
     ["b"] = "◌̱",
     ["v"] = "◌̌",
+    ["t"] = "◌͡"
   }
 )
 

@@ -48,17 +48,20 @@ local load_data_mt = {
    }
 }
 
-local function rename_fields(t)
-  if t.doc then
-    t.summary = t.doc
-    t.doc = nil
-  end
-  if t.args then
-    t.arguments = t.args
-    t.args = nil
-  end
-  for _, v in pairs(t) do
-    if type(v) == "table" then rename_fields(v) end
+local ref_patt = P"$DIGESTIFDATA/" * C(P(1)^0)
+local ref_split = util.split("/")
+
+local function resolve_refs(tbl)
+  for k, v in pairs(tbl) do
+    if type(v) == "string" then
+      local path = ref_patt:match(v)
+      if path then
+        local t = ref_split(path)
+        tbl[k] = util.nested_get(data.require(t[1]), table.unpack(t, 2))
+      end
+    elseif type(v) == "table" then
+      resolve_refs(v) -- TODO: prevent infinite loops
+    end
   end
 end
 
@@ -68,8 +71,8 @@ function data.load(name)
    if not src then return end
    local result, err = util.eval_with_env(src, load_data_mt)
    if not result then util.log(err) end
-   rename_fields(result)
    data.loaded[name] = result
+   resolve_refs(result)
    return result
 end
 

@@ -357,8 +357,9 @@ function Manuscript:add_module(name)
   local mod = require_data(name)
   if not mod then return end
   self.modules[name] = mod
-  if mod.dependencies then
-    for _, n in ipairs(mod.dependencies) do
+  local deps = mod.package and mod.package.dependencies or mod.dependencies
+  if deps then
+    for _, n in ipairs(deps) do
       self:add_module(n)
     end
   end
@@ -507,7 +508,7 @@ function Manuscript.context_callbacks.tikzpath(m, pos, cs, context, end_pos)
       if q and q.pos <= end_pos and end_pos <= q.cont then
         context = {
           arg = true,
-          data = {keys = require_data"tikz-extracted".keys},
+          data = {keys = require_data"tikz".keys.tikz},
           pos = q.pos,
           cont = q.cont,
           parent = context
@@ -681,7 +682,8 @@ function Manuscript.completion_handlers.key(self, ctx, pos)
       if prefix == text:sub(1, len) then
          r[#r+1] = {
             text = text,
-            summary = key.summary
+            summary = key.summary,
+            detail = key.meta and ("=" .. key.meta)
          }
       end
    end
@@ -828,8 +830,7 @@ function Manuscript.help_handlers.cite(self, ctx)
         pos = ctx.pos,
         cont = ctx.cont,
         kind = "bibitem",
-        text = item.name,
-        detail = item.text
+        summary = item.name .. " " .. item.text,
       }
     end
   end
@@ -857,8 +858,9 @@ function Manuscript.help_handlers.ref(self, ctx)
         pos = ctx.pos,
         cont = ctx.cont,
         kind = "label",
-        text = name,
-        detail = script:label_context_long(item)
+        label = name,
+        summary = script:label_context_short(item),
+        details = "Reference " .. name .. ":\n\n" .. script:label_context_long(item)
       }
     end
   end
@@ -866,8 +868,8 @@ function Manuscript.help_handlers.ref(self, ctx)
     pos = ctx.pos,
     cont = ctx.cont,
     kind = "label",
-    text = name,
-    detail = "Unknown label"
+    label = name,
+    summary = "Unknown label"
   }
 end
 
@@ -880,8 +882,10 @@ function Manuscript.help_handlers.begin(self, ctx)
     pos = ctx.pos,
     cont = ctx.cont,
     kind = "environment",
-    text = "\\begin{" .. env_name .. "}" .. (args and format_args(args) or ""),
-    detail = data.summary,
+    label = "\\begin{" .. env_name .. "}"
+      .. (args and format_args(args) or ""),
+    summary = data.summary,
+    details = self:make_docstring("env", env_name, data),
     data = data
   }
 end
@@ -890,12 +894,15 @@ Manuscript.help_handlers['end'] = function(self, ctx)
   local env_name = self:substring(ctx)
   local data = self.environments[env_name]
   if not data then return nil end
+  local args = data.arguments
   return {
     pos = ctx.pos,
     cont = ctx.cont,
     kind = "environment",
-    text = "\\end{" .. env_name .. "}",
-    detail = data.summary,
+    label = "\\begin{" .. env_name .. "}"
+      .. (args and format_args(args) or " "),
+    summary = data.summary,
+    details = self:make_docstring("env", env_name, data),
     data = data
   }
 end
@@ -903,21 +910,15 @@ end
 function Manuscript.help_handlers.cs(self, ctx)
   local data = ctx.data
   if not data then return nil end
-  local args = data and data.arguments
-  local detail = data.summary or ""
-  local symbol = data.symbol
-  if symbol then
-    detail = detail .. " (" .. symbol .. ")"
-  end
-  if data.details then
-    detail = detail .. "\n\n" .. data.details
-  end
+  local args = data.arguments
   return {
     pos = ctx.pos,
     cont = ctx.cont,
     kind = "command",
-    text = "\\" .. ctx.cs .. (args and format_args(args) or ""),
-    detail = detail,
+    label = "\\" .. ctx.cs
+      .. (args and format_args(args) or ""),
+    summary = data.summary,
+    details = self:make_docstring("cs", ctx.cs, data),
     data = data
   }
 end
@@ -938,13 +939,58 @@ function Manuscript.help_handlers.key(self, ctx)
     pos = ctx.pos,
     cont = ctx.cont,
     kind = "key",
-    text = key,
-    detail = data.summary,
+    label = key,
+    summary = data.summary,
+    details = self:make_docstring("key", key, data),
     data = data
   }
 end
 
-
+function Manuscript:make_docstring(kind, name, data)
+  local ret
+  if kind == "cs" then
+    ret = "\\" .. name
+  elseif kind == "env" then
+    ret = "\\begin{" .. name .. "}"
+  else
+    ret = name
+  end
+  if data.arguments then
+    ret = ret .. format_args(data.arguments)
+  elseif kind == "key" and data.meta then
+    ret = ret .. " = " .. data.meta
+  end
+  if data.summary then
+    ret = ret .. ": " .. data.summary
+  end
+  if data.symbol then
+    ret = ret .. " (" .. data.symbol .. ")"
+  end
+  if data.details then
+    ret = ret .. "\n\n" .. data.details
+  elseif data.documentation then
+    local scheme, location = data.documentation:match"([^:]*):(.*)"
+    if scheme == "info" and config.info_command then
+      local path, fragment = location:match"([^#]*)#?(.*)"
+      local node_name = ("(%s)%s"):format(path, fragment)
+      local cmd = config.info_command:format(node_name)
+      local f = io.popen(cmd)
+      local str = f:read("a")
+      local ok, _, exitc = f:close()
+      if ok and exitc == 0 then
+        ret = ret .. "\n\n" .. str
+      else
+        util.log(("Error running info (%d)"):format(exitc))
+      end
+    elseif scheme == "texdoc" then
+      ret = ret .. "\n\nDocumentation at "
+        .. "http://texdoc.net/texmf-dist/doc/" .. location
+    else
+      ret = ret .. "\n\nDocumentation at " .. location
+    end
+  end
+  return ret
+end
 -- ¶ Find definition
 
 --- Find the location where the thing at the given position is

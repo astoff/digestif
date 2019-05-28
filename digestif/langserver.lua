@@ -2,10 +2,8 @@ local FileCache = require "digestif.FileCache"
 local Manuscript = require "digestif.Manuscript"
 local util = require "digestif.util"
 
-local concat = table.concat
 local path_join, path_split = util.path_join, util.path_split
 local nested_get, nested_put = util.nested_get, util.nested_put
-local map, update, merge = util.map, util.update, util.merge
 
 local cache = FileCache()
 local null = util.null
@@ -107,8 +105,8 @@ local languageId_table = {
   plain = "plain",
   plaintex = "plain",
   ["plain-tex"] = "plain",
-  context = context,
-  bibtex = bibtex,
+  context = "context",
+  bibtex = "bibtex",
 }
 
 -- ¶ LSP methods
@@ -126,10 +124,10 @@ methods["initialize"] = function(params)
         change = 2
       },
       completionProvider = {
-        triggerCharacters = {"\\", "{", "["},
+        triggerCharacters = {"\\", "{", "[", ",", "="},
       },
       signatureHelpProvider = {
-        triggerCharacters = {"\\", "="},
+        triggerCharacters = {"{", "[", "="},
       },
       hoverProvider = true,
       definitionProvider = true,
@@ -199,8 +197,8 @@ methods["textDocument/signatureHelp"] = function(params)
   return {
     signatures = {
       [1] = {
-        label = help.text,
-        documentation = help.data.summary,
+        label = help.label,
+        documentation = help.summary,
         parameters = parameters
       }
     },
@@ -213,8 +211,8 @@ methods["textDocument/hover"] = function(params)
   local filename, pos = from_TextDocumentPositionParams(params)
   local script = get_manuscript2(filename)
   local help = script:get_help(pos)
-  if not help then return null end
-  local contents = help.text .. (help.detail and ": " .. help.detail or "")
+  if (not help) or help.arg then return null end
+  local contents = help.details or help.summary or "???"
   return {contents = to_MarkupContent(contents)}
 end
 
