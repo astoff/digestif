@@ -1,7 +1,8 @@
-source = {
-  url = "https://github.com/wspr/unicode-math/",
-  license = "https://www.latex-project.org/lppl/lppl-1-3.txt"
-}
+comments = [[
+Extracted from the unicode-math package source
+URL: https://github.com/wspr/unicode-math/
+Original license: LPPL 1.3c
+]]
 
 commands = {
   Bbbk = {

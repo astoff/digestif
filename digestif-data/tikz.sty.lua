@@ -1,6 +1,31 @@
-module = "tikz.sty"
-
-dependencies = {
-   "tikz-extracted",
-   "pgf.sty"
+package = {
+  name = "tikz.sty",
+  dependencies = {
+    "tikz"
+  }
 }
+environments = {
+  tikzpicture = {
+    arguments = {
+      {
+        delims = {"[", "]"},
+        keys = "$DIGESTIFDATA/tikz/keys/tikz",
+        meta = "options",
+        optional = true
+      },
+    },
+    documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.tikzpicture"
+  },
+  scope = {
+    arguments = {
+      {
+        delims = {"[", "]"},
+        keys = "$DIGESTIFDATA/tikz/keys/tikz",
+        meta = "options",
+        optional = true
+      },
+    },
+    documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.scope"
+  },
+}
+

@@ -1,6 +1,6 @@
-module = "pgf.sty"
-
-dependencies = {
-   "pgf-extracted",
+package = {
+  name = "pgf.sty",
+  dependencies = {
+    "pgf"
+  }
 }
-

@@ -1,5 +1,5 @@
 util = require "digestif.util"
-block = require "serpent".block
+save_from_table = require"luarocks.persist".save_from_table
 trim = util.trim()
 
 if not arg[1] and arg[2] then
@@ -23,7 +23,7 @@ for cs in plainlist:gmatch("\\(%a*)") do
   where[cs] = "plain"
 end
 for cs in ltxlist:gmatch("\\(%a*)") do
-  where[cs] = "latex"
+  where[cs] = "plain"
 end
 for cs in amslist:gmatch("\\(%a*)") do
   where[cs] = "ams"
@@ -37,34 +37,28 @@ for uni, cs, class, descr in tablefile:gmatch("\\UnicodeMathSymbol{\"(.-)}{\\(.-
   descr = trim(descr)
   local item = {
     doc = descr,
-    symbol = (class == "mathaccent" and "◌" or "") .. utf8.char(tonumber(uni,16))
+    symbol = (class:match"accent" and "◌" or "") .. utf8.char(tonumber(uni,16))
   }
-  collections[where[cs] or "um"][cs] = item
+  if where[cs] then collections[where[cs]][cs] = item end
+  collections["um"][cs] = item
   local alias = cs:match("^mup(.*)")
   if where[alias] then collections[where[alias]][alias] = item end
+  if alias then collections["um"][alias] = item end
 end
 
 header = [[
-source = {
-  url = "https://github.com/wspr/unicode-math/",
-  license = "LPPL 1.3c"
-}
-
+Extracted from the unicode-math package source
+URL: https://github.com/wspr/unicode-math/
+License: LPPL 1.3c
 ]]
 
-function serialize(tbl, name)
-  local s = require"serpent".block(tbl, {name = name, comment = false})
-  s = s:gsub("^do local ", "")
-  s = s:gsub("return [^\n]*\nend$", "")
-  return s
-end
-
-f = io.open("plain-symbols.lua", "w")
-f:write(header)
-f:write(serialize(collections.plain, "commands"))
-f = io.open("amssymb.sty.lua", "w")
-f:write(header)
-f:write(serialize(collections.ams, "commands"))
-f = io.open("unicode-math.sty.lua", "w")
-f:write(header)
-f:write(serialize(collections.um, "commands"))
+save_from_table("plain-symbols.lua", {comments=header, commands=collections.plain}, {"comments", "package"})
+save_from_table("amssymb.sty.lua", {comments=header, commands=collections.ams}, {"comments", "package"})
+save_from_table("unicode-math.sty.lua", {
+                  comments=header,
+                  package = {
+                    name = "unicode-math.sty",
+                    documentation = "texdoc:latex/unicode-math/unicode-math.pdf"
+                  },
+                  commands=collections.um},
+                {"comments", "package"})
