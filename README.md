@@ -6,26 +6,38 @@ for LaTeX et caterva.  It can provide context-sensitive documentation
 and completion (macro names, labels, key-value arguments, etc.) to any
 text editor that speaks the LSP protocol.
 
-What it does (for now)
-----------------------
+What it does
+------------
 
-* Complete command names and key-value options.  For instance, with
-  TikZ:
-  ![completion](https://user-images.githubusercontent.com/6500902/49062925-01e83e80-f216-11e8-9342-e27e820c211a.png)
+- Complete commands, environments, and key-value options (for
+  instance, TikZ options).
+
+- Popup help messages, with command signature and a short
+  explanation. Make sure you have the [LaTeX reference
+  manual][latexref] installed as an info node for this.
+
+- Complete labels defined in the document.  Multiple-file documents
+  are supported via TeXShop-style magic comments.
   
-* Complete labels defined in the document.  Multiple-file documents
-  are supported via TeXShop-style magic comments:
-  ![crossref](https://user-images.githubusercontent.com/6500902/49062985-2ba16580-f216-11e8-99de-5be9a74ecaa6.png)
-  
-* Popup help messages, with command signature and a short explanation:
-  ![eldoc](https://user-images.githubusercontent.com/6500902/49062989-2fcd8300-f216-11e8-9076-587eca2321d1.png)
+- Parse BibTeX files and provide completion for citations. Digestif
+  tries exact matches against the BibTeX identifiers and a fuzzy match
+  against author and title.
 
-* Parse BibTeX files and provide completion for citations:
-  ![cite](https://user-images.githubusercontent.com/6500902/49612569-64270900-f9a5-11e8-9fc5-20c974136209.png)
+- Jump to definition and find references to labels and bibliographic
+  items.
 
-* Jump to definition and find references to labels and. bibliography items.
+The animated gif below shows some of these features. The following
+things happen: user types `\ci`; selects `\cite` in the drop-down
+list; snippet expands; user deletes first (optional) argument, jumping
+to second one; user types `groalhom`; several matches are shown; user
+selects **Gro**thendieck's “Sur quelques points d'**al**gébre
+**hom**ologique”; the BibTeX indentifier `Tohoku` is inserted; user
+triggers “find definition” command; BibTeX entry is shown; user
+returns and exits the snippet.
 
-The implemented LSP methods are
+![Mandatory GIF](https://user-images.githubusercontent.com/6500902/58749048-35d04500-8481-11e9-8e6e-84232308a751.gif)
+
+The implemented LSP methods are:
 
 - `initialize`
 - `initialized`
@@ -48,22 +60,26 @@ language server is using LuaRocks (on most Linux distros, this is
 package `luarocks`).  Just type
 
 ``` shell
-luarocks install https://github.com/astoff/digestif/raw/master/rockspec/digestif-scm-1.rockspec
+luarocks install --server=http://luarocks.org/dev digestif
 ```
 
 (Either as root, or with the `--local` option, in which case the
-executable script will land in `~/.luarocks/bin/digestif`)
+executable script will land in `~/.luarocks/bin/digestif` and you need
+to adapt your text editor configuration accordingly.)
 
-Next, you will need to enable Digestif as a language server in your
-favorite text editor.  I have tested it on Emacs with [Eglot][eglot].
-First, make sure the eglot ELPA package is installed (`M-x
-package-install RET eglot RET`).  Then evaluate the following in your
-scratch buffer (or add it to your init file).
+Next, you need to enable Digestif as a language server in your
+favorite text editor.
+
+### Emacs with the [Eglot] package
+
+First, make sure the Eglot ELPA package is installed (`M-x
+package-install RET eglot RET`) and add the following to your init
+file.
 
 ``` emacs-lisp
-(with-eval-after-load 'eglot
-  (add-to-list 'eglot-server-programs
-               '(latex-mode . ("digestif"))))
+(require 'eglot)
+(add-to-list 'eglot-server-programs
+             '((plain-tex-mode latex-mode) . ("digestif")))
 ```
 
 Finally, open some LaTeX document and enable eglot (`M-x eglot`).
@@ -71,7 +87,32 @@ Voilà!  To get popup suggestions, make sure `company-mode` is on.  To
 insert snippets upon completion, activate `yas-minor-mode` before
 starting up `eglot`.
 
-For Vim with the [Coc][coc] plugin, see instructions
+### Emacs with the [lsp-mode] package
+
+Install `lsp-mode` and add the following to your init file.
+
+``` emacs-lisp
+(require 'lsp-mode)
+(lsp-register-client
+ (make-lsp-client :new-connection (lsp-stdio-connection "digestif")
+                  :major-modes '(latex-mode plain-tex-mode)
+                  :server-id 'digestif))
+(add-to-list 'lsp-language-id-configuration '(latex-mode . "latex"))
+(add-to-list 'lsp-language-id-configuration '(plain-tex-mode . "plaintex"))
+```
+
+If you want fuzzy-matching of citations, make sure you have the
+`company-lsp` package installed and add the following to your init
+file.
+
+``` emacs-lisp
+(require 'company-lsp)
+(add-to-list 'company-lsp-filter-candidates '(digestif . nil))
+```
+
+### Vim with the [Coc] plugin
+
+See instructions
 [here](https://github.com/neoclide/coc.nvim/wiki/Language-servers#latex).
 
 To do
@@ -93,23 +134,24 @@ manually.  These files are in the `digestif-data` folder, and their
 format should be more or less self explanatory.  Some sources that
 seem suitable for automatic extraction include:
 
-- For plain TeX: [TeX for the impatient](https://www.gnu.org/software/teximpatient/).
-- For ConTeXt: whatever the source of [this pdf](http://www.pragma-ade.nl/general/qrcs/setup-en.pdf) is.
-- For Texinfo: from the [reference card](git.savannah.gnu.org/cgit/texinfo.git/plain/doc/refcard/txirefcard.pdf).
+- [x] For plain TeX: [TeX for the impatient](https://www.gnu.org/software/teximpatient/).
+- [ ] For ConTeXt: whatever the source of [this pdf](http://www.pragma-ade.nl/general/qrcs/setup-en.pdf) is.
+- [ ] For Texinfo: from the [command list](https://www.gnu.org/software/texinfo/manual/texinfo-html/Command-List.html).
 
 Further things to do and some open questions:
 
 - [x] Bibliography support: parse bibtex files, etc.
 - [ ] Test on more editors (VS Code plugin?)
-- [ ] On Emacs, an ivy-based interface, more on the lines of RefTeX, might
-  be nice
+- [ ] On Emacs, an ivy-based interface, more on the lines of RefTeX,
+      might be nice
 - [ ] Provide diagnostics?
 - [ ] Extract data files from LaTeX literate code?  For packages using
-  xparse, it is possible to at least obtain the signature of commands
-  systematically
-- [ ] How to integrate with texdoc?
+      xparse, it is possible to at least obtain the signature of
+      commands systematically
+- [ ] How to integrate with texdoc? For now, we provide links to
+      <http://texdoc.net/>
 - [ ] Provide a Lua API, for use in editors capable of loading Lua
-  modules
+      modules
 
 License
 -------
@@ -122,6 +164,8 @@ adapted from other sources, such as package manuals or books, and
 therefore may inherit specific license details.  At a minimum, they
 should be free to use, redistribute and modify.
 
-[lsp]: https://microsoft.github.io/language-server-protocol/
-[eglot]: https://github.com/joaotavora/eglot
 [coc]: https://github.com/neoclide/coc.nvim
+[eglot]: https://github.com/joaotavora/eglot
+[latexref]: https://latexref.xyz/
+[lsp-mode]: https://github.com/emacs-lsp/lsp-mode
+[lsp]: https://microsoft.github.io/language-server-protocol/
