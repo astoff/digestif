@@ -632,7 +632,7 @@ function Manuscript.completion_handlers.cs(self, ctx)
   local extra_snippets = config.extra_snippets
   local prefix = ctx.cs
   local len = #prefix
-  local r = {
+  local ret = {
     pos = ctx.pos + 1,
     prefix = prefix,
     kind = "command"
@@ -642,7 +642,7 @@ function Manuscript.completion_handlers.cs(self, ctx)
     if prefix == cs:sub(1, len) then
       local args = cmd.arguments
       local user_snippet = extra_snippets[cs]
-      r[#r+1] = {
+      ret[#ret+1] = {
         text = cs,
         summary = cmd.summary,
         detail = args and format_args(args) or cmd.symbol,
@@ -657,16 +657,16 @@ function Manuscript.completion_handlers.cs(self, ctx)
       local snippet_begin = "begin{" .. cs .. "}"
       local snippet_end = "\n\t$0\n\\end{" .. cs .. "}"
       local detail = args and format_args(args)
-      r[#r+1] = {
+      ret[#ret+1] = {
         text = cs,
-        filter_text = cs,
         summary = cmd.summary,
         detail = (detail or "") .. (detail and " " or "") .. "(environment)",
         snippet = user_snippet or make_snippet(snippet_begin, args, snippet_end)
       }
     end
   end
-  return r
+  table.sort(ret, function(x,y) return x.text < y.text end)
+  return ret
 end
 
 function Manuscript.completion_handlers.key(self, ctx, pos)

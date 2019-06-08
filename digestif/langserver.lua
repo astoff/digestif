@@ -232,6 +232,7 @@ methods["textDocument/completion"] = function(params)
       result[i] = {
          label = cand.text,
          filterText = cand.filter_text,
+	 sortText=("%09d"):format(i), -- Workaround to avoid client re-sorting
          documentation = cand.summary,
          detail = cand.detail,
          insertTextFormat = snippet and 2 or 1,
