@@ -97,14 +97,14 @@ end
 
 function util.matcher(patt)
   patt = P(patt)
-  return function(...) return match(patt, ...) end
+  return function(s, i) return match(patt, s, i) end
 end
 
 -- like string.gsub, but partially evaluated
 local function replace(patt, repl, token)
   token = token and P(token) or char
   patt = Cs((P(patt) / repl + token)^0)
-  return function(...) return match(patt, ...) end
+  return function(s, i) return match(patt, s, i) end
 end
 util.replace = replace
 
@@ -140,21 +140,21 @@ function util.split(sep, token, nulls)
   else
     patt = Ct((sep^0 * C((token - sep)^1))^0)
   end
-  return function (...) return match(patt, ...) end
+  return function (s, i) return match(patt, s, i) end
 end
 
 function util.trim(space, token)
   space = space and P(space) or locale_table.space
   token = token and P(token) or char
   local patt = space^0 * C((space^0 * (token - space)^1)^0)
-  return function(...) return match(patt, ...) end
+  return function(s, i) return match(patt, s, i) end
 end
 
 function util.clean(space, token)
   space = space and P(space) or locale_table.space
   token = token and P(token) or char
   local patt = space^0 * Cs(((space^1 / " " + true) * (token - space)^1)^0)
-  return function(...) return match(patt, ...) end
+  return function(s, i) return match(patt, s, i) end
 end
 
 -- iterators

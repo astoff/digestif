@@ -52,7 +52,7 @@ function FileCache:put_property(filename, propname, value)
 end
 
 function FileCache:get_property(filename, propname)
-  return self.store[filename][propname]
+  return self.store[filename] and self.store[filename][propname]
 end
 
 function FileCache:forget(filename)

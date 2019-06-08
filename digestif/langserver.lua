@@ -22,16 +22,16 @@ local function escape_uri(s)
    return "file://" .. s
 end
 
-local function get_manuscript(filename, tex_format)
-  return Manuscript{
-    filename = filename,
-    cache = cache,
-    format = tex_format
-  }
-end
-get_manuscript = util.memoize(get_manuscript)
+-- local function get_manuscript(filename, tex_format)
+--   return Manuscript{
+--     filename = filename,
+--     cache = cache,
+--     format = tex_format
+--   }
+-- end
+-- get_manuscript = util.memoize(get_manuscript)
 
-local function get_manuscript2(filename)
+local function get_manuscript(filename)
   local tex_format = cache:get_property(filename, "tex_format")
   local rootname = cache:get_rootname(filename) or filename
   local root = cache:get_property(rootname, tex_format)
@@ -44,7 +44,19 @@ local function get_manuscript2(filename)
     cache:put_property(rootname, tex_format, root)
   end
   root:refresh()
-  return root:find_manuscript(filename)
+  local script = root:find_manuscript(filename)
+  if not script then -- root does not refer back to filename
+    script = cache:get_property(filename, tex_format)
+    if not script then
+      script = Manuscript{
+        filename = filename,
+        cache = cache,
+        format = tex_format
+      }
+      cache:put_property(filename, tex_format, script)
+    end
+  end
+  return script
 end
 
 -- ¶ Convert LSP API objects to/from internal representations
@@ -147,7 +159,8 @@ methods["workspace/didChangeConfiguration"] = function() return end
 methods["textDocument/didOpen"] = function(params)
   local filename = unescape_uri(params.textDocument.uri)
   local version = params.textDocument.version
-  local tex_format = languageId_table[params.textDocument.languageId] or "tex"
+  local tex_format = languageId_table[params.textDocument.languageId]
+  if not tex_format then error("Invalid languageId.") end
   cache:put(filename, params.textDocument.text)
   cache:put_property(filename, "tex_format", tex_format)
   cache:put_property(filename, "version", version)
@@ -172,7 +185,6 @@ methods["textDocument/didChange"] = function(params)
   end
   cache:put_property(filename, "tex_format", tex_format)
   cache:put_property(filename, "version", version)
-  get_manuscript:forget(filename)
 end
 
 methods["textDocument/didClose"] = function(params)
@@ -184,7 +196,7 @@ end
 
 methods["textDocument/signatureHelp"] = function(params)
   local filename, pos = from_TextDocumentPositionParams(params)
-  local script = get_manuscript2(filename)
+  local script = get_manuscript(filename)
   local help = script:get_help(pos)
   if not nested_get(help, "data", "arguments") then return null end
   local parameters = {}
@@ -209,7 +221,7 @@ end
 
 methods["textDocument/hover"] = function(params)
   local filename, pos = from_TextDocumentPositionParams(params)
-  local script = get_manuscript2(filename)
+  local script = get_manuscript(filename)
   local help = script:get_help(pos)
   if (not help) or help.arg then return null end
   local contents = help.details or help.summary or "???"
@@ -218,7 +230,7 @@ end
 
 methods["textDocument/completion"] = function(params)
    local filename, pos = from_TextDocumentPositionParams(params)
-   local script = get_manuscript2(filename)
+   local script = get_manuscript(filename)
    local candidates = script:complete(pos)
    if not candidates then return null end
    local with_snippets = nested_get(client_capabilities,
@@ -247,14 +259,14 @@ end
 
 methods["textDocument/definition"] = function(params)
   local filename, pos = from_TextDocumentPositionParams(params)
-  local script = get_manuscript2(filename)
+  local script = get_manuscript(filename)
   local definition = script:find_definition(pos)
   return definition and to_Location(definition) or null
 end
 
 methods["textDocument/references"] = function(params)
   local filename, pos = from_TextDocumentPositionParams(params)
-  local script = get_manuscript2(filename)
+  local script = get_manuscript(filename)
   local result = {}
   if params.context and params.context.includeDeclaration then
     local definition = script:find_definition(pos)
