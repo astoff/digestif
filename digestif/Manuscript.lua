@@ -984,9 +984,9 @@ function Manuscript:make_docstring(kind, name, data)
       end
     elseif scheme == "texdoc" then
       ret = ret .. "\n\nDocumentation at "
-        .. "http://texdoc.net/texmf-dist/doc/" .. location
+        .. "<http://texdoc.net/texmf-dist/doc/" .. location .. ">"
     else
-      ret = ret .. "\n\nDocumentation at " .. location
+      ret = ret .. "\n\nDocumentation at <" .. location ..">"
     end
   end
   return ret

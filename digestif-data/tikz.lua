@@ -14,7 +14,7 @@ commands = {
             meta = "after code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>afterdecoration"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Eafterdecoration"
    },
    anchor = {
       arguments = {
@@ -25,7 +25,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>anchor"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Eanchor"
    },
    anchorborder = {
       arguments = {
@@ -33,7 +33,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>anchorborder"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Eanchorborder"
    },
    arrow = {
       arguments = {
@@ -50,7 +50,7 @@ commands = {
             meta = "arrow end tip"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>arrow"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Earrow"
    },
    arrowreversed = {
       arguments = {
@@ -67,7 +67,7 @@ commands = {
             meta = "arrow end tip"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>arrowreversed"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Earrowreversed"
    },
    attribute = {
       arguments = {
@@ -84,7 +84,7 @@ commands = {
             literal = ";"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>attribute"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Eattribute"
    },
    backgroundpath = {
       arguments = {
@@ -92,7 +92,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>backgroundpath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ebackgroundpath"
    },
    beforebackgroundpath = {
       arguments = {
@@ -100,7 +100,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>beforebackgroundpath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ebeforebackgroundpath"
    },
    beforedecoration = {
       arguments = {
@@ -108,7 +108,7 @@ commands = {
             meta = "before code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>beforedecoration"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ebeforedecoration"
    },
    beforeforegroundpath = {
       arguments = {
@@ -116,7 +116,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>beforeforegroundpath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ebeforeforegroundpath"
    },
    behindbackgroundpath = {
       arguments = {
@@ -124,7 +124,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>behindbackgroundpath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ebehindbackgroundpath"
    },
    behindforegroundpath = {
       arguments = {
@@ -132,10 +132,10 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>behindforegroundpath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ebehindforegroundpath"
    },
    breakforeach = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>breakforeach"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ebreakforeach"
    },
    calendar = {
       arguments = {
@@ -146,7 +146,7 @@ commands = {
             literal = ";"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>calendar"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ecalendar"
    },
    chainin = {
       arguments = {
@@ -167,7 +167,7 @@ commands = {
             optional = true
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>chainin"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Echainin"
    },
    clip = {
       action = "tikzpath",
@@ -180,10 +180,10 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>clip"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Eclip"
    },
    colorcurrentmixin = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>colorcurrentmixin"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ecolorcurrentmixin"
    },
    coordinate = {
       action = "tikzpath",
@@ -196,7 +196,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>coordinate"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ecoordinate"
    },
    datavisualization = {
       action = "tikzpath",
@@ -209,7 +209,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>datavisualization"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Edatavisualization"
    },
    decoration = {
       arguments = {
@@ -217,7 +217,7 @@ commands = {
             meta = "name"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>decoration"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Edecoration"
    },
    deferredanchor = {
       arguments = {
@@ -228,7 +228,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>deferredanchor"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Edeferredanchor"
    },
    draw = {
       action = "tikzpath",
@@ -241,7 +241,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>draw"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Edraw"
    },
    fill = {
       action = "tikzpath",
@@ -254,7 +254,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>fill"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Efill"
    },
    filldraw = {
       action = "tikzpath",
@@ -267,7 +267,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>filldraw"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Efilldraw"
    },
    foreach = {
       arguments = {
@@ -281,7 +281,7 @@ commands = {
             literal = " "
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>foreach"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Eforeach"
    },
    foregroundpath = {
       arguments = {
@@ -289,7 +289,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>foregroundpath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Eforegroundpath"
    },
    graph = {
       action = "tikzpath",
@@ -302,7 +302,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>graph"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Egraph"
    },
    ifdate = {
       arguments = {
@@ -316,7 +316,7 @@ commands = {
             meta = "else code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>ifdate"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Eifdate"
    },
    inheritanchor = {
       arguments = {
@@ -333,7 +333,7 @@ commands = {
             meta = "name"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>inheritanchor"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Einheritanchor"
    },
    inheritanchorborder = {
       arguments = {
@@ -347,7 +347,7 @@ commands = {
             literal = "]"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>inheritanchorborder"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Einheritanchorborder"
    },
    inheritbackgroundpath = {
       arguments = {
@@ -361,7 +361,7 @@ commands = {
             literal = "]"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>inheritbackgroundpath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Einheritbackgroundpath"
    },
    inheritbeforebackgroundpath = {
       arguments = {
@@ -375,7 +375,7 @@ commands = {
             literal = "]"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>inheritbeforebackgroundpath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Einheritbeforebackgroundpath"
    },
    inheritbeforeforegroundpath = {
       arguments = {
@@ -389,7 +389,7 @@ commands = {
             literal = "]"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>inheritbeforeforegroundpath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Einheritbeforeforegroundpath"
    },
    inheritbehindbackgroundpath = {
       arguments = {
@@ -403,7 +403,7 @@ commands = {
             literal = "]"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>inheritbehindbackgroundpath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Einheritbehindbackgroundpath"
    },
    inheritbehindforegroundpath = {
       arguments = {
@@ -417,7 +417,7 @@ commands = {
             literal = "]"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>inheritbehindforegroundpath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Einheritbehindforegroundpath"
    },
    inheritforegroundpath = {
       arguments = {
@@ -431,7 +431,7 @@ commands = {
             literal = "]"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>inheritforegroundpath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Einheritforegroundpath"
    },
    inheritsavedanchors = {
       arguments = {
@@ -445,10 +445,10 @@ commands = {
             literal = "]"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>inheritsavedanchors"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Einheritsavedanchors"
    },
    jobname = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>jobname"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ejobname"
    },
    matrix = {
       action = "tikzpath",
@@ -461,7 +461,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>matrix"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ematrix"
    },
    method = {
       arguments = {
@@ -479,7 +479,7 @@ commands = {
             meta = "method body"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>method"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Emethod"
    },
    n = {
       arguments = {
@@ -487,7 +487,7 @@ commands = {
             meta = "number register"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>n"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3En"
    },
    node = {
       action = "tikzpath",
@@ -500,7 +500,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>node"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Enode"
    },
    nodepart = {
       action = "tikzpath",
@@ -513,7 +513,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>nodepart"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Enodepart"
    },
    nodeparts = {
       arguments = {
@@ -521,7 +521,7 @@ commands = {
             meta = "list of node parts"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>nodeparts"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Enodeparts"
    },
    p = {
       arguments = {
@@ -529,7 +529,7 @@ commands = {
             meta = "point register"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>p"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ep"
    },
    path = {
       action = "tikzpath",
@@ -542,7 +542,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>path"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Epath"
    },
    pattern = {
       action = "tikzpath",
@@ -555,7 +555,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>pattern"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Epattern"
    },
    pic = {
       action = "tikzpath",
@@ -568,7 +568,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>pic"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Epic"
    },
    rule = {
       arguments = {
@@ -579,7 +579,7 @@ commands = {
             meta = "head"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>rule"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Erule"
    },
    savedanchor = {
       arguments = {
@@ -590,7 +590,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>savedanchor"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Esavedanchor"
    },
    saveddimen = {
       arguments = {
@@ -601,7 +601,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>saveddimen"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Esaveddimen"
    },
    savedmacro = {
       arguments = {
@@ -612,7 +612,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>savedmacro"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Esavedmacro"
    },
    scoped = {
       arguments = {
@@ -632,7 +632,7 @@ commands = {
             meta = "path command"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>scoped"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Escoped"
    },
    shade = {
       action = "tikzpath",
@@ -645,7 +645,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>shade"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Eshade"
    },
    shadedraw = {
       action = "tikzpath",
@@ -658,7 +658,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>shadedraw"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Eshadedraw"
    },
    spy = {
       arguments = {
@@ -678,7 +678,7 @@ commands = {
             meta = "coordinate"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>spy"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Espy"
    },
    state = {
       arguments = {
@@ -698,7 +698,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>state"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Estate"
    },
    symbol = {
       arguments = {
@@ -709,7 +709,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>symbol"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Esymbol"
    },
    tikz = {
       arguments = {
@@ -729,7 +729,7 @@ commands = {
             meta = "path commands"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikz"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikz"
    },
    tikzaliascoordinatesystem = {
       arguments = {
@@ -740,7 +740,7 @@ commands = {
             meta = "old name"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzaliascoordinatesystem"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzaliascoordinatesystem"
    },
    tikzappendtofigurename = {
       arguments = {
@@ -748,7 +748,7 @@ commands = {
             meta = "suffix"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzappendtofigurename"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzappendtofigurename"
    },
    tikzdeclarecoordinatesystem = {
       arguments = {
@@ -759,7 +759,7 @@ commands = {
             meta = "code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzdeclarecoordinatesystem"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzdeclarecoordinatesystem"
    },
    tikzdvdeclarestylesheetcolorseries = {
       arguments = {
@@ -776,13 +776,13 @@ commands = {
             meta = "step"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzdvdeclarestylesheetcolorseries"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzdvdeclarestylesheetcolorseries"
    },
    tikzexternaldisable = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzexternaldisable"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzexternaldisable"
    },
    tikzexternalenable = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzexternalenable"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzexternalenable"
    },
    tikzexternalfiledependsonfile = {
       arguments = {
@@ -793,7 +793,7 @@ commands = {
             meta = "file name"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzexternalfiledependsonfile"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzexternalfiledependsonfile"
    },
    tikzexternalize = {
       arguments = {
@@ -806,10 +806,10 @@ commands = {
             optional = true
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzexternalize"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzexternalize"
    },
    tikzexternalrealjob = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzexternalrealjob"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzexternalrealjob"
    },
    tikzfading = {
       arguments = {
@@ -823,7 +823,7 @@ commands = {
             optional = true
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzfading"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzfading"
    },
    tikzgraphforeachcolorednode = {
       arguments = {
@@ -834,19 +834,19 @@ commands = {
             meta = "macro"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzgraphforeachcolorednode"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzgraphforeachcolorednode"
    },
    tikzgraphnodefullname = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzgraphnodefullname"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzgraphnodefullname"
    },
    tikzgraphnodename = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzgraphnodename"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzgraphnodename"
    },
    tikzgraphnodepath = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzgraphnodepath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzgraphnodepath"
    },
    tikzgraphnodetext = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzgraphnodetext"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzgraphnodetext"
    },
    tikzgraphpreparecolor = {
       arguments = {
@@ -860,7 +860,7 @@ commands = {
             meta = "prefix"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzgraphpreparecolor"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzgraphpreparecolor"
    },
    tikzgraphsset = {
       arguments = {
@@ -869,7 +869,7 @@ commands = {
             meta = "options"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzgraphsset"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzgraphsset"
    },
    tikzifexternalizing = {
       arguments = {
@@ -880,7 +880,7 @@ commands = {
             meta = "false code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzifexternalizing"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzifexternalizing"
    },
    tikzifexternalizingnext = {
       arguments = {
@@ -891,25 +891,25 @@ commands = {
             meta = "false code"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzifexternalizingnext"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzifexternalizingnext"
    },
    tikzinputsegmentfirst = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzinputsegmentfirst"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzinputsegmentfirst"
    },
    tikzinputsegmentlast = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzinputsegmentlast"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzinputsegmentlast"
    },
    tikzinputsegmentsupporta = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzinputsegmentsupporta"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzinputsegmentsupporta"
    },
    tikzinputsegmentsupportb = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzinputsegmentsupportb"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzinputsegmentsupportb"
    },
    tikzlastnode = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzlastnode"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzlastnode"
    },
    tikzmath = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzmath"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzmath"
    },
    tikzpicturedependsonfile = {
       arguments = {
@@ -917,10 +917,10 @@ commands = {
             meta = "file name"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzpicturedependsonfile"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzpicturedependsonfile"
    },
    tikzrdfhashmark = {
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzrdfhashmark"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzrdfhashmark"
    },
    tikzset = {
       arguments = {
@@ -929,7 +929,7 @@ commands = {
             meta = "options"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzset"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzset"
    },
    tikzsetexternalprefix = {
       arguments = {
@@ -937,7 +937,7 @@ commands = {
             meta = "file name prefix"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzsetexternalprefix"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzsetexternalprefix"
    },
    tikzsetfigurename = {
       arguments = {
@@ -945,7 +945,7 @@ commands = {
             meta = "name"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzsetfigurename"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzsetfigurename"
    },
    tikzsetnextfilename = {
       arguments = {
@@ -953,7 +953,7 @@ commands = {
             meta = "file name"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>tikzsetnextfilename"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Etikzsetnextfilename"
    },
    useasboundingbox = {
       action = "tikzpath",
@@ -966,7 +966,7 @@ commands = {
             meta = "specification"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>useasboundingbox"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Euseasboundingbox"
    },
    usegdlibrary = {
       arguments = {
@@ -974,7 +974,7 @@ commands = {
             meta = "list of libraries"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>usegdlibrary"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Eusegdlibrary"
    },
    usetikzlibrary = {
       arguments = {
@@ -982,7 +982,7 @@ commands = {
             meta = "list of libraries"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>usetikzlibrary"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Eusetikzlibrary"
    },
    value = {
       arguments = {
@@ -990,7 +990,7 @@ commands = {
             meta = "variable"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>value"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Evalue"
    },
    x = {
       arguments = {
@@ -998,7 +998,7 @@ commands = {
             meta = "point register"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>x"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ex"
    },
    y = {
       arguments = {
@@ -1006,7 +1006,7 @@ commands = {
             meta = "point register"
          }
       },
-      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>y"
+      documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.%3CCS%3Ey"
    }
 }
 keys = {
