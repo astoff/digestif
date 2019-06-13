@@ -687,6 +687,7 @@ function Manuscript.completion_handlers.key(self, ctx, pos)
          }
       end
    end
+   table.sort(r, function(x,y) return x.text < y.text end)
    return r
 end
 

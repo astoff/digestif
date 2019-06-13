@@ -1,10 +1,15 @@
 Digestif
 ========
 
+[![LuaRocks](https://img.shields.io/luarocks/v/astoff/digestif.svg)](https://luarocks.org/modules/astoff/digestif)
+[![Build Status](https://travis-ci.com/astoff/digestif.svg?branch=master)](https://travis-ci.com/astoff/digestif)
+
 Digestif is a code analyzer of sorts, and a [language server][lsp],
 for LaTeX et caterva.  It can provide context-sensitive documentation
 and completion (macro names, labels, key-value arguments, etc.) to any
 text editor that speaks the LSP protocol.
+
+![Mandatory GIF](https://user-images.githubusercontent.com/6500902/59445824-96a43980-8e00-11e9-9149-3dfa4d13ea6c.gif)
 
 What it does
 ------------
@@ -17,25 +22,22 @@ What it does
   manual][latexref] installed as an info node for this.
 
 - Complete labels defined in the document.  Multiple-file documents
-  are supported via TeXShop-style magic comments.
+  are supported via TeXShop-style magic comments. Just add a comment
+  like this near the top of each child document:
+
+  ```
+  % !TeX root = somefile.tex
+  ```
   
 - Parse BibTeX files and provide completion for citations. Digestif
   tries exact matches against the BibTeX identifiers and a fuzzy match
-  against author and title.
+  against author and title. In the GIF above, the user types
+  `groalhom`, which matches **Gro**thendieck's “Sur quelques points
+  d'**al**gébre **hom**ologique”; selecting this inserts the BibTeX
+  identifier `Tohoku`.
 
 - Jump to definition and find references to labels and bibliographic
   items.
-
-The animated gif below shows some of these features. The following
-things happen: user types `\ci`; selects `\cite` in the drop-down
-list; snippet expands; user deletes first (optional) argument, jumping
-to second one; user types `groalhom`; several matches are shown; user
-selects **Gro**thendieck's “Sur quelques points d'**al**gébre
-**hom**ologique”; the BibTeX indentifier `Tohoku` is inserted; user
-triggers “find definition” command; BibTeX entry is shown; user
-returns and exits the snippet.
-
-![Mandatory GIF](https://user-images.githubusercontent.com/6500902/58749048-35d04500-8481-11e9-8e6e-84232308a751.gif)
 
 The implemented LSP methods are:
 

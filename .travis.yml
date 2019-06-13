@@ -1,0 +1,18 @@
+dist: xenial
+language: haskell
+ghc: 8.4.1
+env:
+  global:
+    - LUAROCKS=2.3.0
+    - LUA=lua5.3
+
+before_install:
+  - source .travis/setenv_lua.sh
+  - luarocks install busted
+
+install:
+  - luarocks make rockspec/digestif-scm-1.rockspec
+
+script:
+  - busted
+  - cabal new-test
