@@ -17,21 +17,21 @@ What it does
 - Complete commands, environments, and key-value options (for
   instance, TikZ options).
 
-- Popup help messages, with command signature and a short
-  explanation. Make sure you have the [LaTeX reference
-  manual][latexref] installed as an info node for this.
+- Popup help messages, with command signature and a short explanation.
+  For this to work, make sure you have the [LaTeX reference
+  manual][latexref] installed as an info node.
 
 - Complete labels defined in the document.  Multiple-file documents
-  are supported via TeXShop-style magic comments. Just add a comment
+  are supported via TeXShop-style magic comments.  Just add a comment
   like this near the top of each child document:
 
   ```
   % !TeX root = somefile.tex
   ```
   
-- Parse BibTeX files and provide completion for citations. Digestif
+- Parse BibTeX files and provide completion for citations.  Digestif
   tries exact matches against the BibTeX identifiers and a fuzzy match
-  against author and title. In the GIF above, the user types
+  against author and title.  In the GIF above, the user types
   `groalhom`, which matches **Gro**thendieck's “Sur quelques points
   d'**al**gébre **hom**ologique”; selecting this inserts the BibTeX
   identifier `Tohoku`.
@@ -39,20 +39,8 @@ What it does
 - Jump to definition and find references to labels and bibliographic
   items.
 
-The implemented LSP methods are:
-
-- `initialize`
-- `initialized`
-- `shutdown`
-- `exit`
-- `textDocument/didOpen`
-- `textDocument/didChange`
-- `textDocument/didClose`
-- `textDocument/signatureHelp`
-- `textDocument/hover`
-- `textDocument/completion`
-- `textDocument/definition`
-- `textDocument/references`
+- Preliminary support for plain TeX, ConTeXt, Texinfo and BibTeX
+  formats.
 
 Installation and set-up
 -----------------------
@@ -62,7 +50,7 @@ language server is using LuaRocks (on most Linux distros, this is
 package `luarocks`).  Just type
 
 ``` shell
-luarocks install --server=http://luarocks.org/dev digestif
+luarocks install digestif
 ```
 
 (Either as root, or with the `--local` option, in which case the
@@ -72,50 +60,34 @@ to adapt your text editor configuration accordingly.)
 Next, you need to enable Digestif as a language server in your
 favorite text editor.
 
-### Emacs with the [Eglot] package
+- **Emacs with the [Eglot] package:** First, make sure the Eglot ELPA
+  package is installed (`M-x package-install RET eglot RET`) and add
+  the following to your init file.
 
-First, make sure the Eglot ELPA package is installed (`M-x
-package-install RET eglot RET`) and add the following to your init
-file.
+  ``` emacs-lisp
+  (require 'eglot)
+  (add-to-list 'eglot-server-programs '((tex-mode context-mode
+                                         texinfo-mode bibtex-mode)
+                                        . ("digestif")))
+  ```
 
-``` emacs-lisp
-(require 'eglot)
-(add-to-list 'eglot-server-programs
-             '((plain-tex-mode latex-mode) . ("digestif")))
-```
+  Finally, open some LaTeX document and enable eglot (`M-x eglot`).
+  Voilà!  To get popup suggestions, make sure `company-mode` is on.
+  To insert snippets upon completion, activate `yas-minor-mode` before
+  starting up `eglot`.
 
-Finally, open some LaTeX document and enable eglot (`M-x eglot`).
-Voilà!  To get popup suggestions, make sure `company-mode` is on.  To
-insert snippets upon completion, activate `yas-minor-mode` before
-starting up `eglot`.
+- **Emacs with the [lsp-mode] package:** Recent versions have built-in
+  support for Digestif.  If you want fuzzy-matching of citations (as
+  in the GIF above), make sure you have the `company-lsp` package
+  installed and add the following to your init file.
 
-### Emacs with the [lsp-mode] package
+  ``` emacs-lisp
+  (require 'company-lsp)
+  (add-to-list 'company-lsp-filter-candidates '(digestif . nil))
+  ```
 
-Install `lsp-mode` and add the following to your init file.
-
-``` emacs-lisp
-(require 'lsp-mode)
-(lsp-register-client
- (make-lsp-client :new-connection (lsp-stdio-connection "digestif")
-                  :major-modes '(latex-mode plain-tex-mode)
-                  :server-id 'digestif))
-(add-to-list 'lsp-language-id-configuration '(latex-mode . "latex"))
-(add-to-list 'lsp-language-id-configuration '(plain-tex-mode . "plaintex"))
-```
-
-If you want fuzzy-matching of citations, make sure you have the
-`company-lsp` package installed and add the following to your init
-file.
-
-``` emacs-lisp
-(require 'company-lsp)
-(add-to-list 'company-lsp-filter-candidates '(digestif . nil))
-```
-
-### Vim with the [Coc] plugin
-
-See instructions
-[here](https://github.com/neoclide/coc.nvim/wiki/Language-servers#latex).
+- **Vim with the [Coc] plugin:** See instructions
+  [here](https://github.com/neoclide/coc.nvim/wiki/Language-servers#latex).
 
 To do
 -----
@@ -137,12 +109,14 @@ format should be more or less self explanatory.  Some sources that
 seem suitable for automatic extraction include:
 
 - [x] For plain TeX: [TeX for the impatient](https://www.gnu.org/software/teximpatient/).
-- [ ] For ConTeXt: whatever the source of [this pdf](http://www.pragma-ade.nl/general/qrcs/setup-en.pdf) is.
-- [ ] For Texinfo: from the [command list](https://www.gnu.org/software/texinfo/manual/texinfo-html/Command-List.html).
+- [x] For ConTeXt: whatever the source of [this pdf](http://www.pragma-ade.nl/general/qrcs/setup-en.pdf) is.
+- [x] For Texinfo: from the [command list](https://www.gnu.org/software/texinfo/manual/texinfo-html/Command-List.html).
 
 Further things to do and some open questions:
 
 - [x] Bibliography support: parse bibtex files, etc.
+- [ ] Add cross-reference and code snippet support for plain TeX,
+  ConTeXt and Texinfo.
 - [ ] Test on more editors (VS Code plugin?)
 - [ ] On Emacs, an ivy-based interface, more on the lines of RefTeX,
       might be nice

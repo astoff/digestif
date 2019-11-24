@@ -1,8 +1,8 @@
 package = "digestif"    
-version = "scm-1"
+version = "0.1"
 source = {
   url = "git://github.com/astoff/digestif",
-  branch = "master"
+  tag = "0.1"
 }
 description = {
   summary = "Code analyzer for TeX.",
