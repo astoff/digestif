@@ -1,5 +1,5 @@
 package = "digestif"    
-version = "0.1"
+version = "0.1-1"
 source = {
   url = "git://github.com/astoff/digestif",
   tag = "0.1"
