@@ -47,7 +47,7 @@ describe("Schema validation", function()
 
   it("checks keys", function()
     Schema{keys = {type = "string"}}:assert({a = 1, b = 2})
-    Schema{keys = {type = "string"}}:assert_fail({a = 1, b = 2, [true] = 3})
+    Schema{keys = {type = "boolean"}}:assert_fail({[true] = 1, b = 2})
   end)
 
   it("checks values", function()
