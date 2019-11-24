@@ -26,7 +26,8 @@ local formats = {
   bibtex = "digestif.ManuscriptBibTeX",
   context = "digestif.ManuscriptConTeXt",
   latex = "digestif.ManuscriptLaTeX",
-  plain = "digestif.ManuscriptPlainTeX"
+  plain = "digestif.ManuscriptPlainTeX",
+  texinfo = "digestif.ManuscriptTexinfo"
 }
 
 local function ManuscriptFactory(_, args)

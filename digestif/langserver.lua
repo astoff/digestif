@@ -112,13 +112,14 @@ local function to_TextEdit(filename, pos, old, new)
 end
 
 local languageId_table = {
-  tex = "latex", -- this is for vim; maybe "tex" should mean "tex file, undecided format"
+  bibtex = "bibtex",
+  context = "context",
   latex = "latex",
   plain = "plain",
   plaintex = "plain",
   ["plain-tex"] = "plain",
-  context = "context",
-  bibtex = "bibtex",
+  tex = "latex", -- this is for vim; maybe "tex" should mean "tex file, undecided format"
+  texinfo = "texinfo"
 }
 
 -- ¶ LSP methods
