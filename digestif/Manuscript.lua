@@ -23,9 +23,10 @@ local Manuscript = util.class()
 -- argument.
 
 local formats = {
-  plain = "digestif.ManuscriptPlainTeX",
+  bibtex = "digestif.ManuscriptBibTeX",
+  context = "digestif.ManuscriptConTeXt",
   latex = "digestif.ManuscriptLaTeX",
-  bibtex = "digestif.ManuscriptBibTeX"
+  plain = "digestif.ManuscriptPlainTeX"
 }
 
 local function ManuscriptFactory(_, args)
