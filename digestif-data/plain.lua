@@ -48,7 +48,7 @@ commands = {
    },
    ["+"] = {
       arguments = {
-         delims = {
+         delimiters = {
             "",
             "\\cr"
          },
@@ -444,7 +444,7 @@ commands = {
    beginsection = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "\\par"
             },
@@ -1151,7 +1151,7 @@ commands = {
    hglue = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "glue"
          }
       },
@@ -1537,7 +1537,7 @@ commands = {
             optional = true
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -1548,7 +1548,7 @@ commands = {
    magstep = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -1624,7 +1624,7 @@ commands = {
    midinsert = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "\\endinsert"
             },
@@ -1666,7 +1666,7 @@ commands = {
    multispan = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -1909,7 +1909,7 @@ commands = {
    openup = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen"
          }
       },
@@ -1974,7 +1974,7 @@ commands = {
    pageinsert = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "\\endinsert"
             },
@@ -2071,14 +2071,14 @@ commands = {
    proclaim = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "."
             },
             meta = "argument"
          },
          {
-            delims = {
+            delimiters = {
                "",
                "\\par"
             },
@@ -2232,7 +2232,7 @@ commands = {
    romannumeral = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -2243,7 +2243,7 @@ commands = {
    root = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "\\of"
             },
@@ -2292,7 +2292,7 @@ commands = {
    settabs = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "\\cr"
             },
@@ -2364,7 +2364,7 @@ commands = {
    skew = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          },
          {
@@ -2570,7 +2570,7 @@ commands = {
    },
    tabalign = {
       arguments = {
-         delims = {
+         delimiters = {
             "",
             "\\cr"
          },
@@ -2683,7 +2683,7 @@ commands = {
    topglue = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "glue"
          }
       },
@@ -2694,7 +2694,7 @@ commands = {
    topinsert = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "\\endinsert"
             },
@@ -2881,7 +2881,7 @@ commands = {
    vglue = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "glue"
          }
       },

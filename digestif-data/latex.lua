@@ -245,7 +245,7 @@ commands = {
             meta = "cmd"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -253,7 +253,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -399,7 +399,7 @@ commands = {
             meta = "cmd"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -407,7 +407,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -456,7 +456,7 @@ commands = {
             meta = "encoding"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -464,7 +464,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -669,7 +669,7 @@ commands = {
    LoadClass = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -680,7 +680,7 @@ commands = {
             meta = "class name"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -696,7 +696,7 @@ commands = {
             meta = "class name"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -732,7 +732,7 @@ commands = {
             meta = "format"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -868,7 +868,7 @@ commands = {
             meta = "encoding"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -876,7 +876,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -908,7 +908,7 @@ commands = {
             meta = "class name"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -924,7 +924,7 @@ commands = {
             meta = "file name"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -940,7 +940,7 @@ commands = {
             meta = "package name"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -961,7 +961,7 @@ commands = {
    RequirePackage = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -972,7 +972,7 @@ commands = {
             meta = "package name"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -988,7 +988,7 @@ commands = {
             meta = "package name"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -1082,7 +1082,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -1317,7 +1317,7 @@ commands = {
       action = "bibitem",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -1588,7 +1588,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -1631,7 +1631,7 @@ commands = {
       action = "cite",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -1687,7 +1687,7 @@ commands = {
    color = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -1702,7 +1702,7 @@ commands = {
    colorbox = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -1779,14 +1779,14 @@ commands = {
             meta = "dash-len"
          },
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
             meta = "rect-width,rect-height"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -1910,7 +1910,7 @@ commands = {
       action = "input",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2049,7 +2049,7 @@ commands = {
    fcolorbox = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2139,7 +2139,7 @@ commands = {
    footnote = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2156,7 +2156,7 @@ commands = {
    footnotemark = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2179,7 +2179,7 @@ commands = {
    footnotetext = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2224,14 +2224,14 @@ commands = {
    framebox = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
             meta = "rec-width,rec-height"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2310,7 +2310,7 @@ commands = {
    graphpaper = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2318,14 +2318,14 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
             meta = "x_init,y_init"
          },
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
@@ -2477,7 +2477,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2547,7 +2547,7 @@ commands = {
    item = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2740,7 +2740,7 @@ commands = {
    line = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
@@ -2756,7 +2756,7 @@ commands = {
    linebreak = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2860,14 +2860,14 @@ commands = {
    makebox = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
             meta = "rec-width,rec-height"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2905,7 +2905,7 @@ commands = {
    marginpar = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3087,14 +3087,14 @@ commands = {
    multiput = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
             meta = "x,y"
          },
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
@@ -3157,7 +3157,7 @@ commands = {
             meta = "\\cmd"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3165,7 +3165,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3185,7 +3185,7 @@ commands = {
             meta = "countername"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3207,7 +3207,7 @@ commands = {
             meta = "env"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3215,7 +3215,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3288,7 +3288,7 @@ commands = {
             meta = "name"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3333,7 +3333,7 @@ commands = {
    nolinebreak = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3353,7 +3353,7 @@ commands = {
    nopagebreak = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3460,14 +3460,14 @@ commands = {
    oval = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
             meta = "width,height"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3501,7 +3501,7 @@ commands = {
    pagebreak = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3515,7 +3515,7 @@ commands = {
    pagecolor = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3573,7 +3573,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3594,7 +3594,7 @@ commands = {
    parbox = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3602,7 +3602,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3610,7 +3610,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3647,7 +3647,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3749,7 +3749,7 @@ commands = {
             meta = "cmd"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3757,7 +3757,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3790,7 +3790,7 @@ commands = {
    put = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
@@ -3806,7 +3806,7 @@ commands = {
    qbezier = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3814,21 +3814,21 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
             meta = "x1,y1"
          },
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
             meta = "x2,y2"
          },
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
@@ -3873,7 +3873,7 @@ commands = {
             meta = "distance"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3881,7 +3881,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3953,7 +3953,7 @@ commands = {
             meta = "\\cmd"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3961,7 +3961,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3985,7 +3985,7 @@ commands = {
             meta = "env"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3993,7 +3993,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4101,7 +4101,7 @@ commands = {
    rotatebox = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4124,7 +4124,7 @@ commands = {
    rule = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4147,7 +4147,7 @@ commands = {
             meta = "box-cmd"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4155,7 +4155,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4190,7 +4190,7 @@ commands = {
             meta = "horizontal factor"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4226,7 +4226,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4323,7 +4323,7 @@ commands = {
    shortstack = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4421,7 +4421,7 @@ commands = {
    sqrt = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4496,7 +4496,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4519,7 +4519,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4550,7 +4550,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4682,7 +4682,7 @@ commands = {
    textcolor = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4939,7 +4939,7 @@ commands = {
    twocolumn = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -4953,7 +4953,7 @@ commands = {
    typein = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -5071,7 +5071,7 @@ commands = {
       action = "input",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -5139,7 +5139,7 @@ commands = {
    vector = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
@@ -5275,7 +5275,7 @@ environments = {
    array = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -5322,7 +5322,7 @@ environments = {
    figure = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -5336,7 +5336,7 @@ environments = {
    ["figure*"] = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -5412,7 +5412,7 @@ environments = {
    minipage = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -5420,7 +5420,7 @@ environments = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -5428,7 +5428,7 @@ environments = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -5445,14 +5445,14 @@ environments = {
    picture = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
             meta = "width,height"
          },
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
@@ -5480,7 +5480,7 @@ environments = {
    table = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -5494,7 +5494,7 @@ environments = {
    tabular = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -5514,7 +5514,7 @@ environments = {
             meta = "width"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },

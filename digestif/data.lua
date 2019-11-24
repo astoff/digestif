@@ -13,17 +13,17 @@ local token = P(1)
 local xparse_patt = (P" "^0 * P"+"^-1 *
    (  "m" * Cc{optional = false}
     + "r" * C(token) * C(token)
-          / function (tok1, tok2) return {delims = {tok1, tok2}} end
+          / function (tok1, tok2) return {delimiters = {tok1, tok2}} end
     + "u{"* C((token - "}")^0) * "}"
-          / function (toks) return {delims = {"", toks}} end
+          / function (toks) return {delimiters = {"", toks}} end
     + "v" * Cc{type = "verbatim"}
-    + "o" * Cc{optional = true, delims = {"[", "]"}}
+    + "o" * Cc{optional = true, delimiters = {"[", "]"}}
     + "d" * C(token) * C(token)
-          / function (tok1, tok2) return {optonal = true, delims = {tok1, tok2}} end
-    + "s" * Cc{type = "literal", literal = "*", optional = true, delims = false}
+          / function (tok1, tok2) return {optonal = true, delimiters = {tok1, tok2}} end
+    + "s" * Cc{type = "literal", literal = "*", optional = true, delimiters = false}
     + "t" * C(token)
           / function (tok) return {type = "literal", literal = tok, optional = true} end
-    + "g" * Cc{optional = true, delims = {"{", "}"}}))^0
+    + "g" * Cc{optional = true, delimiters = {"{", "}"}}))^0
 
 function data.signature(sig, ...)
    local args = {...}

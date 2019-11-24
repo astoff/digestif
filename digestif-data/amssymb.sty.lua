@@ -4,6 +4,11 @@ URL: https://github.com/wspr/unicode-math/
 Original license: LPPL 1.3c
 ]]
 
+package = {
+  name = "amssymb",
+  documentation = "texdoc:fonts/amsfonts/amssymb.pdf"
+}
+
 commands = {
   Bbbk = {
     summary = "mathematical double-struck small k",

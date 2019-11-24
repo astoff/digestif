@@ -3,7 +3,7 @@ local p = Parser()
 
 describe("Argument parser", function()
   local arg_m = {}
-  local arg_o = {delims = {"[", "]"}, optional = true}
+  local arg_o = {delimiters = {"[", "]"}, optional = true}
   local arg_s = {literal = "*", optional = true}
 
   it("parses complete arguments", function()

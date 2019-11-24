@@ -555,10 +555,10 @@ local function format_args(args)
     local l, r
     if arg.literal then
       l, r = "", ""
-    elseif arg.delims == false then
+    elseif arg.delimiters == false then
       l, r = "〈", "〉"
-    elseif arg.delims then
-      l, r = arg.delims[1] or "{", arg.delims[2] or "}"
+    elseif arg.delimiters then
+      l, r = arg.delimiters[1] or "{", arg.delimiters[2] or "}"
     else
       l, r = "{", "}"
     end
@@ -590,12 +590,12 @@ local function make_snippet(before, args, after)
       else
          i = i + 1
          if arg.optional then -- include delimiter in selection, to allow deletion
-           local l = arg.delims and arg.delims[1] or "{"
-           local r = arg.delims and arg.delims[2] or "\\}"
+           local l = arg.delimiters and arg.delimiters[1] or "{"
+           local r = arg.delimiters and arg.delimiters[2] or "\\}"
            t[#t+1] = "${" .. i .. ":" .. l .. (arg.meta or "") .. r .. "}"
          else
-           local l = arg.delims and arg.delims[1] or "{"
-           local r = arg.delims and arg.delims[2] or "}"
+           local l = arg.delimiters and arg.delimiters[1] or "{"
+           local r = arg.delimiters and arg.delimiters[2] or "}"
            t[#t+1] = l .. "${" .. i .. (arg.meta and ":" .. arg.meta or "") .. "}" .. r
          end
       end

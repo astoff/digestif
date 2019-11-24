@@ -8,7 +8,7 @@ environments = {
   tikzpicture = {
     arguments = {
       {
-        delims = {"[", "]"},
+        delimiters = {"[", "]"},
         keys = "$DIGESTIFDATA/tikz/keys/tikz",
         meta = "options",
         optional = true
@@ -19,7 +19,7 @@ environments = {
   scope = {
     arguments = {
       {
-        delims = {"[", "]"},
+        delimiters = {"[", "]"},
         keys = "$DIGESTIFDATA/tikz/keys/tikz",
         meta = "options",
         optional = true

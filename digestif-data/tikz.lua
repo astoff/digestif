@@ -38,7 +38,7 @@ commands = {
    arrow = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -55,7 +55,7 @@ commands = {
    arrowreversed = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -151,14 +151,14 @@ commands = {
    chainin = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
             meta = "existing name"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -173,7 +173,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -189,7 +189,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -202,7 +202,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -234,7 +234,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -247,7 +247,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -260,7 +260,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -295,7 +295,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -454,7 +454,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -469,7 +469,7 @@ commands = {
             meta = "method name"
          },
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
@@ -493,7 +493,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -506,7 +506,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -535,7 +535,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -548,7 +548,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -561,7 +561,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -620,7 +620,7 @@ commands = {
             meta = "animations spec"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -638,7 +638,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -651,7 +651,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },
@@ -663,7 +663,7 @@ commands = {
    spy = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -686,7 +686,7 @@ commands = {
             meta = "name"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -717,7 +717,7 @@ commands = {
             meta = "animations spec"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -798,7 +798,7 @@ commands = {
    tikzexternalize = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -814,7 +814,7 @@ commands = {
    tikzfading = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -959,7 +959,7 @@ commands = {
       action = "tikzpath",
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                ";"
             },

@@ -144,8 +144,8 @@ function Parser:__init(catcodes)
 
   local patt_from_arg = function(arg)
     local ret = skipped
-    if arg.delims then
-      local l, r = arg.delims[1], arg.delims[2]
+    if arg.delimiters then
+      local l, r = arg.delimiters[1], arg.delimiters[2]
       ret = sequence(
         ret, Iouter_pos, l, Ipos,
         many(
@@ -210,7 +210,7 @@ function Parser:__init(catcodes)
   self.strip_comments = matcher(comment_stripper)
   self.skip_to_bracketed = matcher( -- for tikz paths
     search(
-      patt_from_arg{delims = {"[", "]"}},
+      patt_from_arg{delimiters = {"[", "]"}},
       skim_unit - blank_line)) -- also exclude ";"?
 
   --- Parse a list.

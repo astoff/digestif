@@ -81,8 +81,8 @@ end
 
 commands = {}
 
-Poarg = Cg(Cc(true), "optional") * Cg(Cc({"[","]"}),"delims")
-Pparg = Cg(Cc({"(",")"}),"delims")
+Poarg = Cg(Cc(true), "optional") * Cg(Cc({"[","]"}),"delimiters")
+Pparg = Cg(Cc({"(",")"}),"delimiters")
 
 sigpatt = "\\"*C((R"AZ" + R"az" + '@')^1)*Ct(Ct(P" "^0 * choice(
   Cg(surrounded("\\opt{\\oarg{", "}}"), "meta") *Poarg,
@@ -203,7 +203,7 @@ tikzpathcommands = {
 }
 
 commands.path.arguments = {
-  {meta="specification", delims = {"",";"}}
+  {meta="specification", delimiters = {"",";"}}
 }
 for _, k in ipairs(tikzpathcommands) do
   commands[k].arguments = merge(commands.path.arguments)

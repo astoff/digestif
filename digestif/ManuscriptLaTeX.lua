@@ -15,7 +15,7 @@ ManuscriptLaTeX.format = "latex"
 
 ManuscriptLaTeX.init_callbacks =
    setmetatable({}, {__index = Manuscript.init_callbacks})
-Manuscript.scan_references_callbacks = {}
+Manuscript.scan_references_callbacks = {} -- TODO: is this correct?
 
 -- ¶ Helper functions
 

@@ -21,7 +21,7 @@ commands = {
    above = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen"
          }
       },
@@ -44,15 +44,15 @@ commands = {
    abovewithdelims = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "delim1"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "delim2"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen"
          }
       },
@@ -63,7 +63,7 @@ commands = {
    accent = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "charcode"
          }
       },
@@ -80,14 +80,14 @@ commands = {
    advance = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "by"
             },
             meta = "muskip register"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "muglue"
          }
       },
@@ -98,7 +98,7 @@ commands = {
    afterassignment = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "token"
          }
       },
@@ -109,7 +109,7 @@ commands = {
    aftergroup = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "token"
          }
       },
@@ -125,11 +125,11 @@ commands = {
    atopwithdelims = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "delim1"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "delim2"
          }
       },
@@ -184,7 +184,7 @@ commands = {
    box = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -207,11 +207,11 @@ commands = {
    catcode = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "charcode"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -222,7 +222,7 @@ commands = {
    char = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "charcode"
          }
       },
@@ -233,7 +233,7 @@ commands = {
    chardef = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
@@ -241,7 +241,7 @@ commands = {
             optional = true
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "charcode"
          }
       },
@@ -252,11 +252,11 @@ commands = {
    cleaders = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "box or rule"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "skip command"
          }
       },
@@ -271,7 +271,7 @@ commands = {
    closeout = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -288,7 +288,7 @@ commands = {
    copy = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -299,7 +299,7 @@ commands = {
    count = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -310,7 +310,7 @@ commands = {
    countdef = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
@@ -318,7 +318,7 @@ commands = {
             optional = true
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -339,7 +339,7 @@ commands = {
    csname = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "\\endcsname"
             },
@@ -365,11 +365,11 @@ commands = {
    def = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "parameter text"
          },
          {
@@ -395,11 +395,11 @@ commands = {
    delcode = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "charcode"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -410,7 +410,7 @@ commands = {
    delimiter = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -429,7 +429,7 @@ commands = {
    dimen = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -440,7 +440,7 @@ commands = {
    dimendef = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
@@ -448,7 +448,7 @@ commands = {
             optional = true
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -503,14 +503,14 @@ commands = {
    divide = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "by"
             },
             meta = "register"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -527,7 +527,7 @@ commands = {
    dp = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -544,11 +544,11 @@ commands = {
    edef = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "parameter text"
          },
          {
@@ -683,11 +683,11 @@ commands = {
    expandafter = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "token1"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "token2"
          }
       },
@@ -726,7 +726,7 @@ commands = {
    font = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
@@ -734,14 +734,14 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "",
                "at"
             },
             meta = "fontname"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen"
          }
       },
@@ -752,11 +752,11 @@ commands = {
    fontdimen = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "font"
          }
       },
@@ -768,7 +768,7 @@ commands = {
    fontname = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "font"
          }
       },
@@ -779,15 +779,15 @@ commands = {
    futurelet = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "token1"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "token2"
          }
       },
@@ -798,11 +798,11 @@ commands = {
    gdef = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "parameter text"
          },
          {
@@ -827,7 +827,7 @@ commands = {
    halign = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "to",
                ""
             },
@@ -835,7 +835,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "spread",
                ""
             },
@@ -843,7 +843,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "{",
                "}"
             },
@@ -875,7 +875,7 @@ commands = {
    hbox = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "to",
                ""
             },
@@ -883,7 +883,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "spread",
                ""
             },
@@ -891,7 +891,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "{",
                "}"
             },
@@ -938,7 +938,7 @@ commands = {
    hrule = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "width",
                ""
             },
@@ -946,7 +946,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "height",
                ""
             },
@@ -954,7 +954,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "depth",
                ""
             },
@@ -975,21 +975,21 @@ commands = {
    hskip = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "plus"
             },
             meta = "dimen1"
          },
          {
-            delims = {
+            delimiters = {
                "",
                "minus"
             },
             meta = "dimen2"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen3"
          }
       },
@@ -1005,7 +1005,7 @@ commands = {
    ht = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -1021,7 +1021,7 @@ commands = {
    hyphenchar = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "font"
          }
       },
@@ -1039,11 +1039,11 @@ commands = {
    ["if"] = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "token1"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "token2"
          }
       },
@@ -1058,11 +1058,11 @@ commands = {
    ifcat = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "token1"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "token2"
          }
       },
@@ -1073,15 +1073,15 @@ commands = {
    ifdim = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen1"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "relation"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen2"
          }
       },
@@ -1092,7 +1092,7 @@ commands = {
    ifeof = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -1108,7 +1108,7 @@ commands = {
    ifhbox = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -1134,15 +1134,15 @@ commands = {
    ifnum = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number1"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "relation"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "number2"
          }
       },
@@ -1153,7 +1153,7 @@ commands = {
    ifodd = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -1169,7 +1169,7 @@ commands = {
    ifvbox = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -1185,7 +1185,7 @@ commands = {
    ifvoid = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -1196,11 +1196,11 @@ commands = {
    ifx = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "token1"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "token2"
          }
       },
@@ -1226,7 +1226,7 @@ commands = {
    input = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "filename"
          }
       },
@@ -1242,7 +1242,7 @@ commands = {
    insert = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          },
          {
@@ -1273,7 +1273,7 @@ commands = {
    kern = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen"
          }
       },
@@ -1310,11 +1310,11 @@ commands = {
    lccode = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "charcode"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -1325,11 +1325,11 @@ commands = {
    leaders = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "box or rule"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "skip command"
          }
       },
@@ -1362,7 +1362,7 @@ commands = {
    let = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
@@ -1370,7 +1370,7 @@ commands = {
             optional = true
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "token"
          }
       },
@@ -1415,11 +1415,11 @@ commands = {
    lower = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "box"
          }
       },
@@ -1456,7 +1456,7 @@ commands = {
    mathaccent = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "mathcode"
          }
       },
@@ -1472,7 +1472,7 @@ commands = {
    mathchar = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "mathcode"
          }
       },
@@ -1483,7 +1483,7 @@ commands = {
    mathchardef = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
@@ -1491,7 +1491,7 @@ commands = {
             optional = true
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "mathcode"
          }
       },
@@ -1512,11 +1512,11 @@ commands = {
    mathcode = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "charcode"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -1575,7 +1575,7 @@ commands = {
    meaning = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "token"
          }
       },
@@ -1602,7 +1602,7 @@ commands = {
    mkern = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "mudimen"
          }
       },
@@ -1619,11 +1619,11 @@ commands = {
    moveleft = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "box"
          }
       },
@@ -1634,11 +1634,11 @@ commands = {
    moveright = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "box"
          }
       },
@@ -1649,21 +1649,21 @@ commands = {
    mskip = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "plus"
             },
             meta = "mudimen1"
          },
          {
-            delims = {
+            delimiters = {
                "",
                "minus"
             },
             meta = "mudimen2"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "mudimen3"
          }
       },
@@ -1674,14 +1674,14 @@ commands = {
    multiply = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "by"
             },
             meta = "register"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -1692,7 +1692,7 @@ commands = {
    muskip = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -1703,7 +1703,7 @@ commands = {
    muskipdef = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
@@ -1711,7 +1711,7 @@ commands = {
             optional = true
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -1747,7 +1747,7 @@ commands = {
    noexpand = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "token"
          }
       },
@@ -1789,7 +1789,7 @@ commands = {
    number = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -1805,7 +1805,7 @@ commands = {
    openin = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          },
          {
@@ -1813,7 +1813,7 @@ commands = {
             optional = true
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "filename"
          }
       },
@@ -1824,7 +1824,7 @@ commands = {
    openout = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          },
          {
@@ -1832,7 +1832,7 @@ commands = {
             optional = true
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "filename"
          }
       },
@@ -1884,11 +1884,11 @@ commands = {
    overwithdelims = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "delim1"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "delim2"
          }
       },
@@ -1980,7 +1980,7 @@ commands = {
    penalty = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -2027,7 +2027,7 @@ commands = {
    radical = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -2038,11 +2038,11 @@ commands = {
    raise = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "box"
          }
       },
@@ -2085,7 +2085,7 @@ commands = {
    scriptfont = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "family"
          }
       },
@@ -2097,7 +2097,7 @@ commands = {
    scriptscriptfont = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "family"
          }
       },
@@ -2130,7 +2130,7 @@ commands = {
    setbox = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          },
          {
@@ -2138,7 +2138,7 @@ commands = {
             optional = true
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "box"
          }
       },
@@ -2149,7 +2149,7 @@ commands = {
    setlanguage = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -2160,11 +2160,11 @@ commands = {
    sfcode = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "charcode"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -2175,7 +2175,7 @@ commands = {
    shipout = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "box"
          }
       },
@@ -2186,7 +2186,7 @@ commands = {
    show = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "token"
          }
       },
@@ -2197,7 +2197,7 @@ commands = {
    showbox = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -2235,7 +2235,7 @@ commands = {
    skewchar = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "font"
          }
       },
@@ -2247,7 +2247,7 @@ commands = {
    skip = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -2258,7 +2258,7 @@ commands = {
    skipdef = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
@@ -2266,7 +2266,7 @@ commands = {
             optional = true
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -2326,7 +2326,7 @@ commands = {
    string = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          }
       },
@@ -2343,7 +2343,7 @@ commands = {
    textfont = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "family"
          }
       },
@@ -2360,7 +2360,7 @@ commands = {
    the = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "token"
          }
       },
@@ -2389,7 +2389,7 @@ commands = {
    toks = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -2400,7 +2400,7 @@ commands = {
    toksdef = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
@@ -2408,7 +2408,7 @@ commands = {
             optional = true
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -2490,11 +2490,11 @@ commands = {
    uccode = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "charcode"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          }
       },
@@ -2521,7 +2521,7 @@ commands = {
    unhbox = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -2532,7 +2532,7 @@ commands = {
    unhcopy = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -2558,7 +2558,7 @@ commands = {
    unvbox = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -2569,7 +2569,7 @@ commands = {
    unvcopy = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -2600,7 +2600,7 @@ commands = {
    valign = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "to",
                ""
             },
@@ -2608,7 +2608,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "spread",
                ""
             },
@@ -2616,7 +2616,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "{",
                "}"
             },
@@ -2636,7 +2636,7 @@ commands = {
    vbox = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "to",
                ""
             },
@@ -2644,7 +2644,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "spread",
                ""
             },
@@ -2652,7 +2652,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "{",
                "}"
             },
@@ -2703,7 +2703,7 @@ commands = {
    vrule = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "width",
                ""
             },
@@ -2711,7 +2711,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "height",
                ""
             },
@@ -2719,7 +2719,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "depth",
                ""
             },
@@ -2740,21 +2740,21 @@ commands = {
    vskip = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "plus"
             },
             meta = "dimen1"
          },
          {
-            delims = {
+            delimiters = {
                "",
                "minus"
             },
             meta = "dimen2"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen3"
          }
       },
@@ -2765,14 +2765,14 @@ commands = {
    vsplit = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "",
                "to"
             },
             meta = "number"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "dimen"
          }
       },
@@ -2788,7 +2788,7 @@ commands = {
    vtop = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "to",
                ""
             },
@@ -2796,7 +2796,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "spread",
                ""
             },
@@ -2804,7 +2804,7 @@ commands = {
             optional = true
          },
          {
-            delims = {
+            delimiters = {
                "{",
                "}"
             },
@@ -2818,7 +2818,7 @@ commands = {
    wd = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "register"
          }
       },
@@ -2836,7 +2836,7 @@ commands = {
    write = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "number"
          },
          {
@@ -2850,11 +2850,11 @@ commands = {
    xdef = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "control sequence"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "parameter text"
          },
          {
@@ -2868,11 +2868,11 @@ commands = {
    xleaders = {
       arguments = {
          {
-            delims = false,
+            delimiters = false,
             meta = "box or rule"
          },
          {
-            delims = false,
+            delimiters = false,
             meta = "skip command"
          }
       },

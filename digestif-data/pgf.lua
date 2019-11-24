@@ -437,7 +437,7 @@ commands = {
    pgfdata = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -513,7 +513,7 @@ commands = {
    pgfdeclarefunctionalshading = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -541,7 +541,7 @@ commands = {
    pgfdeclarehorizontalshading = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -563,7 +563,7 @@ commands = {
    pgfdeclareimage = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -602,7 +602,7 @@ commands = {
    pgfdeclaremask = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -636,7 +636,7 @@ commands = {
    pgfdeclarepatternformonly = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -664,7 +664,7 @@ commands = {
    pgfdeclarepatterninherentlycolored = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -717,7 +717,7 @@ commands = {
    pgfdeclareradialshading = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -750,7 +750,7 @@ commands = {
    pgfdeclareverticalshading = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -1094,7 +1094,7 @@ commands = {
    pgfimage = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2267,7 +2267,7 @@ commands = {
    pgfmatrixendrow = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2280,7 +2280,7 @@ commands = {
    pgfmatrixnextcell = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2389,7 +2389,7 @@ commands = {
    pgfooclass = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
@@ -2455,7 +2455,7 @@ commands = {
             meta = "class name"
          },
          {
-            delims = {
+            delimiters = {
                "(",
                ")"
             },
@@ -2576,7 +2576,7 @@ commands = {
             meta = "layout"
          },
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -2870,7 +2870,7 @@ commands = {
    pgfpathgrid = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3036,7 +3036,7 @@ commands = {
    pgfplotgnuplot = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3639,7 +3639,7 @@ commands = {
    pgfprofilenewforcommand = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3658,7 +3658,7 @@ commands = {
    pgfprofilenewforcommandpattern = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -3680,7 +3680,7 @@ commands = {
    pgfprofilenewforenvironment = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
@@ -6213,7 +6213,7 @@ commands = {
    pgftext = {
       arguments = {
          {
-            delims = {
+            delimiters = {
                "[",
                "]"
             },
