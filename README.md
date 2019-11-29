@@ -153,9 +153,9 @@ Notes
 emacs variable `Info-directory-list`.
 
 If you install [texlive](https://tug.org/texlive/), latex2e info file
-is in `/usr/local/texlive/2019/texmf-dist/doc`. You can make it
+is in `/usr/local/texlive/2019/texmf-dist/doc/info`. You can make it
 visible to emacs, for instance, with:
 
-    (add-to-list 'Info-directory-list "/usr/local/texlive/2019/texmf-dist/doc")
+    (add-to-list 'Info-directory-list "/usr/local/texlive/2019/texmf-dist/doc/info")
 
 [↩](#infofn)
