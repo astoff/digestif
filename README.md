@@ -149,8 +149,9 @@ should be free to use, redistribute and modify.
 Notes
 -----
 
-<b id="info">info:</b> check the environemnt variable "INFOPATH" or the
-emacs variable `Info-directory-list`.
+<b id="info">info nodes:</b> info files are searched for in a list of
+directories. Check the environemnt variable "INFOPATH" or the emacs
+variable `Info-directory-list`.
 
 If you install [texlive](https://tug.org/texlive/), latex2e info file
 is in `/usr/local/texlive/2019/texmf-dist/doc/info`. You can make it
