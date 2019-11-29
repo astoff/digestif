@@ -19,7 +19,7 @@ What it does
 
 - Popup help messages, with command signature and a short explanation.
   For this to work, make sure you have the [LaTeX reference
-  manual][latexref] installed as an info node.
+  manual][latexref] installed as an info node<sup id="infofn">[info](#info)</sup>.
 
 - Complete labels defined in the document.  Multiple-file documents
   are supported via TeXShop-style magic comments.  Just add a comment
@@ -28,7 +28,7 @@ What it does
   ```
   % !TeX root = somefile.tex
   ```
-  
+
 - Parse BibTeX files and provide completion for citations.  Digestif
   tries exact matches against the BibTeX identifiers and a fuzzy match
   against author and title.  In the GIF above, the user types
@@ -145,3 +145,17 @@ should be free to use, redistribute and modify.
 [latexref]: https://latexref.xyz/
 [lsp-mode]: https://github.com/emacs-lsp/lsp-mode
 [lsp]: https://microsoft.github.io/language-server-protocol/
+
+Notes
+-----
+
+<b id="info">info:</b> check the environemnt variable "INFOPATH" or the
+emacs variable `Info-directory-list`.
+
+If you install [texlive](https://tug.org/texlive/), latex2e info file
+is in `/usr/local/texlive/2019/texmf-dist/doc`. You can make it
+visible to emacs, for instance, with:
+
+    (add-to-list 'Info-directory-list "/usr/local/texlive/2019/texmf-dist/doc")
+
+[↩](#infofn)
