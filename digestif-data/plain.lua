@@ -1621,20 +1621,6 @@ commands = {
       summary = "Middle relation: ∣.",
       symbol = "∣"
    },
-   midinsert = {
-      arguments = {
-         {
-            delimiters = {
-               "",
-               "\\endinsert"
-            },
-            meta = "vertical mode material"
-         }
-      },
-      details = "$DIGESTIFDATA/excerpts-teximpatient/data/topinsert",
-      documentation = "texdoc:plain/impatient/book.pdf#page=166",
-      summary = "Produce the specified text at the current position if possible, otherwise at the top of the next page."
-   },
    min = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/cos",
       documentation = "texdoc:plain/impatient/book.pdf#page=213",
@@ -1970,20 +1956,6 @@ commands = {
       documentation = "texdoc:plain/impatient/book.pdf#page=210",
       summary = "Owns relation: ∋.",
       symbol = "∋"
-   },
-   pageinsert = {
-      arguments = {
-         {
-            delimiters = {
-               "",
-               "\\endinsert"
-            },
-            meta = "vertical mode material"
-         }
-      },
-      details = "$DIGESTIFDATA/excerpts-teximpatient/data/topinsert",
-      documentation = "texdoc:plain/impatient/book.pdf#page=166",
-      summary = "Produce the specified text on the following page, and use up the full page."
    },
    pageno = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/pageno",
@@ -2691,20 +2663,6 @@ commands = {
       documentation = "texdoc:plain/impatient/book.pdf#page=176",
       summary = "Produce specified vertical glue at the top of a page."
    },
-   topinsert = {
-      arguments = {
-         {
-            delimiters = {
-               "",
-               "\\endinsert"
-            },
-            meta = "vertical mode material"
-         }
-      },
-      details = "$DIGESTIFDATA/excerpts-teximpatient/data/topinsert",
-      documentation = "texdoc:plain/impatient/book.pdf#page=166",
-      summary = "Produce the specified text at top of a page."
-   },
    tracingall = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/tracingall",
       documentation = "texdoc:plain/impatient/book.pdf#page=281",
@@ -2965,5 +2923,22 @@ commands = {
    ["~"] = {
       documentation = "texdoc:plain/impatient/book.pdf#page=120",
       summary = "Tilde accent for text, as in ã."
+   }
+}
+environments = {
+   midinsert = {
+      details = "$DIGESTIFDATA/excerpts-teximpatient/data/topinsert",
+      documentation = "texdoc:plain/impatient/book.pdf#page=166",
+      summary = "Produce the specified text at the current position if possible, otherwise at the top of the next page."
+   },
+   pageinsert = {
+      details = "$DIGESTIFDATA/excerpts-teximpatient/data/topinsert",
+      documentation = "texdoc:plain/impatient/book.pdf#page=166",
+      summary = "Produce the specified text on the following page, and use up the full page."
+   },
+   topinsert = {
+      details = "$DIGESTIFDATA/excerpts-teximpatient/data/topinsert",
+      documentation = "texdoc:plain/impatient/book.pdf#page=166",
+      summary = "Produce the specified text at top of a page."
    }
 }

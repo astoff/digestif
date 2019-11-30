@@ -15,6 +15,16 @@ ManuscriptConTeXt.format = "context"
 
 ManuscriptConTeXt.init_callbacks =
    setmetatable({}, {__index = Manuscript.init_callbacks})
-Manuscript.scan_references_callbacks = {}
+ManuscriptConTeXt.scan_references_callbacks = {}
+
+--- Make a snippet for an environment.
+--
+-- @param cs The command name
+-- @param args An argument list
+-- @return The snippet string
+function ManuscriptConTeXt:snippet_env(cs, args)
+  local argsnippet = args and self:snippet_args(args) or ""
+  return "start" .. cs .. argsnippet .. "\n\t$0\n\\stop" .. cs
+end
 
 return ManuscriptConTeXt

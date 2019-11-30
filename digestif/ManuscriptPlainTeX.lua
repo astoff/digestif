@@ -15,6 +15,6 @@ ManuscriptPlainTeX.format = "plain"
 
 ManuscriptPlainTeX.init_callbacks =
    setmetatable({}, {__index = Manuscript.init_callbacks})
-Manuscript.scan_references_callbacks = {}
+ManuscriptPlainTeX.scan_references_callbacks = {}
 
 return ManuscriptPlainTeX

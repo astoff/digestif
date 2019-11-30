@@ -12,6 +12,16 @@ ManuscriptTexinfo.format = "texinfo"
 
 ManuscriptTexinfo.init_callbacks =
    setmetatable({}, {__index = Manuscript.init_callbacks})
-Manuscript.scan_references_callbacks = {}
+ManuscriptTexinfo.scan_references_callbacks = {}
+
+--- Make a snippet for an environment.
+--
+-- @param cs The command name
+-- @param args An argument list
+-- @return The snippet string
+function ManuscriptTexinfo:snippet_env(cs, args)
+  local argsnippet = args and self:snippet_args(args) or ""
+  return cs .. argsnippet .. "\n\t$0\n@end " .. cs
+end
 
 return ManuscriptTexinfo

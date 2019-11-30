@@ -606,6 +606,62 @@ local function make_snippet(before, args, after)
    return concat(t)
 end
 
+--- Make a snippet fragment from an argument list
+--
+-- @param args An argument list
+-- @param i The initial counter
+-- @return The snippet string
+function Manuscript:snippet_args(args, i)
+  if not args then return "" end
+  local t, i = {}, i or 1
+  for _, arg in ipairs(args) do
+    if arg.optional then
+      t[#t+1] = "${" .. i .. ":"
+      i = i + 1
+    end
+    if arg.literal then
+      t[#t+1] = arg.literal
+    else
+      local delims, l, r = arg.delimiters
+      local meta = arg.meta
+      if delims then
+        l, r = delims[1], delims[2]
+      elseif delims == nil then
+        l, r = "{", "}"
+      else -- delims == false
+        l, r = "", ""
+      end
+      t[#t+1] = l .. "${" .. i .. (meta and ":" .. meta or "") .. "}" .. r
+      i = i + 1
+    end
+    if arg.optional then t[#t+1] = "}" end
+  end
+  return concat(t)
+end
+
+--- Make a snippet for a command.
+--
+-- @param cs The command name
+-- @param args An argument list
+-- @return The snippet string
+function Manuscript:snippet_cmd(cs, args)
+  local argsnippet = args and self:snippet_args(args) or ""
+  return cs .. argsnippet .. "$0"
+end
+
+--- Make a snippet for an environment.
+--
+-- This is the plain TeX version.  It's intended to be overwritten by
+-- other classes.
+--
+-- @param cs The command name
+-- @param args An argument list
+-- @return The snippet string
+function Manuscript:snippet_env(cs, args)
+  local argsnippet = args and self:snippet_args(args) or ""
+  return cs .. argsnippet .. "\n\t$0\n\\end" .. cs
+end
+
 --- Calculate completions for the manuscript at the given point.
 --
 -- @param pos A position in the source
@@ -648,22 +704,20 @@ function Manuscript.completion_handlers.cs(self, ctx)
         text = cs,
         summary = cmd.summary,
         detail = args and format_args(args) or cmd.symbol,
-        snippet = user_snippet or args and make_snippet(cs, args)
+        snippet = user_snippet or args and self:snippet_cmd(cs, args)
       }
     end
   end
   for cs, cmd in pairs(self:all_environments()) do
     if prefix == cs:sub(1, len) then
-      local args = cmd.arguments or {}
+      local args = cmd.arguments
       local user_snippet = extra_snippets[cs]
-      local snippet_begin = "begin{" .. cs .. "}"
-      local snippet_end = "\n\t$0\n\\end{" .. cs .. "}"
       local detail = args and format_args(args)
       ret[#ret+1] = {
         text = cs,
         summary = cmd.summary,
-        detail = (detail or "") .. (detail and " " or "") .. "(environment)",
-        snippet = user_snippet or make_snippet(snippet_begin, args, snippet_end)
+        detail = (detail and detail .. " " or "") .. "(environment)",
+        snippet = user_snippet or self:snippet_env(cs, args)
       }
     end
   end

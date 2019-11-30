@@ -15,7 +15,19 @@ ManuscriptLaTeX.format = "latex"
 
 ManuscriptLaTeX.init_callbacks =
    setmetatable({}, {__index = Manuscript.init_callbacks})
-Manuscript.scan_references_callbacks = {} -- TODO: is this correct?
+ManuscriptLaTeX.scan_references_callbacks = {}
+
+-- ¶ Snippets
+
+--- Make a snippet for an environment.
+--
+-- @param cs The command name
+-- @param args An argument list
+-- @return The snippet string
+function ManuscriptLaTeX:snippet_env(cs, args)
+  local argsnippet = args and self:snippet_args(args) or ""
+  return "begin{" .. cs .. "}" .. argsnippet .. "\n\t$0\n\\end{" .. cs .. "}"
+end
 
 -- ¶ Helper functions
 
