@@ -5,7 +5,7 @@ source = {
   branch = "master"
 }
 description = {
-  summary = "Code analyzer for TeX.",
+  summary = "A code analyzer for TeX",
   detailed = [[
     A code analyzer for TeX documents, including LaTeX and BibTeX.  It
     comes with a Language Server Protocol implementation, so it can
@@ -17,20 +17,20 @@ description = {
 dependencies = {
   "lua >= 5.3",
   "lpeg >= 1.0",
-  "dkjson >= 2.1.0",
+  "dkjson >= 2.5",
 }
-
 build = {
   type = "builtin",
   modules = {
     ["digestif.FileCache"] = "digestif/FileCache.lua",
     ["digestif.Manuscript"] = "digestif/Manuscript.lua",
     ["digestif.ManuscriptBibTeX"] = "digestif/ManuscriptBibTeX.lua",
-    ["digestif.ManuscriptConTeXt"] = "digestif/ManuscriptPlainTeX.lua",
+    ["digestif.ManuscriptConTeXt"] = "digestif/ManuscriptConTeXt.lua",
     ["digestif.ManuscriptLaTeX"] = "digestif/ManuscriptLaTeX.lua",
     ["digestif.ManuscriptPlainTeX"] = "digestif/ManuscriptPlainTeX.lua",
-    ["digestif.ManuscriptTexinfo"] = "digestif/ManuscriptPlainTeX.lua",
+    ["digestif.ManuscriptTexinfo"] = "digestif/ManuscriptTexinfo.lua",
     ["digestif.Parser"] = "digestif/Parser.lua",
+    ["digestif.Schema"] = "digestif/Schema.lua",
     ["digestif.bibtex"] = "digestif/bibtex.lua",
     ["digestif.config"] = "digestif/config.lua",
     ["digestif.data"] = "digestif/data.lua",
