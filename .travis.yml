@@ -1,13 +1,13 @@
-dist: xenial
+dist: bionic
 language: haskell
 ghc: 8.4.1
 env:
-  global:
-    - LUAROCKS=2.3.0
-    - LUA=lua5.3
+  - LUA=5.3 LUAROCKS=3.0
 
 before_install:
-  - source .travis/setenv_lua.sh
+  - pip install --user hererocks
+  - hererocks env --lua $LUA --luarocks $LUAROCKS
+  - source env/bin/activate
   - luarocks install busted
 
 install:
