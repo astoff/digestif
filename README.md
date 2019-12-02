@@ -120,7 +120,7 @@ Further things to do and some open questions:
 - [ ] Test on more editors (VS Code plugin?)
 - [ ] On Emacs, an ivy-based interface, more on the lines of RefTeX,
       might be nice
-- [ ] Provide diagnostics?Common-installation-issues
+- [ ] Provide diagnostics?
 - [ ] Extract data files from LaTeX literate code?  For packages using
       xparse, it is possible to at least obtain the signature of
       commands systematically
