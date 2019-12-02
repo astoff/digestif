@@ -19,7 +19,7 @@ What it does
 
 - Popup help messages, with command signature and a short explanation.
   For this to work, make sure you have the [LaTeX reference
-  manual][latexref] installed as an info node<sup id="infofn">[info](#info)</sup>.
+  manual][latexref] installed as an [[info node|wiki/Common-installation-issues]].
 
 - Complete labels defined in the document.  Multiple-file documents
   are supported via TeXShop-style magic comments.  Just add a comment
@@ -120,7 +120,7 @@ Further things to do and some open questions:
 - [ ] Test on more editors (VS Code plugin?)
 - [ ] On Emacs, an ivy-based interface, more on the lines of RefTeX,
       might be nice
-- [ ] Provide diagnostics?
+- [ ] Provide diagnostics?Common-installation-issues
 - [ ] Extract data files from LaTeX literate code?  For packages using
       xparse, it is possible to at least obtain the signature of
       commands systematically
@@ -146,17 +146,3 @@ should be free to use, redistribute and modify.
 [lsp-mode]: https://github.com/emacs-lsp/lsp-mode
 [lsp]: https://microsoft.github.io/language-server-protocol/
 
-Notes
------
-
-<b id="info">info nodes:</b> info files are searched for in a list of
-directories. Check the environemnt variable "INFOPATH" or the emacs
-variable `Info-directory-list`.
-
-If you install [texlive](https://tug.org/texlive/), latex2e info file
-is in `/usr/local/texlive/2019/texmf-dist/doc/info`. You can make it
-visible to emacs, for instance, with:
-
-    (add-to-list 'Info-directory-list "/usr/local/texlive/2019/texmf-dist/doc/info")
-
-[↩](#infofn)
