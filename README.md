@@ -19,7 +19,7 @@ What it does
 
 - Popup help messages, with command signature and a short explanation.
   For this to work, make sure you have the [LaTeX reference
-  manual][latexref] installed as an [[info node|wiki/Common-installation-issues]].
+  manual][latexref] installed as an [info node](../../wiki/Common-installation-issues).
 
 - Complete labels defined in the document.  Multiple-file documents
   are supported via TeXShop-style magic comments.  Just add a comment
