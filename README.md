@@ -9,7 +9,7 @@ for LaTeX et caterva.  It can provide context-sensitive documentation
 and completion (macro names, labels, key-value arguments, etc.) to any
 text editor that speaks the LSP protocol.
 
-![Mandatory GIF](https://user-images.githubusercontent.com/6500902/59445824-96a43980-8e00-11e9-9149-3dfa4d13ea6c.gif)
+![Mandatory GIF][gif]
 
 What it does
 ------------
@@ -19,7 +19,7 @@ What it does
 
 - Popup help messages, with command signature and a short explanation.
   For this to work, make sure you have the [LaTeX reference
-  manual][latexref] installed as an [info node](../../wiki/Common-installation-issues).
+  manual][latexref] installed as an [info node][info-issues].
 
 - Complete labels defined in the document.  Multiple-file documents
   are supported via TeXShop-style magic comments.  Just add a comment
@@ -140,6 +140,9 @@ adapted from other sources, such as package manuals or books, and
 therefore may inherit specific license details.  At a minimum, they
 should be free to use, redistribute and modify.
 
+[gif]: https://user-images.githubusercontent.com/6500902/70076615-714df680-15ff-11ea-90cc-405cea8bbb49.gif
+[info-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues#info-nodes
+[installation-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues
 [coc]: https://github.com/neoclide/coc.nvim
 [eglot]: https://github.com/joaotavora/eglot
 [latexref]: https://latexref.xyz/
