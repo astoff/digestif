@@ -550,7 +550,7 @@ end
 -- @param args An argument list
 -- @return A string
 --
-local function format_args(args)
+function Manuscript:signature_arg(args)
   if not args then return nil end
   local t = {}
   for i, arg in ipairs(args) do
@@ -572,39 +572,19 @@ local function format_args(args)
   return concat(t)
 end
 
---- Make a snippet string from args.
+--- Pretty-print a command signature
 --
--- @param before A string added at the beginning, typically the command
--- name
--- @param after A string added at the end; default value is "$0"
--- @return The snippet string
-
-local function make_snippet(before, args, after)
-   local t, i = {before}, 0
-   for _, arg in ipairs(args) do
-      if arg.literal then
-         if arg.optional then
-            i = i + 1
-            t[#t+1] = "${" .. i .. ":" .. arg.literal .. "}"
-         else
-            t[#t+1] = arg.literal
-         end
-      else
-         i = i + 1
-         if arg.optional then -- include delimiter in selection, to allow deletion
-           local l = arg.delimiters and arg.delimiters[1] or "{"
-           local r = arg.delimiters and arg.delimiters[2] or "\\}"
-           t[#t+1] = "${" .. i .. ":" .. l .. (arg.meta or "") .. r .. "}"
-         else
-           local l = arg.delimiters and arg.delimiters[1] or "{"
-           local r = arg.delimiters and arg.delimiters[2] or "}"
-           t[#t+1] = l .. "${" .. i .. (arg.meta and ":" .. arg.meta or "") .. "}" .. r
-         end
-      end
-   end
-   t[#t+1] = after or "$0"
-   return concat(t)
+-- @param cs The command name
+-- @param args An argument list, or nil
+-- @return A string
+--
+function Manuscript:signature_cmd(cs, args)
+  return "\\" .. cs .. (args and self:signature_arg(args) or "")
 end
+
+-- This is for plain TeX.  Other formats should override this
+-- definition.
+Manuscript.signature_env = Manuscript.signature_cmd
 
 --- Make a snippet fragment from an argument list
 --
@@ -703,7 +683,7 @@ function Manuscript.completion_handlers.cs(self, ctx)
       ret[#ret+1] = {
         text = cs,
         summary = cmd.summary,
-        detail = args and format_args(args) or cmd.symbol,
+        detail = args and self:signature_arg(args) or cmd.symbol,
         snippet = user_snippet or args and self:snippet_cmd(cs, args)
       }
     end
@@ -712,7 +692,7 @@ function Manuscript.completion_handlers.cs(self, ctx)
     if prefix == cs:sub(1, len) then
       local args = cmd.arguments
       local user_snippet = extra_snippets[cs]
-      local detail = args and format_args(args)
+      local detail = args and self:signature_arg(args)
       ret[#ret+1] = {
         text = cs,
         summary = cmd.summary,
@@ -780,7 +760,7 @@ function Manuscript.completion_handlers.begin(self, ctx, pos)
          r[#r+1] = {
             text = text,
             summary = env.summary,
-            detail = format_args(env.arguments),
+            detail = signature_arg(env.arguments),
          }
       end
    end
@@ -939,8 +919,7 @@ function Manuscript.help_handlers.begin(self, ctx)
     pos = ctx.pos,
     cont = ctx.cont,
     kind = "environment",
-    label = "\\begin{" .. env_name .. "}"
-      .. (args and format_args(args) or ""),
+    label = self:signature_env(env_name, args),
     summary = data.summary,
     details = self:make_docstring("env", env_name, data),
     data = data
@@ -956,8 +935,7 @@ Manuscript.help_handlers['end'] = function(self, ctx)
     pos = ctx.pos,
     cont = ctx.cont,
     kind = "environment",
-    label = "\\begin{" .. env_name .. "}"
-      .. (args and format_args(args) or " "),
+    label = self:signature_env(env_name, args),
     summary = data.summary,
     details = self:make_docstring("env", env_name, data),
     data = data
@@ -972,8 +950,7 @@ function Manuscript.help_handlers.cs(self, ctx)
     pos = ctx.pos,
     cont = ctx.cont,
     kind = "command",
-    label = "\\" .. ctx.cs
-      .. (args and format_args(args) or ""),
+    label = self:signature_cmd(ctx.cs, args),
     summary = data.summary,
     details = self:make_docstring("cs", ctx.cs, data),
     data = data
@@ -1006,16 +983,14 @@ end
 function Manuscript:make_docstring(kind, name, data)
   local ret
   if kind == "cs" then
-    ret = "\\" .. name
+    ret = self:signature_cmd(name, data.arguments)
   elseif kind == "env" then
-    ret = "\\begin{" .. name .. "}"
+    ret = self:signature_env(name, data.arguments)
+  elseif kind == "key" then
+    ret = name
+    if data.meta then ret = ret .. " = " .. data.meta end
   else
     ret = name
-  end
-  if data.arguments then
-    ret = ret .. format_args(data.arguments)
-  elseif kind == "key" and data.meta then
-    ret = ret .. " = " .. data.meta
   end
   if data.summary then
     ret = ret .. ": " .. data.summary
@@ -1035,6 +1010,7 @@ function Manuscript:make_docstring(kind, name, data)
       local str = f:read("a")
       local ok, _, exitc = f:close()
       if ok and exitc == 0 then
+        str = str:gsub(".-\n", "", 2) -- discard header line
         ret = ret .. "\n\n" .. str
       else
         util.log(("Error running info (%d)"):format(exitc))

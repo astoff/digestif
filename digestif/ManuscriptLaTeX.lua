@@ -29,6 +29,16 @@ function ManuscriptLaTeX:snippet_env(cs, args)
   return "begin{" .. cs .. "}" .. argsnippet .. "\n\t$0\n\\end{" .. cs .. "}"
 end
 
+--- Pretty-print an environment signature
+--
+-- @param cs The command name
+-- @param args An argument list, or nil
+-- @return A string
+--
+function ManuscriptLaTeX:signature_env(cs, args)
+  return "\\begin{" .. cs .. "}" .. (args and self:signature_arg(args) or "")
+end
+
 -- ¶ Helper functions
 
 --@param meta the desired meta string

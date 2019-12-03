@@ -24,4 +24,14 @@ function ManuscriptTexinfo:snippet_env(cs, args)
   return cs .. argsnippet .. "\n\t$0\n@end " .. cs
 end
 
+--- Pretty-print a command signature
+--
+-- @param cs The command name
+-- @param args An argument list, or nil
+-- @return A string
+--
+function Manuscript:signature_cmd(cs, args)
+  return "@" .. cs .. (args and self:signature_arg(args) or "")
+end
+
 return ManuscriptTexinfo
