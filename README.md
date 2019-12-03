@@ -140,7 +140,7 @@ adapted from other sources, such as package manuals or books, and
 therefore may inherit specific license details.  At a minimum, they
 should be free to use, redistribute and modify.
 
-[gif]: https://user-images.githubusercontent.com/6500902/70076615-714df680-15ff-11ea-90cc-405cea8bbb49.gif
+[gif]: https://user-images.githubusercontent.com/6500902/70077785-c5f27100-1601-11ea-9cfb-6e7ebd3c61ae.gif
 [info-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues#info-nodes
 [installation-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues
 [coc]: https://github.com/neoclide/coc.nvim
