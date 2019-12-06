@@ -10,6 +10,8 @@ local concat, sort, unpack = table.concat, table.sort, table.unpack
 local path_join, path_split = util.path_join, util.path_split
 local nested_get, nested_put = util.nested_get, util.nested_put
 local map, update, merge = util.map, util.update, util.merge
+
+local infty = math.huge
 local min, max = math.min, math.max
 
 local matcher = util.matcher
@@ -517,7 +519,7 @@ function Manuscript.context_callbacks.tikzpath(m, pos, cs, context, end_pos)
         }
         context = local_scan_parse_keys(m, context, end_pos)
       end
-      p = q and q.cont or math.huge
+      p = q and q.cont or infty
     end
   end
   return r.cont, context, end_pos
@@ -669,6 +671,7 @@ Manuscript.completion_handlers = {}
 function Manuscript.completion_handlers.cs(self, ctx)
   local extra_snippets = config.extra_snippets
   local prefix = ctx.cs
+  local has_prefix = matcher(prefix)
   local len = #prefix
   local ret = {
     pos = ctx.pos + 1,
@@ -677,7 +680,7 @@ function Manuscript.completion_handlers.cs(self, ctx)
   }
   local s = string.sub
   for cs, cmd in pairs(self:all_commands()) do
-    if prefix == cs:sub(1, len) then
+    if has_prefix(cs) then
       local args = cmd.arguments
       local user_snippet = extra_snippets[cs]
       ret[#ret+1] = {
@@ -689,7 +692,7 @@ function Manuscript.completion_handlers.cs(self, ctx)
     end
   end
   for cs, cmd in pairs(self:all_environments()) do
-    if prefix == cs:sub(1, len) then
+    if has_prefix(cs) then
       local args = cmd.arguments
       local user_snippet = extra_snippets[cs]
       local detail = args and self:signature_arg(args)
@@ -760,16 +763,23 @@ function Manuscript.completion_handlers.begin(self, ctx, pos)
          r[#r+1] = {
             text = text,
             summary = env.summary,
-            detail = signature_arg(env.arguments),
+            detail = self:signature_arg(env.arguments),
          }
       end
    end
    return r
 end
 
--- move to ManuscriptLaTeX?
+--- Get a short piece of text around a label.
+-- If there is a recognized command ending right before the label, the
+-- context starts there.
+-- TODO: For now, the context is 100 bytes, but it should be smart and
+-- choose a lenght close to 100 characters but ending at a line end.
+-- It should also be Unicode-safe.
+-- @param item an item in a label index
+-- @return a string
 function Manuscript:label_context_short(item)
-  local pos, cs, r = self:find_preceding_command(item.outer_pos)
+  local pos, cs, _ = self:find_preceding_command(item.outer_pos)
   local cmd = self.commands[cs]
   if not cmd then
     pos = self.parser.next_nonblank(self.src, item.outer_pos)
@@ -778,23 +788,30 @@ function Manuscript:label_context_short(item)
 end
 
 function Manuscript.completion_handlers.ref(self, ctx, pos)
-   local prefix = self:substring(ctx.pos, pos - 1)
-   local len = #prefix
-   local r = {
-      pos = ctx.pos,
-      prefix = prefix,
-      kind = "label"
-   }
-   for label in self.root:each_of "label_index" do
-      if prefix == label.name:sub(1, len) then
-         r[#r+1] = {
-            text = label.name,
-            detail = label.manuscript:label_context_short(label),
-            summary = label.manuscript:label_context_long(label),
-         }
-      end
-   end
-   return r
+  local prefix = self:substring(ctx.pos, pos - 1)
+  local has_prefix = matcher(prefix)
+  local fuzzy_matches = fuzzy_matcher(prefix)
+  local scores = {}
+  local r = {
+    pos = ctx.pos,
+    prefix = prefix,
+    kind = "label"
+  }
+  for label in self.root:each_of "label_index" do
+    local short_ctx = label.manuscript:label_context_short(label)
+    local score = has_prefix(label.name) and infty or fuzzy_matches(short_ctx)
+    if score then
+      r[#r+1] = {
+        text = label.name,
+        detail = short_ctx,
+        summary = label.manuscript:label_context_long(label),
+      }
+      scores[r[#r]] = score
+    end
+  end
+  -- sort exact matches by order in the document, fuzzy ones by score
+  sort(r, function(a, b) return scores[a] > scores[b] end)
+  return r
 end
 
 function Manuscript.completion_handlers.cite(self, ctx, pos)
@@ -809,8 +826,7 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
   local exact_match = matcher(prefix)
   local fuzzy_match = fuzzy_matcher(prefix)
   for item in self.root:each_of "bib_index" do
-    local score = exact_match(item.name) and math.huge
-      or fuzzy_match(item.text)
+    local score = exact_match(item.name) and infty or fuzzy_match(item.text)
     if score then
       scores[item.name] = score
       r[#r+1] = {
@@ -820,6 +836,7 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
       }
     end
   end
+  -- sort exact matches by label, fuzzy matches by score
   local cmp = function(a, b)
     local na, nb = a.text, b.text
     local sa, sb = scores[na], scores[nb]

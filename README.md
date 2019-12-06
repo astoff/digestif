@@ -21,23 +21,26 @@ What it does
   For this to work, make sure you have the [LaTeX reference
   manual][latexref] installed as an [info node][info-issues].
 
-- Complete labels defined in the document.  Multiple-file documents
-  are supported via TeXShop-style magic comments.  Just add a comment
-  like this near the top of each child document:
+- Complete cross-references.  Multi-file documents are supported via
+  TeXShop-style magic comments.  Just add a comment like this near the
+  top of each child document:
 
   ```
   % !TeX root = somefile.tex
   ```
 
-- Parse BibTeX files and provide completion for citations.  Digestif
-  tries exact matches against the BibTeX identifiers and a fuzzy match
-  against author and title.  In the GIF above, the user types
-  `groalhom`, which matches **Gro**thendieck's “Sur quelques points
-  d'**al**gébre **hom**ologique”; selecting this inserts the BibTeX
-  identifier `Tohoku`.
+- Parse BibTeX files and provide completion for citations.
 
-- Jump to definition and find references to labels and bibliographic
-  items.
+- Digestif is fuzzy!  For citations, it tries an exact match against
+  the BibTeX identifier and a fuzzy match against author and title.
+  In the GIF above, the user types `groalhom`, which matches
+  **Gro**thendieck's “Sur quelques points d'**al**gébre
+  **hom**ologique”; selecting this inserts the BibTeX identifier
+  `Tohoku`.  Similarly, for cross-references, Digestif tries an exact
+  match against the label and a fuzzy match against the text around
+  the label.
+
+- Jump to definition and find references to labels and citations.
 
 - Preliminary support for plain TeX, ConTeXt, Texinfo and BibTeX
   formats.
@@ -66,8 +69,7 @@ favorite text editor.
 
   ``` emacs-lisp
   (require 'eglot)
-  (add-to-list 'eglot-server-programs '((tex-mode context-mode
-                                         texinfo-mode bibtex-mode)
+  (add-to-list 'eglot-server-programs '((tex-mode context-mode texinfo-mode bibtex-mode)
                                         . ("digestif")))
   ```
 
@@ -102,8 +104,8 @@ this point include:
 
 This program can't be useful without a larger collection of data
 files.  The typical TeX literate documentation is ostensibly not
-machine readable, so in most cases lists of commands with a short
-explanation and a description of the arguments must be compiled
+machine readable, so in most cases a “tags” file (listing all commands
+and their arguments, preferably with docstrings) must be compiled
 manually.  These files are in the `data` folder, and their format
 should be more or less self explanatory.  Some sources that seem
 suitable for automatic extraction include:

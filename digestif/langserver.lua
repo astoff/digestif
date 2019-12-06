@@ -152,13 +152,12 @@ methods["initialize"] = function(params)
   }
 end
 
-methods["initialized"] = function() return end
-
+methods["initialized"] = function() end
 methods["shutdown"] = function() return null end
-
 methods["exit"] = function() os.exit() end
-
-methods["workspace/didChangeConfiguration"] = function() return end
+methods["workspace/didChangeConfiguration"] = function() end
+methods["textDocument/willSave"] = function() end
+methods["textDocument/didSave"] = function() end
 
 methods["textDocument/didOpen"] = function(params)
   local filename = unescape_uri(params.textDocument.uri)

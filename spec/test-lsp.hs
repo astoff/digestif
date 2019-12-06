@@ -64,6 +64,16 @@ main = hspec $ do
         item ^. label `shouldBe` "somepaper"
         item ^. detail `shouldBe` Just "Thor 1999; Some great paper"
 
+    it "completes label wth fuzzy match" $ runSession digestif_cmd fullCaps fixtures $ do
+      doc <- openDoc "file2.tex" "latex"
+      item:_ <- getCompletions doc (Position 2 10)
+      liftIO $ item ^. label `shouldBe` "somelabel"
+
+    it "completes citation wth fuzzy match" $ runSession digestif_cmd fullCaps fixtures $ do
+      doc <- openDoc "file2.tex" "latex"
+      item:_ <- getCompletions doc (Position 10 10)
+      liftIO $ item ^. label `shouldBe` "somepaper"
+
   describe "textDocument/completion with inconsistent root information" $ do
     it "works when root doesn't exist" $ runSession digestif_cmd fullCaps fixtures $ do
       doc <- openDoc "child.tex" "latex"
