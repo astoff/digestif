@@ -131,17 +131,6 @@ Further things to do and some open questions:
 - [ ] Provide a Lua API, for use in editors capable of loading Lua
       modules
 
-License
--------
-
-The software itself (everything outside the `data` folder) is under
-the MIT license.
-
-Some files in the `data` folder are extracted or adapted from other
-sources, such as package manuals or books, and therefore may inherit
-specific license details.  At a minimum, they should be free to use,
-redistribute and modify.
-
 [gif]: https://user-images.githubusercontent.com/6500902/70077785-c5f27100-1601-11ea-9cfb-6e7ebd3c61ae.gif
 [info-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues#info-nodes
 [installation-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues
