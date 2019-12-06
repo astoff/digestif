@@ -104,9 +104,9 @@ This program can't be useful without a larger collection of data
 files.  The typical TeX literate documentation is ostensibly not
 machine readable, so in most cases lists of commands with a short
 explanation and a description of the arguments must be compiled
-manually.  These files are in the `digestif-data` folder, and their
-format should be more or less self explanatory.  Some sources that
-seem suitable for automatic extraction include:
+manually.  These files are in the `data` folder, and their format
+should be more or less self explanatory.  Some sources that seem
+suitable for automatic extraction include:
 
 - [x] For plain TeX: [TeX for the impatient](https://www.gnu.org/software/teximpatient/).
 - [x] For ConTeXt: whatever the source of [this pdf](http://www.pragma-ade.nl/general/qrcs/setup-en.pdf) is.
@@ -132,13 +132,13 @@ Further things to do and some open questions:
 License
 -------
 
-The software itself (everything outside the `digestif-data` folder) is
-under the MIT license.
+The software itself (everything outside the `data` folder) is under
+the MIT license.
 
-Some of the files in the `digestif-data` folder are extracted or
-adapted from other sources, such as package manuals or books, and
-therefore may inherit specific license details.  At a minimum, they
-should be free to use, redistribute and modify.
+Some files in the `data` folder are extracted or adapted from other
+sources, such as package manuals or books, and therefore may inherit
+specific license details.  At a minimum, they should be free to use,
+redistribute and modify.
 
 [gif]: https://user-images.githubusercontent.com/6500902/70077785-c5f27100-1601-11ea-9cfb-6e7ebd3c61ae.gif
 [info-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues#info-nodes
@@ -148,4 +148,3 @@ should be free to use, redistribute and modify.
 [latexref]: https://latexref.xyz/
 [lsp-mode]: https://github.com/emacs-lsp/lsp-mode
 [lsp]: https://microsoft.github.io/language-server-protocol/
-

@@ -38,11 +38,11 @@ build = {
     ["digestif.util"] = "digestif/util.lua",
   },
   copy_directories = {
-    "digestif-data"
+    "data"
   },
   install = {
     bin = {
-      ["digestif"] = "bin/digestif.lua"
+      ["digestif"] = "bin/digestif"
     }
   }
 }

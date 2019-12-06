@@ -1,7 +1,7 @@
 local Schema = require "digestif.Schema"
 local require_data = require "digestif.data".require
 
-local DIGESTIF_DATA = "digestif-data/"
+local DIGESTIF_DATA = "./data"
 local datafiles = {}
 
 for path in require("lfs").dir(DIGESTIF_DATA) do

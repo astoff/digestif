@@ -1,12 +1,15 @@
 local FileCache = require "digestif.FileCache"
 local Manuscript = require "digestif.Manuscript"
+local config = require "digestif.config"
+local json = require "dkjson"
 local util = require "digestif.util"
 
-local path_join, path_split = util.path_join, util.path_split
+local log = util.log
 local nested_get, nested_put = util.nested_get, util.nested_put
+local path_join, path_split = util.path_join, util.path_split
 
 local cache = FileCache()
-local null = util.null
+local null = json.null
 local trace, root_dir, client_capabilities
 
 local function hex_to_char(hex)
@@ -288,4 +291,82 @@ methods["textDocument/references"] = function(params)
   end
 end
 
-return methods
+-- ¶ RPC functions and the main loop
+
+local function write_msg(msg)
+   io.write("Content-Length: ", #msg, "\r\n\r\n", msg)
+   io.flush()
+end
+
+local function read_msg()
+   local headers, msg = {}, nil
+   for h in io.lines() do
+      if h == "" or h == "\r" then break end
+      local k, v = string.match(h, "^([%a%-]+): (.*)")
+      if k then headers[k] = v end
+   end
+   local len = tonumber(headers["Content-Length"])
+   if len then msg = io.read(len) end
+   return msg, headers
+end
+
+local function rpc_send(id, result, error_code)
+   write_msg(
+      json.encode({
+            jsonrpc = "2.0",
+            id = id,
+            result = not error_code and result,
+            error = error_code and {code = error_code, message = result}
+   }))
+end
+
+local function rpc_receive()
+  local msg = read_msg()
+  local success, request = pcall(json.decode, msg)
+  if not success then
+    rpc_send(json.null, request, -32700)
+    return
+  end
+  return request.id, request.method, request.params
+end
+
+local is_optional = util.matcher("$/")
+
+local function process_request(verbose)
+  local clock = verbose and os.clock()
+  local id, method_name, params = rpc_receive()
+  local method = methods[method_name]
+  if method then
+    local success, result = pcall(method, params)
+    if success then
+      if id then rpc_send(id, result) end
+    else
+      rpc_send(id, result, 1)
+    end
+  elseif not is_optional(method_name) then
+    rpc_send(id, "unknown method " .. method_name, -32601)
+  end
+  if verbose then
+    log(string.format("Request: %4s %-40s %6.2f ms",
+                      id or "*", method_name, (os.clock() - clock) * 1000))
+  end
+end
+
+local function main(...)
+  local DIGESTIFDATA = os.getenv("DIGESTIFDATA")
+  if DIGESTIFDATA then
+    config.data_dirs = util.split";"(DIGESTIFDATA)
+  end
+  if not require("digestif.data").require("primitives") then
+    error("Could not find data files at the following locations:\n- "
+            .. table.concat(config.data_dirs, "\n- ")
+            .. "\nSet the environment variable DIGESTIFDATA to fix this.")
+  end
+
+  while true do process_request(true) end
+end
+
+return {
+  main = main,
+  methods = methods
+}

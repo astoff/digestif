@@ -1,0 +1,11 @@
+#!/usr/bin/env lua
+
+-- Set the right data path when installed by luarocks
+local rock_path = debug.getinfo(1).source:match("^@(.*/luarocks/.*)/bin/digestif$")
+if rock_path then
+  local data_dirs = require "digestif.config".data_dirs
+  local path_join = require "digestif.util".path_join
+  table.insert(data_dirs, path_join(rock_path, 'data'))
+end
+
+require "digestif.langserver".main(...)

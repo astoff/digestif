@@ -5,8 +5,6 @@ local config = require "digestif.config"
 local P = lpeg.P
 local C, Cc = lpeg.C, lpeg.Cc
 
-local data_dirs = config.data_dirs
-
 local data = {loaded = {}}
 
 local token = P(1)
@@ -66,14 +64,14 @@ local function resolve_refs(tbl)
 end
 
 function data.load(name)
-   if name:find('..', 1, true) then return end -- unreasonable file name
-   local src = util.try_read_file(data_dirs, name .. ".lua")
-   if not src then return end
-   local result, err = util.eval_with_env(src, load_data_mt)
-   if not result then util.log(err) end
-   data.loaded[name] = result
-   resolve_refs(result)
-   return result
+  if name:find('..', 1, true) then return end -- unreasonable file name
+  local src = util.try_read_file(config.data_dirs, name .. ".tags")
+  if not src then return end
+  local result, err = util.eval_with_env(src, load_data_mt)
+  if not result then util.log(err) end
+  data.loaded[name] = result
+  resolve_refs(result)
+  return result
 end
 
 return data

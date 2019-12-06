@@ -4,8 +4,7 @@ local path_join, path_split = util.path_join, util.path_split
 local HOME = os.getenv("HOME")
 
 local data_dirs = {
-  "./digestif-data",
-  path_join(HOME, ".local/share/digestif-data")
+  path_join(HOME, ".local/share/digestif")
 }
 
 local extra_snippets = {
