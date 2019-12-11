@@ -16,5 +16,7 @@ return {
   data_dirs = data_dirs,
   eol = "\n",
   extra_snippets = extra_snippets,
+  fuzzy_cite = true,
+  fuzzy_ref = true,
   info_command = "info %q"
 }

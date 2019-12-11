@@ -777,7 +777,7 @@ end
 function Manuscript.completion_handlers.ref(self, ctx, pos)
   local prefix = self:substring(ctx.pos, pos - 1)
   local has_prefix = matcher(prefix)
-  local fuzzy_matches = fuzzy_matcher(prefix)
+  local fuzzy_match = config.fuzzy_ref and fuzzy_matcher(prefix)
   local scores = {}
   local r = {
     pos = ctx.pos,
@@ -811,10 +811,11 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
     kind = "bibitem"
   }
   local scores = {}
-  local exact_match = matcher(prefix)
-  local fuzzy_match = fuzzy_matcher(prefix)
-  for item in self.root:each_of "bib_index" do
-    local score = exact_match(item.name) and infty or fuzzy_match(item.text)
+  local has_prefix = matcher(prefix)
+  local fuzzy_match = config.fuzzy_cite and fuzzy_matcher(prefix)
+  for item in self.root:traverse "bib_index" do
+    local score = has_prefix(item.name) and infty
+      or fuzzy_match and fuzzy_match(item.text)
     if score then
       scores[item.name] = score
       r[#r+1] = {
