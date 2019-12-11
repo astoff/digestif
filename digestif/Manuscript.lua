@@ -1,21 +1,21 @@
 --- Manuscript class
 -- @classmod digestif.Manuscript
 
-local FileCache = require "digestif.FileCache"
 local config = require "digestif.config"
 local require_data = require "digestif.data".require
 local util = require "digestif.util"
 
+local co_wrap, co_yield = coroutine.wrap, coroutine.yield
 local concat, sort, unpack = table.concat, table.sort, table.unpack
+local infty = math.huge
+local min, max = math.min, math.max
+
 local path_join, path_split = util.path_join, util.path_split
 local nested_get, nested_put = util.nested_get, util.nested_put
 local map, update, merge = util.map, util.update, util.merge
 
-local infty = math.huge
-local min, max = math.min, math.max
-
-local matcher = util.matcher
-local fuzzy_matcher = util.fuzzy_matcher
+local line_indices = util.line_indices
+local matcher, fuzzy_matcher = util.matcher, util.fuzzy_matcher
 
 local Manuscript = util.class()
 
@@ -33,10 +33,10 @@ local formats = {
 }
 
 local function ManuscriptFactory(_, args)
-   local fmt = args.format
-      or args.parent and args.parent.format
-      or "latex"
-   return require(formats[fmt])(args)
+  local fmt = args.format
+    or args.parent and args.parent.format
+    or error "TeX format not specified"
+  return require(formats[fmt])(args)
 end
 getmetatable(Manuscript).__call = ManuscriptFactory
 
@@ -52,18 +52,18 @@ end
 -- - parent: a parent manuscript object (optional)
 -- - filename: the manuscript source file (optional, not used if src is given)
 -- - src: the contents of the file (optional)
--- - cache: a FileCache object (optional, typically retrived from parent)
+-- - files: a function that returns file contents
 --
 -- Note also that args.format is used by ManuscriptFactory
 --
 function Manuscript:__init(args)
-  local parent, filename, src
-    = args.parent, args.filename, args.src
+  local parent, filename, src, files
+    = args.parent, args.filename, args.src, args.files
   self.filename = filename
   self.parent = parent
   self.root = parent and parent.root or self
-  self.cache = args.cache or parent and parent.cache or FileCache()
-  self.src = src or self.cache:get(filename) or ""
+  self.src = src or files(filename) or ""
+  self.lines = line_indices(self.src)
   self.depth = 1 + (parent and parent.depth or 0)
   self.modules = {}
   self.commands = {}
@@ -77,14 +77,16 @@ function Manuscript:__init(args)
     setmetatable(self.modules,      {__index = parent.modules}     )
     setmetatable(self.commands,     {__index = parent.commands}    )
     setmetatable(self.environments, {__index = parent.environments})
+  else
+    self:add_module(self.format) -- do this only once, for the root
   end
-  self:add_module(self.format) -- do this only once, for the root
   self:scan(self.init_callbacks)
   for _, item in ipairs(self.child_index) do
     self.children[item.name] = Manuscript{
       filename = item.name,
       parent = self,
-      format = guess_format(item.name)
+      format = guess_format(item.name),
+      files = files
     }
   end
 end
@@ -212,10 +214,32 @@ end
 -- @return The line's starting position
 --
 function Manuscript:line_number_at(pos)
-  local src_len = #self.src
-  if pos < 1 then pos = src_len + pos + 1 end
-  return self.cache:get_line_number(self.filename, min(pos, src_len))
+  local len = #self.src
+  local lines = self.lines
+  local j, l = 1, #lines -- top and bottom bounds for line search
+  if pos < 1 then pos = len + pos + 1 end
+  while pos < lines[l] do
+    local k = (j + l + 1) // 2
+    if pos < lines[k] then
+      l = k - 1
+    else
+      j = k
+    end
+  end -- now l = correct line, 1-based indexing
+  return l, lines[l]
 end
+
+function Manuscript:line_column_at(pos)
+  local l, line_pos = self:line_number_at(pos)
+  local c = utf8.len(self.src, line_pos, pos) or error("Invalid UTF-8")
+  return l, c
+end
+
+function Manuscript:position_at(line, col)
+  local line_pos = self.lines[line] or error("Position out of bounds")
+  return utf8.offset(self.src, col, line_pos) or error("Position out of bounds")
+end
+
 
 --- Find paragraph before a position.
 --
@@ -224,8 +248,7 @@ end
 --
 function Manuscript:find_par(pos)
   local src = self.src
-  if pos < 1 then pos = #src + pos + 1 end
-  local lines = self.cache:get_lines(self.filename, min(pos, #src))
+  local lines = self.lines
   local l = self:line_number_at(pos)
   for k = l, 1, -1 do
     if self.parser.is_blank_line(src, lines[k]) then
@@ -234,14 +257,6 @@ function Manuscript:find_par(pos)
   end
   return 1
 end
---    local i, j = 1, 1
---    local patt, src = self.parser.next_par, self.src
---    while i == j do
---       j = patt:match(src, i)
---       if j and j <= pos then i = j end
---    end
---    return i
--- end
 
 local preceding_command_callbacks = {}
 
@@ -678,7 +693,6 @@ function Manuscript.completion_handlers.cs(self, ctx)
     prefix = prefix,
     kind = "command"
   }
-  local s = string.sub
   for cs, cmd in pairs(self:all_commands()) do
     if has_prefix(cs) then
       local args = cmd.arguments
@@ -1041,6 +1055,7 @@ function Manuscript:make_docstring(kind, name, data)
   end
   return ret
 end
+
 -- ¶ Find definition
 
 --- Find the location where the thing at the given position is
