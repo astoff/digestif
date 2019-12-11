@@ -283,57 +283,30 @@ function preceding_command_callbacks.cs(self, pos, cs, end_pos)
   return r.cont, end_pos
 end
 
---- Iterator to transverse a given index documentwise.
---
--- This recursevely iterates over entries of "self.name" and
--- "child.name" for each child of the manuscript, depth first.  "name"
--- refers to an index, that is, a list of tables containing an entry
--- "pos".
---
--- @param name The name of an index (a string)
---
-function Manuscript:each_of(name)
-   local stack = {}
-   local script = self
-   local items, inputs = script[name], script.child_index
-   local i, j = 1, 1
-   local function f()
-      local item, input = items[i], inputs[j]
-      if item and not (input and item.pos > input.pos) then
-         i = i + 1
-         return item
-      elseif input then
-         stack[#stack+1] = {i, j + 1, script, items, inputs}
-         script = script.children[input.name]
-         items = script and script[name] or {}
-         inputs = script and script.inputs or {}
-         i, j = 1, 1
-         return f()
-      elseif #stack > 0 then
-         i, j, script, items, inputs = unpack(stack[#stack])
-         stack[#stack] = nil
-         return f()
-      else
-         return nil
-      end
-   end
-   return f
-end
-
-function Manuscript:is_current()
-  return (self.cache:get(self.filename) == self.src)
-end
-
---- Reconstruct children if their cached source changed.
-function Manuscript:refresh()
-  for name, script in pairs(self.children) do
-    if script:is_current() then
-      script:refresh()
+local function traverse(self, index_name)
+  local items, children = self[index_name], self.child_index
+  local i, j, item, child = 1, 1
+  while true do
+    local item, child = items[i], children[j]
+    if item and not (child and item.pos > child.pos) then
+      i = i + 1
+      co_yield(item)
+    elseif child then
+      j = j + 1
+      traverse(self.children[child.name], index_name)
     else
-      script.src = nil
-      self.children[name] = Manuscript(script)
+      return nil
     end
   end
+end
+
+--- Iterator to transverse a given index documentwise.
+-- This recursevely iterates over entries of a given index on self and
+-- its children, depth first.  An index is a Manuscript field
+-- consisting a list of tables containing an entry "pos".
+-- @param index_name the name of an index (a string)
+function Manuscript:traverse(index_name)
+  return co_wrap(function() traverse(self, index_name) end)
 end
 
 --- Scan the Manuscript, executing callbacks for each document element.
@@ -811,9 +784,10 @@ function Manuscript.completion_handlers.ref(self, ctx, pos)
     prefix = prefix,
     kind = "label"
   }
-  for label in self.root:each_of "label_index" do
+  for label in self.root:traverse "label_index" do
     local short_ctx = label.manuscript:label_context_short(label)
-    local score = has_prefix(label.name) and infty or fuzzy_matches(short_ctx)
+    local score = has_prefix(label.name) and infty
+      or fuzzy_match and fuzzy_match(short_ctx)
     if score then
       r[#r+1] = {
         text = label.name,
@@ -892,7 +866,7 @@ Manuscript.help_handlers = {}
 
 function Manuscript.help_handlers.cite(self, ctx)
   local name = self:substring(ctx)
-  for item in self.root:each_of "bib_index" do
+  for item in self.root:traverse "bib_index" do
     if name == item.name then
       return {
         pos = ctx.pos,
@@ -908,7 +882,7 @@ function Manuscript:label_context_long(item)
   local pos, cs, r = self:find_preceding_command(item.outer_pos)
   if not pos then pos = item.outer_pos end
   local l = self:line_number_at(pos)
-  local lines = self.cache:get_lines(self.filename)
+  local lines = self.lines
   local end_pos = lines[l + 5]
   if end_pos then
     return self:substring_trimmed(pos, end_pos - 1)
@@ -919,7 +893,7 @@ end
 
 function Manuscript.help_handlers.ref(self, ctx)
   local name = self:substring(ctx)
-  for item in self.root:each_of "label_index" do
+  for item in self.root:traverse "label_index" do
     if name == item.name then
       local script = item.manuscript
       return {
@@ -1082,7 +1056,7 @@ Manuscript.find_definition_handlers = {}
 
 function Manuscript.find_definition_handlers.ref(self, ctx)
   local name = self:substring(ctx)
-  for item in self.root:each_of "label_index" do
+  for item in self.root:traverse "label_index" do
     if name == item.name then
       return {
         pos = item.pos,
@@ -1096,7 +1070,7 @@ end
 
 function Manuscript.find_definition_handlers.cite(self, ctx)
   local name = self:substring(ctx)
-  for item in self.root:each_of "bib_index" do
+  for item in self.root:traverse "bib_index" do
     if name == item.name then
       return {
         pos = item.pos,
@@ -1173,7 +1147,7 @@ Manuscript.find_references_handlers = {}
 function Manuscript.find_references_handlers.cs(self, ctx)
   local name = ctx.cs
   local r = {}
-  for item in self.root:each_of "cs_index" do
+  for item in self.root:traverse "cs_index" do
     if name == item.name then
       r[#r + 1] = {
         pos = item.pos,
@@ -1189,7 +1163,7 @@ end
 function Manuscript.find_references_handlers.ref(self, ctx)
   local name = self:substring(ctx)
   local r = {}
-  for item in self.root:each_of "ref_index" do
+  for item in self.root:traverse "ref_index" do
     if name == item.name then
       r[#r + 1] = {
         pos = item.pos,
@@ -1208,7 +1182,7 @@ Manuscript.find_references_handlers.label =
 function Manuscript.find_references_handlers.cite(self, ctx)
   local name = self:substring(ctx)
   local r = {}
-  for item in self.root:each_of "cite_index" do
+  for item in self.root:traverse "cite_index" do
     if name == item.name then
       r[#r + 1] = {
         pos = item.pos,

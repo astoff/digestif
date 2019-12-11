@@ -2,6 +2,7 @@
 -- @module digestif.util
 local lpeg = require "lpeg"
 
+local co_yield, co_wrap = coroutine.yield, coroutine.wrap
 local to_upper, gsub = string.upper, string.gsub
 local P, V, R = lpeg.P, lpeg.V, lpeg.R
 local C, Cp, Cs, Cmt, Cf, Ct = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cmt, lpeg.Cf, lpeg.Ct
@@ -42,6 +43,7 @@ end
 
 local char = P(1) -- in most cases, this works with utf8 too
 local uchar = R("\0\127") + R("\194\244") * R("\128\191")^-3
+local eol = P("\n")
 
 local function search(patt, token)
   token = token and P(token) or char
@@ -60,23 +62,6 @@ function util.between_balanced(l, r, token) --nicer name?
   token = token and P(token) or char
   return P{l * C(((token - l - r) + V(1)/0)^0) * r}
 end
-
--- function util.trimmer(space, token)
---   space = space and P(space) or locale_table.space
---   token = token and P(token) or char
---   return space^0 * C((space^0 * (token - space)^1)^0)
--- end
-
--- function util.cleaner(space, token)
---   space = space and P(space) or locale_table.space
---   token = token and P(token) or char
---   return space^0 * Cs(((space^1 / " " + true) * (token - space)^1)^0)
--- end
-
--- function util.replacer(patt, repl, token)
---   token = token and P(token) or char
---   return Cs((P(patt) / repl + token)^0)
--- end
 
 -- string.upper doesn't handle well non-ASCII characters...
 local function case_fold_char(c)
@@ -101,19 +86,21 @@ function util.matcher(patt)
 end
 
 -- like string.gsub, but partially evaluated
-local function replace(patt, repl, token)
+function util.replace(patt, repl, token)
   token = token and P(token) or char
   patt = Cs((P(patt) / repl + token)^0)
   return function(s, i) return match(patt, s, i) end
 end
-util.replace = replace
 
-util.lpeg_escape = replace("%", "%%%%")
+util.lpeg_escape = util.replace("%", "%%%%")
 
---- Returns a function that fuzzy-matches against the given string.
--- p0 is an extra penalty parameter.  Higher values reduce the
--- relative penalty for long gaps.  This is a made-up scoring
--- algorith, there must be better ones.
+--- Returns a function that fuzzy-matches against a string.
+-- Higher values of the "penalty parameter" p0 reduce the relative
+-- penalty for long gaps.  This is a made-up scoring algorithm, there
+-- must be better ones.
+-- @param str the string to match against
+-- @param token a basic unit of text, by default an UTF-8 codepoint
+-- @param p0 penalty parameter, default is 2
 function util.fuzzy_matcher(str, token, p0)
   token = token and P(token) or uchar
   p0 = p0 or 2
@@ -157,21 +144,20 @@ function util.clean(space, token)
   return function(s, i) return match(patt, s, i) end
 end
 
+util.line_indices = util.matcher(Ct(Cp() * search(eol * Cp())^0))
+
 -- iterators
 
-function util.matches_of(patt, token)
-  patt = search(patt, token)
-  return function(s, i)
-    i = i or 1
-    local f = function (_, j, ...)
-      i = j
-      return true, ...
+local line_patt = Cp() * (search(Cp() * eol) * Cp() + P(true))
+function util.lines(s, i)
+  return co_wrap(function()
+    local n, j, k, l =  1, match(line_patt, s, i)
+    while l do
+      co_yield(n, j, k - 1)
+      n, j, k, l = n + 1, match(line_patt, s, l)
     end
-    local p = Cmt(patt, f)
-    return function()
-      return match(p, s, i)
-    end
-  end
+    if j < #s then co_yield(n, j, #s) end
+  end)
 end
 
 -- ¶ Classes
