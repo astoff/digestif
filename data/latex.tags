@@ -2522,12 +2522,14 @@ commands = {
       symbol = "∞"
    },
    input = {
+      action = "input",
       arguments = {
          {
             meta = "filename"
          }
       },
       documentation = "info:latex2e#\\input",
+      filename = "?",
       summary = "Unconditionally include a file."
    },
    int = {
