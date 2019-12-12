@@ -1023,8 +1023,8 @@ function Manuscript:make_docstring(kind, name, data)
       if ok and exitc == 0 then
         str = str:gsub(".-\n", "", 2) -- discard header line
         ret = ret .. "\n\n" .. str
-      else
-        util.log(("Error running info (%d)"):format(exitc))
+      elseif config.verbose then
+        util.log("Error running info (%d)", exitc)
       end
     elseif scheme == "texdoc" then
       ret = ret .. "\n\nDocumentation at "

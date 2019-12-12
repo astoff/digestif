@@ -68,7 +68,9 @@ function data.load(name)
   local src = util.try_read_file(config.data_dirs, name .. ".tags")
   if not src then return end
   local result, err = util.eval_with_env(src, load_data_mt)
-  if not result then util.log(err) end
+  if not result and config.verbose then
+    util.log("Error loading %s.tags: %s", name, err)
+  end
   data.loaded[name] = result
   resolve_refs(result)
   return result

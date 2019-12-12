@@ -352,10 +352,14 @@ util.try_read_file = try_read_file
 
 -- ¶ &c.
 
-function util.log(...)
-   local msg = util.map(tostring, {...})
-   io.stderr:write(table.concat(msg, " "), "\n")
-   io.stderr:flush()
+function util.log(msg, ...)
+  if select("#", ...) > 0 then msg = msg:format(...) end
+  io.stderr:write(msg, "\n")
+  io.stderr:flush()
+end
+
+function util.log_objects(msg, ...)
+  return util.log(msg, unpack(util.map(require "serpent".block, {...})))
 end
 
 return util

@@ -1,6 +1,6 @@
 local Cache = require "digestif.Cache"
 local config = require "digestif.config"
-local json = require "cjson"; json.encode_empty_table_as_object(false)
+local json = require "dkjson"
 local util = require "digestif.util"
 
 local log, nested_get = util.log, util.nested_get
@@ -254,7 +254,7 @@ end
 
 local function log_error(err)
   if config.verbose then
-    log("Error:", err)
+    log("Error: %s", err)
     log(debug.traceback())
   end
   return err
@@ -313,9 +313,9 @@ local function process_request()
   elseif not is_optional(method_name) then
     rpc_send(id, "Unknown method " .. method_name, -32601)
   end
-  if config.verbose then
-    log(string.format("Request: %4s %-40s %6.2f ms",
-                      id or "*", method_name, (os.clock() - clock) * 1000))
+  if clock then
+    log("Request: %4s %-40s %6.2f ms",
+        id or "*", method_name, 1000 * (os.clock() - clock))
   end
 end
 
@@ -331,7 +331,7 @@ local function main(...)
             .. "\nSet the environment variable DIGESTIFDATA to fix this.")
   end
   if config.verbose then
-    log("\n━━━━━━ digestif started! ━━━━━━━━━━━━━━", os.date())
+    log("\n━━━━━━ digestif started! ━━━━━━━━━━━━━━ %s", os.date())
   end
   while true do process_request() end
 end
