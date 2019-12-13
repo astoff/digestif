@@ -678,7 +678,7 @@ function Manuscript.completion_handlers.cs(self, ctx)
       ret[#ret+1] = {
         text = cs,
         summary = cmd.summary,
-        detail = args and self:signature_arg(args) or cmd.symbol,
+        annotation = args and self:signature_arg(args) or cmd.symbol,
         snippet = user_snippet or args and self:snippet_cmd(cs, args)
       }
     end
@@ -687,11 +687,11 @@ function Manuscript.completion_handlers.cs(self, ctx)
     if has_prefix(cs) then
       local args = cmd.arguments
       local user_snippet = extra_snippets[cs]
-      local detail = args and self:signature_arg(args)
+      local annotation = args and self:signature_arg(args)
       ret[#ret+1] = {
         text = cs,
         summary = cmd.summary,
-        detail = (detail and detail .. " " or "") .. "(environment)",
+        annotation = (annotation and annotation .. " " or "") .. "(environment)",
         snippet = user_snippet or self:snippet_env(cs, args)
       }
     end
@@ -714,7 +714,7 @@ function Manuscript.completion_handlers.key(self, ctx, pos)
          r[#r+1] = {
             text = text,
             summary = key.summary,
-            detail = key.meta and ("=" .. key.meta)
+            annotation = key.meta and ("=" .. key.meta)
          }
       end
    end
@@ -755,7 +755,7 @@ function Manuscript.completion_handlers.begin(self, ctx, pos)
          r[#r+1] = {
             text = text,
             summary = env.summary,
-            detail = self:signature_arg(env.arguments),
+            annotation = self:signature_arg(env.arguments),
          }
       end
    end
@@ -796,7 +796,7 @@ function Manuscript.completion_handlers.ref(self, ctx, pos)
     if score then
       r[#r+1] = {
         text = label.name,
-        detail = short_ctx,
+        annotation = short_ctx,
         summary = label.manuscript:label_context_long(label),
       }
       scores[r[#r]] = score
@@ -825,8 +825,7 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
       scores[item.name] = score
       r[#r+1] = {
         text = item.name,
-        summary = item.text, --rename this field to detail
-        detail = item.text
+        annotation = item.text
       }
     end
   end
@@ -850,7 +849,7 @@ end
 --
 -- @param pos A position in the source
 --
-function Manuscript:get_help(pos)
+function Manuscript:describe(pos)
   local ctx = self:get_context(pos)
   if not ctx then return nil end
   local action = nested_get(ctx, "parent", "data", "action")

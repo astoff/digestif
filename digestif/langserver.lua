@@ -172,7 +172,7 @@ end
 
 methods["textDocument/signatureHelp"] = function(params)
   local script, pos = from_TextDocumentPositionParams(params)
-  local help = script:get_help(pos)
+  local help = script:describe(pos)
   if not nested_get(help, "data", "arguments") then return null end
   local parameters = {}
   for i, arg in ipairs(help.data.arguments) do
@@ -196,7 +196,7 @@ end
 
 methods["textDocument/hover"] = function(params)
   local script, pos = from_TextDocumentPositionParams(params)
-  local help = script:get_help(pos)
+  local help = script:describe(pos)
   if (not help) or help.arg then return null end
   local contents = help.details or help.summary or "???"
   return {contents = to_MarkupContent(contents)}
@@ -214,7 +214,7 @@ methods["textDocument/completion"] = function(params)
       filterText = candidates.prefix, -- Workaround to allow “flex matching”
       sortText=("%05x"):format(i), -- Workaround to avoid client re-sorting
       documentation = cand.summary,
-      detail = cand.detail,
+      detail = cand.annotation,
       insertTextFormat = snippet and 2 or 1,
       textEdit = to_TextEdit(script,
                              candidates.pos,
