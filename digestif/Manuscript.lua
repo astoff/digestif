@@ -83,12 +83,15 @@ function Manuscript:__init(args)
   end
   self:scan(self.init_callbacks)
   for _, item in ipairs(self.child_index) do
-    self.children[item.name] = Manuscript{
-      filename = item.name,
-      parent = self,
-      format = guess_format(item.name),
-      files = files
-    }
+    local file_exists, _ = files(item.name)
+    if file_exists then
+      self.children[item.name] = Manuscript{
+        filename = item.name,
+        parent = self,
+        format = guess_format(item.name),
+        files = files
+      }
+    end
   end
 end
 
@@ -294,7 +297,8 @@ local function traverse(self, index_name)
       co_yield(item)
     elseif child then
       j = j + 1
-      traverse(self.children[child.name], index_name)
+      local script = self.children[child.name]
+      if script then traverse(script, index_name) end
     else
       return nil
     end
