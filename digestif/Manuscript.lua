@@ -57,12 +57,13 @@ end
 -- Note also that args.format is used by ManuscriptFactory
 --
 function Manuscript:__init(args)
-  local parent, filename, src, files
-    = args.parent, args.filename, args.src, args.files
+  local parent, filename, files, src
+    = args.parent, args.filename, args.files, nil
   self.filename = filename
   self.parent = parent
   self.root = parent and parent.root or self
-  self.src = src or files(filename) or ""
+  src, self.token = files(filename)
+  self.src = src or ""
   self.lines = line_indices(self.src)
   self.depth = 1 + (parent and parent.depth or 0)
   self.modules = {}

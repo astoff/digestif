@@ -1,16 +1,20 @@
 local Cache = require "digestif.Cache"
-local Manuscript = require "digestif.Manuscript"
 local config = require "digestif.config"
-local json = require "dkjson"
+local json = require "cjson"; json.encode_empty_table_as_object(false)
 local util = require "digestif.util"
 
-local log = util.log
-local nested_get, nested_put = util.nested_get, util.nested_put
-local path_join, path_split = util.path_join, util.path_split
+local log, nested_get = util.log, util.nested_get
 
 local cache = Cache()
 local null = json.null
-local root_dir, client_capabilities
+local client_capabilities
+
+-- a place to store the tex_format/languageId of open files
+local tex_format_table = setmetatable({}, {
+  __index = function(_, k)
+    error(("Trying to access unopened file %s"):format(k))
+  end
+})
 
 local function hex_to_char(hex)
   return string.format('%c', tonumber(hex, 16))
@@ -28,10 +32,10 @@ end
 -- ¶ Convert LSP API objects to/from internal representations
 
 local function from_Range(filename, range)
-  local src = cache:get(filename) or error("File " .. filename .. " not found")
-  local lines = cache:line_indices(filename)
+  local src = cache(filename) or error("File " .. filename .. " not found")
   local l1, c1 = range.start.line + 1, range.start.character + 1
   local l2, c2 = range["end"].line + 1, range["end"].character + 1
+  local lines = cache:line_indices(filename)
   local pos = utf8.offset(src, c1, lines[l1]) -- inclusive
   local cont = utf8.offset(src, c2, lines[l2]) -- exclusive
   if not (pos and cont) then error("Position out of bounds") end
@@ -43,7 +47,7 @@ end
 --@return a position in bytes, filename, root's filename
 local function from_TextDocumentPositionParams(arg)
   local filename = unescape_uri(arg.textDocument.uri)
-  local format = cache:get_property(filename, "tex_format")
+  local format = tex_format_table[filename]
   local script = cache:manuscript(filename, format)
   local l, c = arg.position.line + 1, arg.position.character + 1
   return script, script:position_at(l, c)
@@ -82,7 +86,7 @@ local function to_TextEdit(script, pos, old, new)
   }
 end
 
-local languageId_table = {
+local languageId_translation_table = {
   bibtex = "bibtex",
   context = "context",
   latex = "latex",
@@ -99,7 +103,6 @@ local methods = {}
 
 methods["initialize"] = function(params)
   if params.trace == "verbose" then config.verbose = true end
-  root_dir = unescape_uri(params.rootUri)
   client_capabilities = params.capabilities
   return {
     capabilities = {
@@ -129,20 +132,19 @@ methods["textDocument/didSave"] = function() end
 
 methods["textDocument/didOpen"] = function(params)
   local filename = unescape_uri(params.textDocument.uri)
-  local version = params.textDocument.version
-  local tex_format = languageId_table[params.textDocument.languageId]
-  if not tex_format then error("Invalid languageId") end
+  local format = languageId_translation_table[params.textDocument.languageId]
+  if not format then
+    error(("Invalid languageId %q"):format(params.textDocument.languageId))
+  end
+  tex_format_table[filename] = format
   cache:put(filename, params.textDocument.text)
-  cache:put_property(filename, "tex_format", tex_format)
-  cache:put_property(filename, "version", version)
 end
 
 methods["textDocument/didChange"] = function(params)
   local filename = unescape_uri(params.textDocument.uri)
-  local tex_format = cache:get_property(filename, "tex_format")
   for _, change in ipairs(params.contentChanges) do
     if change.range then
-      local src = cache:get(filename)
+      local src = cache(filename)
       local pos, cont = from_Range(filename, change.range)
       if change.rangeLength ~= utf8.len(src, pos, cont - 1) then
         error("Range length mismatch in textdocument/didChange operation")
@@ -153,16 +155,10 @@ methods["textDocument/didChange"] = function(params)
       cache:put(filename, change.text)
     end
   end
-  cache:put_property(filename, "tex_format", tex_format)
-  cache:put_property(filename, "version", params.textDocument.version)
 end
 
 methods["textDocument/didClose"] = function(params)
   local filename = unescape_uri(params.textDocument.uri)
-  local rootname = cache:rootname(filename)
-  if rootname then cache:forget(rootname) end
-  -- FIX: If root name changed during the life of a document, the old
-  -- cached root manuscript will be kept forever.
   cache:forget(filename)
 end
 
