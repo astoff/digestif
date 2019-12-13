@@ -103,7 +103,8 @@ local methods = {}
 
 methods["initialize"] = function(params)
   if params.trace == "verbose" then config.verbose = true end
-  client_capabilities = params.capabilities
+  config.provide_snippets = nested_get(params.capabilities,
+    "textDocument", "completion", "completionItem", "snippetSupport")
   return {
     capabilities = {
       textDocumentSync = {
@@ -198,14 +199,9 @@ methods["textDocument/completion"] = function(params)
   local script, pos = from_TextDocumentPositionParams(params)
   local candidates = script:complete(pos)
   if not candidates then return null end
-  local with_snippets = nested_get(client_capabilities,
-                                   "textDocument",
-                                   "completion",
-                                   "completionItem",
-                                   "snippetSupport")
   local result = {}
   for i, cand in ipairs(candidates) do
-    local snippet = with_snippets and cand.snippet
+    local snippet = config.provide_snippets and cand.snippet
     result[i] = {
       label = cand.text,
       filterText = candidates.prefix, -- Workaround to allow “flex matching”

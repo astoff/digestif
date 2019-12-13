@@ -18,5 +18,6 @@ return {
   extra_snippets = extra_snippets,
   fuzzy_cite = true,
   fuzzy_ref = true,
-  info_command = "info %q"
+  info_command = "info %q",
+  provide_snippets = false
 }
