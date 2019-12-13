@@ -149,14 +149,14 @@ util.line_indices = util.matcher(Ct(Cp() * search(eol * Cp())^0))
 -- iterators
 
 local line_patt = Cp() * (search(Cp() * eol) * Cp() + P(true))
-function util.lines(s, i)
+function util.lines(s, i, n)
   return co_wrap(function()
-    local n, j, k, l =  1, match(line_patt, s, i)
-    while l do
-      co_yield(n, j, k - 1)
-      n, j, k, l = n + 1, match(line_patt, s, l)
+    local n, i, j, k =  n or 1, match(line_patt, s, i)
+    while k do
+      co_yield(n, i, j - 1)
+      n, i, j, k = n + 1, match(line_patt, s, k)
     end
-    if j < #s then co_yield(n, j, #s) end
+    co_yield(n, i or 1, #s)
   end)
 end
 

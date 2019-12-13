@@ -31,20 +31,26 @@ end
 
 -- ¶ Convert LSP API objects to/from internal representations
 
-local function from_Range(filename, range)
-  local src = cache(filename) or error("File " .. filename .. " not found")
-  local l1, c1 = range.start.line + 1, range.start.character + 1
-  local l2, c2 = range["end"].line + 1, range["end"].character + 1
-  local lines = cache:line_indices(filename)
-  local pos = utf8.offset(src, c1, lines[l1]) -- inclusive
-  local cont = utf8.offset(src, c2, lines[l2]) -- exclusive
-  if not (pos and cont) then error("Position out of bounds") end
-  return pos, cont
+-- p0 is the position of a line l0, provided as a hint for the search
+-- returns a position in btyes, and a new hint p0, l0
+local function from_Position(str, position, p0, l0)
+  local l, c = position.line + 1, position.character + 1
+  if l0 and l0 > l then p0, l0 = nil, nil end
+  for n, i in util.lines(str, p0, l0) do
+    if n == l then
+      return utf8.offset(str, c, i), i, l
+    end
+    l0, p0 = n, i
+  end
 end
 
---- Convert from a TextDocumentPositionParams object
---@param arg a TextDocumentPositionParam object
---@return a position in bytes, filename, root's filename
+local function from_Range(str, range, p0, l0)
+  local pos, p1, l1 = from_Position(str, range.start, p0, l0) -- inclusive
+  local cont = from_Position(str, range['end'], p1, l1) -- exclusive
+  if not (pos and cont) then error("Position out of bounds") end
+  return pos, cont, p1, l1
+end
+
 local function from_TextDocumentPositionParams(arg)
   local filename = unescape_uri(arg.textDocument.uri)
   local format = tex_format_table[filename]
@@ -143,19 +149,20 @@ end
 
 methods["textDocument/didChange"] = function(params)
   local filename = unescape_uri(params.textDocument.uri)
+  local p0, l0, src = 1, 1, cache(filename)
   for _, change in ipairs(params.contentChanges) do
     if change.range then
-      local src = cache(filename)
-      local pos, cont = from_Range(filename, change.range)
+      local pos, cont
+      pos, cont, p0, l0 = from_Range(src, change.range, p0, l0)
       if change.rangeLength ~= utf8.len(src, pos, cont - 1) then
         error("Range length mismatch in textdocument/didChange operation")
       end
       src = src:sub(1, pos - 1) .. change.text .. src:sub(cont)
-      cache:put(filename, src)
     else
-      cache:put(filename, change.text)
+      src = change.text
     end
   end
+  cache:put(filename, src)
 end
 
 methods["textDocument/didClose"] = function(params)

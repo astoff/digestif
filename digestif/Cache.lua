@@ -31,7 +31,7 @@ function Cache:put(filename, str)
     props = {}
     self.store[filename] = props
   else
-    props.line_indices, props.rootname = nil, nil
+    props.rootname = nil
   end
   props.contents = str
   self.persist[filename] = props
@@ -66,23 +66,16 @@ function Cache:forget(filename)
   self.persist[filename] = nil
 end
 
---- Get a list of line starting positions.
-function Cache:line_indices(filename)
-  local props = assert(self.store[filename])
-  local lines = props.line_indices
-  if not lines then
-    lines = util.line_indices(props.contents)
-    props.line_indices = lines
-  end
-  return lines
-end
-
 local space = S" \t\r"
 local magic_comment_patt = sequence(
-  space^0,
-  "%" * space^0 * "!" * S"Tt" * S"Ee" * S"Xx" * space^1,
-  C((1 - space - "=")^1) * space^0,
-  "=" * space^0 * C(gobble_until(space^0 * "\n")))
+  (space^0 * "%")^1,
+  space^0 * "!" * S"Tt" * S"Ee" * S"Xx",
+  space^1 * "root",
+  space^0 * "=",
+  space^0 * C(gobble_until(space^0 * "\n")))
+local search_magic_comment_patt = util.choice(
+  magic_comment_patt,
+  util.search("\n" * magic_comment_patt))
 
 --- Determine the root path of a document from magic comments.
 function Cache:rootname(filename)
@@ -91,14 +84,11 @@ function Cache:rootname(filename)
   local rootname = props.rootname
   if rootname == nil then
     local src = self(filename)
-    local lines = self:line_indices(filename)
-    rootname = false
-    for i = 1, 15 do
-      local key, val = magic_comment_patt:match(src, lines[i])
-      if key == "root" then
-        rootname = path_join(path_split(filename), val)
-        break
-      end
+    local val = search_magic_comment_patt:match(src:sub(1, 1000))
+    if val then
+      rootname = path_join(path_split(filename), val)
+    else
+      rootname = false
     end
     props.rootname = rootname
   end

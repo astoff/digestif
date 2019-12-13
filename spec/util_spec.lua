@@ -42,9 +42,10 @@ describe("Line splitting", function()
     assert.same({1,2}, util.line_indices("\nabc"))
   end)
 
-  it("ignores a blank line at the end", function()
+  it("finds a blank line at the end", function()
     local f = util.lines("abc\n")
     assert.same({1,1,3}, {f()})
+    assert.same({2,5,4}, {f()})
     assert.same({}, {f()})
 
     assert.same({1,5}, util.line_indices("abc\n"))
@@ -52,7 +53,7 @@ describe("Line splitting", function()
 
   it("works on empty strings", function()
     local f = util.lines("")
-    assert.same({}, {f()})
+    assert.same({1, 1, 0}, {f()})
 
     local g = util.lines("\n")
     assert.same({1, 1, 0}, {g()})
