@@ -63,6 +63,18 @@ describe("Line splitting", function()
   end)
 end)
 
+describe("UTF-8 agnostic substring", function()
+   local substring8 = util.substring8
+   it("works", function()
+     assert.equal("😃", substring8("😠😃", 2))
+     assert.equal("😃", substring8("😃😠", 1, 1))
+     assert.equal("alô", substring8("alô", 1, -2))
+     assert.equal("alô", substring8("alô", 1, -1))
+     assert.equal("2", substring8("123", 2, -2))
+   end)
+
+end)
+
 describe("Fuzzy matching", function()
   it("does fuzzy matching", function()
     local f = util.fuzzy_matcher("Abc")   

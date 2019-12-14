@@ -3,7 +3,7 @@
 local lpeg = require "lpeg"
 
 local co_yield, co_wrap = coroutine.yield, coroutine.wrap
-local to_upper, gsub = string.upper, string.gsub
+local to_upper, gsub, substring = string.upper, string.gsub, string.sub
 local P, V, R = lpeg.P, lpeg.V, lpeg.R
 local C, Cp, Cs, Cmt, Cf, Ct = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cmt, lpeg.Cf, lpeg.Ct
 local match, locale_table = lpeg.match, lpeg.locale()
@@ -145,6 +145,15 @@ function util.clean(space, token)
 end
 
 util.line_indices = util.matcher(Ct(Cp() * search(eol * Cp())^0))
+
+local utf8_sync_patt = R("\128\191")^-3 * Cp() + Cp()
+
+-- Like string.gsub, but don't break up UTF-8 codepoints
+function util.substring8(s, i, j)
+  i = match(utf8_sync_patt, s, i)
+  j = j and match(utf8_sync_patt, s, j + 1) - 1
+  return substring(s, i, j)
+end
 
 -- iterators
 
