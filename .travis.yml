@@ -11,7 +11,7 @@ before_install:
   - luarocks install busted
 
 install:
-  - luarocks make rockspec/digestif-scm-1.rockspec
+  - luarocks make digestif-dev-1.rockspec
 
 script:
   - busted
