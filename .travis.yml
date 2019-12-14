@@ -15,4 +15,5 @@ install:
 
 script:
   - busted
-  - cabal new-test
+  - cabal install --disable-optimization hspec lsp-test
+  - runhaskell spec/test-lsp.hs

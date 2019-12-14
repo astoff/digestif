@@ -13,22 +13,24 @@ import           Language.Haskell.LSP.Types.Capabilities as LSP
 digestif_cmd = "digestif"
 fixtures = "spec/fixtures"
 
+mySession = runSession digestif_cmd fullCaps fixtures
+
 main = hspec $ do
   describe "textDocument/completion" $ do
-    it "completes commands" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "completes commands" $ mySession $ do
       doc <- openDoc "file1.tex" "latex"
       item:_ <- getCompletions doc (Position 3 7)
       liftIO $ do
         item ^. label `shouldBe` "raisebox"
         item ^. detail `shouldBe` Just "{distance}[height][depth]{text}"
 
-    it "completes commands from a package" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "completes commands from a package" $ mySession $ do
       doc <- openDoc "using-tikz.tex" "latex"
       item:_ <- getCompletions doc (Position 1 8)
       --items <- getCompletions doc (Position 1 8)
       liftIO $ item ^. label `shouldBe` "pgfmatrix"
 
-    it "completes tikz options" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "completes tikz options" $ mySession $ do
       doc <- openDoc "using-tikz.tex" "latex"
       env_opt:_ <- getCompletions doc (Position 3 40)
       path_opt:_ <- getCompletions doc (Position 4 18)
@@ -37,59 +39,59 @@ main = hspec $ do
         path_opt ^. label `shouldBe` "line cap"
         path_opt ^. detail `shouldBe` Just "=⟨type⟩"
 
-    it "completes local labels" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "completes local labels" $ mySession $ do
       doc <- openDoc "file1.tex" "latex"
       item:_ <- getCompletions doc (Position 5 7)
       liftIO $ item ^. label `shouldBe` "somelabel"
 
-    it "completes label from included file" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "completes label from included file" $ mySession $ do
       doc <- openDoc "root.tex" "latex"
       item:_ <- getCompletions doc (Position 2 8)
       liftIO $ item ^. label `shouldBe` "childlabel"
 
-    it "completes label from root file" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "completes label from root file" $ mySession $ do
       doc <- openDoc "child.tex" "latex"
       item:_ <- getCompletions doc (Position 2 8)
       liftIO $ item ^. label `shouldBe` "rootlabel"
 
-    it "completes citation from thebibliography environment" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "completes citation from thebibliography environment" $ mySession $ do
       doc <- openDoc "file1.tex" "latex"
       item:_ <- getCompletions doc (Position 9 10)
       liftIO $ item ^. label `shouldBe` "somebibitem"
 
-    it "completes citation from bibtex file" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "completes citation from bibtex file" $ mySession $ do
       doc <- openDoc "child.tex" "latex"
       item:_ <- getCompletions doc (Position 3 8)
       liftIO $ do
         item ^. label `shouldBe` "somepaper"
         item ^. detail `shouldBe` Just "Thor 1999; Some great paper"
 
-    it "completes label wth fuzzy match" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "completes label wth fuzzy match" $ mySession $ do
       doc <- openDoc "file2.tex" "latex"
       item:_ <- getCompletions doc (Position 2 10)
       liftIO $ item ^. label `shouldBe` "somelabel"
 
-    it "completes citation wth fuzzy match" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "completes citation wth fuzzy match" $ mySession $ do
       doc <- openDoc "file2.tex" "latex"
       item:_ <- getCompletions doc (Position 10 10)
       liftIO $ item ^. label `shouldBe` "somepaper"
 
   describe "textDocument/completion with inconsistent root information" $ do
-    it "works when root doesn't exist" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "works when root doesn't exist" $ mySession $ do
       doc <- openDoc "child.tex" "latex"
       let changeEv = TextDocumentContentChangeEvent (Just (Range (Position 0 14) (Position 0 18))) (Just 4) "nonexistent"
       changeDoc doc [changeEv]
       items <- getCompletions doc (Position 2 8)
       liftIO $ items `shouldBe` []
 
-    it "works when root doesn't exist" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "works when root doesn't exist" $ mySession $ do
       doc <- openDoc "child.tex" "latex"
       let changeEv = TextDocumentContentChangeEvent (Just (Range (Position 0 14) (Position 0 18))) (Just 4) "nonexistent"
       changeDoc doc [changeEv]
       item:_ <- getCompletions doc (Position 4 8)
       liftIO $ item ^. label `shouldBe` "childlabel"
 
-    it "works when root doesn't refer back to child" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "works when root doesn't refer back to child" $ mySession $ do
       doc <- openDoc "child.tex" "latex"
       let edit = TextEdit (Range (Position 0 14) (Position 0 18)) "file1"
       changeDoc doc [TextDocumentContentChangeEvent (Just (Range (Position 0 14) (Position 0 18))) (Just 4) "file1"]
@@ -97,13 +99,13 @@ main = hspec $ do
       liftIO $ item ^. label `shouldBe` "childlabel"
 
   describe "textDocument/definition" $
-    it "works" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "works" $ mySession $ do
       doc <- openDoc "file1.tex" "latex"
       def <- getDefinitions doc (Position 6 6)
       liftIO $ def `shouldBe` [Location (doc ^. uri) (Range (Position 4 7) (Position 4 16))]
 
   describe "textDocument/references" $ do
-    it "finds references in a single file" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "finds references in a single file" $ mySession $ do
       let pos = (Position 6 6)
       doc <- openDoc "file1.tex" "latex"
       defs <- getReferences doc pos True
@@ -111,7 +113,7 @@ main = hspec $ do
         Location (doc ^. uri) (Range (Position 4 7) (Position 4 16)),
         Location (doc ^. uri) (Range (Position 7 5) (Position 7 14))]
 
-    it "finds references across files" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "finds references across files" $ mySession $ do
       doc <- openDoc "root.tex" "latex"
       doc2 <- openDoc "child.tex" "latex"
       defs <- getReferences doc (Position 3 13) True
@@ -120,13 +122,13 @@ main = hspec $ do
         Location (doc ^. uri) (Range (Position 3 5) (Position 3 15))]
 
   describe "textDocument/hover" $ do
-    it "finds command documentation" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "finds command documentation" $ mySession $ do
       let getText (HoverContents (MarkupContent MkMarkdown x)) = x
       doc <- openDoc "file2.tex" "latex"
       Just h <- getHover doc (Position 1 5)
       liftIO $ getText(h ^. contents) `shouldSatisfy` isInfixOf "do nothing"
 
-    it "finds context around a label" $ runSession digestif_cmd fullCaps fixtures $ do
+    it "finds context around a label" $ mySession $ do
       let getText (HoverContents (MarkupContent MkMarkdown x)) = x
       doc <- openDoc "file2.tex" "latex"
       Just h <- getHover doc (Position 0 5)
