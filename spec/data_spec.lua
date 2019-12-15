@@ -1,14 +1,7 @@
 local Schema = require "digestif.Schema"
-local require_data = require "digestif.data".require
-
-local DIGESTIF_DATA = "./data"
-local datafiles = {}
-
-for path in require("lfs").dir(DIGESTIF_DATA) do
-  if path:match('%.lua$') then
-    datafiles[#datafiles+1] = path:sub(1, -5)
-  end
-end
+local data = require "digestif.data"
+require "digestif.config".data_dirs = {"./data"}
+require "digestif.config".verbose = true
 
 documentation_schema = Schema{
   description = "Hyperlink to documentation (texdoc, info, web, etc.)",
@@ -148,9 +141,13 @@ datafile_schema = Schema{
 }
 
 describe("Data check", function()
-  for _, pkg in ipairs(datafiles) do
-    it("succeeds on " .. pkg, function()
-      datafile_schema:assert(require_data(pkg))
+  it("loads data files", function()
+    assert.not_same(data.load_all(), {})
+  end)
+
+  for pkg in pairs(data.load_all()) do
+    it("validates data for " .. pkg, function()
+      datafile_schema:assert(data.require(pkg))
     end)
   end
 end)

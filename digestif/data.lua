@@ -34,18 +34,6 @@ function data.signature(sig, ...)
    return args
 end
 
-function data.require(name)
-   return data.loaded[name] or data.load(name)
-end
-
-local load_data_mt = {
-   __index = {
-      merge = util.merge,
-      data = data.require,
-      signature = data.signature
-   }
-}
-
 local ref_patt = P"$DIGESTIFDATA/" * C(P(1)^0)
 local ref_split = util.split("/")
 
@@ -63,17 +51,47 @@ local function resolve_refs(tbl)
   end
 end
 
+local load_data_mt = {
+   __index = {
+      merge = util.merge,
+      data = data.require,
+      signature = data.signature
+   }
+}
+
 function data.load(name)
-  if name:find('..', 1, true) then return end -- unreasonable file name
+  if name:find('..', 1, true) then return nil end -- unreasonable file name
   local src = util.try_read_file(config.data_dirs, name .. ".tags")
-  if not src then return end
+  if not src then return nil end
   local result, err = util.eval_with_env(src, load_data_mt)
   if not result and config.verbose then
     util.log("Error loading %s.tags: %s", name, err)
+    return -- TODO: should throw an error?
   end
   data.loaded[name] = result
   resolve_refs(result)
   return result
+end
+
+function data.require(name)
+   return data.loaded[name] or data.load(name)
+end
+
+---
+-- Load all data files, and return them in a table.  This is intended
+-- for debugging and testing only, and depends on luafilesystem.
+function data.load_all()
+  local ok, lfs = pcall(require, "lfs")
+  assert(ok, "Function data.load_all() need the luafilesystem library.")
+  for _, data_dir in ipairs(config.data_dirs) do
+    for path in lfs.dir(data_dir) do
+      local pkg = path:match("(.*)%.tags")
+      if pkg then
+        assert(data.require(pkg), "Couldn't load data file " .. path)
+      end
+    end
+  end
+  return data.loaded
 end
 
 return data
