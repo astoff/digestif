@@ -4,36 +4,82 @@ local lpeg = require "lpeg"
 
 local co_yield, co_wrap = coroutine.yield, coroutine.wrap
 local to_upper, gsub, substring = string.upper, string.gsub, string.sub
+local pack, unpack = table.pack, table.unpack
 local P, V, R = lpeg.P, lpeg.V, lpeg.R
 local C, Cp, Cs, Cmt, Cf, Ct = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cmt, lpeg.Cf, lpeg.Ct
 local match, locale_table = lpeg.match, lpeg.locale()
-local lpeg_add = getmetatable(P(true)).__add
-local lpeg_mul = getmetatable(P(true)).__mul
-local lpeg_pow = getmetatable(P(true)).__pow
 
 local util = {}
+
+-- ¶ Table manipulation
+
+function util.map(f, t)
+  local r = {}
+  for i, v in pairs(t) do
+    r[i] = f(v)
+  end
+  return r
+end
+
+function util.foldl1(f, t)
+  local v = t[1]
+  for i = 2, t.n or #t do
+    v = f(v, t[i])
+  end
+  return v
+end
+local foldl1 = util.foldl1
+
+function util.nested_get(t, ...)
+  local arg = pack(...)
+  for i = 1, #arg do
+    if t then t = t[arg[i]] else return nil end
+  end
+  return t
+end
+
+function util.nested_put(v, t, ...)
+  local arg = pack(...)
+  local k = arg[1]
+  for i = 2, arg.n do
+    local u = t[k]
+    if u == nil then u = {}; t[k] = u end
+    t, k = u, arg[i]
+  end
+  t[k] = v
+  return v
+end
+
+function util.update(t, ...)
+  local arg = pack(...) -- TODO: do we actually need more than 1 argument?
+  for i = 1, arg.n do
+    for k, v in pairs(arg[i] or {}) do -- TODO: should we allow nils?
+      t[k] = v
+    end
+  end
+  return t
+end
+local update = util.update
+
+function util.merge(...)
+  return update({}, ...)
+end
 
 -- ¶ Cool combinators and friendly functions for LPeg
 
 -- simple things for better legibility of complicated constructions
 
-local function choice(p, q, ...)
-  if q == nil then
-    return P(p)
-  else
-    return choice(lpeg_add(p, q), ...)
-  end
-end
-util.choice = choice
+local lpeg_add = getmetatable(P(true)).__add
+local lpeg_mul = getmetatable(P(true)).__mul
+local lpeg_pow = getmetatable(P(true)).__pow
 
-local function sequence(p, q, ...)
-  if q == nil then
-    return P(p)
-  else
-    return sequence(lpeg_mul(p, q), ...)
-  end
+function util.choice(...)
+  return foldl1(lpeg_add, pack(...))
 end
-util.sequence = sequence
+
+function util.sequence(...)
+  return foldl1(lpeg_mul, pack(...))
+end
 
 function util.many(p)
   return lpeg_pow(p,0)
@@ -187,86 +233,28 @@ function util.class(parent)
    return setmetatable(c, mt)
 end
 
--- ¶ Table manipulation
-
-function util.map(f, t)
-   local r = {}
-   for i, v in pairs(t) do
-      r[i] = f(v)
-   end
-   return r
-end
-
-local function update(t, u, ...)
-  if u then
-    for i, v in pairs(u) do
-      t[i] = v
-    end
-    return update(t, ...)
-  else
-    return t
-  end
-end
-util.update = update
-
-function util.merge(...)
-   return update({}, ...)
-end
-
-local nil_marker = {}
-
-local function nested_get(t, k, ...)
-  if t then
-    if k == nil then k = nil_marker end
-    if select('#', ...) == 0 then
-      return t[k]
-    else
-      return nested_get(t[k], ...)
-    end
-  end
-end
-util.nested_get = nested_get
-
-local function nested_put(val, t, k, ...)
-  if k == nil then k = nil_marker end
-  if select('#', ...) == 0 then
-    t[k] = val
-    return val
-  else
-    local q = t[k]
-    if not q then
-      q = {}
-      t[k] = q
-    end
-    return nested_put(val, q, ...)
-  end
-end
-util.nested_put = nested_put
-
 -- ¶ Memoization
 
-local memoize = util.class()
-util.memoize = memoize
+local weak_keys, nil_marker, value_marker = {__mode = "k"}, {}, {}
 
-local weak_keys = {__mode = "k"}
-
-function memoize:__init(f)
-   self.fun = f
-   self.values = setmetatable({}, weak_keys)
-end
-
-function memoize:__call(...)
-   local values = self.values
-   local val = nested_get(values, ...)
-   if not val then
-      val = self.fun(...)
-      nested_put(val, values, ...)
-   end
-   return val
-end
-
-function memoize:forget(...)
-   nested_put(nil, self.values, ...)
+---
+-- Return a memoizing version of a function.  Only one return value is
+-- allowed.  Nil arguments are handled correctly, but nil return
+-- values are not memoized.
+function util.memoize(fun)
+  local values = setmetatable({}, weak_keys)
+  return function(...)
+    local arg, val, v, a = pack(...), values
+    for i = 1, arg.n do
+      a = arg[i] or nil_marker
+      v = val[a]
+      if v == nil then v = setmetatable({}, weak_keys); val[a] = v end
+      val = v
+    end
+    v = val[value_marker]
+    if v == nil then v = fun(...); val[value_marker] = v end
+    return v
+  end
 end
 
 -- ¶ Reading data and config files
@@ -307,20 +295,20 @@ local path_is_abs_patt = path_sep_patt + P"~/"
 local path_trim_patt = C((path_sep_patt^0 * (1 - path_sep_patt)^1)^0)
 local path_last_sep_patt = P{Cp() * (1 - path_sep_patt)^0 * -1 + (1 * V(1))}
 
---- Concatenate any number of path names.
--- If one of the paths is absolute, all the previous ones are ignored.
--- @function path_join
--- @tparam string ... path names
--- @treturn string a path name
-local function path_join(p, q, ...)
-   if not q then return p end
-   if path_is_abs_patt:match(q) or p == "" then
-      return path_join(q, ...)
-   end
-   p = path_trim_patt:match(p) .. path_sep
-   return path_join(p .. q, ...)
+local function path_join2(p, q)
+  if path_is_abs_patt:match(q) or p == "" then
+    return q
+  else
+    return path_trim_patt:match(p) .. path_sep .. q
+  end
 end
-util.path_join = path_join
+
+---
+-- Concatenate any number of path names.  If one of the paths is
+-- absolute, all the previous ones are ignored.
+function util.path_join(...)
+  return foldl1(path_join2, pack(...))
+end
 
 --- Split a path into directory and file parts.
 -- @tparam string p a path name
@@ -349,7 +337,7 @@ local function try_read_file(path, name)
          if s then return s end
       end
    else
-      local f = io.open(path_join(path, name))
+      local f = io.open(util.path_join(path, name))
       if f then
          local s = f:read("*all")
          f:close()

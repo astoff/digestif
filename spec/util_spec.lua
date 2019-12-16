@@ -1,6 +1,60 @@
 local util = require "digestif.util"
 local lpeg = require "lpeg"
 
+describe("Table utils", function()
+  it("folding works", function()
+    assert.equal(10, util.foldl1(function(x,y) return x+y end, {1,2,3,4}))
+    assert.equal(0, util.foldl1(function(x,y) return x+y end, {0}))
+  end)
+
+  it("nested get and put work", function()
+    local nested_get, nested_put = util.nested_get, util.nested_put
+    local tbl = {a = {b = {c = "x"}}}
+    assert.equal (tbl,       nested_get (tbl))
+    assert.same  ({c = "x"}, nested_get (tbl, "a", "b"))
+    assert.equal ("x",       nested_get (tbl, "a", "b", "c"))
+    assert.is_nil(           nested_get (tbl, "a", "b", "c", "d"))
+
+    local tbl2, tbl3 = {}, {}
+    assert.has_error(function() nested_put("x", {}) end)
+    assert.has_error(function() nested_put("x", {}, 1, nil) end)
+    nested_put("z", tbl2, "d")
+    assert.same({d = "z"}, tbl2)
+    nested_put("x", tbl3, "a", "b", "c")
+    assert.same(tbl, tbl3)
+    nested_put("y", tbl3, "a", "b", "d")
+    assert.same({c = "x", d = "y"}, nested_get(tbl3, "a", "b"))
+  end)
+end)
+
+describe("Memoization", function()
+  local tester = 0
+  local function f(x, y)
+    tester = tester + 1
+    return (x or 0) + (y or 0)
+  end
+  local g = util.memoize(f)
+  local function compute(...)
+    tester = 0
+    assert.equal(f(...), g(...))
+  end
+
+  it("remebers things", function()
+    compute(1);    assert.equal(2, tester); compute(1);    assert.equal(1, tester)
+    compute(1, 2); assert.equal(2, tester); compute(1, 2); assert.equal(1, tester)
+    compute(1);    assert.equal(1, tester)
+  end)
+
+  it("gives the right results", function()
+    compute();
+    compute(nil)
+    compute(nil, 1)
+    compute(1, nil)
+    compute(2, 1)
+    compute(1, 3)
+  end)
+end)
+
 describe("Splitting and trimming", function()
   it("splits a string", function()
     local s = ",a,b,,c,"
