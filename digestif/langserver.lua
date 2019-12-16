@@ -322,17 +322,23 @@ local function process_request()
   end
 end
 
-local function main(...)
-  if ... == "-v" then config.verbose = true end
+local function main(arg)
+  if arg[1] == "-v" then config.verbose = true end
+
+  -- Set up data path and check if it worked
   local DIGESTIFDATA = os.getenv("DIGESTIFDATA")
+  local ROCKPATH = arg[0]:match("^(.*/luarocks/.*)/bin/digestif$")
   if DIGESTIFDATA then
     config.data_dirs = util.split";"(DIGESTIFDATA)
+  elseif ROCKPATH then
+    table.insert(config.data_dirs, util.path_join(ROCKPATH, 'data'))
   end
   if not require("digestif.data").require("primitives") then
     error("Could not find data files at the following locations:\n- "
             .. table.concat(config.data_dirs, "\n- ")
             .. "\nSet the environment variable DIGESTIFDATA to fix this.")
   end
+
   if config.verbose then
     log("\n━━━━━━ digestif started! ━━━━━━━━━━━━━━ %s", os.date())
   end
