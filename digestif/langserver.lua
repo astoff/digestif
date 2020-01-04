@@ -7,7 +7,6 @@ local log, nested_get = util.log, util.nested_get
 
 local cache = Cache()
 local null = json.null
-local client_capabilities
 
 -- a place to store the tex_format/languageId of open files
 local tex_format_table = setmetatable({}, {
@@ -16,20 +15,26 @@ local tex_format_table = setmetatable({}, {
   end
 })
 
-local function hex_to_char(hex)
-  return string.format('%c', tonumber(hex, 16))
-end
-
-local function unescape_uri(s)
-  s = s:match("^file://(.*)") or error("Invalid URI: " .. s)
-  return s:gsub('%%(%x%x)', hex_to_char), nil
-end
-
-local function escape_uri(s)
-  return "file://" .. s
-end
-
 -- ¶ Convert LSP API objects to/from internal representations
+
+-- TODO: deal with weird path separators
+local function from_DocumentUri(str)
+  str = str:match("^file://([^#%?]*)$")
+    or error("Invalid or unsupported URI: " .. str)
+  str = str:gsub('%%(%x%x)',
+                 function(x)
+                   return string.char(tonumber(x, 16))
+                 end)
+  return str
+end
+
+local function to_DocumentUri(str)
+  str = str:gsub("[^0-9A-Za-z%-._~/]",
+                 function(s)
+                   return string.format("%%%X", string.byte(s))
+                 end)
+  return "file://" .. str
+end
 
 -- p0 is the position of a line l0, provided as a hint for the search
 -- returns a position in btyes, and a new hint p0, l0
@@ -40,7 +45,6 @@ local function from_Position(str, position, p0, l0)
     if n == l then
       return utf8.offset(str, c, i), i, l
     end
-    l0, p0 = n, i
   end
 end
 
@@ -52,7 +56,7 @@ local function from_Range(str, range, p0, l0)
 end
 
 local function from_TextDocumentPositionParams(arg)
-  local filename = unescape_uri(arg.textDocument.uri)
+  local filename = from_DocumentUri(arg.textDocument.uri)
   local format = tex_format_table[filename]
   local script = cache:manuscript(filename, format)
   local l, c = arg.position.line + 1, arg.position.character + 1
@@ -71,7 +75,7 @@ end
 
 local function to_Location(item)
   return {
-    uri = escape_uri(item.manuscript.filename),
+    uri = to_DocumentUri(item.manuscript.filename),
     range = to_Range(item)
   }
 end
@@ -138,7 +142,7 @@ methods["textDocument/willSave"] = function() end
 methods["textDocument/didSave"] = function() end
 
 methods["textDocument/didOpen"] = function(params)
-  local filename = unescape_uri(params.textDocument.uri)
+  local filename = from_DocumentUri(params.textDocument.uri)
   local format = languageId_translation_table[params.textDocument.languageId]
   if not format then
     error(("Invalid languageId %q"):format(params.textDocument.languageId))
@@ -148,7 +152,7 @@ methods["textDocument/didOpen"] = function(params)
 end
 
 methods["textDocument/didChange"] = function(params)
-  local filename = unescape_uri(params.textDocument.uri)
+  local filename = from_DocumentUri(params.textDocument.uri)
   local p0, l0, src = 1, 1, cache(filename)
   for _, change in ipairs(params.contentChanges) do
     if change.range then
@@ -166,7 +170,7 @@ methods["textDocument/didChange"] = function(params)
 end
 
 methods["textDocument/didClose"] = function(params)
-  local filename = unescape_uri(params.textDocument.uri)
+  local filename = from_DocumentUri(params.textDocument.uri)
   cache:forget(filename)
 end
 
