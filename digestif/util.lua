@@ -238,22 +238,42 @@ end
 local weak_keys, nil_marker, value_marker = {__mode = "k"}, {}, {}
 
 ---
--- Return a memoizing version of a function.  Only one return value is
--- allowed.  Nil arguments are handled correctly, but nil return
--- values are not memoized.
+-- Memoize a function of one argument with one return value.  Nil is
+-- not allowed as argument or return value.
+function util.memoize1(fun)
+  local values = setmetatable({}, weak_keys)
+  return function(arg)
+    local val = values[arg]
+    if val == nil then
+      val = fun(arg)
+      values[arg] = val
+    end
+    return val
+  end
+end
+
+---
+-- Return a memoizing version of a function.
 function util.memoize(fun)
   local values = setmetatable({}, weak_keys)
   return function(...)
-    local arg, val, v, a = pack(...), values
+    local arg, val = pack(...), values
     for i = 1, arg.n do
-      a = arg[i] or nil_marker
-      v = val[a]
-      if v == nil then v = setmetatable({}, weak_keys); val[a] = v end
+      local a = arg[i]
+      if a == nil then a = nil_marker end
+      local v = val[a]
+      if v == nil then
+        v = setmetatable({}, weak_keys)
+        val[a] = v
+      end
       val = v
     end
-    v = val[value_marker]
-    if v == nil then v = fun(...); val[value_marker] = v end
-    return v
+    local v = val[value_marker]
+    if v == nil then
+      v = pack(fun(...))
+      val[value_marker] = v
+    end
+    return unpack(v, 1, v.n)
   end
 end
 
