@@ -119,6 +119,38 @@ function ManuscriptLaTeX.init_callbacks.bibitem (m, pos, cs)
   return r.cont
 end
 
+function ManuscriptLaTeX.init_callbacks.amsrefs_bib(self, pos, cs)
+  local idx = self.bib_index
+  local r = self:parse_command(pos, cs)
+  if r.incomplete then return r.cont end
+  local keys = self:read_keys(r[3])
+  local authors, title, date = {}, "", "n.d."
+  for i = 1, #keys do
+    local k, v = keys[i].key, keys[i].value
+    if k == "author" then
+      authors[#authors+1] = self.parser.clean(v:match("[^,]+", 2))
+    elseif k == "title" then
+      title = self.parser.clean(v:sub(2, -2))
+    elseif k == "date" then
+      date = self.parser.clean(v:match("(%d+)"))
+    end
+  end
+  idx[#idx + 1] = {
+    name = self:substring_stripped(r[1]),
+    text = string.format(
+      "%s (%s); %s",
+      table.concat(authors, ", "),
+      date,
+      title),
+    pos = r[1].pos,
+    cont = r[1].cont,
+    outer_pos = r.pos,
+    outer_cont = r.cont,
+    manuscript = self
+  }
+  return r.cont
+end
+
 -- function ManuscriptLaTeX.init_callbacks.begin(m, pos, cs)
 --    local r = m:parse_command(pos, cs)
 --    if r[1] then

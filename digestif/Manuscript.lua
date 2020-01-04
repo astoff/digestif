@@ -167,7 +167,7 @@ end
 -- present), containing the corresponding text in the source.
 --
 function Manuscript:read_keys(range)
-   local tbl = self:parse_keys(range)
+   local tbl = self:parse_kvlist(range)
    local r = {}
    for i, v in ipairs(tbl) do
       r[i] = {
