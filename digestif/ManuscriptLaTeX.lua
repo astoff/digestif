@@ -124,7 +124,7 @@ function ManuscriptLaTeX.init_callbacks.amsrefs_bib(self, pos, cs)
   local r = self:parse_command(pos, cs)
   if r.incomplete then return r.cont end
   local keys = self:read_keys(r[3])
-  local authors, title, date = {}, "", "n.d."
+  local authors, title, date = {}, "", "(n.d.)"
   for i = 1, #keys do
     local k, v = keys[i].key, keys[i].value
     if k == "author" then
@@ -138,7 +138,7 @@ function ManuscriptLaTeX.init_callbacks.amsrefs_bib(self, pos, cs)
   idx[#idx + 1] = {
     name = self:substring_stripped(r[1]),
     text = string.format(
-      "%s (%s); %s",
+      "%s %s; %s",
       table.concat(authors, ", "),
       date,
       title),
