@@ -147,19 +147,44 @@ function compute_arguments(node)
   return tbl
 end
 
+function compute_instances(node)
+  tbl = {}
+  if node == nil then return tbl end
+  for instance in node:childtags() do
+    tbl[#tbl+1] = instance:get_attribs().value
+  end
+  return tbl
+end
+
 for _, node in ipairs(data:get_elements_with_name("cd:command")) do
   local attribs = node:get_attribs()
-  local name = attribs.name
+  local other_instances = compute_instances(node:child_with_name("cd:instances"))
+  local instances = {attribs.name, table.unpack(other_instances)}
   local arguments = node:child_with_name("cd:arguments")
-  local cmd = {
-    cs = attribs.name,
-    environment = (attribs.type == "environment"),
-    --source = attribs.file,
-    --category = attribs.category,
-    arguments = arguments and compute_arguments(arguments),
-  }
+  arguments = arguments and compute_arguments(arguments)
+  local level = nil -- make sure it’s reset first
+  for _, name in ipairs(instances) do
+    local cmd = {
+      cs = name,
+      environment = (attribs.type == "environment"),
+      --source = attribs.file,
+      --category = attribs.category,
+      arguments = arguments,
+    }
+    if attribs.name == "section" and name ~= "section" then
+      -- instances of section are listed first by
+      -- unnumbered/numbered, then section order
+      -- the numbered “part” has no unnumbered equivalent
+      if name == "part" then level = 1 end
+      if name == "title" then level = 2 end
+      cmd.action = "section"
+      cmd.section_level = level
+      --print(name, level)
+      level = level + 1
+    end
 
-  command_list[#command_list+1] = cmd
+    command_list[#command_list+1] = cmd
+  end
 end
 
 for _, cmd in ipairs(command_list) do
@@ -196,7 +221,7 @@ end
 save_from_table = require"luarocks.persist".save_from_table
 
 save_from_table(
-  'context.lua',
+  'context.tags',
   {
     comments = [[
 Extracted from ConTeXt source code (context-en.xml)
