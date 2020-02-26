@@ -158,8 +158,10 @@ end
 
 for _, node in ipairs(data:get_elements_with_name("cd:command")) do
   local attribs = node:get_attribs()
-  local other_instances = compute_instances(node:child_with_name("cd:instances"))
-  local instances = {attribs.name, table.unpack(other_instances)}
+  local instances = compute_instances(node:child_with_name("cd:instances"))
+  if not util.has_value(instances, attribs.name) then
+    table.insert(instances, 1, attribs.name)
+  end
   local arguments = node:child_with_name("cd:arguments")
   arguments = arguments and compute_arguments(arguments)
   local level = nil -- make sure it’s reset first
@@ -171,7 +173,7 @@ for _, node in ipairs(data:get_elements_with_name("cd:command")) do
       --category = attribs.category,
       arguments = arguments,
     }
-    if attribs.name == "section" and name ~= "section" then
+    if attribs.name == "section" then
       -- instances of section are listed first by
       -- unnumbered/numbered, then section order
       -- the numbered “part” has no unnumbered equivalent

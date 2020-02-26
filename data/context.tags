@@ -70303,6 +70303,7 @@ commands = {
       }
    },
    section = {
+      action = "section",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
@@ -70314,7 +70315,8 @@ commands = {
             delimiters = "$DIGESTIFDATA/context/data/braces",
             meta = "text"
          }
-      }
+      },
+      section_level = 3
    },
    seeregister = {
       arguments = {
@@ -108914,7 +108916,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 3
+      section_level = 4
    },
    subsentence = {
       arguments = {
@@ -108971,7 +108973,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 4
+      section_level = 5
    },
    subsubsubject = {
       action = "section",
@@ -109003,7 +109005,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 5
+      section_level = 6
    },
    subsubsubsubject = {
       action = "section",
@@ -109035,7 +109037,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 6
+      section_level = 7
    },
    subsubsubsubsubject = {
       action = "section",
@@ -132018,6 +132020,7 @@ environments = {
       }
    },
    section = {
+      action = "section",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
@@ -132056,7 +132059,8 @@ environments = {
             meta = "assignments",
             optional = true
          }
-      }
+      },
+      section_level = 3
    },
    sectionblock = {
       arguments = {
@@ -132606,7 +132610,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 3
+      section_level = 4
    },
    subsentence = {},
    substack = {},
@@ -132694,7 +132698,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 4
+      section_level = 5
    },
    subsubsubject = {
       action = "section",
@@ -132780,7 +132784,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 5
+      section_level = 6
    },
    subsubsubsubject = {
       action = "section",
@@ -132866,7 +132870,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 6
+      section_level = 7
    },
    subsubsubsubsubject = {
       action = "section",

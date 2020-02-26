@@ -65,6 +65,15 @@ function util.merge(...)
   return update({}, ...)
 end
 
+function util.has_value(tab, val)
+  for _, value in ipairs(tab) do
+      if value == val then
+          return true
+      end
+  end
+  return false
+end
+
 -- ¶ Cool combinators and friendly functions for LPeg
 
 -- simple things for better legibility of complicated constructions
