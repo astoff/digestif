@@ -32,4 +32,15 @@ function ManuscriptBibTeX:scan()
   return nil
 end
 
+function Manuscript:find_par(pos)
+  local start = 1
+  for i, item in ipairs(self.bib_index) do
+    if item.pos <= pos and pos <= item.cont then
+      start = item.pos
+      break
+    end
+  end
+  return start
+end
+
 return ManuscriptBibTeX
