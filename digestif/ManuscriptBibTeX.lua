@@ -1,6 +1,7 @@
 local lpeg = require "lpeg"
 local util = require "digestif.util"
 local Manuscript = require "digestif.Manuscript"
+local Parser = require "digestif.Parser"
 local bibtex = require "digestif.bibtex"
 
 local path_join, path_split = util.path_join, util.path_split
@@ -10,6 +11,8 @@ local map, update, merge = util.map, util.update, util.merge
 local ManuscriptBibTeX = util.class(Manuscript)
 
 ManuscriptBibTeX.format = "bibtex"
+ManuscriptBibTeX.parser = Parser()
+ManuscriptBibTeX.init_callbacks = false
 
 function ManuscriptBibTeX:__init(args)
   Manuscript.__init(self, args)
@@ -26,10 +29,6 @@ function ManuscriptBibTeX:__init(args)
       bibitem = item,
     }
   end
-end
-
-function ManuscriptBibTeX:scan()
-  return nil
 end
 
 return ManuscriptBibTeX

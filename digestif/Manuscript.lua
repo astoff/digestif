@@ -81,7 +81,9 @@ function Manuscript:__init(args)
   else
     self:add_module(self.format) -- do this only once, for the root
   end
-  self:scan(self.init_callbacks)
+  if self.init_callbacks then
+    self:scan(self.init_callbacks)
+  end
   for _, item in ipairs(self.child_index) do
     local file_exists, _ = files(item.name)
     if file_exists then
