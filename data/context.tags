@@ -5924,7 +5924,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 3
+      section_level = 2
    },
    character = {
       arguments = {
@@ -49412,7 +49412,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 3
+      section_level = 1
    },
    pdfTeX = {},
    pdfactualtext = {
@@ -97415,7 +97415,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 3
+      section_level = 4
    },
    subsentence = {
       arguments = {
@@ -97456,7 +97456,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 3
+      section_level = 4
    },
    subsubsection = {
       action = "section",
@@ -97472,7 +97472,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 3
+      section_level = 5
    },
    subsubsubject = {
       action = "section",
@@ -97488,7 +97488,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 3
+      section_level = 5
    },
    subsubsubsection = {
       action = "section",
@@ -97504,7 +97504,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 3
+      section_level = 6
    },
    subsubsubsubject = {
       action = "section",
@@ -97520,7 +97520,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 3
+      section_level = 6
    },
    subsubsubsubsection = {
       action = "section",
@@ -97536,7 +97536,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 3
+      section_level = 7
    },
    subsubsubsubsubject = {
       action = "section",
@@ -97552,7 +97552,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 3
+      section_level = 7
    },
    subtractfeature = {
       arguments = {
@@ -98651,7 +98651,7 @@ commands = {
             meta = "text"
          }
       },
-      section_level = 3
+      section_level = 2
    },
    tlap = {
       arguments = {
@@ -109048,7 +109048,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 3
+      section_level = 2
    },
    characteralign = {
       arguments = {
@@ -114802,7 +114802,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 3
+      section_level = 1
    },
    path = {
       arguments = {
@@ -115697,7 +115697,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 3
+      section_level = 4
    },
    subsentence = {},
    substack = {},
@@ -115742,7 +115742,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 3
+      section_level = 4
    },
    subsubsection = {
       action = "section",
@@ -115785,7 +115785,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 3
+      section_level = 5
    },
    subsubsubject = {
       action = "section",
@@ -115828,7 +115828,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 3
+      section_level = 5
    },
    subsubsubsection = {
       action = "section",
@@ -115871,7 +115871,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 3
+      section_level = 6
    },
    subsubsubsubject = {
       action = "section",
@@ -115914,7 +115914,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 3
+      section_level = 6
    },
    subsubsubsubsection = {
       action = "section",
@@ -115957,7 +115957,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 3
+      section_level = 7
    },
    subsubsubsubsubject = {
       action = "section",
@@ -116000,7 +116000,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 3
+      section_level = 7
    },
    symbolset = {
       arguments = {
@@ -116812,7 +116812,7 @@ environments = {
             optional = true
          }
       },
-      section_level = 3
+      section_level = 2
    },
    tokenlist = {
       arguments = {

@@ -190,12 +190,10 @@ for _, node in ipairs(data:get_elements_with_name("cd:command")) do
       if name == "part" then level = 1 end
       if name == "title" then level = 2 end
       if name == "subsection" then level = 4 end
-      local inst = {
-        action = "section",
-        section_level = level,
-      }
+      local inst = { action = "section" }
       for k, v in pairs(cmd) do inst[k] = v end
       inst.cs = name
+      inst.section_level = level
       --print(name, level)
       level = level + 1
       command_list[#command_list+1] = inst
