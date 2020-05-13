@@ -1026,6 +1026,7 @@ commands = {
       }
    },
    about = {
+      action = "ref",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
@@ -2959,6 +2960,7 @@ commands = {
       }
    },
    at = {
+      action = "ref",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/braces",
@@ -6252,6 +6254,7 @@ commands = {
       }
    },
    citation = {
+      action = "cite",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
@@ -6385,6 +6388,7 @@ commands = {
       }
    },
    cite = {
+      action = "cite",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
@@ -41115,6 +41119,7 @@ commands = {
    impliedby = {},
    implies = {},
    ["in"] = {
+      action = "ref",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/braces",
@@ -48077,6 +48082,7 @@ commands = {
    nobar = "$DIGESTIFDATA/context/commands/bar",
    nocharacteralign = {},
    nocitation = {
+      action = "cite",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
@@ -48085,6 +48091,7 @@ commands = {
       }
    },
    nocite = {
+      action = "cite",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
@@ -49364,6 +49371,7 @@ commands = {
    },
    pagenumber = {},
    pagereference = {
+      action = "label",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
@@ -98355,6 +98363,7 @@ commands = {
    },
    textplus = {},
    textreference = {
+      action = "label",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
@@ -100806,6 +100815,7 @@ commands = {
       }
    },
    usebtxdataset = {
+      action = "input",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",

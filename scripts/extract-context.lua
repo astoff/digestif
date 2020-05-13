@@ -237,6 +237,21 @@ for _, cmd in ipairs(command_list) do
   end
 end
 
+for cs, action in pairs {
+  usebtxdataset = "input",
+  cite = "cite",
+  nocite = "cite",
+  citation = "cite",
+  nocitation = "cite",
+  pagereference = "label",
+  textreference = "label",
+  ["in"] = "ref",
+  at = "ref",
+  about = "ref"
+} do
+  commands[cs].action = action
+end
+
 save_from_table = require"luarocks.persist".save_from_table
 
 save_from_table(
