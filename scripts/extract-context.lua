@@ -135,10 +135,6 @@ function compute_argument(node)
   return ret
 end
 
-command_list = {}
-commands = {}
-inherits = {}
-
 function compute_arguments(node)
   tbl = {}
   for node in node:childtags() do
@@ -147,25 +143,70 @@ function compute_arguments(node)
   return tbl
 end
 
+function compute_instances(name, node)
+  tbl = {}
+  if node == nil then return tbl end
+  for instance in node:childtags() do
+    inst_name = instance:get_attribs().value
+    if name ~= inst_name then
+      tbl[#tbl+1] = inst_name
+    end
+  end
+  return tbl
+end
+
+command_list = {}
 for _, node in ipairs(data:get_elements_with_name("cd:command")) do
   local attribs = node:get_attribs()
-  local name = attribs.name
   local arguments = node:child_with_name("cd:arguments")
+  arguments = arguments and compute_arguments(arguments)
   local cmd = {
     cs = attribs.name,
     environment = (attribs.type == "environment"),
     --source = attribs.file,
     --category = attribs.category,
-    arguments = arguments and compute_arguments(arguments),
+    arguments = arguments,
   }
-
+  if cmd.cs == "section" then
+    cmd.section_level = 3
+  end
   command_list[#command_list+1] = cmd
+
+  local instances = compute_instances(attribs.name, node:child_with_name("cd:instances"))
+  local level = nil -- make sure it’s reset first
+  for _, name in ipairs(instances) do
+    if cmd.cs ~= "section" then
+      -- link possible due to no section_level
+      local what = cmd.environment and "environments" or "commands"
+      command_list[#command_list+1] = {
+        cs = name,
+        link = "$DIGESTIFDATA/context/" .. what .. "/" .. cmd.cs,
+      }
+    else
+      -- instances of section are listed first by
+      -- unnumbered/numbered, then section order
+      -- the numbered “part” has no unnumbered equivalent
+      -- section is the base cmd, so skipped in `instances`
+      if name == "part" then level = 1 end
+      if name == "title" then level = 2 end
+      if name == "subsection" then level = 4 end
+      local inst = { action = "section" }
+      for k, v in pairs(cmd) do inst[k] = v end
+      inst.cs = name
+      inst.section_level = level
+      --print(name, level)
+      level = level + 1
+      command_list[#command_list+1] = inst
+    end
+  end
 end
 
+-- FIXME: need to distinguish when doing
+cmds_and_envs = {}
 for _, cmd in ipairs(command_list) do
   local cs = cmd.cs
-  if not commands[cs] then
-    commands[cs] = cmd
+  if cmd.link or not cmds_and_envs[cs] then
+    cmds_and_envs[cs] = cmd
   end
 end
 
@@ -173,7 +214,7 @@ for _, tbl in ipairs(inherit_order) do
   local inh = inheritances[tbl]
   --print("\n\nbefore", ser(tbl))
   for _, cs in ipairs(inh) do
-    for _, arg in ipairs((commands[cs] or {}).arguments or {}) do
+    for _, arg in ipairs((cmds_and_envs[cs] or {}).arguments or {}) do
       util.update(tbl, arg[inherit_type[tbl]] or {})
     end
   end
@@ -189,14 +230,17 @@ for _, cmd in ipairs(command_list) do
   cmd.environment = nil
   cmd.cs = nil
   if not list[cs] then
-    list[cs] = cmd
+    list[cs] = cmd.link and cmd.link or cmd
+    if cmd.section_level then
+      --print(cs, cmd.section_level)
+    end
   end
 end
 
 save_from_table = require"luarocks.persist".save_from_table
 
 save_from_table(
-  'context.lua',
+  'context.tags',
   {
     comments = [[
 Extracted from ConTeXt source code (context-en.xml)

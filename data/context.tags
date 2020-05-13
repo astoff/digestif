@@ -204,6 +204,7 @@ commands = {
    INRSTEX = {},
    LAMSTEX = {},
    LATEX = {},
+   LUA = "$DIGESTIFDATA/context/environments/typing",
    LUAJITTEX = {},
    LUATEX = {},
    LaTeX = {},
@@ -243,6 +244,7 @@ commands = {
          }
       }
    },
+   MP = "$DIGESTIFDATA/context/environments/typing",
    MPII = {},
    MPIV = {},
    MPVI = {},
@@ -469,14 +471,7 @@ commands = {
          }
       }
    },
-   MPpage = {
-      arguments = {
-         {
-            delimiters = "$DIGESTIFDATA/context/data/braces",
-            meta = "name"
-         }
-      }
-   },
+   MPpage = "$DIGESTIFDATA/context/environments/fittingpage",
    MPpardata = {
       arguments = {
          {
@@ -809,6 +804,7 @@ commands = {
          }
       }
    },
+   PARSEDXML = "$DIGESTIFDATA/context/environments/typing",
    PDFETEX = {},
    PDFTEX = {},
    PDFcolor = {
@@ -931,6 +927,7 @@ commands = {
    },
    TABLE = {},
    TEX = {},
+   TEXpage = "$DIGESTIFDATA/context/environments/fittingpage",
    TaBlE = {},
    TeX = {},
    TheNormalizedFontSize = {},
@@ -1000,7 +997,10 @@ commands = {
       }
    },
    XETEX = {},
+   XML = "$DIGESTIFDATA/context/environments/typing",
    XeTeX = {},
+   abbreviation = "$DIGESTIFDATA/context/commands/synonym",
+   abbreviations = "$DIGESTIFDATA/context/commands/placelistofsynonyms",
    abjadnaivenumerals = {
       arguments = {
          {
@@ -1555,6 +1555,7 @@ commands = {
          }
       }
    },
+   align = "$DIGESTIFDATA/context/environments/mathalignment",
    alignbottom = {},
    aligned = {
       arguments = {
@@ -2523,6 +2524,7 @@ commands = {
          }
       }
    },
+   appendices = "$DIGESTIFDATA/context/environments/sectionblock",
    appendtocommalist = {
       arguments = {
          {
@@ -2769,6 +2771,7 @@ commands = {
          }
       }
    },
+   aside = "$DIGESTIFDATA/context/commands/delimitedtext",
    assignalfadimension = {
       arguments = {
          {
@@ -2973,6 +2976,7 @@ commands = {
          }
       }
    },
+   atleftmargin = "$DIGESTIFDATA/context/commands/margindata",
    atpage = {
       arguments = {
          {
@@ -2981,6 +2985,7 @@ commands = {
          }
       }
    },
+   atrightmargin = "$DIGESTIFDATA/context/commands/margindata",
    attachment = {
       arguments = {
          {
@@ -3238,6 +3243,7 @@ commands = {
          }
       }
    },
+   backmatter = "$DIGESTIFDATA/context/environments/sectionblock",
    bar = {
       arguments = {
          {
@@ -3474,6 +3480,7 @@ commands = {
       }
    },
    bigskip = {},
+   binom = "$DIGESTIFDATA/context/commands/fraction",
    bitmapimage = {
       arguments = {
          {
@@ -3763,6 +3770,7 @@ commands = {
          }
       }
    },
+   blockquote = "$DIGESTIFDATA/context/commands/delimitedtext",
    blocksynctexfile = {
       arguments = {
          {
@@ -3782,6 +3790,7 @@ commands = {
    },
    bodyfontenvironmentlist = {},
    bodyfontsize = {},
+   bodymatter = "$DIGESTIFDATA/context/environments/sectionblock",
    bold = {},
    boldface = {},
    bolditalic = {},
@@ -3840,6 +3849,7 @@ commands = {
       }
    },
    boxcursor = {},
+   boxedcolumns = "$DIGESTIFDATA/context/environments/mixedcolumns",
    boxmarker = {
       arguments = {
          {
@@ -5056,6 +5066,7 @@ commands = {
          }
       }
    },
+   btxlabel = "$DIGESTIFDATA/context/commands/setuplabeltext",
    btxlistcitation = {
       arguments = {
          {
@@ -5797,6 +5808,7 @@ commands = {
          }
       }
    },
+   cases = "$DIGESTIFDATA/context/environments/mathcases",
    catcodetablename = {},
    cbox = {
       arguments = {
@@ -5897,6 +5909,22 @@ commands = {
             meta = "content"
          }
       }
+   },
+   chapter = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            list = true,
+            meta = "reference",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/braces",
+            meta = "text"
+         }
+      },
+      section_level = 2
    },
    character = {
       arguments = {
@@ -6174,6 +6202,7 @@ commands = {
          }
       }
    },
+   chemicals = "$DIGESTIFDATA/context/commands/placelistoffloats",
    chemicalsymbol = {
       arguments = {
          {
@@ -6540,6 +6569,7 @@ commands = {
          }
       }
    },
+   cleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
    clip = {
       arguments = {
          {
@@ -9079,6 +9109,7 @@ commands = {
          }
       }
    },
+   content = "$DIGESTIFDATA/context/commands/setupcombinedlist",
    contentreference = {
       arguments = {
          {
@@ -10267,6 +10298,8 @@ commands = {
          }
       }
    },
+   crightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   crightoverleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
    ctop = {
       arguments = {
          {
@@ -10608,6 +10641,7 @@ commands = {
          }
       }
    },
+   dbinom = "$DIGESTIFDATA/context/commands/fraction",
    dddot = {
       arguments = {
          {
@@ -27529,6 +27563,7 @@ commands = {
          }
       }
    },
+   dfrac = "$DIGESTIFDATA/context/commands/fraction",
    digits = {
       arguments = {
          {
@@ -34004,7 +34039,11 @@ commands = {
          }
       }
    },
+   doublebar = "$DIGESTIFDATA/context/commands/mathdoubleextensible",
    doublebond = {},
+   doublebrace = "$DIGESTIFDATA/context/commands/mathdoubleextensible",
+   doublebracket = "$DIGESTIFDATA/context/commands/mathdoubleextensible",
+   doubleparent = "$DIGESTIFDATA/context/commands/mathdoubleextensible",
    dowith = {
       arguments = {
          {
@@ -34218,6 +34257,10 @@ commands = {
    },
    elapsedseconds = {},
    elapsedtime = {},
+   eleftarrowfill = "$DIGESTIFDATA/context/commands/mathextensible",
+   eleftharpoondownfill = "$DIGESTIFDATA/context/commands/mathextensible",
+   eleftharpoonupfill = "$DIGESTIFDATA/context/commands/mathextensible",
+   eleftrightarrowfill = "$DIGESTIFDATA/context/commands/mathextensible",
    em = {},
    emphasisboldface = {},
    emphasistypeface = {},
@@ -34348,6 +34391,7 @@ commands = {
          }
       }
    },
+   endnote = "$DIGESTIFDATA/context/environments/note",
    enskip = {},
    enspace = {},
    enumeration = {
@@ -34400,6 +34444,10 @@ commands = {
          }
       }
    },
+   eoverbarfill = "$DIGESTIFDATA/context/commands/mathextensible",
+   eoverbracefill = "$DIGESTIFDATA/context/commands/mathextensible",
+   eoverbracketfill = "$DIGESTIFDATA/context/commands/mathextensible",
+   eoverparentfill = "$DIGESTIFDATA/context/commands/mathextensible",
    epos = {
       arguments = {
          {
@@ -34416,6 +34464,15 @@ commands = {
          }
       }
    },
+   erightarrowfill = "$DIGESTIFDATA/context/commands/mathextensible",
+   erightharpoondownfill = "$DIGESTIFDATA/context/commands/mathextensible",
+   erightharpoonupfill = "$DIGESTIFDATA/context/commands/mathextensible",
+   ethiopic = "$DIGESTIFDATA/context/commands/script",
+   etwoheadrightarrowfill = "$DIGESTIFDATA/context/commands/mathextensible",
+   eunderbarfill = "$DIGESTIFDATA/context/commands/mathextensible",
+   eunderbracefill = "$DIGESTIFDATA/context/commands/mathextensible",
+   eunderbracketfill = "$DIGESTIFDATA/context/commands/mathextensible",
+   eunderparentfill = "$DIGESTIFDATA/context/commands/mathextensible",
    executeifdefined = {
       arguments = {
          {
@@ -34984,6 +35041,7 @@ commands = {
          }
       }
    },
+   fact = "$DIGESTIFDATA/context/environments/tabulate",
    fakebox = {
       arguments = {
          {
@@ -35927,6 +35985,7 @@ commands = {
          }
       }
    },
+   figure = "$DIGESTIFDATA/context/commands/definefloat",
    figurefilename = {},
    figurefilepath = {},
    figurefiletype = {},
@@ -35934,6 +35993,7 @@ commands = {
    figureheight = {},
    figurenaturalheight = {},
    figurenaturalwidth = {},
+   figures = "$DIGESTIFDATA/context/commands/placelistoffloats",
    figuresymbol = {
       arguments = {
          {
@@ -37377,6 +37437,7 @@ commands = {
    },
    fontsize = {},
    fontstyle = {},
+   footnote = "$DIGESTIFDATA/context/environments/note",
    footnotetext = {
       arguments = {
          {
@@ -37548,6 +37609,7 @@ commands = {
          }
       }
    },
+   frac = "$DIGESTIFDATA/context/commands/fraction",
    fraction = {
       arguments = {
          {
@@ -38193,6 +38255,7 @@ commands = {
          }
       }
    },
+   frontmatter = "$DIGESTIFDATA/context/environments/sectionblock",
    frozenhbox = {
       arguments = {
          {
@@ -40189,6 +40252,8 @@ commands = {
          }
       }
    },
+   graphic = "$DIGESTIFDATA/context/commands/definefloat",
+   graphics = "$DIGESTIFDATA/context/commands/placelistoffloats",
    grave = {
       arguments = {
          {
@@ -40411,6 +40476,8 @@ commands = {
       }
    },
    handwritten = {},
+   hangul = "$DIGESTIFDATA/context/commands/script",
+   hanzi = "$DIGESTIFDATA/context/commands/script",
    hash = {},
    hat = {
       arguments = {
@@ -40457,6 +40524,7 @@ commands = {
          }
       }
    },
+   head = "$DIGESTIFDATA/context/commands/setuplabeltext",
    headhbox = {
       arguments = {
          {
@@ -40561,23 +40629,7 @@ commands = {
          }
       }
    },
-   helptext = {
-      arguments = {
-         {
-            delimiters = "$DIGESTIFDATA/context/data/brackets",
-            meta = "reference",
-            optional = true
-         },
-         {
-            delimiters = "$DIGESTIFDATA/context/data/braces",
-            meta = "text"
-         },
-         {
-            delimiters = "$DIGESTIFDATA/context/data/braces",
-            meta = "text"
-         }
-      }
-   },
+   helptext = "$DIGESTIFDATA/context/commands/help",
    hglue = {
       arguments = {
          {
@@ -40586,6 +40638,7 @@ commands = {
          }
       }
    },
+   hiddenbar = "$DIGESTIFDATA/context/commands/bar",
    hiddencitation = {
       arguments = {
          {
@@ -40617,6 +40670,7 @@ commands = {
          }
       }
    },
+   hiding = "$DIGESTIFDATA/context/environments/buffer",
    high = {
       arguments = {
          {
@@ -41135,6 +41189,7 @@ commands = {
       }
    },
    indentation = {},
+   index = "$DIGESTIFDATA/context/commands/register",
    infofont = {},
    infofontbold = {},
    inframed = {
@@ -41421,6 +41476,9 @@ commands = {
       }
    },
    inhibitblank = {},
+   ininner = "$DIGESTIFDATA/context/commands/margindata",
+   ininneredge = "$DIGESTIFDATA/context/commands/margindata",
+   ininnermargin = "$DIGESTIFDATA/context/commands/margindata",
    initializeboxstack = {
       arguments = {
          {
@@ -41429,6 +41487,9 @@ commands = {
          }
       }
    },
+   inleft = "$DIGESTIFDATA/context/commands/margindata",
+   inleftedge = "$DIGESTIFDATA/context/commands/margindata",
+   inleftmargin = "$DIGESTIFDATA/context/commands/margindata",
    inline = {
       arguments = {
          {
@@ -41526,7 +41587,13 @@ commands = {
          }
       }
    },
+   inmargin = "$DIGESTIFDATA/context/commands/margindata",
+   inmframed = "$DIGESTIFDATA/context/commands/mathframed",
    innerflushshapebox = {},
+   inother = "$DIGESTIFDATA/context/commands/margindata",
+   inouter = "$DIGESTIFDATA/context/commands/margindata",
+   inouteredge = "$DIGESTIFDATA/context/commands/margindata",
+   inoutermargin = "$DIGESTIFDATA/context/commands/margindata",
    input = {
       arguments = {
          {
@@ -41547,6 +41614,9 @@ commands = {
          }
       }
    },
+   inright = "$DIGESTIFDATA/context/commands/margindata",
+   inrightedge = "$DIGESTIFDATA/context/commands/margindata",
+   inrightmargin = "$DIGESTIFDATA/context/commands/margindata",
    insertpages = {
       arguments = {
          {
@@ -43359,6 +43429,8 @@ commands = {
          }
       }
    },
+   intermezzi = "$DIGESTIFDATA/context/commands/placelistoffloats",
+   intermezzo = "$DIGESTIFDATA/context/commands/definefloat",
    intertext = {
       arguments = {
          {
@@ -43421,6 +43493,8 @@ commands = {
          }
       }
    },
+   itemgroupcolumns = "$DIGESTIFDATA/context/environments/mixedcolumns",
+   itemize = "$DIGESTIFDATA/context/commands/setupitemgroup",
    items = {
       arguments = {
          {
@@ -43725,6 +43799,7 @@ commands = {
          }
       }
    },
+   latin = "$DIGESTIFDATA/context/commands/script",
    layeredtext = {
       arguments = {
          {
@@ -44354,6 +44429,7 @@ commands = {
          }
       }
    },
+   legend = "$DIGESTIFDATA/context/commands/setuppairedbox",
    letbeundefined = {
       arguments = {
          {
@@ -45638,6 +45714,8 @@ commands = {
          }
       }
    },
+   logo = "$DIGESTIFDATA/context/commands/sorting",
+   logos = "$DIGESTIFDATA/context/commands/placelistofsorts",
    lohi = {
       arguments = {
          {
@@ -45889,6 +45967,9 @@ commands = {
          }
       }
    },
+   mLeftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   mLeftrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   mRightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
    mainlanguage = {
       arguments = {
          {
@@ -46320,6 +46401,7 @@ commands = {
          }
       }
    },
+   margintext = "$DIGESTIFDATA/context/commands/margindata",
    markcontent = {
       arguments = {
          {
@@ -46757,6 +46839,7 @@ commands = {
    },
    mathit = {},
    mathitalic = {},
+   mathlabel = "$DIGESTIFDATA/context/commands/setuplabeltext",
    mathmatrix = {
       arguments = {
          {
@@ -47090,6 +47173,7 @@ commands = {
          }
       }
    },
+   matrix = "$DIGESTIFDATA/context/environments/mathmatrix",
    maxaligned = {
       arguments = {
          {
@@ -47106,6 +47190,8 @@ commands = {
          }
       }
    },
+   mcframed = "$DIGESTIFDATA/context/commands/mathframed",
+   md = "$DIGESTIFDATA/context/environments/formula",
    measure = {
       arguments = {
          {
@@ -47516,6 +47602,7 @@ commands = {
          }
       }
    },
+   mequal = "$DIGESTIFDATA/context/commands/mathextensible",
    message = {
       arguments = {
          {
@@ -47533,6 +47620,7 @@ commands = {
          }
       }
    },
+   mframed = "$DIGESTIFDATA/context/commands/mathframed",
    mfunction = {
       arguments = {
          {
@@ -47557,6 +47645,8 @@ commands = {
          }
       }
    },
+   mhookleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   mhookrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
    midaligned = {
       arguments = {
          {
@@ -47565,14 +47655,7 @@ commands = {
          }
       }
    },
-   middle = {
-      arguments = {
-         {
-            delimiters = false,
-            meta = "character"
-         }
-      }
-   },
+   middle = "$DIGESTIFDATA/context/environments/makeup",
    middlealigned = {
       arguments = {
          {
@@ -47636,6 +47719,12 @@ commands = {
          }
       }
    },
+   mleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   mleftharpoondown = "$DIGESTIFDATA/context/commands/mathextensible",
+   mleftharpoonup = "$DIGESTIFDATA/context/commands/mathextensible",
+   mleftrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   mleftrightharpoons = "$DIGESTIFDATA/context/commands/mathextensible",
+   mmapsto = "$DIGESTIFDATA/context/commands/mathextensible",
    moduleparameter = {
       arguments = {
          {
@@ -47683,7 +47772,14 @@ commands = {
          }
       }
    },
+   mp = "$DIGESTIFDATA/context/environments/formula",
    mprandomnumber = {},
+   mrel = "$DIGESTIFDATA/context/commands/mathextensible",
+   mrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   mrightharpoondown = "$DIGESTIFDATA/context/commands/mathextensible",
+   mrightharpoonup = "$DIGESTIFDATA/context/commands/mathextensible",
+   mrightleftharpoons = "$DIGESTIFDATA/context/commands/mathextensible",
+   mrightoverleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
    mtext = {
       arguments = {
          {
@@ -47692,6 +47788,9 @@ commands = {
          }
       }
    },
+   mtriplerel = "$DIGESTIFDATA/context/commands/mathextensible",
+   mtwoheadleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   mtwoheadrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
    namedheadnumber = {
       arguments = {
          {
@@ -47974,6 +48073,8 @@ commands = {
    nextsubpagenumber = {},
    nextuserpage = {},
    nextuserpagenumber = {},
+   nihongo = "$DIGESTIFDATA/context/commands/script",
+   nobar = "$DIGESTIFDATA/context/commands/bar",
    nocharacteralign = {},
    nocitation = {
       arguments = {
@@ -48671,6 +48772,7 @@ commands = {
          }
       }
    },
+   operator = "$DIGESTIFDATA/context/commands/setuplabeltext",
    ordinaldaynumber = {
       arguments = {
          {
@@ -49079,6 +49181,11 @@ commands = {
          }
       }
    },
+   overbar = "$DIGESTIFDATA/context/commands/bar",
+   overbars = "$DIGESTIFDATA/context/commands/bar",
+   overbarunderbar = "$DIGESTIFDATA/context/commands/mathdoubleextensible",
+   overbraceunderbrace = "$DIGESTIFDATA/context/commands/mathdoubleextensible",
+   overbracketunderbracket = "$DIGESTIFDATA/context/commands/mathdoubleextensible",
    overlaybutton = {
       arguments = {
          {
@@ -49123,6 +49230,7 @@ commands = {
    },
    overlaywidth = {},
    overloaderror = {},
+   overparentunderparent = "$DIGESTIFDATA/context/commands/mathdoubleextensible",
    overset = {
       arguments = {
          {
@@ -49135,16 +49243,9 @@ commands = {
          }
       }
    },
-   page = {
-      arguments = {
-         {
-            delimiters = "$DIGESTIFDATA/context/data/brackets",
-            list = true,
-            meta = "keywords",
-            optional = true
-         }
-      }
-   },
+   overstrike = "$DIGESTIFDATA/context/commands/bar",
+   overstrikes = "$DIGESTIFDATA/context/commands/bar",
+   page = "$DIGESTIFDATA/context/environments/makeup",
    pagearea = {
       arguments = {
          {
@@ -49297,6 +49398,22 @@ commands = {
    },
    paletsize = {},
    paragraphs = {},
+   part = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            list = true,
+            meta = "reference",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/braces",
+            meta = "text"
+         }
+      },
+      section_level = 1
+   },
    pdfTeX = {},
    pdfactualtext = {
       arguments = {
@@ -54836,6 +54953,7 @@ commands = {
          }
       }
    },
+   prefix = "$DIGESTIFDATA/context/commands/setuplabeltext",
    prefixedpagenumber = {},
    prependetoks = {
       arguments = {
@@ -55752,6 +55870,8 @@ commands = {
    quitcommalist = {},
    quitprevcommalist = {},
    quittypescriptscanning = {},
+   quotation = "$DIGESTIFDATA/context/commands/delimitedtext",
+   quote = "$DIGESTIFDATA/context/commands/delimitedtext",
    raggedbottom = {},
    raggedcenter = {},
    raggedleft = {},
@@ -58588,6 +58708,7 @@ commands = {
       }
    },
    script = {},
+   sd = "$DIGESTIFDATA/context/environments/formula",
    secondoffivearguments = {
       arguments = {
          {
@@ -58728,7 +58849,8 @@ commands = {
             delimiters = "$DIGESTIFDATA/context/data/braces",
             meta = "text"
          }
-      }
+      },
+      section_level = 3
    },
    seeregister = {
       arguments = {
@@ -95118,6 +95240,7 @@ commands = {
          }
       }
    },
+   sfrac = "$DIGESTIFDATA/context/commands/fraction",
    shapedhbox = {
       arguments = {
          {
@@ -95147,6 +95270,8 @@ commands = {
          }
       }
    },
+   shiftdown = "$DIGESTIFDATA/context/commands/shift",
+   shiftup = "$DIGESTIFDATA/context/commands/shift",
    showallmakeup = {},
    showattributes = {},
    showbodyfont = {
@@ -96674,6 +96799,7 @@ commands = {
          }
       }
    },
+   sp = "$DIGESTIFDATA/context/environments/formula",
    space = {},
    spaceddigits = {
       arguments = {
@@ -96702,6 +96828,7 @@ commands = {
          }
       }
    },
+   speech = "$DIGESTIFDATA/context/commands/delimitedtext",
    splitatasterisk = {
       arguments = {
          {
@@ -96956,6 +97083,7 @@ commands = {
          }
       }
    },
+   standard = "$DIGESTIFDATA/context/environments/makeup",
    startline = {
       arguments = {
          {
@@ -97256,7 +97384,39 @@ commands = {
          }
       }
    },
+   subject = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            list = true,
+            meta = "reference",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/braces",
+            meta = "text"
+         }
+      },
+      section_level = 3
+   },
    subpagenumber = {},
+   subsection = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            list = true,
+            meta = "reference",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/braces",
+            meta = "text"
+         }
+      },
+      section_level = 4
+   },
    subsentence = {
       arguments = {
          {
@@ -97282,6 +97442,118 @@ commands = {
          }
       }
    },
+   subsubject = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            list = true,
+            meta = "reference",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/braces",
+            meta = "text"
+         }
+      },
+      section_level = 4
+   },
+   subsubsection = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            list = true,
+            meta = "reference",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/braces",
+            meta = "text"
+         }
+      },
+      section_level = 5
+   },
+   subsubsubject = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            list = true,
+            meta = "reference",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/braces",
+            meta = "text"
+         }
+      },
+      section_level = 5
+   },
+   subsubsubsection = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            list = true,
+            meta = "reference",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/braces",
+            meta = "text"
+         }
+      },
+      section_level = 6
+   },
+   subsubsubsubject = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            list = true,
+            meta = "reference",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/braces",
+            meta = "text"
+         }
+      },
+      section_level = 6
+   },
+   subsubsubsubsection = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            list = true,
+            meta = "reference",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/braces",
+            meta = "text"
+         }
+      },
+      section_level = 7
+   },
+   subsubsubsubsubject = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            list = true,
+            meta = "reference",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/braces",
+            meta = "text"
+         }
+      },
+      section_level = 7
+   },
    subtractfeature = {
       arguments = {
          {
@@ -97290,6 +97562,7 @@ commands = {
          }
       }
    },
+   suffix = "$DIGESTIFDATA/context/commands/setuplabeltext",
    swapcounts = {
       arguments = {
          {
@@ -97587,6 +97860,11 @@ commands = {
          }
       }
    },
+   tLeftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   tLeftrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   tRightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   table = "$DIGESTIFDATA/context/commands/definefloat",
+   tables = "$DIGESTIFDATA/context/commands/placelistoffloats",
    tabulateautoline = {},
    tabulateautorule = {},
    tabulateline = {},
@@ -97615,6 +97893,8 @@ commands = {
          }
       }
    },
+   taglabel = "$DIGESTIFDATA/context/commands/setuplabeltext",
+   tbinom = "$DIGESTIFDATA/context/commands/fraction",
    tbox = {
       arguments = {
          {
@@ -97623,6 +97903,8 @@ commands = {
          }
       }
    },
+   tequal = "$DIGESTIFDATA/context/commands/mathextensible",
+   test = "$DIGESTIFDATA/context/commands/script",
    testandsplitstring = {
       arguments = {
          {
@@ -97762,6 +98044,7 @@ commands = {
          }
       }
    },
+   text = "$DIGESTIFDATA/context/environments/makeup",
    textbackground = {
       arguments = {
          {
@@ -98104,6 +98387,7 @@ commands = {
       }
    },
    textvisiblespace = {},
+   thai = "$DIGESTIFDATA/context/commands/script",
    thainumerals = {
       arguments = {
          {
@@ -98318,6 +98602,8 @@ commands = {
          }
       }
    },
+   thookleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   thookrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
    threedigitrounding = {
       arguments = {
          {
@@ -98351,6 +98637,22 @@ commands = {
       }
    },
    tinyfont = {},
+   title = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            list = true,
+            meta = "reference",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/braces",
+            meta = "text"
+         }
+      },
+      section_level = 2
+   },
    tlap = {
       arguments = {
          {
@@ -98359,6 +98661,12 @@ commands = {
          }
       }
    },
+   tleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   tleftharpoondown = "$DIGESTIFDATA/context/commands/mathextensible",
+   tleftharpoonup = "$DIGESTIFDATA/context/commands/mathextensible",
+   tleftrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   tleftrightharpoons = "$DIGESTIFDATA/context/commands/mathextensible",
+   tmapsto = "$DIGESTIFDATA/context/commands/mathextensible",
    tochar = {
       arguments = {
          {
@@ -98724,6 +99032,12 @@ commands = {
          }
       }
    },
+   trel = "$DIGESTIFDATA/context/commands/mathextensible",
+   trightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   trightharpoondown = "$DIGESTIFDATA/context/commands/mathextensible",
+   trightharpoonup = "$DIGESTIFDATA/context/commands/mathextensible",
+   trightleftharpoons = "$DIGESTIFDATA/context/commands/mathextensible",
+   trightoverleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
    triplebond = {},
    truefilename = {
       arguments = {
@@ -98742,6 +99056,9 @@ commands = {
       }
    },
    ttraggedright = {},
+   ttriplerel = "$DIGESTIFDATA/context/commands/mathextensible",
+   ttwoheadleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   ttwoheadrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
    twodigitrounding = {
       arguments = {
          {
@@ -100065,6 +100382,14 @@ commands = {
          }
       }
    },
+   underbar = "$DIGESTIFDATA/context/commands/bar",
+   underbars = "$DIGESTIFDATA/context/commands/bar",
+   underdash = "$DIGESTIFDATA/context/commands/bar",
+   underdashes = "$DIGESTIFDATA/context/commands/bar",
+   underdot = "$DIGESTIFDATA/context/commands/bar",
+   underdots = "$DIGESTIFDATA/context/commands/bar",
+   underrandom = "$DIGESTIFDATA/context/commands/bar",
+   underrandoms = "$DIGESTIFDATA/context/commands/bar",
    underset = {
       arguments = {
          {
@@ -100077,6 +100402,8 @@ commands = {
          }
       }
    },
+   understrike = "$DIGESTIFDATA/context/commands/bar",
+   understrikes = "$DIGESTIFDATA/context/commands/bar",
    undoassign = {
       arguments = {
          {
@@ -100102,6 +100429,7 @@ commands = {
          }
       }
    },
+   unframed = "$DIGESTIFDATA/context/commands/framed",
    unhhbox = {
       arguments = {
          {
@@ -100163,14 +100491,9 @@ commands = {
          }
       }
    },
-   unit = {
-      arguments = {
-         {
-            delimiters = "$DIGESTIFDATA/context/data/brackets",
-            meta = "content"
-         }
-      }
-   },
+   unit = "$DIGESTIFDATA/context/commands/setuplabeltext",
+   unitshigh = "$DIGESTIFDATA/context/commands/high",
+   unitslow = "$DIGESTIFDATA/context/commands/low",
    unknown = {},
    unprotected = {
       arguments = {
@@ -103556,6 +103879,9 @@ commands = {
          }
       }
    },
+   xLeftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   xLeftrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   xRightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
    xdefconvertedargument = {
       arguments = {
          {
@@ -103569,6 +103895,16 @@ commands = {
          }
       }
    },
+   xequal = "$DIGESTIFDATA/context/commands/mathextensible",
+   xfrac = "$DIGESTIFDATA/context/commands/fraction",
+   xhookleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   xhookrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   xleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   xleftharpoondown = "$DIGESTIFDATA/context/commands/mathextensible",
+   xleftharpoonup = "$DIGESTIFDATA/context/commands/mathextensible",
+   xleftrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   xleftrightharpoons = "$DIGESTIFDATA/context/commands/mathextensible",
+   xmapsto = "$DIGESTIFDATA/context/commands/mathextensible",
    xmladdindex = {
       arguments = {
          {
@@ -105113,6 +105449,12 @@ commands = {
          }
       }
    },
+   xrel = "$DIGESTIFDATA/context/commands/mathextensible",
+   xrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   xrightharpoondown = "$DIGESTIFDATA/context/commands/mathextensible",
+   xrightharpoonup = "$DIGESTIFDATA/context/commands/mathextensible",
+   xrightleftharpoons = "$DIGESTIFDATA/context/commands/mathextensible",
+   xrightoverleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
    xsplitstring = {
       arguments = {
          {
@@ -105126,6 +105468,10 @@ commands = {
          }
       }
    },
+   xtriplerel = "$DIGESTIFDATA/context/commands/mathextensible",
+   xtwoheadleftarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   xtwoheadrightarrow = "$DIGESTIFDATA/context/commands/mathextensible",
+   xxfrac = "$DIGESTIFDATA/context/commands/fraction",
    xypos = {
       arguments = {
          {
@@ -108661,6 +109007,49 @@ environments = {
       }
    },
    centeraligned = {},
+   chapter = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               bookmark = {
+                  meta = "text"
+               },
+               list = {
+                  meta = "text"
+               },
+               marking = {
+                  meta = "text"
+               },
+               ownnumber = {
+                  meta = "text"
+               },
+               reference = {
+                  meta = "reference"
+               },
+               title = {
+                  meta = "text"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         }
+      },
+      section_level = 2
+   },
    characteralign = {
       arguments = {
          {
@@ -114372,6 +114761,49 @@ environments = {
          }
       }
    },
+   part = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               bookmark = {
+                  meta = "text"
+               },
+               list = {
+                  meta = "text"
+               },
+               marking = {
+                  meta = "text"
+               },
+               ownnumber = {
+                  meta = "text"
+               },
+               reference = {
+                  meta = "reference"
+               },
+               title = {
+                  meta = "text"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         }
+      },
+      section_level = 1
+   },
    path = {
       arguments = {
          {
@@ -114892,7 +115324,8 @@ environments = {
             meta = "assignments",
             optional = true
          }
-      }
+      },
+      section_level = 3
    },
    sectionblock = {
       arguments = {
@@ -115134,6 +115567,49 @@ environments = {
          }
       }
    },
+   subject = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               bookmark = {
+                  meta = "text"
+               },
+               list = {
+                  meta = "text"
+               },
+               marking = {
+                  meta = "text"
+               },
+               ownnumber = {
+                  meta = "text"
+               },
+               reference = {
+                  meta = "reference"
+               },
+               title = {
+                  meta = "text"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         }
+      },
+      section_level = 3
+   },
    subjectlevel = {
       arguments = {
          {
@@ -115180,8 +115656,352 @@ environments = {
          }
       }
    },
+   subsection = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               bookmark = {
+                  meta = "text"
+               },
+               list = {
+                  meta = "text"
+               },
+               marking = {
+                  meta = "text"
+               },
+               ownnumber = {
+                  meta = "text"
+               },
+               reference = {
+                  meta = "reference"
+               },
+               title = {
+                  meta = "text"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         }
+      },
+      section_level = 4
+   },
    subsentence = {},
    substack = {},
+   subsubject = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               bookmark = {
+                  meta = "text"
+               },
+               list = {
+                  meta = "text"
+               },
+               marking = {
+                  meta = "text"
+               },
+               ownnumber = {
+                  meta = "text"
+               },
+               reference = {
+                  meta = "reference"
+               },
+               title = {
+                  meta = "text"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         }
+      },
+      section_level = 4
+   },
+   subsubsection = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               bookmark = {
+                  meta = "text"
+               },
+               list = {
+                  meta = "text"
+               },
+               marking = {
+                  meta = "text"
+               },
+               ownnumber = {
+                  meta = "text"
+               },
+               reference = {
+                  meta = "reference"
+               },
+               title = {
+                  meta = "text"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         }
+      },
+      section_level = 5
+   },
+   subsubsubject = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               bookmark = {
+                  meta = "text"
+               },
+               list = {
+                  meta = "text"
+               },
+               marking = {
+                  meta = "text"
+               },
+               ownnumber = {
+                  meta = "text"
+               },
+               reference = {
+                  meta = "reference"
+               },
+               title = {
+                  meta = "text"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         }
+      },
+      section_level = 5
+   },
+   subsubsubsection = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               bookmark = {
+                  meta = "text"
+               },
+               list = {
+                  meta = "text"
+               },
+               marking = {
+                  meta = "text"
+               },
+               ownnumber = {
+                  meta = "text"
+               },
+               reference = {
+                  meta = "reference"
+               },
+               title = {
+                  meta = "text"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         }
+      },
+      section_level = 6
+   },
+   subsubsubsubject = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               bookmark = {
+                  meta = "text"
+               },
+               list = {
+                  meta = "text"
+               },
+               marking = {
+                  meta = "text"
+               },
+               ownnumber = {
+                  meta = "text"
+               },
+               reference = {
+                  meta = "reference"
+               },
+               title = {
+                  meta = "text"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         }
+      },
+      section_level = 6
+   },
+   subsubsubsubsection = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               bookmark = {
+                  meta = "text"
+               },
+               list = {
+                  meta = "text"
+               },
+               marking = {
+                  meta = "text"
+               },
+               ownnumber = {
+                  meta = "text"
+               },
+               reference = {
+                  meta = "reference"
+               },
+               title = {
+                  meta = "text"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         }
+      },
+      section_level = 7
+   },
+   subsubsubsubsubject = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               bookmark = {
+                  meta = "text"
+               },
+               list = {
+                  meta = "text"
+               },
+               marking = {
+                  meta = "text"
+               },
+               ownnumber = {
+                  meta = "text"
+               },
+               reference = {
+                  meta = "reference"
+               },
+               title = {
+                  meta = "text"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         }
+      },
+      section_level = 7
+   },
    symbolset = {
       arguments = {
          {
@@ -115950,6 +116770,49 @@ environments = {
             meta = "text"
          }
       }
+   },
+   title = {
+      action = "section",
+      arguments = {
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               bookmark = {
+                  meta = "text"
+               },
+               list = {
+                  meta = "text"
+               },
+               marking = {
+                  meta = "text"
+               },
+               ownnumber = {
+                  meta = "text"
+               },
+               reference = {
+                  meta = "reference"
+               },
+               title = {
+                  meta = "text"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
+         }
+      },
+      section_level = 2
    },
    tokenlist = {
       arguments = {
