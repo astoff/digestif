@@ -208,6 +208,7 @@ function ManuscriptLaTeX.scan_references_callbacks.ref(self, pos, cs)
 end
 
 function ManuscriptLaTeX.scan_references_callbacks.cite(self, pos, cs)
+  -- TODO: allow lists using Manuscript:argument_items
   local idx = self.cite_index
   local args = self.commands[cs].arguments
   local r = self:parse_command(pos, cs)

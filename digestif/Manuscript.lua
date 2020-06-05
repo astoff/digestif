@@ -159,7 +159,7 @@ end
 -- @return a list of annotated ranges
 --
 function Manuscript:parse_kvlist(range)
-  local s = self:substring(1, range.cont - 1)
+  local s = self:substring(1, range.cont - 1) -- TODO: avoid creating a new string
   return self.parser.parse_kvlist(s, range.pos)
 end
 
@@ -313,8 +313,48 @@ end
 -- consisting a list of tables containing an entry "pos".
 -- @param index_name the name of an index (a string)
 function Manuscript:traverse(index_name)
-  return co_wrap(function() traverse(self, index_name) end)
+  return co_wrap(function() return traverse(self, index_name) end)
 end
+
+local function argument_items(script, sel, pos, cs)
+  local args = script.commands[cs].arguments
+  if not args then return end
+  local i
+  if type(sel) == "string" then
+    for j = 1, #args do
+      if args[j].meta == sel then i = j; break end
+    end
+  else
+    i = sel(args)
+  end
+  if not i then return end
+  local ranges = script:parse_command(pos, cs)
+  local range = ranges[i]
+  if not range or range.omitted then return end
+  local arg = args[i]
+  if arg.list then
+    local items = script:parse_kvlist(range)
+    for j = 1, #items do
+      co_yield(items[j])
+    end
+  else
+    co_yield(range)
+  end
+end
+
+-- Iterator to look at arguments of a command.  The first argument
+-- `sel` determines which argument to look for; it it's a string, the
+-- first argument with that meta property is used; otherwise, sel
+-- should be a function that takes an `arguments` table and return the
+-- relevant index.
+--
+-- The iterator yields the range of the relevant argument (if
+-- present), or succesive ranges corresponding to the argument's
+-- subitems, if the argument's `list` property is true.
+function Manuscript:argument_items(sel, pos, cs)
+  return co_wrap(function() return argument_items(self, sel, pos, cs) end)
+end
+
 
 --- Scan the Manuscript, executing callbacks for each document element.
 --
