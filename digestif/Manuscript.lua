@@ -1,5 +1,4 @@
---- Manuscript class
--- @classmod digestif.Manuscript
+-- Manuscript class
 
 local config = require "digestif.config"
 local require_data = require "digestif.data".require
@@ -18,6 +17,8 @@ local line_indices = util.line_indices
 local matcher, fuzzy_matcher = util.matcher, util.fuzzy_matcher
 
 local Manuscript = util.class()
+
+--* Constructor
 
 -- Only descendants of this class (representing various TeX formats)
 -- are ever instantiated.  So we replace the constructor by a function
@@ -46,16 +47,14 @@ local function guess_format(filename)
   end
 end
 
---- Create a new manuscript object.
+-- Create a new manuscript object.  The argument is a table with the
+-- following keys:
 --
--- The argument is a table with the following keys:
--- - parent: a parent manuscript object (optional)
--- - filename: the manuscript source file (optional, not used if src is given)
--- - src: the contents of the file (optional)
+-- - filename: the manuscript's file name
 -- - files: a function that returns file contents
---
--- Note also that args.format is used by ManuscriptFactory
---
+-- - parent: a parent manuscript object (optional)
+-- - format: the TeX format ("latex", "plain", etc.).  This is
+--   actually only used by ManuscriptFactory
 function Manuscript:__init(args)
   local parent, filename, files, src
     = args.parent, args.filename, args.files, nil
@@ -99,15 +98,11 @@ end
 
 Manuscript.init_callbacks = {}
 
---- Get a substring of the manuscript.
---
--- The argument can be a pair of integers or a table with fields pos
--- and cont.
---
--- @param i The intial position, or a range table
--- @param j The final position (ignored if i is a table)
--- @return A string
---
+--* Substrings
+
+-- Get a substring of the manuscript. The argument can be a pair of
+-- integers (inclusive indices, as in the Lua convention) or a table
+-- with fields pos (inclusive) and cont (exclusive).
 function Manuscript:substring(i, j)
   if not i then return nil end
   if type(i) == "table" then
@@ -117,57 +112,44 @@ function Manuscript:substring(i, j)
   return self.src:sub(i, j)
 end
 
---- Get a substring of the manuscript, trimmed
---
--- @param i The intial position, or a range table
--- @param j The final position (ignored if i is a table)
--- @return A string
---
+-- Get a substring of the manuscript, trimmed.  The argument follows
+-- the same convention as Manuscript:substring.
 function Manuscript:substring_trimmed(i, j)
   return self.parser.trim(self:substring(i,j))
 end
 
---- Get a substring of the manuscript, trimmed and without comments.
---
--- @param i The intial position, or a range table
--- @param j The final position (ignored if i is a table)
--- @return A string
---
+-- Get a substring of the manuscript, trimmed and without comments.
+-- The argument follows the same convention as Manuscript:substring.
 function Manuscript:substring_stripped(i, j)
   local parser = self.parser
   return parser.trim(parser.strip_comments(self:substring(i,j)))
 end
 
---- Get a substring of the manuscript, without commments and reduced
--- to one line.
---
--- @param i The intial position, or a range table
--- @param j The final position (ignored if i is a table)
--- @return A string
---
+-- Get a substring of the manuscript, without commments and reduced to
+-- one line.  The argument follows the same convention as
+-- Manuscript:substring.
 function Manuscript:substring_clean(i, j)
   local parser = self.parser
   return parser.clean(parser.strip_comments(self:substring(i,j)))
 end
 
---- Parse a key-value list in a given range.
---
--- Returns a list of ranges, with additional fields "key" and "value"
--- (if present).  These are range tables as well.
---
--- @param range The range to scan
--- @return a list of annotated ranges
---
+--* Parsing commands, lists, and key-value lists.
+
+-- Parse a key-value list in a given manuscript range.  The argument
+-- is a table with fields pos and cont.  Returns a list of ranges,
+-- with additional fields "key" and "value" (if present).  These are
+-- range tables as well.
 function Manuscript:parse_kvlist(range)
   local s = self:substring(1, range.cont - 1) -- TODO: avoid creating a new string
   return self.parser.parse_kvlist(s, range.pos)
 end
 
---- Read the contents of a key-value list in the manuscript.
+-- Read the contents of a key-value list in the manuscript.  The
+-- argument is a table with fields pos and cont.  Returns a nested
+-- list of tables with fields "key" and "value" (if present),
+-- containing the corresponding text in the source.
 --
--- Returns a nested list of tables with fields "key" and "value" (if
--- present), containing the corresponding text in the source.
---
+-- TODO: add substring method as parameter
 function Manuscript:read_keys(range)
    local tbl = self:parse_kvlist(range)
    local r = {}
@@ -180,22 +162,19 @@ function Manuscript:read_keys(range)
    return r
 end
 
---- Read the contents of a list in the manuscript.
---
--- Returns a list of strings.
---
+-- Read the contents of a list in the manuscript.  Returns a list of
+-- strings.
 function Manuscript:read_list(i, j)
   local parser = self.parser
   local s = self:substring(i, j)
   return parser.read_list(s)
 end
 
---- Parse the arguments of a command.
---
--- @param pos A position in the source
--- @param cs The command name (optional)
--- @return A list of ranges
---
+-- Parse the arguments of a command.  Arguments:
+-- - pos: a position in the source
+-- - cs: the command name (optional).  If omitted, it's read from the
+--   manuscript.
+-- Returns a list of ranges.
 function Manuscript:parse_command(pos, cs)
   local parser = self.parser
   if not cs then
@@ -213,12 +192,11 @@ function Manuscript:parse_command(pos, cs)
   end
 end
 
---- Find the line number (and its location) of a given position.
---
--- @param pos A position in the source
--- @return The line number
--- @return The line's starting position
---
+--* Find line numbers, paragraphs, etc.
+
+-- Find the line number (and its location) of a given position.
+-- Returns the line number (1-based) and that line's starting
+-- position.
 function Manuscript:line_number_at(pos)
   local len = #self.src
   local lines = self.lines
@@ -235,23 +213,26 @@ function Manuscript:line_number_at(pos)
   return l, lines[l]
 end
 
+-- Compute the line and column number (both 1-based) at the give
+-- position.
+--
+-- TODO: make len function a parameter
 function Manuscript:line_column_at(pos)
   local l, line_pos = self:line_number_at(pos)
   local c = utf8.len(self.src, line_pos, pos) or error("Invalid UTF-8")
   return l, c
 end
 
+-- Compute the source position at the given line an column.
+--
+-- TODO: make offset function a parameter
 function Manuscript:position_at(line, col)
   local line_pos = self.lines[line] or error("Position out of bounds")
   return utf8.offset(self.src, col, line_pos) or error("Position out of bounds")
 end
 
 
---- Find paragraph before a position.
---
--- @param pos A position in the source
--- @return The paragraph's starting position
---
+-- Find beginning of the paragraph containing the given position.
 function Manuscript:find_par(pos)
   local src = self.src
   local lines = self.lines
@@ -266,17 +247,6 @@ end
 
 local preceding_command_callbacks = {}
 
---- Find the preceding command, if any.
---
--- If there is a command whose arguments end right before the given
--- position, returns the position, command name, and parse data of
--- the preceding command.
---
-function Manuscript:find_preceding_command(pos)
-  local par_pos = self:find_par(pos)
-  return self:scan(preceding_command_callbacks, par_pos, pos)
-end
-
 function preceding_command_callbacks.cs(self, pos, cs, end_pos)
   if pos > end_pos then return nil end
   local r = self:parse_command(pos, cs)
@@ -288,6 +258,16 @@ function preceding_command_callbacks.cs(self, pos, cs, end_pos)
   end
   return r.cont, end_pos
 end
+
+-- Find the preceding command, if any.  If there is a command whose
+-- arguments end right before the given position, returns the
+-- position, command name, and parse data of the preceding command.
+function Manuscript:find_preceding_command(pos)
+  local par_pos = self:find_par(pos)
+  return self:scan(preceding_command_callbacks, par_pos, pos)
+end
+
+--* Document traversal
 
 local function traverse(self, index_name)
   local items, children = self[index_name], self.child_index
@@ -307,11 +287,11 @@ local function traverse(self, index_name)
   end
 end
 
---- Iterator to transverse a given index documentwise.
--- This recursevely iterates over entries of a given index on self and
--- its children, depth first.  An index is a Manuscript field
--- consisting a list of tables containing an entry "pos".
--- @param index_name the name of an index (a string)
+-- Iterator to transverse a given index documentwise.  This
+-- recursevely iterates over entries of a given index on self and its
+-- children, depth first.  An index is a Manuscript field consisting a
+-- list of tables containing an entry "pos".  The argument index_name
+-- is the name of an index, as a string.
 function Manuscript:traverse(index_name)
   return co_wrap(function() return traverse(self, index_name) end)
 end
@@ -356,7 +336,9 @@ function Manuscript:argument_items(sel, pos, cs)
 end
 
 
---- Scan the Manuscript, executing callbacks for each document element.
+--* Manuscript scanning
+
+-- Scan the Manuscript, executing callbacks for each document element.
 --
 -- Each callback is a function taking at least two arguments (a
 -- Manuscript object and a source position) and returns at least one
@@ -366,12 +348,9 @@ end
 -- values of a callback can be used to keep track of an internal
 -- state.
 --
--- Indices of the callback table can be either the "action" field of a
--- command, or a "type" field of a thing ("cs", "mathshift" or "par").
---
--- @param callbacks A table of callback functions
--- @param pos Starting position of the scan
---
+-- The callbacks argument is a table.  Its keys correspond to either
+-- the "action" field of a command, or the "type" field of an item
+-- found by the parser ("cs", "mathshift" or "par").
 function Manuscript:scan(callbacks, pos, ...)
   local patt = self.parser.next_thing
   local match = patt.match
@@ -435,16 +414,34 @@ function Manuscript:add_outline(e, tree)
    end
 end
 
--- ¶ Local scanning (get local context)
+--* Getting the local context
 
---- Scan the current paragraph, returning the context.
+-- The context at a given manuscript postion is described by a linked
+-- list list of ranges, starting from the innermost, with additional
+-- annotations.  More specifically, the following fields are possible
+-- in a context description table:
 --
--- This is a list of nested annotated ranges, starting from the
--- innermost.
+-- pos: the starting position
+-- cont: the ending postiion (exclusive)
+-- parent: a similar table, with range including the current range
+-- cs: if present, indicates that this range correspond to a command
+--   and its arguments.  The value of this field is the command name.
+-- env: if present, indicates that this range correspond to an
+--   environment beginning and its arguments.  The value of this field
+--   is the environment name.
+-- arg: if present, indicates that this range is a command argument.
+--   The value corresponds to the argument number.  The parent is of
+--   "cs" or "env" type.
+-- key: if present, indicates this range is one item in a plain list
+--   or key-value list.  The value of this field is the key text.
+-- value: if present, indicates this range is the value of a key in a
+--   key-value list.  the parent is of "key" type.
+-- data: in each case above, data contains the corresponding data
+--   object, for instance the command description.
 --
--- @param pos A position in the source
--- @return A nested list of annotated ranges
---
+
+-- Scan the current paragraph, returning the context around the given
+-- position.
 function Manuscript:get_context(pos)
    return self:scan(self.context_callbacks, self:find_par(pos), nil, pos)
 end
@@ -564,29 +561,9 @@ function Manuscript.context_callbacks.par (_, _, _, context)
    return nil, context
 end
 
--- ¶ Completion
+--* Snippets and pretty-printing commands
 
-local function gather(script, field, tbl)
-  update(tbl, script[field])
-  for _, child in pairs(script.children) do
-    gather(child, field, tbl)
-  end
-  return tbl
-end
-
-function Manuscript:all_commands()
-  return gather(self.root, 'commands', {})
-end
-
-function Manuscript:all_environments()
-  return gather(self.root, 'environments', {})
-end
-
---- Pretty-print an argument list
---
--- @param args An argument list
--- @return A string
---
+-- Pretty-print an argument list.
 function Manuscript:signature_arg(args)
   if not args then return nil end
   local t = {}
@@ -609,12 +586,9 @@ function Manuscript:signature_arg(args)
   return concat(t)
 end
 
---- Pretty-print a command signature
---
--- @param cs The command name
--- @param args An argument list, or nil
--- @return A string
---
+-- Pretty-print a command signature.
+-- cs: The command name
+-- args: An argument list, or nil
 function Manuscript:signature_cmd(cs, args)
   return "\\" .. cs .. (args and self:signature_arg(args) or "")
 end
@@ -623,11 +597,9 @@ end
 -- definition.
 Manuscript.signature_env = Manuscript.signature_cmd
 
---- Make a snippet fragment from an argument list
---
--- @param args An argument list
--- @param i The initial counter
--- @return The snippet string
+-- Make a snippet fragment from an argument list.
+-- args: An argument list
+-- i: The initial counter
 function Manuscript:snippet_args(args, i)
   if not args then return "" end
   local t, i = {}, i or 1
@@ -656,33 +628,48 @@ function Manuscript:snippet_args(args, i)
   return concat(t)
 end
 
---- Make a snippet for a command.
---
--- @param cs The command name
--- @param args An argument list
--- @return The snippet string
+-- Make a snippet for a command.
 function Manuscript:snippet_cmd(cs, args)
   local argsnippet = args and self:snippet_args(args) or ""
   return cs .. argsnippet .. "$0"
 end
 
---- Make a snippet for an environment.
+-- Make a snippet for an environment.
 --
 -- This is the plain TeX version.  It's intended to be overwritten by
 -- other classes.
---
--- @param cs The command name
--- @param args An argument list
--- @return The snippet string
 function Manuscript:snippet_env(cs, args)
   local argsnippet = args and self:snippet_args(args) or ""
   return cs .. argsnippet .. "\n\t$0\n\\end" .. cs
 end
 
---- Calculate completions for the manuscript at the given point.
+
+--* Completion
+
+local function gather(script, field, tbl)
+  update(tbl, script[field])
+  for _, child in pairs(script.children) do
+    gather(child, field, tbl)
+  end
+  return tbl
+end
+
+function Manuscript:all_commands()
+  return gather(self.root, 'commands', {})
+end
+
+function Manuscript:all_environments()
+  return gather(self.root, 'environments', {})
+end
+
+-- Calculate completions for the manuscript at the given position.
+-- Returns a a table containing a list of completion items (at
+-- numerical indices) and some addition information in the following
+-- fields.
 --
--- @param pos A position in the source
--- @return A list of completions
+-- pos: position where the matched text starts
+-- prefix: the matched text
+-- kind: whether the completions are for a command, a key, etc.
 --
 function Manuscript:complete(pos)
   local ctx = self:get_context(pos - 1)
@@ -810,8 +797,6 @@ end
 -- TODO: For now, the context is 100 bytes, but it should be smart and
 -- choose a lenght close to 100 characters but ending at a line end.
 -- It should also be Unicode-safe.
--- @param item an item in a label index
--- @return a string
 function Manuscript:label_context_short(item)
   local pos, cs, _ = self:find_preceding_command(item.outer_pos)
   local cmd = self.commands[cs]
@@ -885,12 +870,9 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
   return r
 end
 
--- ¶ Context help
+--* Context help
 
---- Get information about the thing at the given position.
---
--- @param pos A position in the source
---
+-- Get information about the thing at the given position.
 function Manuscript:describe(pos)
   local ctx = self:get_context(pos)
   if not ctx then return nil end
@@ -1077,14 +1059,9 @@ function Manuscript:make_docstring(kind, name, data)
   return ret
 end
 
--- ¶ Find definition
+--* Find definition
 
---- Find the location where the thing at the given position is
---- defined.
---
--- @param pos A position in the source
--- @return An annotated range table
---
+-- Find the location where the thing at the given position is defined.
 function Manuscript:find_definition(pos)
   local ctx = self:get_context(pos)
   if not ctx then return nil end
@@ -1129,7 +1106,7 @@ function Manuscript.find_definition_handlers.cite(self, ctx)
   end
 end
 
--- ¶ Find references
+--* Find references
 
 function Manuscript:scan_references()
   if not self.ref_index then
@@ -1168,11 +1145,8 @@ function Manuscript.scan_cs_callbacks.cs(self, pos, cs)
   return cont
 end
 
---- List all references to the thing at the given position
---
--- @param pos A position in the source
--- @return A list of annotated ranges
---
+-- List all references to the thing at the given position.  Returns a
+-- list of annotated ranges.
 function Manuscript:find_references(pos)
   local ctx = self:get_context(pos)
   if not ctx then return nil end
