@@ -9044,12 +9044,14 @@ commands = {
       }
    },
    component = {
+      action = "input",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
             meta = "file"
          }
-      }
+      },
+      filename = "?.tex"
    },
    composedcollector = {
       arguments = {
@@ -34429,12 +34431,14 @@ commands = {
       }
    },
    environment = {
+      action = "input",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
             meta = "file"
          }
-      }
+      },
+      filename = "?.tex"
    },
    envvar = {
       arguments = {
@@ -55724,12 +55728,14 @@ commands = {
       }
    },
    project = {
+      action = "input",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
             meta = "file"
          }
-      }
+      },
+      filename = "?.tex"
    },
    pseudoMixedCapped = {
       arguments = {
@@ -58846,6 +58852,7 @@ commands = {
       }
    },
    section = {
+      action = "section",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
@@ -101337,36 +101344,15 @@ commands = {
       }
    },
    usemodule = {
+      action = "input",
       arguments = {
-         {
-            delimiters = "$DIGESTIFDATA/context/data/brackets",
-            meta = "keywords",
-            optional = true,
-            values = {
-               "m",
-               "p",
-               "s",
-               "x",
-               "t"
-            }
-         },
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
             list = true,
             meta = "file"
-         },
-         {
-            delimiters = "$DIGESTIFDATA/context/data/brackets",
-            keys = {
-               ["cd:key"] = {
-                  meta = "value"
-               }
-            },
-            list = true,
-            meta = "assignments",
-            optional = true
          }
-      }
+      },
+      filename = "t-?.tex"
    },
    usepath = {
       arguments = {
@@ -115296,6 +115282,7 @@ environments = {
       }
    },
    section = {
+      action = "section",
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",

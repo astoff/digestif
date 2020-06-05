@@ -169,6 +169,7 @@ for _, node in ipairs(data:get_elements_with_name("cd:command")) do
   }
   if cmd.cs == "section" then
     cmd.section_level = 3
+    cmd.action = "section"
   end
   command_list[#command_list+1] = cmd
 
@@ -251,6 +252,24 @@ for cs, action in pairs {
 } do
   commands[cs].action = action
 end
+
+for cs, filename in pairs {
+  environment = "?.tex",
+  project = "?.tex",
+  component = "?.tex",
+  usemodule = "t-?.tex"
+} do
+  commands[cs].action = "input"
+  commands[cs].filename = filename
+end
+
+commands.usemodule.arguments = {
+  {
+    delimiters = "$DIGESTIFDATA/context/data/brackets",
+    list = true,
+    meta = "file"
+  }
+}
 
 save_from_table = require"luarocks.persist".save_from_table
 
