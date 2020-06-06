@@ -2,6 +2,45 @@ local Cache = require "digestif.Cache"
 local Manuscript = require"digestif.Manuscript"
 require "digestif.config".data_dirs = {"./data"}
 
+describe("ConTeXt optional arguments", function()
+  local cache = Cache{
+    ["one.tex"] = [[
+\margindata[optional1][optional2][mandatory]
+]],
+    ["two.tex"] = [[
+\margindata[optional2][mandatory]
+]],
+    ["three.tex"] = [[
+\margindata[mandatory]
+]],
+  }
+
+  it("finds all optionals", function()
+     local script = Manuscript{filename="one.tex", format="context", files=cache}
+     local r = script:parse_command(1)
+     assert.equal("optional1", script:substring(r[1]))
+     assert.equal("optional2", script:substring(r[2]))
+     assert.equal("mandatory", script:substring(r[3]))
+  end)
+
+  it("finds one optional", function()
+     local script = Manuscript{filename="two.tex", format="context", files=cache}
+     local r = script:parse_command(1)
+     assert.is_true(r[1].omitted)
+     assert.equal("optional2", script:substring(r[2]))
+     assert.equal("mandatory", script:substring(r[3]))
+  end)
+
+  it("skips optional", function()
+     local script = Manuscript{filename="three.tex", format="context", files=cache}
+     local r = script:parse_command(1)
+     assert.is_true(r[1].omitted)
+     assert.is_true(r[2].omitted)
+     assert.equal("mandatory", script:substring(r[3]))
+  end)
+
+end)
+
 describe("ConTeXt init scanning", function()
   local cache = Cache{
     ["one.tex"] = [[

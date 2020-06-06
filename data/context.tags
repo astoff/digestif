@@ -101348,8 +101348,31 @@ commands = {
       arguments = {
          {
             delimiters = "$DIGESTIFDATA/context/data/brackets",
+            meta = "keywords",
+            optional = true,
+            values = {
+               "m",
+               "p",
+               "s",
+               "x",
+               "t"
+            }
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
             list = true,
             meta = "file"
+         },
+         {
+            delimiters = "$DIGESTIFDATA/context/data/brackets",
+            keys = {
+               ["cd:key"] = {
+                  meta = "value"
+               }
+            },
+            list = true,
+            meta = "assignments",
+            optional = true
          }
       },
       filename = "t-?.tex"

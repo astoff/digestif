@@ -4,6 +4,7 @@ local Parser = require "digestif.Parser"
 
 local path_join, path_split = util.path_join, util.path_split
 local format_filename_template = util.format_filename_template
+local table_move, table_insert = table.move, table.insert
 
 local ManuscriptConTeXt = util.class(Manuscript)
 
@@ -13,16 +14,32 @@ ManuscriptConTeXt.format = "context"
 ManuscriptConTeXt.init_callbacks = {}
 ManuscriptConTeXt.scan_references_callbacks = {}
 
---- Make a snippet for an environment.
---
--- @param cs The command name
--- @param args An argument list
--- @return The snippet string
+--* ConTeXt-specific overrides
+
+-- Make a snippet for an environment.
 function ManuscriptConTeXt:snippet_env(cs, args)
   local argsnippet = args and self:snippet_args(args) or ""
   return "start" .. cs .. argsnippet .. "\n\t$0\n\\stop" .. cs
 end
 
+-- ConTeXt optional arguments can't always be distinguished by their
+-- delimitiers, for instance \citation[optional][mandatory].  Here we
+-- patch Parser.parse_args to deal with this case, but just in the
+-- simplest case where the optinal arguments are in the beginning of
+-- the argument list.
+local original_parse_args = ManuscriptConTeXt.parser.parse_args
+
+local function new_parse_args(arglist, str, pos)
+  local val = original_parse_args(arglist, str, pos)
+  if val.incomplete and arglist[1].optional then
+    arglist = table_move(arglist, 2, #arglist, 1, {})
+    val = new_parse_args(arglist, str, pos)
+    table_insert(val, 1, {omitted = true})
+  end
+  return val
+end
+
+ManuscriptConTeXt.parser.parse_args = new_parse_args
 
 --* Init scanning
 

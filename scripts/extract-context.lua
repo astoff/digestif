@@ -263,14 +263,6 @@ for cs, filename in pairs {
   commands[cs].filename = filename
 end
 
-commands.usemodule.arguments = {
-  {
-    delimiters = "$DIGESTIFDATA/context/data/brackets",
-    list = true,
-    meta = "file"
-  }
-}
-
 save_from_table = require"luarocks.persist".save_from_table
 
 save_from_table(
