@@ -884,7 +884,7 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
   local fuzzy_match = config.fuzzy_cite and fuzzy_matcher(prefix)
   for item in self.root:traverse "bib_index" do
     local score = has_prefix(item.name) and infty
-      or fuzzy_match and fuzzy_match(item.text)
+      or fuzzy_match and item.text and fuzzy_match(item.text)
     if score then
       scores[item.name] = score
       r[#r+1] = {
