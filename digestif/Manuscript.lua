@@ -83,6 +83,7 @@ function Manuscript:__init(args)
   if self.init_callbacks then
     self:scan(self.init_callbacks)
   end
+  if self.depth > 15 then return end
   for _, item in ipairs(self.child_index) do
     local file_exists, _ = files(item.name)
     if file_exists then
@@ -269,32 +270,67 @@ end
 
 --* Document traversal
 
-local function traverse(self, index_name)
-  local items, children = self[index_name], self.child_index
-  local i, j, item, child = 1, 1
-  while true do
-    local item, child = items[i], children[j]
-    if item and not (child and item.pos > child.pos) then
-      i = i + 1
-      co_yield(item)
-    elseif child then
-      j = j + 1
-      local script = self.children[child.name]
-      if script then traverse(script, index_name) end
+local function compare_pos(x, y)
+  return x.pos < y.pos
+end
+
+local function traverse_indexes(script, indexes, max_depth)
+  local items = {}
+  for i = 1, #indexes do
+    idx_name = indexes[i]
+    idx = script[idx_name]
+    for j = 1, #idx do
+      items[#items+1] = idx[j]
+      items[idx[j]] = idx_name
+    end
+  end
+  if max_depth > 0 then
+    local child_idx, children = script.child_index, script.children
+    for i = 1, #child_idx do
+      item = child_idx[i]
+      local child = children[item.name]
+      if child then
+        items[#items+1] = {
+          pos = item.pos,
+          manuscript = child
+        }
+      end
+    end
+  end
+  sort(items, compare_pos)
+  for i = 1, #items do
+    local item = items[i]
+    local kind = items[item]
+    if kind then
+      co_yield(item, kind)
     else
-      return nil
+      traverse_indexes(item.manuscript, indexes, max_depth - 1)
     end
   end
 end
 
--- Iterator to transverse a given index documentwise.  This
--- recursevely iterates over entries of a given index on self and its
+-- Iterator to transverse an index documentwise.  This recursevely
+-- iterates over entries of the given indexes on self and its
 -- children, depth first.  An index is a Manuscript field consisting a
--- list of tables containing an entry "pos".  The argument index_name
--- is the name of an index, as a string.
-function Manuscript:traverse(index_name)
-  return co_wrap(function() return traverse(self, index_name) end)
+-- list of tables containing an entry "pos".  At each iteration,
+-- yields one index entry and the name of the index to which it
+-- belongs.
+--
+-- Arguments:
+--
+-- indexes: is the name of an index, as a string, or a list of
+--   such.
+--
+-- max_depth: optional, leave at the default for the recursive
+--   behavior or set to 0 to disable it.
+--
+function Manuscript:traverse(indexes, max_depth)
+  if type(indexes) == "string" then indexes = {indexes} end
+  return co_wrap(function ()
+    return traverse_indexes(self, indexes, max_depth or 15)
+  end)
 end
+
 
 local function argument_items(script, sel, pos, cs)
   local args = script.commands[cs].arguments
@@ -322,15 +358,22 @@ local function argument_items(script, sel, pos, cs)
   end
 end
 
--- Iterator to look at arguments of a command.  The first argument
--- `sel` determines which argument to look for; it it's a string, the
--- first argument with that meta property is used; otherwise, sel
--- should be a function that takes an `arguments` table and return the
--- relevant index.
+-- Iterator to look at arguments of a command.  Yields the range of
+-- the relevant argument (if present), or succesive ranges
+-- corresponding to the argument's subitems, if the argument's `list`
+-- property is true.
 --
--- The iterator yields the range of the relevant argument (if
--- present), or succesive ranges corresponding to the argument's
--- subitems, if the argument's `list` property is true.
+-- Arguments:
+--
+-- sel: determines which argument to look for; it it's a string, the
+--   first argument with that meta property is used; otherwise, sel
+--   should be a function that takes an `arguments` table and return
+--   the relevant index.
+--
+-- pos: the position of the command to analyze
+--
+-- cs: optional, the name of the command
+--
 function Manuscript:argument_items(sel, pos, cs)
   return co_wrap(function() return argument_items(self, sel, pos, cs) end)
 end
@@ -387,12 +430,6 @@ function Manuscript:add_module(name)
   if mod.environments then
     update(self.environments, mod.environments)
   end
-end
-
-function Manuscript:add_children(filename)
-   if self.depth > 15 then return end
-   filename = path_join(path_split(self.filename), filename)
-   self.children[filename] = true
 end
 
 function Manuscript:find_manuscript(filename)
