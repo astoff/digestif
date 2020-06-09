@@ -67,3 +67,23 @@ describe("Multi-manuscript traversal", function()
     assert(#t < 100)
   end)
 end)
+
+describe("Get context", function()
+  local cache = Cache{
+    ["one.tex"] = [[
+\section{\cite{ABC, DEF}}
+]]
+  }
+
+  it("works", function()
+    local script = Manuscript{filename="one.tex", format="latex", files=cache}
+    local ctx = script:get_context(22)
+    local t = {}
+    while ctx do t[#t+1] = ctx; ctx = ctx.parent end
+    assert.same(
+      {2, 2, "cite", 3, "section", nil},
+      {t[1].item, t[2].arg, t[3].cs, t[4].arg, t[5].cs, t[6]})
+    assert.same("DEF", script:substring(t[1]))
+  end)
+
+end)

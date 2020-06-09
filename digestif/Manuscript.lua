@@ -512,6 +512,21 @@ local function local_scan_parse_keys(m, context, pos)
   return context
 end
 
+local function local_scan_parse_list(m, context, pos)
+  local items = m:parse_kvlist(context)
+  for i = 1, #items do -- are we inside a key/list item?
+    local it = items[i]
+    if it.pos and it.pos <= pos and pos <= it.cont then
+      return {
+        item = i,
+        pos = it.pos,
+        cont = it.cont,
+        parent = context
+      }
+    end
+  end
+end
+
 Manuscript.context_callbacks = {}
 
 function Manuscript.context_callbacks.cs(self, pos, cs, context, end_pos)
@@ -548,15 +563,18 @@ function Manuscript.context_callbacks.cs(self, pos, cs, context, end_pos)
 
   for i, arg in ipairs(r) do -- are we inside an argument?
     if arg.pos and arg.pos <= end_pos and end_pos <= arg.cont then
+      local data = nested_get(context.data, "arguments", i)
       context = {
         arg = i,
-        data = nested_get(context.data, "arguments", i),
+        data = data,
         pos = arg.pos,
         cont = arg.cont,
         parent = context
       }
-      if context.data and context.data.keys then
+      if data and data.keys then
         context = local_scan_parse_keys(self, context, end_pos)
+      elseif data and data.list then
+        context = local_scan_parse_list(self, context, end_pos)
       end
       return context.pos, context, end_pos
     end
@@ -718,6 +736,11 @@ function Manuscript:complete(pos)
       if self.completion_handlers[action] then
          return self.completion_handlers[action](self, ctx, pos)
       end
+   elseif ctx.item then
+      local action = nested_get(ctx, "parent", "parent", "data", "action")
+      if self.completion_handlers[action] then
+         return self.completion_handlers[action](self, ctx, pos)
+      end
    elseif ctx.key then --and pos == ctx.pos + #ctx.key then
       return self.completion_handlers.key(self, ctx, pos)
    elseif ctx.value and pos == ctx.pos + #ctx.value then
@@ -872,7 +895,7 @@ function Manuscript.completion_handlers.ref(self, ctx, pos)
 end
 
 function Manuscript.completion_handlers.cite(self, ctx, pos)
-  if ctx.data.optional then return end
+  if nested_get(ctx, "data", "optional") then return end
   local prefix = self:substring(ctx.pos, pos - 1)
   local r = {
     pos = ctx.pos,
@@ -913,7 +936,8 @@ end
 function Manuscript:describe(pos)
   local ctx = self:get_context(pos)
   if not ctx then return nil end
-  local action = nested_get(ctx, "parent", "data", "action")
+  local action = ctx.arg and nested_get(ctx, "parent", "data", "action")
+    or ctx.item and nested_get(ctx, "parent", "parent", "data", "action")
   local handlers = self.help_handlers
   if handlers[action] then
     return handlers[action](self, ctx)
@@ -921,6 +945,7 @@ function Manuscript:describe(pos)
     return handlers.cs(self, ctx)
   elseif ctx.arg then
     return handlers.arg(self, ctx)
+  -- elseif ctx.list then
   elseif ctx.key then
     return handlers.key(self, ctx)
   else
@@ -1102,7 +1127,8 @@ end
 function Manuscript:find_definition(pos)
   local ctx = self:get_context(pos)
   if not ctx then return nil end
-  local action = nested_get(ctx, "parent", "data", "action")
+  local action = ctx.arg and nested_get(ctx, "parent", "data", "action")
+    or ctx.item and nested_get(ctx, "parent", "parent", "data", "action")
   local handlers = self.find_definition_handlers
   if handlers[action] then
     return handlers[action](self, ctx)
@@ -1187,7 +1213,8 @@ end
 function Manuscript:find_references(pos)
   local ctx = self:get_context(pos)
   if not ctx then return nil end
-  local action = nested_get(ctx, "parent", "data", "action")
+  local action = ctx.arg and nested_get(ctx, "parent", "data", "action")
+    or ctx.item and nested_get(ctx, "parent", "parent", "data", "action")
   local handlers = self.find_references_handlers
   if handlers[action] then
     self.root:scan_references()

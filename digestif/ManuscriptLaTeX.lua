@@ -162,69 +162,58 @@ end
 --    return r.cont
 -- end
 
-function ManuscriptLaTeX.init_callbacks.input(m, pos, cs)
-  local idx = m.child_index -- should this include the known modules, or just the filenames not know in /data?
-  local args = m.commands[cs].arguments
-  local filename = m.commands[cs].filename
-  local r = m:parse_command(pos, cs)
-  local i = first_mand(args)
-  if r[i] then
-    for _, k in ipairs(m:read_list(r[i])) do
-      local f = format_filename_template(filename, k)
-      m:add_module(f)
-      if not m.modules[f] then
-        f = path_join(path_split(m.filename), f)
-        idx[#idx + 1] = {
-          name = f,
-          pos = r[i].pos,
-          cont = r[i].cont,
-          filename = m.filename
-        }
-      end
+function ManuscriptLaTeX.init_callbacks.input(self, pos, cs)
+  local cont = self:parse_command(pos, cs).cont
+  local idx = self.child_index -- should this include the known modules, or just the filenames not know in /data?
+  local template = self.commands[cs].filename or "?"
+  for r in self:argument_items(first_mand, pos, cs) do
+    local f = format_filename_template(template, self:substring_stripped(r))
+    self:add_module(f)
+    if not self.modules[f] then
+      f = path_join(path_split(self.filename), f)
+      idx[#idx + 1] = {
+        name = f,
+        pos = r.pos,
+        cont = r.cont,
+        manuscript = self
+      }
     end
   end
-  return r.cont
+  return cont
 end
 
 -- ¶ Scan reference callbacks
 
 function ManuscriptLaTeX.scan_references_callbacks.ref(self, pos, cs)
+  local cont = self:parse_command(pos, cs).cont
   local idx = self.ref_index
-  local args = self.commands[cs].arguments
-  local r = self:parse_command(pos, cs)
-  local i = first_mand(args)
-  if r[i] then
-    local l = self:substring_stripped(r[i])
+  for r in self:argument_items(first_mand, pos, cs) do
     idx[#idx + 1] = {
-      name = l,
-      pos = r[i].pos,
-      cont = r[i].cont,
-      outer_pos = r.pos,
-      outer_cont = r.cont,
+      name = self:substring_stripped(r),
+      pos = r.pos,
+      cont = r.cont,
+      outer_pos = pos,
+      outer_cont = cont,
       manuscript = self
     }
   end
-  return r.cont
+  return cont
 end
 
 function ManuscriptLaTeX.scan_references_callbacks.cite(self, pos, cs)
-  -- TODO: allow lists using Manuscript:argument_items
+  local cont = self:parse_command(pos, cs).cont
   local idx = self.cite_index
-  local args = self.commands[cs].arguments
-  local r = self:parse_command(pos, cs)
-  local i = first_mand(args)
-  if r[i] then
-    local l = self:substring_stripped(r[i])
+  for r in self:argument_items(first_mand, pos, cs) do
     idx[#idx + 1] = {
-      name = l,
-      pos = r[i].pos,
-      cont = r[i].cont,
-      outer_pos = r.pos,
-      outer_cont = r.cont,
-      manuscript = self,
+      name = self:substring_stripped(r),
+      pos = r.pos,
+      cont = r.cont,
+      outer_pos = pos,
+      outer_cont = cont,
+      manuscript = self
     }
   end
-  return r.cont
+  return cont
 end
 
 return ManuscriptLaTeX

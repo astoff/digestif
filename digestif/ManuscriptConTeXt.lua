@@ -89,7 +89,7 @@ function ManuscriptConTeXt.init_callbacks.input(self, pos, cs)
         name = f,
         pos = r.pos,
         cont = r.cont,
-        filename = self.filename
+        manuscript = self
       }
     end
   end

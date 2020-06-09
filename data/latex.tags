@@ -1335,7 +1335,8 @@ commands = {
       action = "input",
       arguments = {
          {
-            meta = "bibfiles"
+            meta = "bibfiles",
+            list = true
          }
       },
       documentation = "info:latex2e#Using BibTeX",
@@ -1639,7 +1640,8 @@ commands = {
             optional = true
          },
          {
-            meta = "keys"
+            meta = "keys",
+            list = true
          }
       },
       documentation = "info:latex2e#\\cite",
@@ -2492,6 +2494,11 @@ commands = {
       summary = "Using a graphic in your document."
    },
    includeonly = {
+      arguments = {
+         {
+            meta = "files"
+         }
+      },
       documentation = "info:latex2e#\\include & \\includeonly",
       summary = "Conditionally include files."
    },
@@ -5081,7 +5088,9 @@ commands = {
             optional = true
          },
          {
-            meta = "package"
+            meta = "package",
+            list = true
+
          }
       },
       documentation = "info:latex2e#Additional packages",
