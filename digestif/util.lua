@@ -21,6 +21,14 @@ function util.map(f, t)
   return r
 end
 
+function util.imap(f, t)
+  local r = {}
+  for i = 1, #t do
+    r[i] = f(t[i])
+  end
+  return r
+end
+
 function util.foldl1(f, t)
   local v = t[1]
   for i = 2, t.n or #t do

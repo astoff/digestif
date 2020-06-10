@@ -100,6 +100,7 @@ this point include:
 - [x] Support incremental document changes
 - [x] Goto definition
 - [x] Find references
+- [X] Document outline
 - [ ] Rename labels (cross-references and bibitems)
 
 This program can't be useful without a larger collection of data
@@ -128,8 +129,8 @@ Further things to do and some open questions:
       commands systematically
 - [ ] How to integrate with texdoc? For now, we provide links to
       <http://texdoc.net/>
-- [ ] Provide a Lua API, for use in editors capable of loading Lua
-      modules
+- [X] Provide a Lua API, for use in editors capable of loading Lua
+      modules (see [API on the wiki][api])
 
 [gif]: https://user-images.githubusercontent.com/6500902/70077785-c5f27100-1601-11ea-9cfb-6e7ebd3c61ae.gif
 [info-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues#info-nodes
@@ -139,3 +140,4 @@ Further things to do and some open questions:
 [latexref]: https://latexref.xyz/
 [lsp-mode]: https://github.com/emacs-lsp/lsp-mode
 [lsp]: https://microsoft.github.io/language-server-protocol/
+[api]: https://github.com/astoff/digestif/wiki/API

@@ -71,7 +71,7 @@ function Manuscript:__init(args)
   self.children = {}
   self.bib_index = {}
   self.child_index = {}
-  self.heading_index = {}
+  self.section_index = {}
   self.label_index = {}
   if parent then
     setmetatable(self.modules,      {__index = parent.modules}     )
@@ -1277,6 +1277,27 @@ function Manuscript.find_references_handlers.cite(self, ctx)
     end
   end
   return r
+end
+
+--* Outline
+
+function Manuscript:outline(loc)
+  local root = loc and self or self.root
+  local val = {}
+  for it in root:traverse("section_index", loc and 0) do
+    local lv = it.level or infty
+    local t = val
+    while t[#t] and (t[#t].level or -infty) < lv do t = t[#t] end
+    t[#t + 1] = {
+      name = it.name,
+      pos = it.pos,
+      cont = it.cont,
+      level = lv,
+      manuscript = it.manuscript,
+      kind = "section"
+    }
+  end
+  return val
 end
 
 return Manuscript

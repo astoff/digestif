@@ -55,6 +55,13 @@ local function from_Range(str, range, p0, l0)
   return pos, cont, p1, l1
 end
 
+local function from_TextDocumentIdentifier(arg)
+  local filename = from_DocumentUri(arg.uri)
+  local format = tex_format_table[filename]
+  local script = cache:manuscript(filename, format)
+  return script
+end
+
 local function from_TextDocumentPositionParams(arg)
   local filename = from_DocumentUri(arg.textDocument.uri)
   local format = tex_format_table[filename]
@@ -96,6 +103,20 @@ local function to_TextEdit(script, pos, old, new)
   }
 end
 
+local to_SymbolKind = {
+  section = 5 -- Class in LSP
+}
+
+local function to_DocumentSymbol(outline)
+  return {
+    name = outline.name,
+    kind = to_SymbolKind[outline.kind],
+    range = to_Range(outline),
+    selectionRange = to_Range(outline),
+    children = outline[1] and util.imap(to_DocumentSymbol, outline)
+  }
+end
+
 local languageId_translation_table = {
   bibtex = "bibtex",
   context = "context",
@@ -129,7 +150,8 @@ methods["initialize"] = function(params)
       },
       hoverProvider = true,
       definitionProvider = true,
-      referencesProvider = true
+      referencesProvider = true,
+      documentSymbolProvider = true,
     }
   }
 end
@@ -255,6 +277,12 @@ methods["textDocument/references"] = function(params)
   else
     return null
   end
+end
+
+methods["textDocument/documentSymbol"] = function(params)
+  local script = from_TextDocumentIdentifier(params.textDocument)
+  local outline = script:outline(true) -- local only
+  return util.imap(to_DocumentSymbol, outline)
 end
 
 -- ¶ RPC functions and the main loop

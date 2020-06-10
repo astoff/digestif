@@ -82,23 +82,19 @@ function ManuscriptLaTeX.init_callbacks.label (m, pos, cs)
    return r.cont
 end
 
-function ManuscriptLaTeX.init_callbacks.heading (m, pos, cs)
-  local idx = m.heading_index
-  local args = m.commands[cs].arguments
-  local r = m:parse_command(pos, cs)
-  local i = first_mand(args)
-  if r[i] then
+function ManuscriptLaTeX.init_callbacks.section(self, pos, cs)
+  local idx = self.section_index
+  for r in self:argument_items(first_mand, pos, cs) do
     idx[#idx + 1] = {
-      title = m:substring_stripped(r[i]),
-      pos = r[i].pos,
-      cont = r[i].cont,
-      outer_pos = r.pos,
-      outer_cont = r.cont,
-      level = m.commands[cs].heading_level,
-      manuscript = m
+      name = self:substring_stripped(r),
+      level = self.commands[cs].section_level,
+      pos = r.pos,
+      cont = r.cont,
+      outer_pos = pos,
+      manuscript = self
     }
   end
-  return r.cont
+  return pos + #cs + 1
 end
 
 function ManuscriptLaTeX.init_callbacks.bibitem (m, pos, cs)
