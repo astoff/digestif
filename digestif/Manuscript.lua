@@ -277,8 +277,8 @@ end
 local function traverse_indexes(script, indexes, max_depth)
   local items = {}
   for i = 1, #indexes do
-    idx_name = indexes[i]
-    idx = script[idx_name]
+    local idx_name = indexes[i]
+    local idx = script[idx_name]
     for j = 1, #idx do
       items[#items+1] = idx[j]
       items[idx[j]] = idx_name
@@ -287,7 +287,7 @@ local function traverse_indexes(script, indexes, max_depth)
   if max_depth > 0 then
     local child_idx, children = script.child_index, script.children
     for i = 1, #child_idx do
-      item = child_idx[i]
+      local item = child_idx[i]
       local child = children[item.name]
       if child then
         items[#items+1] = {
@@ -728,24 +728,23 @@ end
 --
 function Manuscript:complete(pos)
   local ctx = self:get_context(pos - 1)
-   if ctx == nil then return nil end
-   if ctx.cs and pos == 1 + ctx.pos + #ctx.cs then -- the 1 accounts for escape char
-      return self.completion_handlers.cs(self, ctx)
-   elseif ctx.arg then
-      local action = ctx.parent and ctx.parent.data and ctx.parent.data.action
-      if self.completion_handlers[action] then
-         return self.completion_handlers[action](self, ctx, pos)
-      end
-   elseif ctx.item then
-      local action = nested_get(ctx, "parent", "parent", "data", "action")
-      if self.completion_handlers[action] then
-         return self.completion_handlers[action](self, ctx, pos)
-      end
-   elseif ctx.key then --and pos == ctx.pos + #ctx.key then
-      return self.completion_handlers.key(self, ctx, pos)
-   elseif ctx.value and pos == ctx.pos + #ctx.value then
-      return self.completion_handlers.value(self, ctx, pos)
-   end
+  if ctx == nil then
+    return
+  elseif ctx.cs and pos == ctx.cont then
+    return self.completion_handlers.cs(self, ctx)
+  elseif ctx.arg then
+    local action = nested_get(ctx, "parent", "data", "action")
+    local handler = self.completion_handlers[action]
+    return handler and handler(self, ctx, pos)
+  elseif ctx.item then
+    local action = nested_get(ctx, "parent", "parent", "data", "action")
+    local handler = self.completion_handlers[action]
+    return handler and handler(self, ctx, pos)
+  elseif ctx.key then --and pos == ctx.pos + #ctx.key then
+    return self.completion_handlers.key(self, ctx, pos)
+  elseif ctx.value and pos == ctx.pos + #ctx.value then
+    return self.completion_handlers.value(self, ctx, pos)
+  end
 end
 
 Manuscript.completion_handlers = {}
