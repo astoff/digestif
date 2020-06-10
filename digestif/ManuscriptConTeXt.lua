@@ -62,15 +62,27 @@ end
 
 function ManuscriptConTeXt.init_callbacks.section(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
-  local idx = self.label_index
   for r in self:argument_items("reference", pos, cs) do
+    local idx = self.label_index
     idx[#idx + 1] = {
       name = self:substring_stripped(r),
-        pos = r.pos,
-        cont = r.cont,
-        outer_pos = pos,
-        outer_cont = cont,
-        manuscript = self
+      pos = r.pos,
+      cont = r.cont,
+      outer_pos = pos,
+      outer_cont = cont,
+      manuscript = self
+    }
+  end
+  for r in self:argument_items("text", pos, cs) do
+    local idx = self.section_index
+    idx[#idx + 1] = {
+      name = self:substring_stripped(r),
+      level = self.commands[cs].section_level,
+      pos = r.pos,
+      cont = r.cont,
+      outer_pos = pos,
+      outer_cont = cont,
+      manuscript = self
     }
   end
   return cont
