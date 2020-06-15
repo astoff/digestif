@@ -249,4 +249,83 @@ function data.load_all()
   return data.loaded
 end
 
+--* User-readable documentation
+
+local function extend(s, t)
+  return table.move(t, 1, #t, #s+1, s)
+end
+
+local function resolve_uri(uri)
+  local scheme, location = uri:match"([^:]*):(.*)"
+  if scheme == "info" and config.info_command then
+    return uri
+  elseif scheme == "texdoc" then
+    return "https://texdoc.net/texmf-dist/doc/" .. location
+  else
+    return uri
+  end
+end
+
+local function make_doc(items)
+  if type(items) == "string" then items = {items} end
+  local t = {}
+  for _, item in ipairs(items) do
+    if type(item) == "string" then
+      t[#t+1] = format("- <%s>", resolve_uri(item))
+    else
+      t[#t+1] = format("- [%s](%s)", item.summary, resolve_uri(item.uri))
+    end
+  end
+  t[#t+1] = ""
+  return t
+end
+
+local function get_info(uri)
+  if config.info_command then
+    local path, fragment = uri:match"^info:([^#]*)#?(.*)"
+    local cmd = format("%s '(%s)%s'", config.info_command, path, fragment)
+    local pipe = io.popen(cmd)
+    local str = pipe:read("a")
+    local ok, exitt, exitc = pipe:close()
+    if ok and exitt == "exit" and exitc == 0 then
+      str = str:gsub(".-\n", "", 2) -- discard header line
+      return str, path, fragment
+    elseif config.verbose then
+      util.log("Error running info (%d)", exitc)
+    end
+  end
+end
+
+function data.generate_docstring(item, name)
+  local t = {}
+  local pkg = item.package
+  local details = item.details
+  local item_doc = item.documentation
+  local pkg_doc = pkg and pkg.documentation
+  if pkg and pkg.ctan_package then
+    t[#t+1] = format(
+      "`%s` is defined in the [%s](https://www.ctan.org/pkg/%s) package.\n",
+      name, pkg.ctan_package, pkg.ctan_package
+    )
+  end
+  if details then
+    t[#t+1] = "# Details\n"
+    t[#t+1] = details
+  elseif type(item_doc) == "string" and item_doc:match"^info:" then
+    str, node, subnode = get_info(item_doc)
+    if str then
+      t[#t+1] = format("# Info: (%s)%s\n\n```\n%s```", node, subnode, str)
+    end
+  end
+  if item_doc then
+    t[#t+1] = "# Documentation\n"
+    extend(t, make_doc(item_doc))
+  end
+  if pkg_doc then
+    t[#t+1] = "# Package documentation\n"
+    extend(t, make_doc(pkg_doc))
+  end
+  return concat(t, "\n")
+end
+
 return data

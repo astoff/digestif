@@ -2,6 +2,7 @@
 
 local config = require "digestif.config"
 local require_data = require "digestif.data".require
+local generate_docstring = require "digestif.data".generate_docstring
 local util = require "digestif.util"
 
 local co_wrap, co_yield = coroutine.wrap, coroutine.yield
@@ -29,6 +30,7 @@ local formats = {
   bibtex = "digestif.ManuscriptBibTeX",
   context = "digestif.ManuscriptConTeXt",
   latex = "digestif.ManuscriptLaTeX",
+  ["latex-prog"] = "digestif.ManuscriptLatexProg",
   plain = "digestif.ManuscriptPlainTeX",
   texinfo = "digestif.ManuscriptTexinfo"
 }
@@ -85,12 +87,18 @@ function Manuscript:__init(args)
   end
   if self.depth > 15 then return end
   for _, item in ipairs(self.child_index) do
-    local file_exists, _ = files(item.name)
-    if file_exists then
-      self.children[item.name] = Manuscript{
-        filename = item.name,
+    local name = item.name
+    local file_exists, _ = files(name)
+    local ancestor = self
+    while ancestor do
+      if ancestor.filename == name then break end
+      ancestor = ancestor.parent
+    end
+    if file_exists and not ancestor then
+      self.children[name] = Manuscript{
+        filename = name,
         parent = self,
-        format = guess_format(item.name),
+        format = guess_format(name),
         files = files
       }
     end
@@ -268,7 +276,21 @@ function Manuscript:find_preceding_command(pos)
   return self:scan(preceding_command_callbacks, par_pos, pos)
 end
 
---* Document traversal
+--* Indexes and document traversal
+
+function Manuscript:get_index(name)
+  name = name .. "_index"
+  local idx = self[name]
+  if not idx then
+    idx = {}
+    self[name] = idx
+  end
+  return idx
+end
+
+function Manuscript:index_pairs(name)
+  return ipairs(self:get_index(name))
+end
 
 local function compare_pos(x, y)
   return x.pos < y.pos
@@ -413,22 +435,30 @@ function Manuscript:scan(callbacks, pos, ...)
   return scan(pos or 1, ...)
 end
 
+local function copy_new(s, t)
+  for k, v in pairs(t) do
+    if not s[k] then s[k] = v end
+  end
+end
+
 function Manuscript:add_module(name)
   if self.modules[name] then return end
   local mod = require_data(name)
   if not mod then return end
   self.modules[name] = mod
-  local deps = mod.package and mod.package.dependencies or mod.dependencies
+  local deps = mod.package and mod.package.dependencies or mod.dependencies -- TODO: use only the latter case
   if deps then
     for _, n in ipairs(deps) do
       self:add_module(n)
     end
   end
+   -- Don't overwrite stuff from generated data files
+  local update_fn = mod.generated and copy_new or update
   if mod.commands then
-    update(self.commands, mod.commands)
+    update_fn(self.commands, mod.commands)
   end
   if mod.environments then
-    update(self.environments, mod.environments)
+    update_fn(self.environments, mod.environments)
   end
 end
 
@@ -1076,10 +1106,12 @@ function Manuscript.help_handlers.key(self, ctx)
 end
 
 function Manuscript:make_docstring(kind, name, data)
-  local ret
+  local ret, print_name
   if kind == "cs" then
+    print_name = "\\" .. name
     ret = self:signature_cmd(name, data.arguments)
   elseif kind == "env" then
+    print_name = "{" .. name .. "}"
     ret = self:signature_env(name, data.arguments)
   elseif kind == "key" then
     ret = name
@@ -1093,30 +1125,7 @@ function Manuscript:make_docstring(kind, name, data)
   if data.symbol then
     ret = ret .. " (" .. data.symbol .. ")"
   end
-  if data.details then
-    ret = ret .. "\n\n" .. data.details
-  elseif data.documentation then
-    local scheme, location = data.documentation:match"([^:]*):(.*)"
-    if scheme == "info" and config.info_command then
-      local path, fragment = location:match"([^#]*)#?(.*)"
-      local node_name = ("(%s)%s"):format(path, fragment)
-      local cmd = config.info_command:format(node_name)
-      local f = io.popen(cmd)
-      local str = f:read("a")
-      local ok, _, exitc = f:close()
-      if ok and exitc == 0 then
-        str = str:gsub(".-\n", "", 2) -- discard header line
-        ret = ret .. "\n\n" .. str
-      elseif config.verbose then
-        util.log("Error running info (%d)", exitc)
-      end
-    elseif scheme == "texdoc" then
-      ret = ret .. "\n\nDocumentation at "
-        .. "<http://texdoc.net/texmf-dist/doc/" .. location .. ">"
-    else
-      ret = ret .. "\n\nDocumentation at <" .. location ..">"
-    end
-  end
+  ret = ret .. "\n\n" .. generate_docstring(data, print_name or name)
   return ret
 end
 
