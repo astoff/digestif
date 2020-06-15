@@ -375,6 +375,23 @@ local function try_read_file(path, name)
 end
 util.try_read_file = try_read_file
 
+local function find_file(path, name)
+  if type(path) == "table" then
+    for i = 1, #path do
+      local s = find_file(path[i], name)
+      if s then return s end
+    end
+  else
+    if name then path = util.path_join(path, name) end
+    local f = io.open(path)
+    if f then
+      f:close()
+      return path
+    end
+  end
+end
+util.find_file = find_file
+
 -- ¶ &c.
 
 function util.log(msg, ...)
