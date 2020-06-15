@@ -322,7 +322,7 @@ local function generate_docstring(item, name)
   elseif type(item_doc) == "string" and item_doc:match"^info:" then
     local str, node, subnode = get_info(item_doc)
     if str then
-      t[#t+1] = format("# Info: (%s)%s\n\n```\n%s```", node, subnode, str)
+      t[#t+1] = format("# Info: (%s)%s\n\n```text\n%s```", node, subnode, str)
     end
   end
   if item_doc then

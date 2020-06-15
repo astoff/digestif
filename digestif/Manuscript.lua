@@ -5,6 +5,7 @@ local require_data = require "digestif.data".require
 local generate_docstring = require "digestif.data".generate_docstring
 local util = require "digestif.util"
 
+local format = string.format
 local co_wrap, co_yield = coroutine.wrap, coroutine.yield
 local concat, sort = table.concat, table.sort
 local infty = math.huge
@@ -878,7 +879,7 @@ end
 --- Get a short piece of text around a label.
 -- If there is a recognized command ending right before the label, the
 -- context starts there.
--- TODO: For now, the context is 100 bytes, but it should be smart and
+-- TODO: For now, the context is 60 bytes, but it should be smart and
 -- choose a lenght close to 100 characters but ending at a line end.
 -- It should also be Unicode-safe.
 function Manuscript:label_context_short(item)
@@ -887,7 +888,7 @@ function Manuscript:label_context_short(item)
   if not cmd then
     pos = self.parser.next_nonblank(self.src, item.outer_pos)
   end
-  return self:substring_clean(pos, pos + 100)
+  return self:substring_clean(pos, pos + 60)
 end
 
 function Manuscript.completion_handlers.ref(self, ctx, pos)
@@ -983,11 +984,29 @@ function Manuscript.help_handlers.cite(self, ctx)
   local name = self:substring(ctx)
   for item in self.root:traverse "bib_index" do
     if name == item.name then
+      local script, details = item.manuscript
+      if script.format == "bibtex" then
+        details = format(
+          [[
+`%s`: %s
+
+# Bibtex definition
+
+```bibtex
+%s
+```
+]],
+          item.name,
+          item.text,
+          script:substring(item)
+        )
+      end
       return {
         pos = ctx.pos,
         cont = ctx.cont,
         kind = "bibitem",
         summary = item.name .. " " .. item.text,
+        details = details
       }
     end
   end
@@ -998,7 +1017,7 @@ function Manuscript:label_context_long(item)
   if not pos then pos = item.outer_pos end
   local l = self:line_number_at(pos)
   local lines = self.lines
-  local end_pos = lines[l + 5]
+  local end_pos = lines[l + 10]
   if end_pos then
     return self:substring_trimmed(pos, end_pos - 1)
   else
@@ -1011,13 +1030,31 @@ function Manuscript.help_handlers.ref(self, ctx)
   for item in self.root:traverse "label_index" do
     if name == item.name then
       local script = item.manuscript
+      local short_context = script:label_context_short(item)
+      local long_context = script:label_context_long(item)
+      local details = format(
+        [[
+`%s`: Refers to “%s...”
+
+# Label context
+
+```%s
+%s
+[...]
+```
+]],
+        item.name,
+        short_context,
+        script.format,
+        long_context
+      )
       return {
         pos = ctx.pos,
         cont = ctx.cont,
         kind = "label",
         label = name,
-        summary = script:label_context_short(item),
-        details = "Reference " .. name .. ":\n\n" .. script:label_context_long(item)
+        summary = short_context,
+        details = details
       }
     end
   end
