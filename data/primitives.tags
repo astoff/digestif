@@ -9,6 +9,21 @@ package = {
    documentation = "texdoc:plain/impatient/book.pdf",
    name = "TeX primitives"
 }
+ctan_package = "tex"
+documentation = {
+  {
+    summary = "The TeXbook",
+    uri = "https://www.ctan.org/pkg/texbook"
+  },
+  {
+    summary = "TeX for the Impatient",
+    uri = "doc/plain/impatient/book.pdf"
+  },
+  {
+    summary = "TeX by Topic, a TeXnician's reference",
+    uri = "doc/plain/texbytopic/TeXbyTopic.pdf"
+  }
+}
 commands = {
    ["-"] = {
       documentation = "texdoc:plain/impatient/book.pdf#page=146",
@@ -567,7 +582,7 @@ commands = {
    emergencystretch = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/emergencystretch",
       documentation = "texdoc:plain/impatient/book.pdf#page=144",
-      summary = "Additional stretch added to every line if \\tol\\-er\\-ance is not satisfied.",
+      summary = "Additional stretch added to every line if \\tolerance is not satisfied.",
       type = "dimen"
    },
    ["end"] = {

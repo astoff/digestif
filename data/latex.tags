@@ -10,6 +10,21 @@ package = {
    documentation = "info:latex2e",
    name = "LaTeX kernel"
 }
+ctan_package = "latex"
+documentation = {
+  {
+    summary = "A (Not So) Short Introduction to LaTeX 2ε",
+    uri = "texdoc:doc/latex/lshort-english/lshort.pdf"
+  },
+  {
+    summary = "LaTeX 2ε for authors",
+    uri = "texdoc:latex/base/usrguide.pdf"
+  },
+  {
+    summary = "LaTeX 2ε for class and package writers",
+    uri = "texdoc:latex/base/clsguide.pdf"
+  }
+}
 commands = {
    [" "] = {
       documentation = "info:latex2e#LaTeX command syntax",
@@ -249,7 +264,7 @@ commands = {
                "[",
                "]"
             },
-            meta = "num",
+            meta = "number",
             optional = true
          },
          {
@@ -389,6 +404,7 @@ commands = {
       documentation = "info:latex2e#Class and package commands"
    },
    DeclareRobustCommand = {
+      action = "newcommand",
       arguments = {
          {
             literal = "*",
@@ -396,14 +412,14 @@ commands = {
             optional = true
          },
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             delimiters = {
                "[",
                "]"
             },
-            meta = "num",
+            meta = "number",
             optional = true
          },
          {
@@ -421,9 +437,10 @@ commands = {
       documentation = "info:latex2e#Class and package commands"
    },
    DeclareTextAccent = {
+      action = "newcommand",
       arguments = {
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             meta = "encoding"
@@ -436,9 +453,10 @@ commands = {
       summary = "Define an accent in the encoding."
    },
    DeclareTextAccentDefault = {
+      action = "newcommand",
       arguments = {
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             meta = "encoding"
@@ -448,9 +466,10 @@ commands = {
       summary = "Fallback for using an accent in the encoding."
    },
    DeclareTextCommand = {
+      action = "newcommand",
       arguments = {
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             meta = "encoding"
@@ -460,7 +479,7 @@ commands = {
                "[",
                "]"
             },
-            meta = "nargs",
+            meta = "number",
             optional = true
          },
          {
@@ -468,7 +487,7 @@ commands = {
                "[",
                "]"
             },
-            meta = "optargdefault",
+            meta = "default",
             optional = true
          },
          {
@@ -479,9 +498,10 @@ commands = {
       summary = "New encoding-specific command."
    },
    DeclareTextCommandDefault = {
+      action = "newcommand",
       arguments = {
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             meta = "defn"
@@ -491,15 +511,16 @@ commands = {
       summary = "Fallback for encoding-specific commands."
    },
    DeclareTextComposite = {
+      action = "newcommand",
       arguments = {
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             meta = "encoding"
          },
          {
-            meta = "simple_object"
+            meta = "simple object"
          },
          {
             meta = "slot"
@@ -509,9 +530,10 @@ commands = {
       summary = "Directly access an accented glyph, in the encoding."
    },
    DeclareTextCompositeCommand = {
+      action = "newcommand",
       arguments = {
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             meta = "encoding"
@@ -527,9 +549,10 @@ commands = {
       summary = "Run code in slot, in the encoding."
    },
    DeclareTextSymbol = {
+      action = "newcommand",
       arguments = {
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             meta = "encoding"
@@ -542,9 +565,10 @@ commands = {
       summary = "Define a symbol in the encoding."
    },
    DeclareTextSymbolDefault = {
+      action = "newcommand",
       arguments = {
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             meta = "encoding"
@@ -860,9 +884,10 @@ commands = {
       documentation = "info:latex2e#Class and package commands"
    },
    ProvideTextCommand = {
+      action = "newcommand",
       arguments = {
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             meta = "encoding"
@@ -872,7 +897,7 @@ commands = {
                "[",
                "]"
             },
-            meta = "nargs",
+            meta = "number",
             optional = true
          },
          {
@@ -880,7 +905,7 @@ commands = {
                "[",
                "]"
             },
-            meta = "optargdefault",
+            meta = "default",
             optional = true
          },
          {
@@ -891,9 +916,10 @@ commands = {
       summary = "New encoding-specific command."
    },
    ProvideTextCommandDefault = {
+      action = "newcommand",
       arguments = {
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             meta = "defn"
@@ -959,6 +985,8 @@ commands = {
       symbol = "ℜ"
    },
    RequirePackage = {
+      action = "input",
+      filename = "?.sty",
       arguments = {
          {
             delimiters = {
@@ -983,6 +1011,8 @@ commands = {
       documentation = "info:latex2e#Class and package commands"
    },
    RequirePackageWithOptions = {
+      action = "input",
+      filename = "?.sty",
       arguments = {
          {
             meta = "package name"
@@ -1045,7 +1075,7 @@ commands = {
             meta = "encoding"
          },
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             meta = "text"
@@ -1060,7 +1090,7 @@ commands = {
             meta = "encoding"
          },
          {
-            meta = "cmd"
+            meta = "command"
          }
       },
       documentation = "info:latex2e#\\UseTextAccent & \\UseTextSymbol",
@@ -3156,6 +3186,7 @@ commands = {
       documentation = "info:latex2e#Math symbols"
    },
    newcommand = {
+      action = "newcommand",
       arguments = {
          {
             literal = "*",
@@ -3163,14 +3194,14 @@ commands = {
             optional = true
          },
          {
-            meta = "\\cmd"
+            meta = "command"
          },
          {
             delimiters = {
                "[",
                "]"
             },
-            meta = "nargs",
+            meta = "number",
             optional = true
          },
          {
@@ -3178,7 +3209,7 @@ commands = {
                "[",
                "]"
             },
-            meta = "optargdefault",
+            meta = "default",
             optional = true
          },
          {
@@ -3206,6 +3237,7 @@ commands = {
       summary = "Define a new counter."
    },
    newenvironment = {
+      action = "newenvironment",
       arguments = {
          {
             literal = "*",
@@ -3213,14 +3245,14 @@ commands = {
             optional = true
          },
          {
-            meta = "env"
+            meta = "environment"
          },
          {
             delimiters = {
                "[",
                "]"
             },
-            meta = "nargs",
+            meta = "number",
             optional = true
          },
          {
@@ -3228,7 +3260,7 @@ commands = {
                "[",
                "]"
             },
-            meta = "optargdefault",
+            meta = "default",
             optional = true
          },
          {
@@ -3242,9 +3274,10 @@ commands = {
       summary = "Define a new environment."
    },
    newfont = {
+      action = "newcommand",
       arguments = {
          {
-            meta = "\\cmd"
+            meta = "command"
          },
          {
             meta = "font description"
@@ -3285,7 +3318,7 @@ commands = {
    newsavebox = {
       arguments = {
          {
-            meta = "\\cmd"
+            meta = "command"
          }
       },
       documentation = "info:latex2e#\\newsavebox",
@@ -3748,6 +3781,7 @@ commands = {
       summary = "Using tricky commands."
    },
    providecommand = {
+      action = "newcommand",
       arguments = {
          {
             literal = "*",
@@ -3755,14 +3789,14 @@ commands = {
             optional = true
          },
          {
-            meta = "cmd"
+            meta = "command"
          },
          {
             delimiters = {
                "[",
                "]"
             },
-            meta = "nargs",
+            meta = "number",
             optional = true
          },
          {
@@ -3770,7 +3804,7 @@ commands = {
                "[",
                "]"
             },
-            meta = "optargdefault",
+            meta = "default",
             optional = true
          },
          {
@@ -3819,7 +3853,7 @@ commands = {
                "[",
                "]"
             },
-            meta = "num",
+            meta = "number",
             optional = true
          },
          {
@@ -3952,6 +3986,7 @@ commands = {
       summary = "Add to a counter."
    },
    renewcommand = {
+      action = "newcommand",
       arguments = {
          {
             literal = "*",
@@ -3959,14 +3994,14 @@ commands = {
             optional = true
          },
          {
-            meta = "\\cmd"
+            meta = "command"
          },
          {
             delimiters = {
                "[",
                "]"
             },
-            meta = "nargs",
+            meta = "number",
             optional = true
          },
          {
@@ -3974,7 +4009,7 @@ commands = {
                "[",
                "]"
             },
-            meta = "optargdefault",
+            meta = "default",
             optional = true
          },
          {
@@ -3984,6 +4019,7 @@ commands = {
       summary = "Redefine an existing new command."
    },
    renewenvironment = {
+      action = "newenvironment",
       arguments = {
          {
             literal = "*",
@@ -3991,14 +4027,14 @@ commands = {
             optional = true
          },
          {
-            meta = "env"
+            meta = "environment"
          },
          {
             delimiters = {
                "[",
                "]"
             },
-            meta = "nargs",
+            meta = "number",
             optional = true
          },
          {
@@ -4006,7 +4042,7 @@ commands = {
                "[",
                "]"
             },
-            meta = "optargdefault",
+            meta = "default",
             optional = true
          },
          {
@@ -4153,7 +4189,7 @@ commands = {
    savebox = {
       arguments = {
          {
-            meta = "box-cmd"
+            meta = "command"
          },
          {
             delimiters = {
@@ -4181,7 +4217,7 @@ commands = {
    sbox = {
       arguments = {
          {
-            meta = "box-cmd"
+            meta = "command"
          },
          {
             meta = "text"
@@ -4966,7 +5002,7 @@ commands = {
                "[",
                "]"
             },
-            meta = "cmd",
+            meta = "command",
             optional = true
          }
       },
@@ -5044,7 +5080,7 @@ commands = {
    usebox = {
       arguments = {
          {
-            meta = "box-cmd"
+            meta = "command"
          }
       },
       documentation = "info:latex2e#\\usebox",
@@ -5411,7 +5447,7 @@ environments = {
    lrbox = {
       arguments = {
          {
-            meta = "box-cmd"
+            meta = "command"
          }
       },
       summary = "Environment version of \\sbox."

@@ -7,6 +7,7 @@ package = {
    documentation = "texdoc:context/sources/general/manuals/start/en/ma-cb-en.pdf",
    name = "context"
 }
+ctan_package = "context"
 data = {
    braces = {
       "{",

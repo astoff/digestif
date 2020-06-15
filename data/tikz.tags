@@ -7,6 +7,13 @@ package = {
    documentation = "texdoc:generic/pgf/pgfmanual.pdf",
    name = "tikz"
 }
+ctan_package = "tikz"
+documentation = {
+  {
+    summary = "PGF Manual",
+    uri = "texdoc:generic/pgf/pgfmanual.pdf"
+  }
+}
 commands = {
    afterdecoration = {
       arguments = {

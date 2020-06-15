@@ -13,6 +13,18 @@ package = {
    documentation = "texdoc:plain/impatient/book.pdf",
    name = "Plain TeX"
 }
+ctan_package = "plain"
+documentation = {
+  {
+    summary = "The TeXbook",
+    uri = "https://www.ctan.org/pkg/texbook"
+  },
+  {
+    summary = "TeX for the Impatient",
+    uri = "doc/plain/impatient/book.pdf"
+  }
+}
+
 commands = {
    ["!"] = {
       documentation = "texdoc:plain/impatient/book.pdf#page=234",

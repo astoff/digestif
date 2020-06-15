@@ -7,6 +7,7 @@ package = {
    documentation = "generic/pgf/pgfmanual.pdf",
    name = "pgf"
 }
+ctan_package = "pgf"
 commands = {
    beginpgfgraphicnamed = {
       arguments = {
