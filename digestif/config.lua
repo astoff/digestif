@@ -1,5 +1,13 @@
 local util = require "digestif.util"
 local path_join, path_split = util.path_join, util.path_split
+local format = string.format
+
+-- TODO: Make OS-independent
+
+local function has_command(name)
+  local ok = os.execute(format("command -v %q > /dev/null", name))
+  return ok and name or nil
+end
 
 local HOME = os.getenv("HOME")
 
@@ -18,6 +26,8 @@ return {
   extra_snippets = extra_snippets,
   fuzzy_cite = true,
   fuzzy_ref = true,
-  info_command = "info %q",
+  info_command = has_command("info"),
+  texmf_dirs = "/usr/share/texlive/texmf-dist",
+  tlmgr_command = has_command("tlmgr"),
   provide_snippets = false
 }
