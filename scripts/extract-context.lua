@@ -273,12 +273,20 @@ Extracted from ConTeXt source code (context-en.xml)
 URL: https://www.contextgarden.net/
 Original license: GNU GPLv2
 ]],
-   package = {
-     name = "context",
-     documentation = "texdoc:context/sources/general/manuals/start/en/ma-cb-en.pdf"
-   },
-   commands = commands,
-   environments = environments,
-   data = delim_table
+    ctan_package = "context",
+    documentation = {
+      [1] = {
+        summary = "ConTeXt Mark IV: an excursion",
+        uri = "texdoc:context/documents/general/manuals/ma-cb-en.pdf"
+      },
+      [2] = {
+        summary = "ConTeXt documentation library",
+        uri = "https://wiki.contextgarden.net/Documentation"
+      }
+    },
+    commands = commands,
+    environments = environments,
+    data = delim_table
   },
-  {"comments", "package", "data"})
+  {"comments", "ctan_package", "documentation", "data"}
+)

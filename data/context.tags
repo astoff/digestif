@@ -3,11 +3,17 @@ Extracted from ConTeXt source code (context-en.xml)
 URL: https://www.contextgarden.net/
 Original license: GNU GPLv2
 ]]
-package = {
-   documentation = "texdoc:context/sources/general/manuals/start/en/ma-cb-en.pdf",
-   name = "context"
-}
 ctan_package = "context"
+documentation = {
+   {
+      summary = "ConTeXt Mark IV: an excursion",
+      uri = "texdoc:context/documents/general/manuals/ma-cb-en.pdf"
+   },
+   {
+      summary = "ConTeXt documentation library",
+      uri = "https://wiki.contextgarden.net/Documentation"
+   }
+}
 data = {
    braces = {
       "{",
