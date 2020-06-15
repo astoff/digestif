@@ -21,6 +21,17 @@ function util.map(f, t)
   return r
 end
 
+local function map_keys(f, t)
+  local mt = getmetatable(t)
+  local p = mt and mt.__index
+  local r = p and map_keys(f, p) or {}
+  for k in pairs(t) do
+    r[k] = f(k)
+  end
+  return r
+end
+util.map_keys = map_keys
+
 function util.imap(f, t)
   local r = {}
   for i = 1, #t do

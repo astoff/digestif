@@ -747,22 +747,6 @@ end
 
 --* Completion
 
-local function gather(script, field, tbl)
-  update(tbl, script[field])
-  for _, child in pairs(script.children) do
-    gather(child, field, tbl)
-  end
-  return tbl
-end
-
-function Manuscript:all_commands()
-  return gather(self.root, 'commands', {})
-end
-
-function Manuscript:all_environments()
-  return gather(self.root, 'environments', {})
-end
-
 -- Calculate completions for the manuscript at the given position.
 -- Returns a a table containing a list of completion items (at
 -- numerical indices) and some addition information in the following
@@ -796,39 +780,37 @@ end
 Manuscript.completion_handlers = {}
 
 function Manuscript.completion_handlers.cs(self, ctx)
+  local commands, environments = self.commands, self.environments
   local extra_snippets = config.extra_snippets
   local prefix = ctx.cs
   local has_prefix = matcher(prefix)
-  local len = #prefix
   local ret = {
     pos = ctx.pos + 1,
     prefix = prefix,
     kind = "command"
   }
-  for cs, cmd in pairs(self:all_commands()) do
-    if has_prefix(cs) then
-      local args = cmd.arguments
-      local user_snippet = extra_snippets[cs]
-      ret[#ret+1] = {
-        text = cs,
-        summary = cmd.summary,
-        annotation = args and self:signature_arg(args) or cmd.symbol,
-        snippet = user_snippet or args and self:snippet_cmd(cs, args)
-      }
-    end
+  for cs in pairs(map_keys(has_prefix, commands)) do
+    local cmd = commands[cs]
+    local args = cmd.arguments
+    local user_snippet = extra_snippets[cs]
+    ret[#ret+1] = {
+      text = cs,
+      summary = cmd.summary,
+      annotation = args and self:signature_arg(args) or cmd.symbol,
+      snippet = user_snippet or args and self:snippet_cmd(cs, args)
+    }
   end
-  for cs, cmd in pairs(self:all_environments()) do
-    if has_prefix(cs) then
-      local args = cmd.arguments
-      local user_snippet = extra_snippets[cs]
-      local annotation = args and self:signature_arg(args)
-      ret[#ret+1] = {
-        text = cs,
-        summary = cmd.summary,
-        annotation = (annotation and annotation .. " " or "") .. "(environment)",
-        snippet = user_snippet or self:snippet_env(cs, args)
-      }
-    end
+  for env in pairs(map_keys(has_prefix, environments)) do
+    local cmd = environments[env]
+    local args = cmd.arguments
+    local user_snippet = extra_snippets[env]
+    local annotation = args and self:signature_arg(args)
+    ret[#ret+1] = {
+      text = env,
+      summary = cmd.summary,
+      annotation = (annotation and annotation .. " " or "") .. "(environment)",
+      snippet = user_snippet or self:snippet_env(env, args)
+    }
   end
   table.sort(ret, function(x,y) return x.text < y.text end)
   return ret
