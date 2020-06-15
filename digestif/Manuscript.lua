@@ -6,14 +6,10 @@ local generate_docstring = require "digestif.data".generate_docstring
 local util = require "digestif.util"
 
 local co_wrap, co_yield = coroutine.wrap, coroutine.yield
-local concat, sort, unpack = table.concat, table.sort, table.unpack
+local concat, sort = table.concat, table.sort
 local infty = math.huge
-local min, max = math.min, math.max
-
-local path_join, path_split = util.path_join, util.path_split
-local nested_get, nested_put = util.nested_get, util.nested_put
-local map, update, merge = util.map, util.update, util.merge
-
+local nested_get = util.nested_get
+local map_keys, update = util.map_keys, util.update
 local line_indices = util.line_indices
 local matcher, fuzzy_matcher = util.matcher, util.fuzzy_matcher
 
@@ -62,7 +58,7 @@ end
 --   actually only used by ManuscriptFactory
 function Manuscript:__init(args)
   local parent, filename, files, src
-    = args.parent, args.filename, args.files, nil
+    = args.parent, args.filename, args.files
   self.filename = filename
   self.parent = parent
   self.root = parent and parent.root or self
@@ -536,7 +532,7 @@ local function local_scan_parse_keys(m, context, pos)
       local key = m:substring_trimmed(it.key)
       context = {
         key = key,
-        data = util.nested_get(context.data.keys, key), -- or fetch context-dependent keys, say on a usepackage
+        data = nested_get(context.data.keys, key), -- or fetch context-dependent keys, say on a usepackage
         pos = it.pos,
         cont = it.cont,
         parent = context
@@ -546,7 +542,7 @@ local function local_scan_parse_keys(m, context, pos)
         local value = m:substring_trimmed(v)
         context = {
           value = value,
-          data = util.nested_get(context.data.values, value), -- what if "value" is command-like?
+          data = nested_get(context.data.values, value), -- what if "value" is command-like?
           pos = v.pos,
           cont = v.cont,
           parent = context
@@ -703,7 +699,8 @@ Manuscript.signature_env = Manuscript.signature_cmd
 -- i: The initial counter
 function Manuscript:snippet_args(args, i)
   if not args then return "" end
-  local t, i = {}, i or 1
+  i = i or 1
+  local t = {}
   for _, arg in ipairs(args) do
     if arg.optional then
       t[#t+1] = "${" .. i .. ":"
@@ -997,7 +994,7 @@ function Manuscript.help_handlers.cite(self, ctx)
 end
 
 function Manuscript:label_context_long(item)
-  local pos, cs, r = self:find_preceding_command(item.outer_pos)
+  local pos = self:find_preceding_command(item.outer_pos)
   if not pos then pos = item.outer_pos end
   local l = self:line_number_at(pos)
   local lines = self.lines
@@ -1118,7 +1115,9 @@ function Manuscript:make_docstring(kind, name, data)
     ret = name
   end
   if data.summary then
-    ret = ret .. ": " .. data.summary
+    ret = "`" .. ret .. "`: " .. data.summary
+  else
+    ret = "`" .. ret .. "`"
   end
   if data.symbol then
     ret = ret .. " (" .. data.symbol .. ")"
