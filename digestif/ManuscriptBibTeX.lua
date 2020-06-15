@@ -10,9 +10,11 @@ local map, update, merge = util.map, util.update, util.merge
 
 local ManuscriptBibTeX = util.class(Manuscript)
 
-ManuscriptBibTeX.format = "bibtex"
 ManuscriptBibTeX.parser = Parser()
-ManuscriptBibTeX.init_callbacks = false
+ManuscriptBibTeX.format = "bibtex"
+ManuscriptBibTeX.packages = {}
+ManuscriptBibTeX.commands = {}
+ManuscriptBibTeX.environments = {}
 
 function ManuscriptBibTeX:__init(args)
   Manuscript.__init(self, args)

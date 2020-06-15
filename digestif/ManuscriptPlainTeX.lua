@@ -12,9 +12,11 @@ local ManuscriptPlainTeX = util.class(Manuscript)
 
 ManuscriptPlainTeX.parser = Parser()
 ManuscriptPlainTeX.format = "plain"
-
-ManuscriptPlainTeX.init_callbacks =
-   setmetatable({}, {__index = Manuscript.init_callbacks})
+ManuscriptPlainTeX.packages = {}
+ManuscriptPlainTeX.commands = {}
+ManuscriptPlainTeX.environments = {}
+ManuscriptPlainTeX.init_callbacks = {}
 ManuscriptPlainTeX.scan_references_callbacks = {}
+ManuscriptPlainTeX:add_package("plain")
 
 return ManuscriptPlainTeX

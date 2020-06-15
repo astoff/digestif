@@ -21,15 +21,6 @@ local ManuscriptLatexProg = util.class(ManuscriptLaTeX)
 ManuscriptLatexProg.parser = parser_atletter 
 ManuscriptLatexProg.format = "latex-prog"
 
-ManuscriptLatexProg.init_callbacks =
-   setmetatable({}, {__index = ManuscriptLaTeX.init_callbacks})
-
-function ManuscriptLatexProg:__init(args)
-  self.new_commands = {}
-  self.new_environments = {}
-  ManuscriptLaTeX.__init(self, args)
-end
-
 --* Helper functions
 
 local function first_mand(args)

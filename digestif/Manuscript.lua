@@ -70,21 +70,15 @@ function Manuscript:__init(args)
   self.src = src or ""
   self.lines = line_indices(self.src)
   self.depth = 1 + (parent and parent.depth or 0)
-  self.modules = {}
-  self.commands = {}
-  self.environments = {}
+  local super = parent or self.__index
+  self.packages = setmetatable({}, {__index = super.packages})
+  self.commands = setmetatable({}, {__index = super.commands})
+  self.environments = setmetatable({}, {__index = super.environments})
   self.children = {}
   self.bib_index = {}
   self.child_index = {}
   self.section_index = {}
   self.label_index = {}
-  if parent then
-    setmetatable(self.modules,      {__index = parent.modules}     )
-    setmetatable(self.commands,     {__index = parent.commands}    )
-    setmetatable(self.environments, {__index = parent.environments})
-  else
-    self:add_module(self.format) -- do this only once, for the root
-  end
   if self.init_callbacks then
     self:scan(self.init_callbacks)
   end
@@ -107,8 +101,6 @@ function Manuscript:__init(args)
     end
   end
 end
-
-Manuscript.init_callbacks = {}
 
 --* Substrings
 
@@ -444,24 +436,45 @@ local function copy_new(s, t)
   end
 end
 
-function Manuscript:add_module(name)
-  if self.modules[name] then return end
-  local mod = require_data(name)
-  if not mod then return end
-  self.modules[name] = mod
-  local deps = mod.package and mod.package.dependencies or mod.dependencies -- TODO: use only the latter case
+-- function Manuscript:add_module(name)
+--   if self.modules[name] then return end
+--   local mod = require_data(name)
+--   if not mod then return end
+--   self.modules[name] = mod
+--   local deps = mod.package and mod.package.dependencies or mod.dependencies -- TODO: use only the latter case
+--   if deps then
+--     for _, n in ipairs(deps) do
+--       self:add_module(n)
+--     end
+--   end
+--    -- Don't overwrite stuff from generated data files
+--   local update_fn = mod.generated and copy_new or update
+--   if mod.commands then
+--     update_fn(self.commands, mod.commands)
+--   end
+--   if mod.environments then
+--     update_fn(self.environments, mod.environments)
+--   end
+-- end
+
+function Manuscript:add_package(name)
+  if self.packages[name] then return end
+  local pkg = require_data(name)
+  if not pkg then return end
+  self.packages[name] = pkg
+  local deps =  pkg.dependencies or pkg.package and pkg.package.dependencies -- TODO: use only the former case
   if deps then
     for _, n in ipairs(deps) do
-      self:add_module(n)
+      self:add_package(n)
     end
   end
    -- Don't overwrite stuff from generated data files
-  local update_fn = mod.generated and copy_new or update
-  if mod.commands then
-    update_fn(self.commands, mod.commands)
+  local update_fn = pkg.generated and copy_new or update
+  if pkg.commands then
+    update_fn(self.commands, pkg.commands)
   end
-  if mod.environments then
-    update_fn(self.environments, mod.environments)
+  if pkg.environments then
+    update_fn(self.environments, pkg.environments)
   end
 end
 

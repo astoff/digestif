@@ -81,7 +81,7 @@ describe("ConTeXt init scanning", function()
      for i = 1, #t do u[i] = t[i].name; v[i] = t[i].pos end
      assert.same({"two.tex", "biblio.bib"}, u)
      assert.same({112, 141}, v)
-     assert.not_nil(script.modules["t-tikz.tex"])
+     assert.not_nil(script.packages["t-tikz.tex"])
   end)
 
   it("finds references", function()

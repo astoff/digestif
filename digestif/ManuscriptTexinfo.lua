@@ -4,15 +4,14 @@ local Parser = require "digestif.Parser"
 
 local ManuscriptTexinfo = util.class(Manuscript)
 
-ManuscriptTexinfo.parser = Parser({
-  escape = "@"
-})
-
+ManuscriptTexinfo.parser = Parser({escape = "@"})
 ManuscriptTexinfo.format = "texinfo"
-
-ManuscriptTexinfo.init_callbacks =
-   setmetatable({}, {__index = Manuscript.init_callbacks})
+ManuscriptTexinfo.packages = {}
+ManuscriptTexinfo.commands = {}
+ManuscriptTexinfo.environments = {}
+ManuscriptTexinfo.init_callbacks = {}
 ManuscriptTexinfo.scan_references_callbacks = {}
+ManuscriptTexinfo:add_package("texinfo")
 
 --- Make a snippet for an environment.
 --

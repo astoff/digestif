@@ -59,9 +59,9 @@ describe("Packages", function()
 
   it("finds packages", function()
      local script = Manuscript{filename="one.tex", format="latex", files=cache}
-     assert.not_nil(script.modules["latex"])
-     assert.not_nil(script.modules["tikz.sty"])
-     assert.not_nil(script.modules["amsrefs.sty"])
+     assert.not_nil(script.packages["latex"])
+     assert.not_nil(script.packages["tikz.sty"])
+     assert.not_nil(script.packages["amsrefs.sty"])
      assert.not_nil(script.commands["tikz"])
   end)
   

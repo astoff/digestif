@@ -10,9 +10,12 @@ local ManuscriptConTeXt = util.class(Manuscript)
 
 ManuscriptConTeXt.parser = Parser()
 ManuscriptConTeXt.format = "context"
-
+ManuscriptConTeXt.packages = {}
+ManuscriptConTeXt.commands = {}
+ManuscriptConTeXt.environments = {}
 ManuscriptConTeXt.init_callbacks = {}
 ManuscriptConTeXt.scan_references_callbacks = {}
+ManuscriptConTeXt:add_package("context")
 
 --* ConTeXt-specific overrides
 
@@ -94,8 +97,8 @@ function ManuscriptConTeXt.init_callbacks.input(self, pos, cs)
   local template = self.commands[cs].filename or "?"
   for r in self:argument_items("file", pos, cs) do
     local f = format_filename_template(template, self:substring_stripped(r))
-    self:add_module(f)
-    if not self.modules[f] then
+    self:add_package(f)
+    if not self.packages[f] then
       f = path_join(path_split(self.filename), f)
       idx[#idx + 1] = {
         name = f,

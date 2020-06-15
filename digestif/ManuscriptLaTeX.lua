@@ -12,10 +12,12 @@ local ManuscriptLaTeX = util.class(Manuscript)
 
 ManuscriptLaTeX.parser = Parser()
 ManuscriptLaTeX.format = "latex"
-
-ManuscriptLaTeX.init_callbacks =
-   setmetatable({}, {__index = Manuscript.init_callbacks})
+ManuscriptLaTeX.packages = {}
+ManuscriptLaTeX.commands = {}
+ManuscriptLaTeX.environments = {}
+ManuscriptLaTeX.init_callbacks = {}
 ManuscriptLaTeX.scan_references_callbacks = {}
+ManuscriptLaTeX:add_package("latex")
 
 -- ¶ Snippets
 
@@ -164,8 +166,8 @@ function ManuscriptLaTeX.init_callbacks.input(self, pos, cs)
   local template = self.commands[cs].filename or "?"
   for r in self:argument_items(first_mand, pos, cs) do
     local f = format_filename_template(template, self:substring_stripped(r))
-    self:add_module(f)
-    if not self.modules[f] then
+    self:add_package(f)
+    if not self.packages[f] then
       f = path_join(path_split(self.filename), f)
       idx[#idx + 1] = {
         name = f,
