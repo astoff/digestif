@@ -409,7 +409,39 @@ local function find_file(path, name)
 end
 util.find_file = find_file
 
--- ¶ &c.
+--* URIs
+
+local Phex = R("09", "AF", "af")
+
+local percent_decode = util.replace(
+  P"%" * C(Phex * Phex),
+  function(s) return to_char(tonumber(s, 16)) end
+)
+
+local percent_encode = util.replace(
+  char - (R("09", "AZ", "az") + S"-._~/="),
+  function(s) return format("%%%X", to_byte(s)) end
+)
+
+local uri_patt = util.sequence(
+  C(R("AZ", "az")^1),
+  P":",
+  C(gobble_until("#")),
+  (P"#" * C(char^0))^-1
+)
+
+function util.parse_uri(uri)
+  local scheme, path, fragment = match(uri_patt, uri)
+  return scheme, path and percent_decode(path), fragment and percent_decode(fragment)
+end
+
+function util.make_uri(scheme, path, fragment)
+  local uri = scheme .. ":" .. percent_encode(path)
+  if fragment then uri = uri .. "#" .. percent_encode(fragment) end
+  return uri
+end
+
+--* &c.
 
 function util.log(msg, ...)
   if select("#", ...) > 0 then msg = msg:format(...) end

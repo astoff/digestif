@@ -18,6 +18,7 @@ local tex_format_table = setmetatable({}, {
 -- ¶ Convert LSP API objects to/from internal representations
 
 -- TODO: deal with weird path separators
+-- TODO: use util.parse_uri, etc.
 local function from_DocumentUri(str)
   str = str:match("^file://([^#%?]*)$")
     or error("Invalid or unsupported URI: " .. str)
