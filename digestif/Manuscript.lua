@@ -27,12 +27,12 @@ local Manuscript = util.class()
 -- argument.
 
 local formats = {
-  bibtex = "digestif.ManuscriptBibTeX",
-  context = "digestif.ManuscriptConTeXt",
-  latex = "digestif.ManuscriptLaTeX",
+  ["bibtex"]     = "digestif.ManuscriptBibTeX",
+  ["context"]    = "digestif.ManuscriptConTeXt",
+  ["latex"]      = "digestif.ManuscriptLaTeX",
   ["latex-prog"] = "digestif.ManuscriptLatexProg",
-  plain = "digestif.ManuscriptPlainTeX",
-  texinfo = "digestif.ManuscriptTexinfo"
+  ["plain"]      = "digestif.ManuscriptPlainTeX",
+  ["texinfo"]    = "digestif.ManuscriptTexinfo"
 }
 
 local function ManuscriptFactory(_, args)
@@ -43,9 +43,12 @@ local function ManuscriptFactory(_, args)
 end
 getmetatable(Manuscript).__call = ManuscriptFactory
 
-local function guess_format(filename)
-  if filename:match("%.bib$") then
+local function infer_format(path)
+  local ext = path:sub(-4)
+  if ext == ".bib" then
     return "bibtex"
+  elseif ext == ".sty" or ext == ".cls" then
+    return "latex-prog"
   end
 end
 
@@ -98,7 +101,7 @@ function Manuscript:__init(args)
       self.children[name] = Manuscript{
         filename = name,
         parent = self,
-        format = guess_format(name),
+        format = infer_format(name),
         files = files
       }
     end

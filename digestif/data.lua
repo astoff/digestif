@@ -1,30 +1,28 @@
 local lpeg = require "lpeg"
 local util = require "digestif.util"
 local config = require "digestif.config"
+
 local format = string.format
 local concat = table.concat
-
-local P = lpeg.P
-local C, R, S, Cc = lpeg.C, lpeg.R, lpeg.S, lpeg.Cc
-
-local path_join, path_split = util.path_join, util.path_split
-
-local data = {
-  loaded = {},
-  ctan_files = {},
-  ctan_packages = {},
-  ctan_paths = {}
-}
-
+local P, R, S = lpeg.P, lpeg.R, lpeg.S
+local C, Cc = lpeg.C, lpeg.Cc
 local tlmgr_command = config.tlmgr_command
+local nested_get, update = util.nested_get, util.update
+local path_split = util.path_split
+local find_file, try_read_file = util.find_file, util.try_read_file
+local eval_with_env = util.eval_with_env
+local log = util.log
+
+local ctan_files = {}
+local ctan_packages = {}
+local ctan_paths = {}
+local loaded_tags = {}
+local require_tags -- to be defined
 
 --* CTAN data
 
 if tlmgr_command then
   local pipe = io.popen(tlmgr_command .. " dump-tlpdb --local")
-  local ctan_files = data.ctan_files
-  local ctan_packages = data.ctan_packages
-  local ctan_paths = data.ctan_paths
   local nonblank = R"!z"
   local parse_line = util.matcher(
     util.choice(
@@ -91,7 +89,7 @@ if tlmgr_command then
             for _, v in ipairs(files.runfiles) do
               local path = parse_reloc_file(v)
               if path then
-                local _, basename = util.path_split(path)
+                local _, basename = path_split(path)
                 ctan_files[basename] = pkg
                 ctan_paths[basename] = path
               end
@@ -106,31 +104,31 @@ if tlmgr_command then
 end
 
 -- Generate tags from the user's TeX installation
-function data.generate(name)
-  local path = data.ctan_paths[name]
-  path = path and util.find_file(config.texmf_dirs, path)
-  if not path then return end
-  data.loaded[name] = {} -- TODO: this is to avoid loops, find a better way
-  local Manuscript = require "digestif.Manuscript"
-  local cache = require "digestif.Cache"()
-  local script = Manuscript{
-    filename = path,
-    format = "latex-prog",
-    files = cache
-  }
-  local ctan_data = data.ctan_files[name]
+
+local function infer_format(path)
+  local ext = path:sub(-4)
+  if ext == ".bib" then
+    return "bibtex"
+  elseif ext == ".sty" or ext == ".cls" then
+    return "latex-prog"
+  elseif ext == ".tex" and path:match("%Acontext%A") then
+    return --"context-prog" -- TODO: add this format
+  elseif ext == ".tex" then
+    return "latex-prog" -- TODO: should be plain-prog
+  end
+end
+
+local function tags_from_manuscript(script, ctan_data)
   local commands, environments, dependencies = {}, {}, {}
-  local pkg_tags = setmetatable(
-    {
-      name = name,
-      ctan_package = ctan_data.ctan_package,
+  local tags = {
       generated = true,
       dependencies = dependencies,
       commands = commands,
       environments = environments
-    },
-    {__index = ctan_data}
-  )
+  }
+  if ctan_data then
+    setmetatable(tags, {__index = ctan_data})
+  end
   for _, it in script:index_pairs("child") do
     local _, basename = path_split(it.name)
     dependencies[#dependencies+1] = basename
@@ -138,17 +136,36 @@ function data.generate(name)
   for _, it in script:index_pairs("newcommand") do
     commands[it.name] = {
       arguments = it.arguments,
-      package = pkg_tags
+      package = tags
     }
   end
   for _, it in script:index_pairs("newenvironment") do
     environments[it.name] = {
       arguments = it.arguments,
-      package = pkg_tags
+      package = tags
     }
   end
-  data.loaded[name] = pkg_tags
-  return pkg_tags
+  return tags
+end
+
+local function generate_tags(name)
+  local path = ctan_paths[name]
+  path = path and find_file(config.texmf_dirs, path)
+  if not path then return end
+  local texformat = infer_format(path)
+  if not texformat then return end
+  loaded_tags[name] = {} -- TODO: this is to avoid loops, find a better way
+  local Manuscript = require "digestif.Manuscript"
+  local cache = require "digestif.Cache"()
+  local script = Manuscript{
+    filename = path,
+    format = texformat,
+    files = cache
+  }
+  local ctan_data = ctan_files[name]
+  local tags = tags_from_manuscript(script, ctan_data)
+  loaded_tags[name] = tags
+  return tags
 end
 
 --* Digestif data
@@ -169,13 +186,13 @@ local xparse_patt = (P" "^0 * P"+"^-1 *
           / function (tok) return {type = "literal", literal = tok, optional = true} end
     + "g" * Cc{optional = true, delimiters = {"{", "}"}}))^0
 
-function data.signature(sig, ...)
+local function xparse_to_args(sig, ...)
    local args = {...}
    for i, arg in ipairs({xparse_patt:match(sig)}) do
       if type(args[i]) ~= "table" then
          args[i] = {meta = args[i] or "#" .. i}
       end
-      util.update(args[i], arg)
+      update(args[i], arg)
    end
    return args
 end
@@ -190,7 +207,7 @@ local function resolve_refs(tbl, seen)
       local path = ref_patt:match(v)
       if path then
         local t = ref_split(path)
-        tbl[k] = util.nested_get(data.require(t[1]), table.unpack(t, 2))
+        tbl[k] = nested_get(require_tags(t[1]), table.unpack(t, 2))
       end
     elseif type(v) == "table" and not seen[v] then
       seen[v] = true
@@ -199,21 +216,13 @@ local function resolve_refs(tbl, seen)
   end
 end
 
-local load_data_mt = {
-   __index = {
-      merge = util.merge,
-      data = data.require,
-      signature = data.signature
-   }
-}
-
-function data.load(name)
+local function load_tags(name)
   if name:find('..', 1, true) then return nil end -- unreasonable file name
-  local src = util.try_read_file(config.data_dirs, name .. ".tags")
+  local src = try_read_file(config.data_dirs, name .. ".tags")
   if not src then return nil end
-  local result, err = util.eval_with_env(src, load_data_mt)
+  local result, err = eval_with_env(src)
   if not result and config.verbose then
-    util.log("Error loading %s.tags: %s", name, err)
+    log("Error loading %s.tags: %s", name, err)
     return -- TODO: should throw an error?
   end
   for _, kind in ipairs{"commands", "environments"} do
@@ -221,32 +230,31 @@ function data.load(name)
       if type(cmd) == "table" then cmd.package = result end
     end
   end
-  local ctan_package =  data.ctan_packages[result.ctan_package] or data.ctan_files[name]
+  local ctan_package =  ctan_packages[result.ctan_package] or ctan_files[name]
   setmetatable(result, {__index = ctan_package})
-  data.loaded[name] = result
+  loaded_tags[name] = result
   resolve_refs(result)
   return result
 end
 
-function data.require(name)
-  return data.loaded[name] or data.load(name) or data.generate(name)
+require_tags = function(name)
+  return loaded_tags[name] or load_tags(name) or generate_tags(name)
 end
 
----
 -- Load all data files, and return them in a table.  This is intended
 -- for debugging and testing only, and depends on luafilesystem.
-function data.load_all()
+local function load_all_tags()
   local ok, lfs = pcall(require, "lfs")
   assert(ok, "Function data.load_all() need the luafilesystem library.")
   for _, data_dir in ipairs(config.data_dirs) do
     for path in lfs.dir(data_dir) do
       local pkg = path:match("(.*)%.tags")
       if pkg then
-        assert(data.require(pkg), "Couldn't load data file " .. path)
+        assert(require_tags(pkg), "Couldn't load data file " .. path)
       end
     end
   end
-  return data.loaded
+  return loaded_tags
 end
 
 --* User-readable documentation
@@ -291,12 +299,12 @@ local function get_info(uri)
       str = str:gsub(".-\n", "", 2) -- discard header line
       return str, path, fragment
     elseif config.verbose then
-      util.log("Error running info (%d)", exitc)
+      log("Error running info (%d)", exitc)
     end
   end
 end
 
-function data.generate_docstring(item, name)
+local function generate_docstring(item, name)
   local t = {}
   local pkg = item.package
   local details = item.details
@@ -312,7 +320,7 @@ function data.generate_docstring(item, name)
     t[#t+1] = "# Details\n"
     t[#t+1] = details
   elseif type(item_doc) == "string" and item_doc:match"^info:" then
-    str, node, subnode = get_info(item_doc)
+    local str, node, subnode = get_info(item_doc)
     if str then
       t[#t+1] = format("# Info: (%s)%s\n\n```\n%s```", node, subnode, str)
     end
@@ -328,4 +336,9 @@ function data.generate_docstring(item, name)
   return concat(t, "\n")
 end
 
-return data
+return {
+  require = require_tags,
+  load_all = load_all_tags,
+  generate_tags = generate_tags,
+  generate_docstring = generate_docstring
+}
