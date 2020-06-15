@@ -290,7 +290,7 @@ commands = {
    TeX = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/TeX",
       documentation = "texdoc:plain/impatient/book.pdf#page=118",
-      summary = "Produce the TeX logo."
+      summary = "Produce the TeX logo."
    },
    Theta = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/alpha",

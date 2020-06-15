@@ -11,7 +11,7 @@ data = {
 
 These commands begin a single line in a tabbed alignment. The only
 difference between `\+` and `\tabalign` is that `\+` is an outer
-macro—you can’t use it when TeX is reading tokens at high speed .
+macro—you can’t use it when TeX is reading tokens at high speed .
 
 If you place an ‘`&`’ at a position to the right of all existing tabs in
 a tabbing alignment, the ‘`&`’ establishes a new tab at that position.
@@ -23,47 +23,47 @@ a tabbing alignment, the ‘`&`’ establishes a new tab at that position.
 These commands produce various letters and ligatures from European
 alphabets. They are useful for occasional words and phrases in these
 languages—but if you need to typeset a large amount of text in a
-European language, you should probably be using a version of TeX adapted
+European language, you should probably be using a version of TeX adapted
 to that language.[1]
 
 You’ll need a space after these commands when you use them within a
-word, so that TeX will treat the following letters as part of the word
+word, so that TeX will treat the following letters as part of the word
 rather than as part of the command. You needn’t be in math mode to use
 these commands.
 
-[1] The TeX Users Group can provide you with information about European
+[1] The TeX Users Group can provide you with information about European
 language versions of TeX.
 ]],
    TeX = [[
-This command produces the TeX logo. Remember to follow it by `\!vs` or
+This command produces the TeX logo. Remember to follow it by `\!vs` or
 to enclose it in a group when you want a space after it.
 ]],
    abovedisplayshortskip = [[
-This parameter specifies the amount of vertical glue that TeX inserts
+This parameter specifies the amount of vertical glue that TeX inserts
 before a math display when the display starts to the right of where the
 previous line ends, i.e., when it does not visually overlap the previous
-line. Plain TeX sets `\abovedisplayshortskip` to `0pt plus3pt`. See
+line. Plain TeX sets `\abovedisplayshortskip` to `0pt plus3pt`. See
 pages 188–189 of *The TeXbook* for a more detailed explanation of this
 parameter.
 ]],
    abovedisplayskip = [[
-This parameter specifies the amount of vertical glue that TeX inserts
+This parameter specifies the amount of vertical glue that TeX inserts
 before a display when the display starts to the left of where the
 previous line ends, i.e., when it visually overlaps the previous line.
-Plain TeX sets `\abovedisplayskip` to `12pt plus3pt minus9pt`. See
+Plain TeX sets `\abovedisplayskip` to `12pt plus3pt minus9pt`. See
 pages 188–189 of *The TeXbook* for a more detailed explanation of this
 parameter.
 ]],
    accent = [[
 This command puts an accent over the character following this command.
 The accent is the character at position `charcode` in the current font.
-TeX assumes that the accent has been designed to fit over a character
+TeX assumes that the accent has been designed to fit over a character
 $1$ex high in the same font as the accent. If the character to be
-accented is taller or shorter, TeX adjusts the position accordingly. You
+accented is taller or shorter, TeX adjusts the position accordingly. You
 can change fonts between the accent and the next character, thus drawing
 the accent character and the character to be accented from different
 fonts. If the accent character isn’t really intended to be an accent,
-TeX won’t complain; it will just typeset something ridiculous.
+TeX won’t complain; it will just typeset something ridiculous.
 ]],
    active = [[
 This command contains the category code for an active character, namely,
@@ -75,12 +75,12 @@ the number $13$.
 
 These commands produce accent marks in math formulas. You’ll ordinarily
 need to leave a space after any one of them. A wide accent can be
-applied to a multicharacter subformula; TeX will center the accent over
+applied to a multicharacter subformula; TeX will center the accent over
 the subformula. The other accents are usefully applied only to a single
 character.
 ]],
    adjdemerits = [[
- This parameter specifies additional demerits that TeX attaches to a
+ This parameter specifies additional demerits that TeX attaches to a
 breakpoint between two adjacent lines that are “visually incompatible”.
 Such a pair of lines makes a paragraph appear uneven. Incompatibility is
 evaluated in terms of the tightness or looseness of lines:
@@ -100,7 +100,7 @@ next to a very loose one.
 
 Demerits are in units of badness squared, so you need to assign a rather
 large value to this parameter (in the thousands) for it to have any
-effect. Plain TeX sets `\adjdemerits` to $10000$.
+effect. Plain TeX sets `\adjdemerits` to $10000$.
 ]],
    advance = [[
 This command adds a compatible quantity to a register. For `glue` or
@@ -109,14 +109,14 @@ added. Any of the quantities can be negative. For purposes of these
 calculations (and other assignments as well), `glue` can be converted to
 a `dimen` by dropping the stretch and shrink, and a `dimen` can be
 converted to a `number` by taking its value in scaled points . You can
-omit the word `by` in these commands—TeX will understand them anyway.
+omit the word `by` in these commands—TeX will understand them anyway.
 ]],
    advancepageno = [[
 This command adds $1$ to the page number $n$ in `\pageno` if $n\ge0$ and
 subtracts $1$ from it if $n<0$.
 ]],
    afterassignment = [[
-When TeX encounters this command it saves `token` in a special place.
+When TeX encounters this command it saves `token` in a special place.
 After it next performs an assignment, it inserts `token` into the input
 and expands it. If you call `\afterassignment` more than once before an
 assignment, only the last call has any effect. One use of
@@ -127,7 +127,7 @@ See page 279 of *The TeXbook* for a precise description of the behavior
 of `\afterassignment`.
 ]],
    aftergroup = [[
-When TeX encounters this command during input, it saves `token`. After
+When TeX encounters this command during input, it saves `token`. After
 the end of the current group, it inserts `token` back into the input and
 expands it. If a group contains several `\aftergroup`s, the
 corresponding tokens are *all* inserted following the end of the group,
@@ -137,7 +137,7 @@ The example that follows shows how you can use `\aftergroup` to postpone
 processing a token that you generate within a conditional test.
 ]],
    allowbreak = [[
-This command tells TeX to allow a page break where one could not
+This command tells TeX to allow a page break where one could not
 ordinarily occur. `\allowbreak` can also be used in horizontal mode.
 ]],
    alpha = [[
@@ -152,7 +152,7 @@ ordinarily occur. `\allowbreak` can also be used in horizontal mode.
 
 These commands produce Greek letters suitable for mathematics. You can
 only use them within a math formula, so if you need a Greek letter
-within ordinary text you must enclose it in dollar signs (`$`). TeX does
+within ordinary text you must enclose it in dollar signs (`$`). TeX does
 not have commands for Greek letters that look like their roman
 counterparts, since you can get them by using those roman counterparts.
 For example, you can get a lowercase omicron in a formula by writing the
@@ -168,7 +168,7 @@ Don’t confuse the following letters:
 You can get slanted capital Greek letters by using the math italic
 (`\mit`) font.
 
-TeX treats Greek letters as ordinary symbols when it’s figuring how much
+TeX treats Greek letters as ordinary symbols when it’s figuring how much
 space to put around them.
 ]],
    arrowvert = [[
@@ -190,13 +190,13 @@ the `cmex10` math font.
 (⊇), `\supset` (⊃), `\vdash` (⊢)
 
 These commands produce the symbols for various relations. Relations are
-one of TeX’s classes of math symbols. TeX puts different amounts of
-space around different classes of math symbols. When TeX needs to break
+one of TeX’s classes of math symbols. TeX puts different amounts of
+space around different classes of math symbols. When TeX needs to break
 a line of text within a math formula, it will consider placing the break
 after a relation—but only if the relation is at the outermost level of
 the formula, i.e., not enclosed in a group.
 
-In addition to the commands listed here, TeX treats ‘`=\verb`’ and the
+In addition to the commands listed here, TeX treats ‘`=\verb`’ and the
 “arrow” commands as relations.
 
 Certain relations have more than one command that you can use to produce
@@ -212,26 +212,26 @@ them:
 ]],
    badness = [[
 This command yields the numerical value of the badness of the box
-(either horizontal or vertical) that TeX has most recently produced. If
+(either horizontal or vertical) that TeX has most recently produced. If
 the box was overfull, `\badness` will be $1000000$; in all other cases
 it will be between $0$ and $10000$.
 ]],
    baselineskip = [[
 `\baselineskip`, `\lineskiplimit`, `\lineskip`
 
-These three parameters jointly determine how much space TeX leaves
+These three parameters jointly determine how much space TeX leaves
 between consecutive boxes of an ordinary vertical list, e.g., the lines
 of a paragraph. This space is called “interline glue”. It is also
 inserted between the component boxes of a vbox constructed in internal
 vertical mode.
 
 In the usual case, when the boxes aren’t abnormally high or deep,
-TeX makes the distance from the baseline of one box to the baseline of
+TeX makes the distance from the baseline of one box to the baseline of
 the next one equal to `\baselineskip`. It does this by inserting
 interline glue equal to `\baselineskip` minus the depth of the upper box
 (as given by `\prevdepth`) and the height of the lower box. But if this
 interline glue would be less than `\lineskiplimit`, indicating that the
-two boxes are too close together, TeX inserts the `\lineskip` glue
+two boxes are too close together, TeX inserts the `\lineskip` glue
 instead.[1] See pages 79–80 of *The TeXbook* for a precise description.
 
 Note that `\baselineskip` and `\lineskip` measure *different things*:
@@ -245,13 +245,13 @@ You can obtain the effect of double spacing by doubling the value of
 `\baselineskip` at any point before the end of a paragraph affects the
 entire paragraph.
 
-[1] TeX actually accounts for the beginning of a vertical list by
+[1] TeX actually accounts for the beginning of a vertical list by
 setting `\prevdepth` to $-1000$pt and testing `\prevdepth` before
 *every* box. If `\prevdepth`$\>\le-1000$pt it does not insert any
 interline glue.
 ]],
    batchmode = [[
-This command tells TeX not to stop for errors and to suppress all
+This command tells TeX not to stop for errors and to suppress all
 further output to your terminal. Typing ‘`Q`’ or ‘`q`’ in response to an
 error message puts you into batch mode.
 ]],
@@ -261,7 +261,7 @@ error message puts you into batch mode.
 These two commands begin and end a group. A `\begingroup` does not match
 up with a right brace, nor an `\endgroup` with a left brace.
 
-TeX treats `\begingroup` and `\endgroup` like any other control sequence
+TeX treats `\begingroup` and `\endgroup` like any other control sequence
 when it’s scanning its input. In particular, you can define a macro that
 contains a `\begingroup` but not an `\endgroup`, and conversely.
 
@@ -278,18 +278,18 @@ left-justified. You can produce the `\par` that ends `argument` with a
 blank line.
 ]],
    belowdisplayshortskip = [[
-This parameter specifies the amount of vertical glue that TeX inserts
+This parameter specifies the amount of vertical glue that TeX inserts
 after a display when the display starts to the right of where the
 previous line ends, i.e., when it does not visually overlap the previous
-line. Plain TeX sets `\belowdisplayshortskip` to `7pt plus3pt minus4pt`.
+line. Plain TeX sets `\belowdisplayshortskip` to `7pt plus3pt minus4pt`.
 See pages 188–189 of *The TeXbook* for a more detailed explanation of
 this parameter.
 ]],
    belowdisplayskip = [[
-This parameter specifies the amount of vertical glue that TeX inserts
+This parameter specifies the amount of vertical glue that TeX inserts
 after a display when the display starts to the left of where the
 previous line ends, i.e., when it visually overlaps the previous line.
-Plain TeX sets `\belowdisplayskip` to `12pt plus3pt minus9pt`. See
+Plain TeX sets `\belowdisplayskip` to `12pt plus3pt minus9pt`. See
 pages 188–189 of *The TeXbook* for a more detailed explanation of this
 parameter.
 ]],
@@ -302,7 +302,7 @@ commands in a group, together with the text to be set in the selected
 font. Outside of a group a type style command is effective until the end
 of the document (unless you override it with another such command).
 
-[1] TeX does not provide predefined commands for changing just the point
+[1] TeX does not provide predefined commands for changing just the point
 size, e.g., `\eightpoint`. Supporting such commands would require a
 great number of fonts, most of which would never be used. Such commands
 were, however, used in typesetting *The TeXbook*.
@@ -312,7 +312,7 @@ were, however, used in typesetting *The TeXbook*.
 
 The left and right braces are commands that begin and end a group. The
 `\bgroup` and `\egroup` control sequences are equivalent to ‘`{`’ and
-‘`}`’, except that TeX treats `\bgroup` and `\egroup` like any other
+‘`}`’, except that TeX treats `\bgroup` and `\egroup` like any other
 control sequence when it’s scanning its input.
 
 `\bgroup` and `\egroup` can be useful when you’re defining paired
@@ -342,14 +342,14 @@ the class of the enlarged delimiter:
 
 -   `\bigm` produces a relation symbol.
 
-TeX uses the class of a symbol in order to decide how much space to put
+TeX uses the class of a symbol in order to decide how much space to put
 around that symbol.
 
 These commands, unlike `\left` and `\right`, do *not* define a group.
 ]],
    binoppenalty = [[
 This parameter specifies the penalty for breaking a math formula after a
-binary operator when the formula appears in a paragraph. Plain TeX sets
+binary operator when the formula appears in a paragraph. Plain TeX sets
 `\binoppenalty` to $700$.
 ]],
    bmod = [[
@@ -357,13 +357,13 @@ This command produces a binary operation for indicating a modulus within
 a formula.
 ]],
    boxmaxdepth = [[
-This parameter contains a dimension $D$. TeX will not construct a box
+This parameter contains a dimension $D$. TeX will not construct a box
 whose depth exceeds $D$. If you produce a box whose depth $d$ would
-exceed $D$, TeX will transfer the excess depth to the height of the box,
+exceed $D$, TeX will transfer the excess depth to the height of the box,
 effectively moving the reference point of the box down by $d-D$. If you
-set `\boxmaxdepth` to zero, TeX will line up a row of vboxes so that
+set `\boxmaxdepth` to zero, TeX will line up a row of vboxes so that
 their bottom boundaries all lie on the same horizontal line. Plain
-TeX sets `\boxmaxdepth` to `\maxdimen` , so `\boxmaxdepth` won’t affect
+TeX sets `\boxmaxdepth` to `\maxdimen` , so `\boxmaxdepth` won’t affect
 your boxes unless you change it.
 ]],
    ["break"] = [[
@@ -376,7 +376,7 @@ This parameter specifies the penalty for breaking a page just after a
 line that ends in a discretionary item (usually a hyphen).
 
 `\brokenpenalty` applies to page breaking, while `\hyphenpenalty`
-applies to line breaking. Plain TeX sets `\brokenpenalty` to $100$.
+applies to line breaking. Plain TeX sets `\brokenpenalty` to $100$.
 ]],
    c = [[
 `\H`, `\c`, `\d`, `\t`, `\u`, `\v`
@@ -387,7 +387,7 @@ need to leave a space after the ones denoted by a single letter ).
    cal = [[
 `\cal`, `\mit`, `\oldstyle`
 
-These commands cause TeX to typeset the following text in the specified
+These commands cause TeX to typeset the following text in the specified
 font. You can only use them in math mode. The `\mit` command is useful
 for producing slanted capital Greek letters. You can also use the
 commands given in “TeX for the Impatient”, Selecting fonts,selfont to
@@ -395,7 +395,7 @@ change fonts in math mode.
 ]],
    cases = [[
 This command produces the mathematical form that denotes a choice among
-several cases. Each case has two parts, separated by ‘`&`’. TeX treats
+several cases. Each case has two parts, separated by ‘`&`’. TeX treats
 the first part as a math formula and the second part as ordinary text.
 Each case must be followed by `\cr`.
 ]],
@@ -403,15 +403,15 @@ Each case must be followed by `\cr`.
 This table entry contains the category code of the character whose
 ASCII code is `charcode`. The category codes are listed on in “TeX for
 the Impatient”. By changing the category code of a character you can get
-TeX to treat that character differently.
+TeX to treat that character differently.
 ]],
    cdotp = [[
 `\cdotp` (·), `\ldotp`
 
 These two commands respectively produce a centered dot and a dot
-positioned on the baseline. They are valid only in math mode. TeX treats
+positioned on the baseline. They are valid only in math mode. TeX treats
 them as punctuation, putting no extra space in front of them but a
-little extra space after them. In contrast, TeX puts an equal amount of
+little extra space after them. In contrast, TeX puts an equal amount of
 space on both sides of a centered dot generated by the `\cdot` command.
 ]],
    centerline = [[
@@ -425,7 +425,7 @@ to apply one of these commands to several consecutive lines, you must
 apply it to each one individually. See in “TeX for the Impatient” for an
 alternate approach.
 
-Don’t use these commands within a paragraph—if you do, TeX probably
+Don’t use these commands within a paragraph—if you do, TeX probably
 won’t be able to break the paragraph into lines and will complain about
 an overfull hbox.
 ]],
@@ -445,25 +445,25 @@ main use is in applications such as typesetting computer programs in
 which the tab positions change from line to line.
 ]],
    closeout = [[
-This command tells TeX to close the output stream numbered `number`.
+This command tells TeX to close the output stream numbered `number`.
 i.e., end the association between the output stream and its file. The
 output stream with this number then becomes available for use with a
 different file. You should close an output stream once you’re finished
 using its file.
 
 A `\closeout` generates a whatsit that becomes part of a box. The
-`\closeout` does not take effect until TeX ships out that box to the
+`\closeout` does not take effect until TeX ships out that box to the
 .dvi file, unless you’ve preceded the `\closeout` with `\immediate`.
 ]],
    clubpenalty = [[
 This parameter specifies the penalty for breaking a page just after the
 first line of a paragraph. A line by itself at the bottom of a page is
-called a “club line”. Plain TeX sets `\clubpenalty` to $150$.
+called a “club line”. Plain TeX sets `\clubpenalty` to $150$.
 ]],
    colon = [[
 This command produces a colon punctation symbol. It is valid only in
 math mode. The difference between `\colon` and the colon character (`:`)
-is that ‘`:`’ is an operator, so TeX puts extra space to the left of it
+is that ‘`:`’ is an operator, so TeX puts extra space to the left of it
 whereas it doesn’t put extra space to the left of `\colon`.
 ]],
    copy = [[
@@ -480,8 +480,8 @@ with `\box` makes the register void.)
 
 These commands set the names of various mathematical functions in roman
 type, as is customary. If you apply a superscript or subscript to one of
-these commands, TeX will in most cases typeset it in the usual place. In
-display style, TeX typesets superscripts and subscripts on `\det`,
+these commands, TeX will in most cases typeset it in the usual place. In
+display style, TeX typesets superscripts and subscripts on `\det`,
 `\gcd`, `\inf`, `\lim`, `\liminf`, `\limsup`, `\max`, `\min`, `\Pr`, and
 `\sup` as though they were limits, i.e., directly above or directly
 below the function name.
@@ -503,12 +503,12 @@ are known not to have any conflicting usage.
 
 A `\count` register contains an integer, which can be either positive or
 negative. Integers can be as large as you’re ever likely to need them to
-be.[1] TeX uses count registers $0$–$9$ to keep track of the page number
+be.[1] TeX uses count registers $0$–$9$ to keep track of the page number
 (see page 119 of *The TeXbook*). `\count255` is the only count register
 available for use without a reservation.
 
 [1] Here’s the only exercise in this book: find out what’s the largest
-integer that TeX will accept.
+integer that TeX will accept.
 ]],
    countdef = [[
 `\countdef`, `\dimendef`, `\muskipdef`, `\skipdef`, `\toksdef`
@@ -522,11 +522,11 @@ the previous group are defined in terms of the commands in this group.
    cr = [[
 This command ends the preamble of a horizontal or vertical alignment, a
 row of a horizontal or tabbing alignment, or a column of a vertical
-alignment. You can cause TeX to take certain actions whenever it sees a
+alignment. You can cause TeX to take certain actions whenever it sees a
 `\cr` by setting the value of the `\everycr` parameter .
 ]],
    crcr = [[
-This command behaves just like `\cr`, except that TeX ignores it if it
+This command behaves just like `\cr`, except that TeX ignores it if it
 comes immediately after a `\cr` or a `\noalign`. Its main application is
 as a safety measure to avoid a misleading error message caused by a
 macro that expects an argument ending in `\cr`. If you put `\crcr` after
@@ -540,11 +540,11 @@ a way of synthesizing control sequences, including ones that you can’t
 normally write. `token list` can itself include control sequences; it is
 expanded in the same way as the replacement text of an `\edef`
 definition. If the final expansion yields anything that isn’t a
-character, TeX will complain. `\csname` goes from a list of tokens to a
+character, TeX will complain. `\csname` goes from a list of tokens to a
 control sequence; you can go the other way with `\string` .
 ]],
    day = [[
-TeX sets this parameter to the current day of the month. It is a number
+TeX sets this parameter to the current day of the month. It is a number
 between $1$ and $31$. `\day` is set at the beginning of your run (see
 the comments on `\time` above).
 ]],
@@ -553,13 +553,13 @@ This command produces three dots on a diagonal. Its most common use is
 to indicate repetition along the diagonal of a matrix.
 ]],
    deadcycles = [[
-This parameter contains the number of times that TeX has initiated the
+This parameter contains the number of times that TeX has initiated the
 output routine since the last time it did a `\shipout`.[1] If
-`\deadcycles` gets too big, you’ve probably gotten TeX into a loop,
+`\deadcycles` gets too big, you’ve probably gotten TeX into a loop,
 e.g., one where the page builder is trying the same page break over and
 over again.
 
-[1] More precisely, TeX sets `\deadcyles` to $0$ whenever it executes
+[1] More precisely, TeX sets `\deadcyles` to $0$ whenever it executes
 `\shipout` and increments it by $1$ whenever it executes `\output`.
 ]],
    def = [[
@@ -568,33 +568,33 @@ This command defines `control sequence` as a macro with the specified
 for a full explanation of how to write a macro definition.
 ]],
    defaulthyphenchar = [[
-When TeX reads the metrics file
+When TeX reads the metrics file
 
 for a font in response to a `\font` command, it sets the font’s
 `\hyphenchar` to `\defaulthyphenchar`. If the value of
 `\defaulthyphenchar` is not in the range $0$–$255$ when you load a font,
-TeX won’t hyphenate any words in that font unless you override the
-decision by setting the font’s `\hyphenchar` later on. Plain TeX sets
+TeX won’t hyphenate any words in that font unless you override the
+decision by setting the font’s `\hyphenchar` later on. Plain TeX sets
 `\defaulthyphenchar` to $45$, the ASCII code for ‘`-`’.
 ]],
    defaultskewchar = [[
-When TeX reads the metrics file
+When TeX reads the metrics file
 
 for a font in response to a `\font` command, it sets the font’s
 `\skewchar` to `\defaultskewchar`. If the value of `\defaultskewchar` is
-not in the range $0$–$255$, TeX does not assign any skew characters by
-default. Plain TeX sets `\defaultskewchar` to $-1$, and it’s usually
+not in the range $0$–$255$, TeX does not assign any skew characters by
+default. Plain TeX sets `\defaultskewchar` to $-1$, and it’s usually
 best to leave it there.
 ]],
    delcode = [[
 This table entry specifies the delimiter code for the input character
-whose ASCII code is `charcode`. The delimiter code tells TeX how to find
+whose ASCII code is `charcode`. The delimiter code tells TeX how to find
 the best output character to use for typesetting the indicated input
 character as a delimiter.
 
 `number` is normally written in hexadecimal notation. Suppose that
 `number` is the hexadecimal number $s_1s_2s_3\,
-l_1l_2l_3$. Then when the character is used as a delimiter, TeX takes
+l_1l_2l_3$. Then when the character is used as a delimiter, TeX takes
 the character to have small variant $s_1s_2s_3$ and large variant
 $l_1l_2l_3$. Here $s_1s_2s_3$ indicates the math character found in
 position $s_2s_3$ of family $s_1$, and similarly for $l_1l_2l_3$. This
@@ -605,10 +605,10 @@ is the same convention as the one used for `\mathcode`, except that
 This command produces a delimiter whose characteristics are given by
 `number`. `number` is normally written in hexadecimal notation. You can
 use the `\delimiter` command instead of a character in any context where
-TeX expects a delimiter (although the command is rarely used outside of
+TeX expects a delimiter (although the command is rarely used outside of
 a macro definition). Suppose that `number` is the hexadecimal number
 $cs_1s_2s_3
-l_1l_2l_3$. Then TeX takes the delimiter to have class $c$, small
+l_1l_2l_3$. Then TeX takes the delimiter to have class $c$, small
 variant $s_1s_2s_3$, and large variant $l_1l_2l_3$. Here $s_1s_2s_3$
 indicates the math character found in position $s_2s_3$ of family $s_1$,
 and similarly for $l_1l_2l_3$. This is the same convention as the one
@@ -616,32 +616,32 @@ used for `\mathcode`.
 ]],
    discretionary = [[
 This command specifies a “discretionary break”, namely, a place where
-TeX can break a line. It also tells TeX what text to put on either side
+TeX can break a line. It also tells TeX what text to put on either side
 of the break.
 
--   If TeX does not break there, it uses the `no-break text`.
+-   If TeX does not break there, it uses the `no-break text`.
 
--   If TeX does break there, it puts the `pre-break text` just before
+-   If TeX does break there, it puts the `pre-break text` just before
     the break and the `post-break text` just after the break.
 
-Just as with ``, TeX isn’t obligated to break a line at a discretionary
+Just as with ``, TeX isn’t obligated to break a line at a discretionary
 break. In fact, `` is ordinarily equivalent to
 `\discretionary!allowbreak{-}{}{}`.
 
-TeX sometimes inserts discretionary breaks on its own. For example, it
+TeX sometimes inserts discretionary breaks on its own. For example, it
 inserts `\discretionary!allowbreak{}{}{}` after an explicit hyphen or
 dash.
 ]],
    displayindent = [[
-This parameter specifies the space by which TeX indents a math display.
-TeX sets the value of `\displayindent` when it encounters the ‘`$$`’
+This parameter specifies the space by which TeX indents a math display.
+TeX sets the value of `\displayindent` when it encounters the ‘`$$`’
 that starts the display. Usually this initial value is zero, but if the
 paragraph shape indicates that the display should be shifted by an
-amount $s$, TeX will set `\displayindent` to $s$. See pages 188–189 of
+amount $s$, TeX will set `\displayindent` to $s$. See pages 188–189 of
 *The TeXbook* for a more detailed explanation of this parameter.
 ]],
    displaylimits = [[
-This command tells TeX to place limits above and below all operators
+This command tells TeX to place limits above and below all operators
 (including the integrals) if in display style, and after all operators
 if in text style.
 
@@ -651,12 +651,12 @@ If you specify more than one of `\limits`, `\nolimits`, and
    displaywidowpenalty = [[
 This parameter specifies the penalty for breaking a page just before the
 last line of a partial paragraph that immediately precedes a math
-display. Plain TeX sets `\displaywidowpenalty` to $50$.
+display. Plain TeX sets `\displaywidowpenalty` to $50$.
 ]],
    displaywidth = [[
-This parameter specifies the maximum width that TeX allows for a math
-display. If TeX cannot fit the display into a space of this width, it
-sets an overfull hbox and complains. TeX sets the value of
+This parameter specifies the maximum width that TeX allows for a math
+display. If TeX cannot fit the display into a space of this width, it
+sets an overfull hbox and complains. TeX sets the value of
 `\displaywidth` when it encounters the ‘`$$`’ that starts the display.
 This initial value is `\hsize` unless it’s overridden by changes to the
 paragraph shape. See pages 188–189 of *The TeXbook* for a more detailed
@@ -678,19 +678,19 @@ ordinary words, you should use `$\ldots$` instead. Since `\dots`
 includes its own space, you shouldn’t follow it by `\!vs`.
 ]],
    doublehyphendemerits = [[
- This parameter specifies additional demerits that TeX attaches to a
+ This parameter specifies additional demerits that TeX attaches to a
 breakpoint when that breakpoint leads to two consecutive lines that end
 in a hyphen. Increasing the value of this parameter has the effect of
-discouraging TeX from hyphenating two lines in a row. Demerits are in
+discouraging TeX from hyphenating two lines in a row. Demerits are in
 units of badness squared, so you need to assign a rather large value to
 this parameter (in the thousands) for it to have any effect. Plain
-TeX sets `\doublehyphendemerits` to $10000$.
+TeX sets `\doublehyphendemerits` to $10000$.
 ]],
    downbracefill = [[
 `\downbracefill`, `\upbracefill`
 
 These commands respectively produce upward-pointing and
-downward-pointing extensible horizontal braces. TeX will make the braces
+downward-pointing extensible horizontal braces. TeX will make the braces
 as wide as necessary. These commands are used in the definitions of
 `\overbrace` and `\underbrace` .
 ]],
@@ -698,19 +698,19 @@ as wide as necessary. These commands are used in the definitions of
 This command, which must not appear inside a group, dumps the contents
 of TeX’s memory to a format file. By using `virtex`, a special “virgin”
 form of TeX, you can then reload the format file at high speed and
-continue in the same state that TeX was in at the time of the dump.
+continue in the same state that TeX was in at the time of the dump.
 `\dump` also ends the run. Since `\dump` can only be used in `initex`,
 not in production forms of TeX, it is only useful to people who are
 installing TeX.
 ]],
    edef = [[
 This command defines a macro in the same general way as `\def`. The
-difference is that TeX expands the `replacement text` of an `\edef`
+difference is that TeX expands the `replacement text` of an `\edef`
 immediately (but still without executing anything). Thus any definitions
 within the `replacement text` are expanded, but assignments and commands
 that produce things such as boxes and glue are left as is. For example,
 an `` command within the `replacement text` of an `\edef` remains as a
-command and is not turned into a box as TeX is processing the
+command and is not turned into a box as TeX is processing the
 definition. It isn’t always obvious what’s expanded and what isn’t, but
 you’ll find a complete list of expandable control sequences on
 pages 212–215 of *The TeXbook*.
@@ -729,9 +729,9 @@ expand its replacement text.
 These commands force a page break at the current position and end the
 current paragraph. If you don’t precede them with `\vfil`,
 
-TeX will try to stretch out the page contents (and will probably
+TeX will try to stretch out the page contents (and will probably
 complain about an underfull vbox). The `\supereject` command, in
-addition, instructs the plain TeX output routine to force out any
+addition, instructs the plain TeX output routine to force out any
 leftover insertions,
 
 such as long footnotes, so that they are produced before any more input
@@ -743,14 +743,14 @@ This command introduces the “false” alternative of a conditional test.
 ]],
    emergencystretch = [[
 By setting this parameter to be greater than zero, you can make it
-easier for TeX to typeset your document without generating overfull
+easier for TeX to typeset your document without generating overfull
 hboxes.
 
 This is a better alternative than setting `\tolerance=10000`, since that
-tends to produce really ugly lines. If TeX can’t typeset a paragraph
+tends to produce really ugly lines. If TeX can’t typeset a paragraph
 without exceeding `\tolerance`, it will try again, adding
 `\emergencystretch` to the stretch of each line. The effect of the
-change is to scale down the badness of each line, enabling TeX to make
+change is to scale down the badness of each line, enabling TeX to make
 spaces wider than they would otherwise be and thus choose line breaks
 that are as good as possible under the circumstances.
 ]],
@@ -759,7 +759,7 @@ This command expands to no tokens at all. It differs from `\relax` in
 that it disappears after macro expansion.
 ]],
    ["end"] = [[
-This command tells TeX to produce the last page and end the job. It does
+This command tells TeX to produce the last page and end the job. It does
 not fill out the page, however, so it’s usually better to use `\bye`
 rather than `\end`.
 ]],
@@ -769,7 +769,7 @@ when you’ve redefined `\par` but still want access to the original
 definition of `\par`.
 ]],
    endinput = [[
-This command tells TeX to stop reading input from the current file when
+This command tells TeX to stop reading input from the current file when
 it next reaches the end of a line.
 ]],
    endinsert = [[
@@ -782,25 +782,25 @@ you’ve redefined `\cr` but still need access to the original definition.
 ]],
    endlinechar = [[
 This parameter contains the character code for the character that
-TeX appends to the end of each input line.
+TeX appends to the end of each input line.
 
 A value not in the range $0$–$255$ indicates that no character should be
-appended. Plain TeX leaves `\endlinechar` at `` `\^^M `` (the ASCII code
+appended. Plain TeX leaves `\endlinechar` at `` `\^^M `` (the ASCII code
 for ⟨return⟩).
 ]],
    enskip = [[
 `\enskip`, `\qquad`, `\quad`
 
 Each of these commands produces a glob of horizontal glue that can
-neither stretch nor shrink. TeX can break a line at such glue. The width
+neither stretch nor shrink. TeX can break a line at such glue. The width
 of these glues (which are relative to the current font) are as follows
-for `cmr10`, the default plain TeX font:
+for `cmr10`, the default plain TeX font:
 
 3pc
 ]],
    enspace = [[
 This command produces a kern whose width is one en (half of an em, see
-in “TeX for the Impatient”). TeX won’t break a line at an `\enspace`
+in “TeX for the Impatient”). TeX won’t break a line at an `\enspace`
 unless it’s followed by glue. In a bulleted list, the bullets are
 usually separated from the following text by an `\enspace`.
 ]],
@@ -835,7 +835,7 @@ the `\eqalignno` or `\leqalignno` command .
 These commands are valid only in display math mode.
 ]],
    errhelp = [[
-This parameter contains the token list that TeX displays when you ask
+This parameter contains the token list that TeX displays when you ask
 for help in response to an `\errmessage` command. We recommend that when
 you’re generating an error message with `\errmessage`, you set
 `\errhelp` to a string that describes the nature of the error and use
@@ -844,55 +844,55 @@ character to produce multiline messages.
 ]],
    errorcontextlines = [[
 This parameter determines the number of pairs of context lines, not
-counting the top and bottom pairs, that TeX prints when it encounters an
+counting the top and bottom pairs, that TeX prints when it encounters an
 error. By setting it to $0$ you can get rid of long error messages. You
 can still force out the full context by typing something like:
 
     I\errorcontextlines=100\oops
 
 in response to an error, since the undefined control sequence `\oops`
-will cause another error. Plain TeX sets `\errorcontextlines` to $5$.
+will cause another error. Plain TeX sets `\errorcontextlines` to $5$.
 ]],
    errorstopmode = [[
-This command tells TeX to stop for interaction whenever it finds an
+This command tells TeX to stop for interaction whenever it finds an
 error. This is the normal mode of operation.
 ]],
    escapechar = [[
-This parameter specifies the ASCII code of the character that TeX uses
+This parameter specifies the ASCII code of the character that TeX uses
 to represent the escape character
 
 when it’s converting a control sequence name to a sequence of character
 tokens. This conversion occurs when you use the `\string` command and
-also when TeX is producing diagnostic messages. The default value of the
+also when TeX is producing diagnostic messages. The default value of the
 escape character is $92$, the ASCII character code for a backslash. If
-`\escapechar` is not in the range $0$–$255$, TeX does not include an
+`\escapechar` is not in the range $0$–$255$, TeX does not include an
 escape character in the result of the conversion.
 ]],
    everycr = [[
-TeX expands `token list` whenever it executes a `\cr`—at the end of
+TeX expands `token list` whenever it executes a `\cr`—at the end of
 every preamble, at the end of every row of a horizontal alignment, and
 at the end of every column of a vertical alignment. The `\everycr`
-commands are expanded just after the `\cr`. Thus you can cause TeX to
+commands are expanded just after the `\cr`. Thus you can cause TeX to
 execute certain commands at the end of a preamble, row, or column by
 assigning a list of those commands to `\everycr`.
 
 The `\everycr` tokens shouldn’t include any commands other than
 `\noalign`. That’s because the `\everycr` tokens will reappear after the
 last `\cr` of the alignment. A command other than `\noalign` will then
-make TeX think that it’s starting a new row or column. TeX will complain
+make TeX think that it’s starting a new row or column. TeX will complain
 about a missing `\cr`, insert a `\cr`, insert the `\everycr` tokens
 again, and repeat these actions indefinitely.
 ]],
    everyhbox = [[
 `\everyhbox`, `\everyvbox`
 
-These parameters contain token lists that TeX expands at the start of
+These parameters contain token lists that TeX expands at the start of
 every hbox or vbox that it constructs. Any items resulting from the
 expansion then become the beginning of the list of items for the box. By
 default these token lists are empty.
 ]],
    everyjob = [[
-This parameter contains a token list that TeX expands at the start of
+This parameter contains a token list that TeX expands at the start of
 every job. Because an assignment to `\everyjob` cannot affect the
 current run (by the time you’ve done the assignment it’s already too
 late), it is only useful to people who are preparing format files.
@@ -900,7 +900,7 @@ late), it is only useful to people who are preparing format files.
    everymath = [[
 `\everydisplay`, `\everymath`
 
-These parameters specify token lists that TeX inserts at the start of
+These parameters specify token lists that TeX inserts at the start of
 every text math or display math formula, respectively. You can take
 special actions at the start of each math formula by assigning those
 actions to `\everymath` or `\everydisplay`. Don’t forget that if you
@@ -908,20 +908,20 @@ want both kinds of formulas to be affected, you need to set *both*
 parameters.
 ]],
    everypar = [[
-TeX performs the commands in `token list` whenever it enters horizontal
+TeX performs the commands in `token list` whenever it enters horizontal
 mode, e.g., when it starts a paragraph. By default `\everypar` is empty,
 but you can take extra actions at the start of every paragraph by
 putting the commands for those actions into a token list and assigning
 that token list to `\everypar`.
 ]],
    exhyphenpenalty = [[
-This parameter specifies the penalty that TeX attaches to a breakpoint
+This parameter specifies the penalty that TeX attaches to a breakpoint
 at an explicit hyphen such as the one in “helter-skelter”. Increasing
-this parameter has the effect of discouraging TeX from ending a line at
-an explicit hyphen. Plain TeX sets `\exhyphenpenalty` to $50$.
+this parameter has the effect of discouraging TeX from ending a line at
+an explicit hyphen. Plain TeX sets `\exhyphenpenalty` to $50$.
 ]],
    expandafter = [[
-This command tells TeX to expand `token_1` according to its rules for
+This command tells TeX to expand `token_1` according to its rules for
 macro expansion *after* it has expanded `token_2` by one level. It’s
 useful when `token_1` is something like ‘`{`’
 
@@ -929,54 +929,54 @@ or `\string` that inhibits expansion of `token_2`, but you want to
 expand `token_2` nevertheless.
 ]],
    fam = [[
-When TeX is in math mode, it ordinarily typesets a character using the
+When TeX is in math mode, it ordinarily typesets a character using the
 font family given in its mathcode.
 
-However, when TeX is in math mode and encounters a character whose class
+However, when TeX is in math mode and encounters a character whose class
 is $7$ (Variable), it typesets that character using the font family
 given by the value of `\fam`, provided that the value of `\fam` is
 between $0$ and $15$. If the value of `\fam` isn’t in that range,
-TeX uses the family in the character’s mathcode as in the ordinary case.
-TeX sets `\fam` to $-1$ whenever it enters math mode. Outside of math
+TeX uses the family in the character’s mathcode as in the ordinary case.
+TeX sets `\fam` to $-1$ whenever it enters math mode. Outside of math
 mode, `\fam` has no effect.
 
-By assigning a value to `\fam` you can change the way that TeX typesets
+By assigning a value to `\fam` you can change the way that TeX typesets
 ordinary characters such as variables. For instance, by setting `\fam`
-to `\ttfam`, you cause TeX to typeset variables using a typewriter font.
-Plain TeX defines `` as a macro that, among other things, sets `\fam` to
+to `\ttfam`, you cause TeX to typeset variables using a typewriter font.
+Plain TeX defines `` as a macro that, among other things, sets `\fam` to
 `\ttfam`.
 ]],
    fi = [[
 This command ends the text of a conditional test.
 ]],
    filbreak = [[
-This command provides a kind of conditional page break. It tells TeX to
+This command provides a kind of conditional page break. It tells TeX to
 break the page—but not if the text up to a later `\filbreak` also fits
 on the same page. By enclosing a paragraph in a pair of `\filbreak`s,
-you can ensure that TeX will keep a paragraph on a single page if it
+you can ensure that TeX will keep a paragraph on a single page if it
 can. You should not use `\filbreak` within a paragraph, since it forces
-TeX into vertical mode and thus ends the paragraph. See in “TeX for the
+TeX into vertical mode and thus ends the paragraph. See in “TeX for the
 Impatient” for more advice on this subject.
 ]],
    finalhyphendemerits = [[
- This parameter specifies additional demerits that TeX attaches to a
+ This parameter specifies additional demerits that TeX attaches to a
 breakpoint that causes the next to last line of a paragraph to end with
 a hyphen. Such a hyphen is generally considered to be unaesthetic
 because of the possible blank space from a short last line beneath it.
 Increasing the value of this parameter has the effect of discouraging
-TeX from ending the next to the last line with a hyphen. Demerits are in
+TeX from ending the next to the last line with a hyphen. Demerits are in
 units of badness squared, so you need to assign a rather large value to
 this parameter (in the thousands) for it to have any effect. Plain
-TeX sets `\finalhyphendemerits` to $5000$.
+TeX sets `\finalhyphendemerits` to $5000$.
 ]],
    firstmark = [[
 `\botmark`, `\firstmark`, `\topmark`
 
 These commands expand to the mark text in an item generated by an
 earlier `\mark` command. The mark text has the form of a token list.
-TeX sets the values of these commands when it finishes placing the
+TeX sets the values of these commands when it finishes placing the
 contents of a page into `\box255`, just before calling the output
-routine as part of its page breaking actions. TeX determines these
+routine as part of its page breaking actions. TeX determines these
 values as follows:
 
 -   `\firstmark` contains the tokens of the first mark on the page.
@@ -988,7 +988,7 @@ values as follows:
     page, i.e., the `\botmark` of the previous page. It is empty if no
     marks preceded the page.
 
-If a page has no marks on it, TeX will set `\firstmark` and `\botmark`
+If a page has no marks on it, TeX will set `\firstmark` and `\botmark`
 to the same mark as `\topmark`, i.e., the most recent preceding mark.
 The table at the bottom of page 258 of *The TeXbook* illustrates the
 relation among `\firstmark`, `\botmark`, and `\topmark`.
@@ -998,30 +998,30 @@ relation among `\firstmark`, `\botmark`, and `\topmark`.
 `\sevenrm`, `\sevensy`, `\tenbf`, `\tenex`, `\tenit`, `\teni`, `\tenrm`,
 `\tensl`, `\tensy`, `\tentt`
 
-These commands cause TeX to typeset the following text in the specified
+These commands cause TeX to typeset the following text in the specified
 font. Normally you would enclose one of these font-selecting commands in
 a group, together with the text to be set in the selected font. Outside
 of a group a font-selecting command is effective until the end of the
 document (unless you override it with another such command).
 ]],
    floatingpenalty = [[
-This parameter specifies the penalty that TeX adds to `\insertpenalties`
+This parameter specifies the penalty that TeX adds to `\insertpenalties`
 
 when the page builder is adding an insertion to the current page and
 discovers that a previous insertion of the same kind on this page has
-been split, leaving part of it for subsequent pages. Plain TeX leaves
+been split, leaving part of it for subsequent pages. Plain TeX leaves
 `\floatingpenalty` at $0$.
 ]],
    fmtname = [[
 `\fmtname`, `\fmtversion`
 
-These commands produce the name and version number of the TeX format,
+These commands produce the name and version number of the TeX format,
 e.g., plain TeX or LaTeX, that you’re using.
 ]],
    folio = [[
 This command produces the current page number, whose value is the number
-$n$ contained in `\pageno`. If $n\ge0$, TeX produces $n$ as a decimal
-number, while if $n<0$, TeX produces $-n$ in lowercase roman numerals.
+$n$ contained in `\pageno`. If $n\ge0$, TeX produces $n$ as a decimal
+number, while if $n<0$, TeX produces $-n$ in lowercase roman numerals.
 ]],
    font = [[
 Used alone, the `\font` control sequence designates the current font.
@@ -1035,7 +1035,7 @@ forms has two effects:
 1.  It defines `control sequence` as a name that selects the font
     `fontname`, possibly magnified (see below).
 
-2.  It causes TeX to load the font metrics file (.tfm file) for
+2.  It causes TeX to load the font metrics file (.tfm file) for
     `fontname`.
 
 The name of a font file usually indicates its design size. For example,
@@ -1067,13 +1067,13 @@ These parameters specify various dimensions associated with the font
 named by the control sequence `font` (as distinguished from the
 `fontname` that names the font files). Values of these parameters are
 specified in the metrics file for `font`, but you can retrieve or change
-their values during a TeX run. The numbers and meanings of the
+their values during a TeX run. The numbers and meanings of the
 parameters are:
 
-TeX uses the slant per point for positioning accents. It uses the
+TeX uses the slant per point for positioning accents. It uses the
 interword parameters for producing interword spaces ) and the extra
 space parameter for the additional space after a period). The values of
-these parameters for the plain TeX fonts are enumerated on page 433 of
+these parameters for the plain TeX fonts are enumerated on page 433 of
 *The TeXbook*. Math symbol fonts have $15$ additional parameters, which
 we won’t discuss here.
 
@@ -1115,23 +1115,23 @@ footnote to appear on the same page as its reference mark.
    frenchspacing = [[
 `\frenchspacing`, `\nonfrenchspacing`
 
-TeX normally adjusts the spacing between words to account for
+TeX normally adjusts the spacing between words to account for
 punctuation marks. For example, it inserts extra space at the end of a
 sentence and adds some stretch to the glue following any punctuation
-mark there. The `\frenchspacing` command tells TeX to make the interword
+mark there. The `\frenchspacing` command tells TeX to make the interword
 spacing independent of punctuation, while the `\nonfrenchspacing`
-command tells TeX to use its normal spacing rules. If you don’t specify
+command tells TeX to use its normal spacing rules. If you don’t specify
 `\frenchspacing`, you’ll get TeX’s normal spacing.
 
 See in “TeX for the Impatient” for advice on how to control TeX’s
 treatment of punctuation at the end of sentences.
 ]],
    futurelet = [[
-This command tells TeX to make `token_2` the meaning of
+This command tells TeX to make `token_2` the meaning of
 `control sequence` (as would be done with `\let`), and then to process
 `token_1` and `token_2` normally. `\futurelet` is useful at the end of
 macro definitions because it gives you a way of looking beyond the token
-that TeX is about to process before it processes it.
+that TeX is about to process before it processes it.
 ]],
    gdef = [[
 This command is equivalent to `\global\def`.
@@ -1143,7 +1143,7 @@ it becomes effective independent of group boundaries. You can apply a
 macro definition or a register assignment.
 ]],
    globaldefs = [[
-This parameter controls whether or not TeX takes definitions and other
+This parameter controls whether or not TeX takes definitions and other
 assignments to be global:
 
 -   If `\globaldefs` is zero (as it is by default), a definition is
@@ -1158,16 +1158,16 @@ assignments to be global:
     ignored.
 ]],
    goodbreak = [[
-This command ends a paragraph and also indicates to TeX that this is a
+This command ends a paragraph and also indicates to TeX that this is a
 good place to break the page.
 ]],
    halign = [[
 This command produces a horizontal alignment consisting of a sequence of
 rows, where each row in turn contains a sequence of column entries.
-TeX adjusts the widths of the column entries to accommodate the widest
+TeX adjusts the widths of the column entries to accommodate the widest
 one in each column.
 
-A horizontal alignment can only appear when TeX is in a vertical mode.
+A horizontal alignment can only appear when TeX is in a vertical mode.
 We recommend that you first study alignments in general before you
 attempt to use this command.
 
@@ -1176,16 +1176,16 @@ The preamble, which describes the layout of the rows that follow,
 consists of a sequence of column templates, separated by ‘`&`’ and ended
 by `\cr`. Each row consists of a sequence of column entries, also
 separated by ‘`&`’ and ended by `\cr`. Within a template, ‘`#`’
-indicates where TeX should insert the corresponding text of a column
+indicates where TeX should insert the corresponding text of a column
 entry. In contrast, `\settabs` uses a fixed implicit template of ‘`#`’,
 i.e., it just inserts the text as is.
 
-TeX typesets each column entry in restricted horizontal mode, i.e., as
+TeX typesets each column entry in restricted horizontal mode, i.e., as
 the contents of an hbox, and implicitly encloses it in a group.
 
-The `to` form of this command instructs TeX to make the width of the
+The `to` form of this command instructs TeX to make the width of the
 alignment be `dimen`, adjusting the space between columns as necessary.
-The `spread` form of this command instructs TeX to make the alignment
+The `spread` form of this command instructs TeX to make the alignment
 wider by `dimen` than its natural width. These forms are like the
 corresponding forms of `` .
 
@@ -1202,7 +1202,7 @@ indentation with ``), the entire paragraph appears to be indented by
 `\hangafter`, `\hangindent`
 
 These two parameters jointly specify “hanging indentation” for a
-paragraph. The hanging indentation indicates to TeX that certain lines
+paragraph. The hanging indentation indicates to TeX that certain lines
 of the paragraph should be indented and the remaining lines should have
 their normal width.
 
@@ -1220,7 +1220,7 @@ or on the right:
 
 When you specify hanging indentation, it applies only to the next
 paragraph (if you’re in vertical mode) or to the current paragraph (if
-you’re in horizontal mode). TeX uses the values of `\hangafter` and
+you’re in horizontal mode). TeX uses the values of `\hangafter` and
 `\hangindent` at the end of a paragraph, when it breaks that paragraph
 into lines.
 
@@ -1231,7 +1231,7 @@ you want to typeset a sequence of paragraphs with hanging indentation,
 use `\everypar`.
 
 If you specify `\hangafter` and `\hangindent` as well as `\parshape`,
-TeX ignores the `\hangafter` and `\hangindent`.
+TeX ignores the `\hangafter` and `\hangindent`.
 ]],
    hbadness = [[
 `\hbadness`, `\vbadness`
@@ -1239,24 +1239,24 @@ TeX ignores the `\hangafter` and `\hangindent`.
 These parameters specify the thresholds of horizontal and vertical
 badness for reporting underfull or overfull boxes. `\hbadness` applies
 to hboxes and `\vbadness` applies to vboxes. If the badness of a
-constructed box exceeds the threshold, TeX will report an error. If you
-raise the thresholds (the plain TeX defaults are both $1000$), TeX will
+constructed box exceeds the threshold, TeX will report an error. If you
+raise the thresholds (the plain TeX defaults are both $1000$), TeX will
 be less likely to complain. Note that the settings of `\hbadness` and
 `\vbadness` have no effect on the appearance of your typeset document;
 they only affect the error messages that you get. See page 302 of *The
-TeXbook* for a precise description of how TeX decides when to complain
+TeXbook* for a precise description of how TeX decides when to complain
 about an overfull or underfull box.
 ]],
    hbox = [[
 This command produces an hbox (horizontal box) containing
 `horizontal mode material`. The braces around `horizontal mode material`
-define a group. TeX doesn’t break the `horizontal mode material` into
+define a group. TeX doesn’t break the `horizontal mode material` into
 lines, since it’s in restricted horizontal mode when it’s assembling the
-box. TeX won’t change the size of the box once it’s been produced.
+box. TeX won’t change the size of the box once it’s been produced.
 
 `` is often useful when you want to keep some text all on one line. If
-your use of `` prevents TeX from breaking lines in an acceptable way,
-TeX will complain about an overfull hbox.
+your use of `` prevents TeX from breaking lines in an acceptable way,
+TeX will complain about an overfull hbox.
 
 The width of the hbox depends on the arguments to ``:
 
@@ -1306,8 +1306,8 @@ effect as `\hfil` and `\vfil`.
 `\hfuzz`, `\vfuzz`
 
 These parameters specify the amount that a box can exceed its natural
-size before TeX considers it to be overfull. `\hfuzz` applies to hboxes
-and `\vfuzz` applies to vboxes. Plain TeX sets both parameters to
+size before TeX considers it to be overfull. `\hfuzz` applies to hboxes
+and `\vfuzz` applies to vboxes. Plain TeX sets both parameters to
 `0.1pt`.
 ]],
    hglue = [[
@@ -1321,7 +1321,7 @@ at the top of a page, e.g., above a title on the first page of a
 document, but `\topglue` (next) is usually better for this purpose.
 ]],
    hidewidth = [[
-This command tells TeX to ignore the width of the next column entry in a
+This command tells TeX to ignore the width of the next column entry in a
 horizontal alignment. It’s useful when you have an entry that is longer
 than most of the others in the same column, and you’d rather have that
 entry stick out of the column than make all the entries in the column
@@ -1332,22 +1332,22 @@ entry sticks out to the right.
    hoffset = [[
 `\hoffset`, `\voffset`
 
-TeX normally takes the “origin” of a page, that is, the point where it
+TeX normally takes the “origin” of a page, that is, the point where it
 starts printing, as being one inch down from the top of the page and one
 inch to the right of the left end of the page.[1] The values of
 `\hoffset` and `\voffset` give the horizontal and vertical offset of the
 actual origin from this point. Thus if `\hoffset` and `\voffset` are
-both zero, TeX uses its normal origin.
+both zero, TeX uses its normal origin.
 
-[1] TeX itself is indifferent to where the origin of the page is, but
+[1] TeX itself is indifferent to where the origin of the page is, but
 this information has to be built into the device drivers
 
 that convert .dvi files into printable form so that different devices
 will yield the same results.
 ]],
    holdinginserts = [[
-If this parameter is greater than $0$ when TeX is processing a page
-break, TeX will refrain from processing insertions. Setting this
+If this parameter is greater than $0$ when TeX is processing a page
+break, TeX will refrain from processing insertions. Setting this
 parameter to $1$ can be useful when you’re writing an output routine
 that needs to reprocess the contents of the page, e.g., an output
 routine that uses a value of `\vsize` different from the one used by the
@@ -1372,7 +1372,7 @@ horizontal or vertical dimension.
 
 The `\hrule` command produces a horizontal rule; the `\vrule` command
 produces a vertical rule. You can specify any or all of the width,
-height, and depth of the rule—TeX supplies default values for those that
+height, and depth of the rule—TeX supplies default values for those that
 you omit. You can give the dimensions of the rule in any order; the
 forms listed above show just two of the possible combinations. You can
 even give a dimension of a given kind more than once—if you do, the last
@@ -1389,7 +1389,7 @@ If you don’t specify the width of a vertical rule, it defaults to
 rule, the rule is extended to the boundary of the innermost box or
 alignment that contains the rule.
 
-TeX treats a horizontal rule as an inherently vertical item and a
+TeX treats a horizontal rule as an inherently vertical item and a
 vertical rule as an inherently horizontal item. Thus a horizontal rule
 is legal only in a vertical mode, while a vertical rule is legal only in
 a horizontal mode.
@@ -1436,10 +1436,10 @@ business; if you want to be adventurous you can learn all about it from
 pages 388–389 of *The TeXbook*.
 ]],
    hyphenchar = [[
-TeX doesn’t necessarily use the ‘-’ character at hyphenation points.
+TeX doesn’t necessarily use the ‘-’ character at hyphenation points.
 Instead, it uses the `\hyphenchar` of the current font, which is usually
 ‘-’ but need not be. If a font has a negative `\hyphenchar` value,
-TeX won’t hyphenate words in that font.
+TeX won’t hyphenate words in that font.
 
 Note that `font` is a control sequence that names a font, not a
 `fontname` that names font files. Beware: an assignment to `\hyphenchar`
@@ -1448,12 +1448,12 @@ is *not* undone at the end of a group. If you want to change
 value explicitly.
 ]],
    hyphenpenalty = [[
-This parameter specifies the penalty that TeX attaches to a breakpoint
+This parameter specifies the penalty that TeX attaches to a breakpoint
 at an implicit hyphen. Implicit hyphens can come from TeX’s hyphenation
 dictionary or from discretionary hyphens that you’ve inserted with `` .
 
-Increasing this parameter has the effect of discouraging TeX from
-hyphenating words. Plain TeX sets `\hyphenpenalty` to $50$.
+Increasing this parameter has the effect of discouraging TeX from
+hyphenating words. Plain TeX sets `\hyphenpenalty` to $50$.
 ]],
    i = [[
 `\i` (ı), `\j` (ȷ)
@@ -1472,7 +1472,7 @@ This command behaves just like `\halign`, except that it first sets the
    ["if"] = [[
 =1em This command tests if `token_1` and `token_2` have the same
 character code, independent of their category codes. Before performing
-the test, TeX expands tokens following the `\if` until it obtains two
+the test, TeX expands tokens following the `\if` until it obtains two
 tokens that can’t be expanded further. These two tokens become `token_1`
 and `token_2`. The expansion includes replacing a control sequence
 `\let` equal to a character token by that character token. A control
@@ -1481,7 +1481,7 @@ code $256$.
 ]],
    ifcat = [[
 This command tests if `token_1` and `token_2` have the same category
-code. Before performing the test, TeX expands tokens following the
+code. Before performing the test, TeX expands tokens following the
 `\ifcat` until it obtains two tokens that can’t be expanded further.
 These two tokens become `token_1` and `token_2`. The expansion includes
 replacing a control sequence `\let` equal to a character token by that
@@ -1492,7 +1492,7 @@ considered to have category code $16$.
 This command tests if `dimen_1` and `dimen_2` satisfy `relation`, which
 must be either ‘`<`’, ‘`=`’, or ‘`>`’. The dimensions can be constants
 such as `1in`, dimension registers such as `\dimen6`, or dimension
-parameters such as `\parindent`. Before performing the test, TeX expands
+parameters such as `\parindent`. Before performing the test, TeX expands
 tokens following the `\ifdim` until it obtains a sequence of tokens
 having the form `dimen_1` `relation` `dimen_2`, followed by a token that
 can’t be part of `dimen_2`.
@@ -1518,16 +1518,16 @@ These commands test the contents of the box register numbered
    ifhmode = [[
 `\ifhmode`, `\ifinner`, `\ifmmode`, `\ifvmode`
 
-These commands test what mode TeX is in:
+These commands test what mode TeX is in:
 
--   `\ifhmode` is true if TeX is in ordinary or restricted horizontal
+-   `\ifhmode` is true if TeX is in ordinary or restricted horizontal
     mode.
 
--   `\ifvmode` is true if TeX is in ordinary or internal vertical mode.
+-   `\ifvmode` is true if TeX is in ordinary or internal vertical mode.
 
--   `\ifmmode` is true if TeX is in text math or display math mode.
+-   `\ifmmode` is true if TeX is in text math or display math mode.
 
--   `\ifinner` is true if TeX is in an “internal” mode: restricted
+-   `\ifinner` is true if TeX is in an “internal” mode: restricted
     horizontal, internal vertical, or text math.
 ]],
    ifnum = [[
@@ -1535,13 +1535,13 @@ This command tests if `number_1` and `number_2` satisfy `relation`,
 which must be either ‘`<`’, ‘`=`’, or ‘`>`’. The numbers can be
 constants such as `127`, count registers such as `\pageno` or
 `\count22`, or numerical parameters such as `\hbadness`. Before
-performing the test, TeX expands tokens following the `\ifnum` until it
+performing the test, TeX expands tokens following the `\ifnum` until it
 obtains a sequence of tokens having the form `number_1` `relation`
 `number_2`, followed by a token that can’t be part of `number_2`.
 ]],
    ifodd = [[
 This command tests if `number` is odd. Before performing the test,
-TeX expands tokens following the `\ifodd` until it obtains a sequence of
+TeX expands tokens following the `\ifodd` until it obtains a sequence of
 tokens having the form `number`, followed by a token that can’t be part
 of `number`.
 ]],
@@ -1567,7 +1567,7 @@ There are three cases:
         characters) and their character codes and category codes agree,
         or
 
-    2.  both tokens refer to the same TeX command, font, etc.
+    2.  both tokens refer to the same TeX command, font, etc.
 
 3.  If both tokens are macros, the tokens agree if:
 
@@ -1581,7 +1581,7 @@ There are three cases:
 This test is generally more useful than `\if`.
 ]],
    ignorespaces = [[
-This command tells TeX to read and expand tokens until it finds one that
+This command tells TeX to read and expand tokens until it finds one that
 is not a space token, ignoring any space tokens that it finds on the
 way. `\ignorespaces` is often useful at the end of a macro as a way of
 making the macro insensitive to any spaces or ends of line that might
@@ -1591,18 +1591,18 @@ a `\par` token, however.)
    immediate = [[
 This command should precede an `\openout`, `\closeout`, or `\write`.
 
-It tells TeX to perform the specified file operation without delay.
+It tells TeX to perform the specified file operation without delay.
 ]],
    indent = [[
-If TeX is in vertical mode, as it is after ending a paragraph, this
-command inserts the `\parskip` interparagraph glue, puts TeX into
+If TeX is in vertical mode, as it is after ending a paragraph, this
+command inserts the `\parskip` interparagraph glue, puts TeX into
 horizontal mode, starts a paragraph, and indents that paragraph by
-`\parindent`. If TeX is already in horizontal mode, this command merely
+`\parindent`. If TeX is already in horizontal mode, this command merely
 produces a blank space of width `\parindent`. Two ``s in a row produce
 two indentations.
 
-As the example below shows, an `` at a point where TeX would start a
-paragraph anyway is redundant. When TeX is in vertical mode and sees a
+As the example below shows, an `` at a point where TeX would start a
+paragraph anyway is redundant. When TeX is in vertical mode and sees a
 letter or some other inherently horizontal command, it starts a
 paragraph by switching to horizontal mode, doing an ``, and processing
 the horizontal command.
@@ -1638,8 +1638,8 @@ delimiters. These symbols can be produced in larger sizes by using
 `\bigm` et al.
 ]],
    input = [[
-This command tells TeX to read its input from file `filename`. When that
-file is exhausted, TeX returns to reading from its previous input
+This command tells TeX to read its input from file `filename`. When that
+file is exhausted, TeX returns to reading from its previous input
 source. You can nest input files to any level you like (within reason).
 
 When you’re typesetting a large document, it’s usually a good idea to
@@ -1650,10 +1650,10 @@ practice to put all of your macro definitions into a separate file and
 summon that file with an `\input` command as the first action in your
 main file.
 
-TeX uses different rules for scanning file names than it does for
+TeX uses different rules for scanning file names than it does for
 scanning tokens in general). If your implementation expects file names
 to have extensions (usually indicated by a preceding dot), then
-TeX provides a default extension of `.tex`.
+TeX provides a default extension of `.tex`.
 ]],
    inputlineno = [[
 This command yields a number (not a string) giving the line number of
@@ -1675,36 +1675,36 @@ vertical list. Your output routine is responsible for moving the
 inserted material from where it resides in `\box`$\,n$ to an output
 page.
 
-TeX groups together all insertions having the same code number. Each
+TeX groups together all insertions having the same code number. Each
 insertion code $n$ has four registers associated with it:
 
--   `\box`$\,n$ is where TeX accumulates the material for insertions
-    with code $n$. When TeX breaks a page, it puts into `\box`$\,n$ as
+-   `\box`$\,n$ is where TeX accumulates the material for insertions
+    with code $n$. When TeX breaks a page, it puts into `\box`$\,n$ as
     much insertion $n$ material as will fit on the page. Your output
     routine should then move this material to the actual page. You can
     use `\ifvoid` to test if there is any material in `\box`$\,n$. If
-    not all the material fits, TeX saves the leftovers for the next
+    not all the material fits, TeX saves the leftovers for the next
     page.
 
--   `\count`$\,n$ is a magnification factor $f.$ When TeX is computing
+-   `\count`$\,n$ is a magnification factor $f.$ When TeX is computing
     the vertical space occupied on the page by insertion $n$ material,
     it multiplies the vertical extent of this material by $f/1000$. Thus
     you would ordinarily set $f$ to $500$ for a double-column insertion
     and to $0$ for a marginal note.
 
 -   `\dimen`$\,n$ specifies the maximum amount of insertion $n$ material
-    that TeX will put on a single page.
+    that TeX will put on a single page.
 
--   `\skip`$\,n$ specifies extra space that TeX allocates on the page if
+-   `\skip`$\,n$ specifies extra space that TeX allocates on the page if
     the page contains any insertion $n$ material. This space is in
     addition to the space occupied by the insertion itself. For example,
     it would account for the space on a page above the footnotes (if
     there are any).
 
-TeX sets `\box`$\,n$, and you should set the other three registers so
-that TeX can correctly compute the vertical space required by the
+TeX sets `\box`$\,n$, and you should set the other three registers so
+that TeX can correctly compute the vertical space required by the
 insertion. See pages 122–125 of *The TeXbook* for further details of how
-TeX processes this command and of how insertions interact with page
+TeX processes this command and of how insertions interact with page
 breaking.
 
 [1] *The TeXbook* uses the term “class” for a code. We use a different
@@ -1712,8 +1712,8 @@ term to avoid confusion with the other meaning of “class”.
 ]],
    insertpenalties = [[
 This parameter contains the sum of certain penalties that
-TeX accumulates as it is placing insertions onto the current page. These
-penalties are incurred when TeX is processing an `\insert` command and
+TeX accumulates as it is placing insertions onto the current page. These
+penalties are incurred when TeX is processing an `\insert` command and
 discovers that a previous insertion of the same kind on this page has
 been split, leaving part of it for subsequent pages. See pages 123–125
 of *The TeXbook* for the details of this calculation.
@@ -1727,7 +1727,7 @@ that don’t fit on the current page (see page 125 of *The TeXbook*).
 This parameter specifies the penalty for breaking a page between the
 lines of a paragraph. By setting it to $10000$ you can force all page
 breaks to occur between paragraphs, provided that the pages have enough
-stretch so that TeX can still compose them decently. Plain TeX leaves
+stretch so that TeX can still compose them decently. Plain TeX leaves
 `\interlinepenalty` at $0$.
 ]],
    item = [[
@@ -1753,7 +1753,7 @@ principal use is in defining the `\it`, `\bf`, `\sl`, and `` commands so
 that they work in math mode.
 ]],
    jobname = [[
-This command produces the base name of the file with which TeX was
+This command produces the base name of the file with which TeX was
 invoked. For example, if your main input file is `hatter.tex`,
 `\jobname` will expand to `hatter`. `\jobname` is most useful when
 you’re creating an auxiliary file to be associated with a document.
@@ -1764,25 +1764,25 @@ you change it). The `\jot` is a convenient unit of measure for opening
 up math displays.
 ]],
    kern = [[
-The effect of this command depends on the mode that TeX is in when it
+The effect of this command depends on the mode that TeX is in when it
 encounters it:
 
--   In a horizontal mode, TeX moves its position to the right (for a
+-   In a horizontal mode, TeX moves its position to the right (for a
     positive kern) or to the left (for a negative kern).
 
--   In a vertical mode, TeX moves its position down the page (for a
+-   In a vertical mode, TeX moves its position down the page (for a
     positive kern) or up the page (for a negative kern).
 
 Thus a positive kern produces empty space while a negative kern causes
-TeX to back up over something that it’s already produced. This notion of
+TeX to back up over something that it’s already produced. This notion of
 a kern is different from the notion of a kern in some computerized
 typesetting systems—in TeX, positive kerns push two letters *apart*
 instead of bringing them closer together.
 
 A kern is similar to glue, except that (a) a kern can neither stretch
-nor shrink, and (b) TeX will only break a line or a page at a kern if
+nor shrink, and (b) TeX will only break a line or a page at a kern if
 the kern is followed by glue and is not part of a math formula. If
-TeX finds a kern at the end of a line or a page, it discards the kern.
+TeX finds a kern at the end of a line or a page, it discards the kern.
 If you want to get the effect of a kern that never disappears, use
 `\hglue` or `\vglue`.
 
@@ -1791,19 +1791,19 @@ You can use `\kern` in math mode, but you can’t use `mu` units for
 ]],
    language = [[
 Different languages have different sets of hyphenation rules. This
-parameter determines the set of hyphenation rules that TeX uses. By
-changing `\language` you can get TeX to hyphenate portions of text or
+parameter determines the set of hyphenation rules that TeX uses. By
+changing `\language` you can get TeX to hyphenate portions of text or
 entire documents according to the hyphenation rules appropriate to a
 particular language.
 
-Your local information about TeX will tell you if any additional sets of
+Your local information about TeX will tell you if any additional sets of
 hyphenation rules are available (besides the ones for English) and what
 the appropriate values of `\language` are. The default value of
 `\language` is $0$.
 
-TeX sets the current language to $0$ at the start of every paragraph,
+TeX sets the current language to $0$ at the start of every paragraph,
 and compares `\language` to the current language whenever it adds a
-character to the current paragraph. If they are not the same, TeX adds a
+character to the current paragraph. If they are not the same, TeX adds a
 whatsit indicating the language change. This whatsit is the clue in
 later processing that the language rules should change.
 ]],
@@ -1834,8 +1834,8 @@ These commands produce left and right delimiters. Mathematicians use
 delimiters to indicate the boundaries between parts of a formula. Left
 delimiters are also called “openings”, and right delimiters are also
 called “closings”. Openings and closings are two of TeX’s classes of
-math symbols. TeX puts different amounts of space around different
-classes of math symbols. You might expect the space that TeX puts around
+math symbols. TeX puts different amounts of space around different
+classes of math symbols. You might expect the space that TeX puts around
 openings and closings to be symmetrical, but in fact it isn’t.
 
 Some left and right delimiters have more than one command that you can
@@ -1852,10 +1852,10 @@ use to produce them:
 You can also use the left and right bracket characters (in either form)
 outside of math mode.
 
-In addition to these commands, TeX treats ‘`(`’ as a left delimiter and
+In addition to these commands, TeX treats ‘`(`’ as a left delimiter and
 ‘`)`’ as a right delimiter.
 
-You can have TeX choose the size for a delimiter by using `\left` and
+You can have TeX choose the size for a delimiter by using `\left` and
 `\right`. Alternatively, you can get a delimiter of a specific size by
 using one of the `\big`$x$ commands).
 ]],
@@ -1868,7 +1868,7 @@ uppercase forms of letters. These values are used by the `\lowercase`
 and `\uppercase` commands respectively and by TeX’s hyphenation
 algorithm.
 
-TeX initializes the values of `\lccode` and `\uccode` as follows:
+TeX initializes the values of `\lccode` and `\uccode` as follows:
 
 -   The `\lccode` of a lowercase letter is the ASCII code for that
     letter.
@@ -1903,14 +1903,14 @@ space with copies of a pattern . The `box` or `rule` specifies a leader,
 i.e., a single copy of the pattern, while the `skip command` specifies a
 window to be filled with a row or a column of the leaders. The pattern
 is repeated as many times as will fit into the window. If `skip command`
-is a horizontal skip, the window contains a row of leaders and TeX must
+is a horizontal skip, the window contains a row of leaders and TeX must
 be in a horizontal mode; if `skip command` is a vertical skip, the
-window contains a column of leaders and TeX must be in a vertical mode.
+window contains a column of leaders and TeX must be in a vertical mode.
 
 The commands differ in how they arrange the repeated pattern in the
 space and where they put any leftover space:
 
--   For `\leaders`, TeX aligns a row of leaders with the left end of the
+-   For `\leaders`, TeX aligns a row of leaders with the left end of the
     innermost box $B$ that is to contain the result of the `\leaders`
     command. It aligns a column of leaders with the top of $B$. Those
     leaders that fall entirely within the window are retained. Any
@@ -1920,7 +1920,7 @@ space and where they put any leftover space:
 
 -   For `\xleaders` the pattern is uniformly distributed throughout the
     window. If the leftover space is $l$ and the leader is repeated $n$
-    times, TeX puts space of width or height $l/(n+1)$ between adjacent
+    times, TeX puts space of width or height $l/(n+1)$ between adjacent
     leaders and at the two ends (left and right or top and bottom) of
     the leaders.
 ]],
@@ -1929,7 +1929,7 @@ space and where they put any leftover space:
 
 These commands must be used together in the pattern:
 
-This construct causes TeX to produce `subformula`, enclosed in the
+This construct causes TeX to produce `subformula`, enclosed in the
 delimiters `delim_1` and `delim_2`. The vertical size of the delimiter
 is adjusted to fit the vertical size (height plus depth) of
 `subformula`. `delim_1` and `delim_2` need not correspond. For instance,
@@ -1977,15 +1977,15 @@ right-pointing arrows.
    lefthyphenmin = [[
 `\lefthyphenmin`, `\righthyphenmin`
 
-These parameters specify the smallest word fragments that TeX allows at
-the left and at the right end of a hyphenated word. Plain TeX defaults
+These parameters specify the smallest word fragments that TeX allows at
+the left and at the right end of a hyphenated word. Plain TeX defaults
 them to $2$ and $3$ respectively; these are the recommended values for
 English.
 ]],
    leftskip = [[
 `\leftskip`, `\rightskip`
 
-These parameters tell TeX how much glue to place at the left and at the
+These parameters tell TeX how much glue to place at the left and at the
 right end of each line of the current paragraph. We’ll just explain how
 `\leftskip` works since `\rightskip` is analogous.
 
@@ -1998,7 +1998,7 @@ together with the affected text in order to keep its effect from
 continuing to the end of your document. However, it’s pointless to
 change `\leftskip`’s value inside a group that is in turn contained
 within a paragraph—the value of `\leftskip` at the *end* of a paragraph
-is what determines how TeX breaks the paragraph into lines.
+is what determines how TeX breaks the paragraph into lines.
 ]],
    let = [[
 This command causes `control sequence` to acquire the current meaning of
@@ -2015,8 +2015,8 @@ delimiters is `\Big`. If you use smaller sizes, you’ll get weird
 characters.
 ]],
    limits = [[
-In text style, TeX normally places limits after a large operator. This
-command tells TeX to place limits above and below a large operator
+In text style, TeX normally places limits after a large operator. This
+command tells TeX to place limits above and below a large operator
 rather than after it.
 
 If you specify more than one of `\limits`, `\nolimits`, and
@@ -2028,14 +2028,14 @@ as wide as the current line, i.e., it extends from the right margin to
 the left margin.
 ]],
    linepenalty = [[
-This parameter specifies the penalty that TeX assesses for each line
+This parameter specifies the penalty that TeX assesses for each line
 break when it is breaking a paragraph into lines. The penalty is
 independent of where the line break occurs. Increasing the value of this
-parameter causes TeX to try harder to set a paragraph with a minimum
+parameter causes TeX to try harder to set a paragraph with a minimum
 number of lines, even at the cost of other aesthetic considerations such
 as avoiding overly tight interword spacing. Demerits are in units of
 badness squared, so you need to assign a rather large value to this
-parameter (in the thousands) for it to have any effect. Plain TeX sets
+parameter (in the thousands) for it to have any effect. Plain TeX sets
 `\linepenalty` to $10$.
 ]],
    llap = [[
@@ -2056,11 +2056,11 @@ font such as `cmtt10`, the Computer Modern $10$-point typewriter font).
 ]],
    long = [[
 This command is used as a prefix to a macro definition. It tells
-TeX that the arguments to the macro are permitted to include `\par`
+TeX that the arguments to the macro are permitted to include `\par`
 tokens, which normally indicate the end of a paragraph.
 
-If TeX tries to expand a macro defined without `\long` and any of the
-macro’s arguments include a `\par` token, TeX will complain about a
+If TeX tries to expand a macro defined without `\long` and any of the
+macro’s arguments include a `\par` token, TeX will complain about a
 runaway argument. The purpose of this behavior is to provide you with
 some protection against unterminated macro arguments. `\long` gives you
 a way of bypassing the protection.
@@ -2078,7 +2078,7 @@ to use the test in the opposite sense, you need to rearrange the test or
 define an auxiliary test with `\newif` (see above) and use that test in
 the sense you want (see the second example below).
 
-TeX expands `\loop` as follows:
+TeX expands `\loop` as follows:
 
 1.  $\alpha$ is expanded.
 
@@ -2094,15 +2094,15 @@ paragraph from what they optimally would be. `\looseness` is so named
 because it’s a measure of how loose the paragraph is, i.e., how much
 extra space there is in it.
 
-Normally, `\looseness` is $0$ and TeX chooses line breaks in its usual
-way. But if `\looseness` is, say, $3$, TeX does the following:
+Normally, `\looseness` is $0$ and TeX chooses line breaks in its usual
+way. But if `\looseness` is, say, $3$, TeX does the following:
 
 1.  It chooses line breaks normally, resulting in a paragraph of $n$
     lines.
 
 2.  It discards these line breaks and tries to find a new set of line
     breaks that gives the paragraph $n+3$ lines. (Without the previous
-    step, TeX wouldn’t know the value of $n$.)
+    step, TeX wouldn’t know the value of $n$.)
 
 3.  If the previous attempt results in lines whose badness exceeds
     `\tolerance`,
@@ -2110,8 +2110,8 @@ way. But if `\looseness` is, say, $3$, TeX does the following:
     it tries to get $n+2$ lines—and if that also fails, $n+1$ lines, and
     finally $n$ lines again.
 
-Similarly, if looseness is $-n$, TeX attempts to set the paragraph with
-$n$ fewer lines than normal. The easiest way for TeX to make a paragraph
+Similarly, if looseness is $-n$, TeX attempts to set the paragraph with
+$n$ fewer lines than normal. The easiest way for TeX to make a paragraph
 one line longer is to put a single word on the excess line. You can
 prevent this by putting a tie between the last two words of the
 paragraph.
@@ -2122,7 +2122,7 @@ you’re trying to increase the amount of text you can fit on a page.
 Similarly, setting it to a positive value is useful when you’re trying
 to decrease the amount of text on a page.
 
-TeX sets `\looseness` to $0$ when it ends a paragraph, after breaking
+TeX sets `\looseness` to $0$ when it ends a paragraph, after breaking
 the paragraph into lines. If you want to change the looseness of several
 paragraphs, you must do it individually for each one or put the change
 into `\everypar` .
@@ -2149,7 +2149,7 @@ commands that expand into letters.
 (‘), `\rbrack`, `\rq` (’)
 
 These commands produce various special characters and marks. The first
-five commands are necessary because TeX by default attaches special
+five commands are necessary because TeX by default attaches special
 meanings to the characters (`#`, `$`, `%`, `&`, `_`). You needn’t be in
 math mode to use these commands.
 
@@ -2177,7 +2177,7 @@ magnifications by these factors.
 
 `\magnification` is not a parameter. You can’t use it to *retrieve* the
 scale factor. If you write something like `\dimen0 = \magnification`,
-TeX will complain about it.
+TeX will complain about it.
 
 The `\mag` parameter contains the scale factor. Changing the value of
 `\mag` rescales the page dimensions, which is not usually what you want.
@@ -2196,10 +2196,10 @@ everything in your document (other than `true` dimensions) by
 $\sqrt{1.2}$, i.e., halfway between $1$ and $1.2$.
 ]],
    mark = [[
-This command causes TeX to append a mark containing `mark text` to
+This command causes TeX to append a mark containing `mark text` to
 whatever list it is currently constructing. Generally you shouldn’t use
 `\mark` within an “inner” construct such as a math formula or a box
-you’ve built with an ``, `\vbox`, or `\vtop` command, because TeX won’t
+you’ve built with an ``, `\vbox`, or `\vtop` command, because TeX won’t
 see the mark when it’s constructing the main box of the page. But if you
 use `\mark` in ordinary horizontal mode or directly in an hbox that’s
 part of the main vertical list, the mark migrates out to the main
@@ -2207,10 +2207,10 @@ vertical list. See pages 259–260 of *The TeXbook* for examples showing
 how `\mark` can be used.
 ]],
    mathaccent = [[
-This command tells TeX to typeset a math accent whose family and
-character code are given by `mathcode`. (TeX ignores the class of the
+This command tells TeX to typeset a math accent whose family and
+character code are given by `mathcode`. (TeX ignores the class of the
 mathcode.) See Appendix G of *The TeXbook* for the details of how
-TeX positions such an accent. The usual way to use `\mathaccent` is to
+TeX positions such an accent. The usual way to use `\mathaccent` is to
 put it in a macro definition that gives a name to a math accent.
 ]],
    mathchar = [[
@@ -2222,9 +2222,9 @@ This command defines `control sequence` as a math character with the
 given `mathcode`. The control sequence will only be legal in math mode.
 ]],
    mathchoice = [[
-This command tells TeX to typeset one of the subformulas `math_1`,
+This command tells TeX to typeset one of the subformulas `math_1`,
 `math_2`, `math_3`, or `math_4`, making its choice according to the
-current style. That is, if TeX is in display style it sets the
+current style. That is, if TeX is in display style it sets the
 `\mathchoice` as `math_1`; in text style it sets it as `math_2`; in
 script style it sets it as `math_3`; and in scriptscript style it sets
 it as `math_4`.
@@ -2235,7 +2235,7 @@ is `charcode` . The mathcode specifies that character’s interpretation
 in math mode.
 ]],
    mathinner = [[
-This command tells TeX to treat the construct that follows as an “inner
+This command tells TeX to treat the construct that follows as an “inner
 formula”, e.g., a fraction, for spacing purposes. It resembles the class
 commands given just above.
 ]],
@@ -2243,7 +2243,7 @@ commands given just above.
 `\mathbin`, `\mathclose`, `\mathopen`, `\mathop`, `\mathord`,
 `\mathpunct`, `\mathrel`
 
-These commands tell TeX to treat the construct that follows as belonging
+These commands tell TeX to treat the construct that follows as belonging
 to a particular class (see page 154 of *The TeXbook* for the definition
 of the classes). They are listed here in the order of the class numbers,
 from $0$ to $6$. Their primary effect is to adjust the spacing around
@@ -2255,7 +2255,7 @@ that works in all four styles. To use it, you’ll normally need to define
 an additional macro, which we’ll call `\build`. The call on
 `\mathpalette` should then have the form `\mathpalette`||`argument`.
 
-`\build` tests what style TeX is in and typesets `argument` accordingly.
+`\build` tests what style TeX is in and typesets `argument` accordingly.
 It should be defined to have two parameters. When you call
 `\mathpalette`, it will in turn call `\build`, with `#1` being a command
 that selects the current style and `#2` being `argument`. Thus, within
@@ -2274,36 +2274,36 @@ radicals, underbars, and overbars in a formula. It is much like
 occur in math formulas.
 ]],
    mathsurround = [[
-This parameter specifies the amount of space that TeX inserts before and
+This parameter specifies the amount of space that TeX inserts before and
 after a math formula in text mode (i.e., a formula surrounded by single
 `$`’s). See page 162 of *The TeXbook* for further details about its
-behavior. Plain TeX leaves `\mathsurround` at `0pt`.
+behavior. Plain TeX leaves `\mathsurround` at `0pt`.
 ]],
    maxdeadcycles = [[
 If the value of `\deadcycles` exceeds the value of `\maxdeadcycles`,
-TeX assumes that the output routine has gotten into a loop. TeX then
+TeX assumes that the output routine has gotten into a loop. TeX then
 complains and runs its own simple output routine, equivalent to
 `\shipout!allowbreak\box255`, that is likely to break the loop. Plain
-TeX sets `\maxdeadcycles` to $25$.
+TeX sets `\maxdeadcycles` to $25$.
 ]],
    maxdepth = [[
 This parameter specifies the maximum depth of the bottom box on a page.
 It is related to `\boxmaxdepth`. If the depth of the bottom box on a
-page exceeds `\maxdepth`, TeX moves the box’s reference point down so
+page exceeds `\maxdepth`, TeX moves the box’s reference point down so
 that it’s `\maxdepth` from the bottom of that box. Without this
 adjustment, the bottom box on a page could extend well into the bottom
-margin or even off the page entirely. Plain TeX sets `\maxdepth` to
+margin or even off the page entirely. Plain TeX sets `\maxdepth` to
 `4pt`.
 ]],
    maxdimen = [[
 This control sequence yields a `dimen` that is the largest dimension
-acceptable to TeX (nearly 18 feet). It is not a true command because it
+acceptable to TeX (nearly 18 feet). It is not a true command because it
 can only appear as part of an argument to another command.
 ]],
    meaning = [[
 This command produces the meaning of `token`. It is useful for
 diagnostic output. You can use the `\the` command in a similar way to
-get information about the values of registers and other TeX entities.
+get information about the values of registers and other TeX entities.
 ]],
    message = [[
 `\errmessage`, `\message`
@@ -2311,9 +2311,9 @@ get information about the values of registers and other TeX entities.
 These commands display the message given by `token list` on your
 terminal and also enter it into the log. Any macros in the message are
 expanded, but no commands are executed. This is the same rule that
-TeX uses for `\edef`.
+TeX uses for `\edef`.
 
-For `\errmessage`, TeX pauses in the same way that it does for one of
+For `\errmessage`, TeX pauses in the same way that it does for one of
 its own error messages and displays the `\errhelp` tokens if you ask for
 help.
 
@@ -2327,7 +2327,7 @@ style. Aside from its unit of measurement, this command behaves just
 like `\kern` does in horizontal mode.
 ]],
    month = [[
-TeX sets this parameter to the current month. It is a number between $1$
+TeX sets this parameter to the current month. It is a number between $1$
 and $12$. `\month` is set at the beginning of your run (see the comments
 on `\time` above).
 ]],
@@ -2351,7 +2351,7 @@ These commands multiply and divide the value in `register` by `number`
 (which can be negative). The register can be a `\count`, `\dimen`,
 `\skip`, or `\muskip` register. For a `\skip` or `\muskip` register, all
 three components of the glue in the register are modified. You can omit
-the word `by` in these commands—TeX will understand them anyway.
+the word `by` in these commands—TeX will understand them anyway.
 
 You can also obtain a multiple of a `dimen` by preceding it by a
 `number`
@@ -2362,7 +2362,7 @@ for `glue`, but watch out—the result is a `dimen`, not `glue`. Thus
 `\baselineskip`, with no stretch or shrink.
 ]],
    multispan = [[
-This command tells TeX that the following `number` columns in a row of a
+This command tells TeX that the following `number` columns in a row of a
 horizontal alignment, or `number` rows in a column of a vertical
 alignment, should be combined into a single column or row (as with
 `\span`) and that their templates should be omitted (as with `\omit`).
@@ -2378,13 +2378,13 @@ document will have narrow paragraphs.
 
 `\narrower` affects just those paragraphs that end after you invoke it.
 If you end a `\narrower` group before you’ve ended a paragraph,
-TeX won’t make that paragraph narrower.
+TeX won’t make that paragraph narrower.
 ]],
    negthinspace = [[
 This command produces a negative kern whose width is one-sixth of an em
-, i.e., it causes TeX to move its position left by that amount. It is
+, i.e., it causes TeX to move its position left by that amount. It is
 useful for bringing together characters that are a little too far apart.
-TeX won’t break a line at a `\negthinspace`.
+TeX won’t break a line at a `\negthinspace`.
 ]],
    newif = [[
 This command names a trio of control sequences with names `\alphatrue`,
@@ -2399,7 +2399,7 @@ records true/false information:
 -   `\ifalpha` is a conditional test that is true if the logical
     variable `alpha` is true and false otherwise.
 
-The logical variable `alpha` doesn’t really exist, but TeX behaves as
+The logical variable `alpha` doesn’t really exist, but TeX behaves as
 though it did. After `\newif\ifalpha`, the logical variable is initially
 false.
 
@@ -2408,10 +2408,10 @@ definition.
 ]],
    newlinechar = [[
 This parameter contains a character that indicates a new line on output.
-When TeX encounters this character while reading the argument of a
+When TeX encounters this character while reading the argument of a
 `\write`, `\message`, or `\errmessage` command, it starts a new line. If
 `\newlinechar` is not in the range $0$–$255$, there is no character that
-indicates a new line on output. Plain TeX sets `\newlinechar` to $-1$.
+indicates a new line on output. Plain TeX sets `\newlinechar` to $-1$.
 ]],
    noalign = [[
 This command inserts `vertical mode material` after the current row of a
@@ -2424,17 +2424,17 @@ column. If you want to put extra space after *every* row of a horizontal
 alignment, use `\openup`.
 ]],
    noboundary = [[
-You can defeat a ligature or kern that TeX applies to the first or last
+You can defeat a ligature or kern that TeX applies to the first or last
 character of a word by putting `\noboundary` just before or just after
 the word. Certain fonts intended for languages other than English
-contain a special boundary character that TeX puts at the beginning and
+contain a special boundary character that TeX puts at the beginning and
 end of each word. The boundary character occupies no space and is
-invisible when printed. It enables TeX to provide different
+invisible when printed. It enables TeX to provide different
 typographical treatment to characters at the beginning or end of a word,
 since the boundary character can be part of a sequence of characters to
-be kerned or replaced by a ligature. (None of the standard TeX fonts
+be kerned or replaced by a ligature. (None of the standard TeX fonts
 contain this boundary character.) The effect of `\noboundary` is to
-delete the boundary character if it’s there, thus preventing TeX from
+delete the boundary character if it’s there, thus preventing TeX from
 recognizing the ligature or kern.
 ]],
    nobreak = [[
@@ -2442,16 +2442,16 @@ This command prevents a page break where it otherwise might occur.
 `\nobreak` can also be used in horizontal mode.
 ]],
    noexpand = [[
-This command tells TeX to suppress expansion of `token` if `token` is a
+This command tells TeX to suppress expansion of `token` if `token` is a
 control sequence that can be expanded. If `token` can’t be expanded,
-e.g., it’s a letter, TeX acts as though the `\noexpand` wasn’t there and
+e.g., it’s a letter, TeX acts as though the `\noexpand` wasn’t there and
 processes `token` normally. In other words the expansion of
 ‘`\noexpand``token`’ is simply `token` no matter what `token` happens to
 be.
 ]],
    noindent = [[
-If TeX is in vertical mode, as it is after ending a paragraph, this
-command inserts the `\parskip` interparagraph glue, puts TeX into
+If TeX is in vertical mode, as it is after ending a paragraph, this
+command inserts the `\parskip` interparagraph glue, puts TeX into
 horizontal mode, and starts an unindented paragraph. It has no effect in
 horizontal mode, i.e., within a paragraph. Starting a paragraph with ``
 thus cancels the indentation by `\parindent` that would normally occur
@@ -2461,17 +2461,17 @@ A common use of `` is to cancel the indentation of the first line of a
 paragraph when the paragraph follows some displayed material.
 ]],
    nointerlineskip = [[
-This command tells TeX not to insert interline glue in front of the next
+This command tells TeX not to insert interline glue in front of the next
 line. It has no effect on subsequent lines.
 ]],
    nolimits = [[
-In display style, TeX normally places limits above and below a large
-operator. This command tells TeX to place limits after a large operator
+In display style, TeX normally places limits above and below a large
+operator. This command tells TeX to place limits after a large operator
 rather than above and below it.
 
-The integral operators `\int` and `\oint` are exceptions—TeX places
+The integral operators `\int` and `\oint` are exceptions—TeX places
 limits after them in all cases, unless overridden, as in `\int\limits`.
-(plain TeX defines `\int` and `\oint` as macros that specify the
+(plain TeX defines `\int` and `\oint` as macros that specify the
 operator symbol followed by `\nolimits`—this is what causes them to
 behave differently by default.)
 
@@ -2479,7 +2479,7 @@ If you specify more than one of `\limits`, `\nolimits`, and
 `\displaylimits`, the last command rules.
 ]],
    nonscript = [[
-When TeX is currently typesetting in script or scriptscript style and
+When TeX is currently typesetting in script or scriptscript style and
 encounters this command immediately in front of glue or a kern, it
 cancels the glue or kern. `\nonscript` has no effect in the other
 styles.
@@ -2489,14 +2489,14 @@ scriptscript styles, which generally are set in smaller type. It is of
 little use outside of macro definitions.
 ]],
    nonstopmode = [[
-This command tells TeX not to stop for errors, even those pertaining to
+This command tells TeX not to stop for errors, even those pertaining to
 files that it can’t find, but to continue displaying the error messages
 on your terminal. Typing ‘`R`’ or ‘`r`’ in response to an error message
 puts you into nonstop mode.
 ]],
    nopagenumbers = [[
-By default, plain TeX produces a footer containing a centered page
-number. This command tells TeX to produce a blank footer instead.
+By default, plain TeX produces a footer containing a centered page
+number. This command tells TeX to produce a blank footer instead.
 ]],
    normalbaselineskip = [[
 `\normalbaselineskip`, `\normalbaselines`, `\normallineskiplimit`,
@@ -2513,11 +2513,11 @@ This command produces an empty hbox.
 ]],
    nulldelimiterspace = [[
 This parameter specifies the width of the space produced by a null
-delimiter. Plain TeX sets `\nulldelimiterspace` to `1.2pt`.
+delimiter. Plain TeX sets `\nulldelimiterspace` to `1.2pt`.
 ]],
    nullfont = [[
 This command selects a font, built into TeX, that has no characters in
-it. TeX uses it as a replacement for an undefined font in a family of
+it. TeX uses it as a replacement for an undefined font in a family of
 math fonts.
 ]],
    number = [[
@@ -2526,8 +2526,8 @@ character tokens. The number can be either an explicit integer, a
 `number` parameter, or a `number` register.
 ]],
    obeylines = [[
-TeX normally treats an end of line as a space. `\obeylines` instructs
-TeX to treat each end of line as an end of paragraph, thus forcing a
+TeX normally treats an end of line as a space. `\obeylines` instructs
+TeX to treat each end of line as an end of paragraph, thus forcing a
 line break. `\obeylines` is often useful when you’re typesetting verse
 or computer programs.
 
@@ -2535,16 +2535,16 @@ If any of your lines are longer than the effective line length (`\hsize`
 - `\parindent`), however, you may get an extra line break within those
 lines.
 
-Because TeX inserts the `\parskip` glue between lines controlled by
+Because TeX inserts the `\parskip` glue between lines controlled by
 `\obeylines` (since it thinks each line is a paragraph), you should
 normally set `\parskip` to zero when you’re using `\obeylines`.
 
-You can use the `\obeyspaces` command to get TeX to take spaces within a
+You can use the `\obeyspaces` command to get TeX to take spaces within a
 line literally. `\obeylines` and `\obeyspaces` are often used together.
 ]],
    obeyspaces = [[
-TeX normally condenses a sequence of several spaces to a single space.
-`\obeyspaces` instructs TeX to produce a space in the output for each
+TeX normally condenses a sequence of several spaces to a single space.
+`\obeyspaces` instructs TeX to produce a space in the output for each
 space in the input. `\obeyspaces` does not cause spaces at the beginning
 of a line to show up, however; for that we recommend the
 `\obeywhitespace` command defined in `eplain.tex` .
@@ -2554,12 +2554,12 @@ computer input for example, in a monospaced font (one in which each
 character takes up the same amount of space) and you want to show
 exactly what each line of input looks like.
 
-You can use the `\obeylines` command to get TeX to follow the line
+You can use the `\obeylines` command to get TeX to follow the line
 boundaries of your input. `\obeylines` is often used in combination with
 `\obeyspaces`.
 ]],
    offinterlineskip = [[
-This command tells TeX to stop inserting interline glue from now on.
+This command tells TeX to stop inserting interline glue from now on.
 Unless you want it to be in effect for the rest of the document (which
 you probably don’t), you should enclose it in a group together with the
 text you want it to affect. Its main purpose is to let you do interline
@@ -2568,14 +2568,14 @@ normal interline glue. `\offinterlineskip` is often useful when you’re
 constructing a horizontal alignment.
 ]],
    omit = [[
-This command tells TeX to ignore a template in a horizontal or vertical
+This command tells TeX to ignore a template in a horizontal or vertical
 alignment while processing a particular column or row entry
 respectively. `\omit` must appear as the first item in a column or row
 entry; in effect, it overrides the template from the preamble with the
 simple template ‘`#`’.
 ]],
    openin = [[
-This command tells TeX to open the file named `filename` and make it
+This command tells TeX to open the file named `filename` and make it
 available for reading via the input stream designated by `number`.
 
 `number` must be between $0$ and $15$. Once you’ve opened a file and
@@ -2589,17 +2589,17 @@ input stream.
 You should allocate stream numbers for `\openin` using `\newread`.
 ]],
    openout = [[
-This command tells TeX to open the file named `filename` and make it
+This command tells TeX to open the file named `filename` and make it
 available for writing via the output stream designated by `number`.
 `number` must be between $0$ and $15$. Once you’ve opened a file and
 connected it to an output stream, you can write to the file using the
 `\write` command with the output stream’s number.
 
 An `\openout` generates a whatsit that becomes part of a box. The
-`\openout` does not take effect until TeX ships out that box to the .dvi
+`\openout` does not take effect until TeX ships out that box to the .dvi
 file, unless you’ve preceded the `\openout` with `\immediate`.
 
-TeX won’t complain if you associate more than one output stream with the
+TeX won’t complain if you associate more than one output stream with the
 same file, but you’ll get garbage in the file if you try it!
 
 You should allocate stream numbers for `\openout` using `\newwrite`.
@@ -2613,25 +2613,25 @@ little extra space between rows often makes them more readable.
 ]],
    outer = [[
 This command is used as a prefix to a macro definition. It tells
-TeX that the macro is outer and cannot be used in certain contexts. If
-the macro is used in a forbidden context, TeX will complain.
+TeX that the macro is outer and cannot be used in certain contexts. If
+the macro is used in a forbidden context, TeX will complain.
 ]],
    output = [[
 This parameter contains the current output routine, i.e., the token list
-that TeX expands when it finds a page break. TeX puts the page into
+that TeX expands when it finds a page break. TeX puts the page into
 `\box255`, so `\output` is responsible for doing something with
 `\box255`—either shipping it out or putting it somewhere else. The
 output routine is also responsible for attaching things such as headers
 and footers.
 ]],
    outputpenalty = [[
-TeX sets this parameter when it breaks a page. If the breakpoint was at
-a penalty item, TeX removes the penalty item and sets `\outputpenalty`
+TeX sets this parameter when it breaks a page. If the breakpoint was at
+a penalty item, TeX removes the penalty item and sets `\outputpenalty`
 to the penalty value at the breakpoint; otherwise it sets
 `\outputpenalty` to $0$.
 
 Suppose that you are undoing a page break in order to break the page at
-a different place than the one that TeX has just chosen. In order to
+a different place than the one that TeX has just chosen. In order to
 reconstruct the page, you need to recreate the penalty at TeX’s chosen
 breakpoint. You can accomplish this with the command
 `\penalty!allowbreak\outputpenalty`.
@@ -2664,7 +2664,7 @@ than once in a formula. Thus a formula such as:
 
 isn’t legal. This is not a severe restriction because you can always
 enclose one of the commands in braces. The reason for the restriction is
-that if you had two of these commands in a single formula, TeX wouldn’t
+that if you had two of these commands in a single formula, TeX wouldn’t
 know how to group them.
 
 The other commands are similar to `\over`, with the following
@@ -2686,8 +2686,8 @@ exceptions:
     brackets.
 ]],
    overfullrule = [[
-This parameter specifies the width of the rule that TeX appends to an
-overfull hbox. Plain TeX sets it to `5pt`.
+This parameter specifies the width of the rule that TeX appends to an
+overfull hbox. Plain TeX sets it to `5pt`.
 ]],
    overwithdelims = [[
 `\abovewithdelims`, `\atopwithdelims`, `\overwithdelims`
@@ -2699,17 +2699,17 @@ and `\above`. The `dimen` in `\abovewithdelims` specifies the thickness
 of the fraction bar.
 ]],
    pagedepth = [[
-This parameter specifies the depth of the current page. TeX updates
+This parameter specifies the depth of the current page. TeX updates
 `\pagedepth` as it adds items to the main vertical list.
 ]],
    pagegoal = [[
 This parameter specifies the desired height for the current page.
-TeX sets `\pagegoal` to the current value of `\vsize` when it first puts
+TeX sets `\pagegoal` to the current value of `\vsize` when it first puts
 a box or an insertion on the current page. You can shorten a page while
-TeX is working on it by changing the value of `\pagegoal`—even if the
+TeX is working on it by changing the value of `\pagegoal`—even if the
 new value is less than the height of the material already on that page.
-TeX will just put the extra material on the next page. But
-remember—`\pagegoal` is reset to `\vsize` again when TeX starts the next
+TeX will just put the extra material on the next page. But
+remember—`\pagegoal` is reset to `\vsize` again when TeX starts the next
 page.
 ]],
    pageno = [[
@@ -2720,24 +2720,24 @@ page number within a page, the changed number will be used in any
 headers or footers that appear on that page. The actual printing of page
 numbers is handled by TeX’s output routine, which you can modify.
 
-Plain TeX keeps the page number in the register `\count0`. (`\pageno`
+Plain TeX keeps the page number in the register `\count0`. (`\pageno`
 is, in fact, a synonym for `\count0`.) Whenever it ships out a page to
 the .dvi file,
 
-TeX displays the current value of `\count0` on your terminal so that you
+TeX displays the current value of `\count0` on your terminal so that you
 can tell which page it is working on. It’s possible to use registers
 `\count1`–`\count9` for nested levels of page numbers (you must program
-this yourself). If any of these registers are nonzero, TeX displays them
+this yourself). If any of these registers are nonzero, TeX displays them
 on your terminal also.[1]
 
 [1] More precisely, it displays all registers in sequence from `\count0`
 to `\count9`, but omits trailing zero registers. For instance, if the
 values of `\count0`–`\count3` are $(17, 0 , 0, 7)$ and the others are
-$0$, TeX displays the page number as \[17.0.0.7\].
+$0$, TeX displays the page number as \[17.0.0.7\].
 ]],
    pageshrink = [[
 This parameter specifies the amount of shrink in the accumulated glue on
-the current page. TeX updates `\pageshrink` as it adds items to the main
+the current page. TeX updates `\pageshrink` as it adds items to the main
 vertical list.
 ]],
    pagestretch = [[
@@ -2750,18 +2750,18 @@ on the current page. The amount of stretch has the form
 $n_0 + n_1fil + n_2fill + n_3filll$
 
 , with the four parameters giving the values of the four $n_i$.
-TeX updates these parameters as it adds items to the main vertical list.
+TeX updates these parameters as it adds items to the main vertical list.
 ]],
    pagetotal = [[
 This parameter specifies the accumulated natural height of the current
-page. TeX updates `\pagetotal` as it adds items to the main vertical
+page. TeX updates `\pagetotal` as it adds items to the main vertical
 list.
 ]],
    parfillskip = [[
-This parameter specifies the horizontal glue that TeX inserts at the end
+This parameter specifies the horizontal glue that TeX inserts at the end
 of a paragraph. The default value of `\parfillskip` is `0pt plus 1fil`,
 which causes the last line of a paragraph to be filled out with blank
-space. A value of `0pt` forces TeX to end the last line of a paragraph
+space. A value of `0pt` forces TeX to end the last line of a paragraph
 at the right margin.
 ]],
    parindent = [[
@@ -2783,28 +2783,28 @@ there, and choose your words to fit the shape.
 
 `\parshape`, like `\hangafter` and `\hangindent`, is effective only for
 one paragraph. If you specify `\hangafter` and `\hangindent` as well as
-`\parshape`, TeX ignores the `\hangafter` and `\hangindent`.
+`\parshape`, TeX ignores the `\hangafter` and `\hangindent`.
 ]],
    parskip = [[
 This parameter specifies the “paragraph skip”, i.e., the vertical glue
-that TeX inserts at the start of a paragraph.
+that TeX inserts at the start of a paragraph.
 
-See `\par` for more information about what happens when TeX starts a
-paragraph. Plain TeX sets `\parskip` to `0pt plus 0.1pt`.
+See `\par` for more information about what happens when TeX starts a
+paragraph. Plain TeX sets `\parskip` to `0pt plus 0.1pt`.
 ]],
    pausing = [[
-If this parameter is greater than zero, TeX will pause at each line of
+If this parameter is greater than zero, TeX will pause at each line of
 input to give you an opportunity to replace it with a different line. If
-you type in a replacement, TeX will use that line instead of the
-original one; if you respond with ⟨return⟩, TeX will use the original
+you type in a replacement, TeX will use that line instead of the
+original one; if you respond with ⟨return⟩, TeX will use the original
 line.
 
 Setting `\pausing` to $1$ can be useful as a way of patching a document
-as TeX is processing it. For example, you can use this facility to
+as TeX is processing it. For example, you can use this facility to
 insert `\show` commands (see below).
 ]],
    penalty = [[
-This command produces a penalty item. The penalty item makes TeX more or
+This command produces a penalty item. The penalty item makes TeX more or
 less willing to break a page at the point where that item occurs. A
 negative penalty, i.e., a bonus, encourages a page break; a positive
 penalty discourages a page break. A penalty of $10000$ or more prevents
@@ -2820,7 +2820,7 @@ by hand.
    plainoutput = [[
 This command invokes plain TeX’s output routine.
 
-Plain TeX defines `\output` as a token list containing the single token
+Plain TeX defines `\output` as a token list containing the single token
 `\plainoutput`.
 ]],
    pmod = [[
@@ -2829,15 +2829,15 @@ at the end of a formula.
 ]],
    postdisplaypenalty = [[
 This parameter specifies the penalty for breaking a page just after a
-math display. Plain TeX leaves `\postdisplaypenalty` at $0$.
+math display. Plain TeX leaves `\postdisplaypenalty` at $0$.
 ]],
    predisplaypenalty = [[
 This parameter specifies the penalty for breaking a page just before a
-math display. Plain TeX sets `\predisplaypenalty` to $10000$.
+math display. Plain TeX sets `\predisplaypenalty` to $10000$.
 ]],
    predisplaysize = [[
-TeX sets this parameter to the width of the line preceding a math
-display. TeX uses `\predisplaysize` to determine whether or not the
+TeX sets this parameter to the width of the line preceding a math
+display. TeX uses `\predisplaysize` to determine whether or not the
 display starts to the left of where the previous line ends, i.e.,
 whether or not it visually overlaps the previous line. If there is
 overlap, it uses the `\abovedisplayskip` and `\belowdisplayskip` glue in
@@ -2848,7 +2848,7 @@ more detailed explanation of this parameter.
    pretolerance = [[
 `\pretolerance`, `\tolerance`
 
-These parameters determine the badness that TeX will tolerate on each
+These parameters determine the badness that TeX will tolerate on each
 line when it is choosing line breaks for a paragraph. The badness is a
 measure of how far the interword spacing deviates from the ideal.
 `\pretolerance` specifies the tolerable badness for line breaks without
@@ -2857,13 +2857,13 @@ breaks with hyphenation. The tolerable badness can be exceeded in either
 of two ways: a line is too tight (the interword spaces are too small) or
 it is too loose (the interword spaces are too big).
 
--   If TeX must set a line too loosely, it complains about an “underfull
+-   If TeX must set a line too loosely, it complains about an “underfull
     hbox”.
 
--   If TeX must set a line too rightly, it lets the line run past the
+-   If TeX must set a line too rightly, it lets the line run past the
     right margin and complains about an “overfull hbox”.
 
-TeX chooses line breaks in the following steps:
+TeX chooses line breaks in the following steps:
 
 1.  It attempts to choose line breaks without hyphenating. If none of
     the resulting lines have a badness exceeding `\pretolerance`, the
@@ -2881,32 +2881,32 @@ TeX chooses line breaks in the following steps:
     breaks, it sets the paragraph with one or more overfull hboxes and
     complains about them.
 
-Plain TeX sets `\tolerance` to $200$ and `\pretolerance` to $100$. If
-you set `\tolerance` to $10000$, TeX becomes infinitely tolerant and
+Plain TeX sets `\tolerance` to $200$ and `\pretolerance` to $100$. If
+you set `\tolerance` to $10000$, TeX becomes infinitely tolerant and
 accepts any spacing, no matter how bad (unless it encounters a word that
 won’t fit on a line, even with hyphenation). Thus by changing
 `\tolerance` you can avoid overfull and underfull hboxes, but at the
 cost of making the spacing worse. By making `\pretolerance` larger you
-can get TeX to avoid hyphenation (and also run faster), again at the
+can get TeX to avoid hyphenation (and also run faster), again at the
 cost of possibly worse spacing. If you set `\pretolerance` to $-1$,
-TeX will not even try to set the paragraph without hyphenation.
+TeX will not even try to set the paragraph without hyphenation.
 
-The `\hbadness` parameter determines the level of badness that TeX will
+The `\hbadness` parameter determines the level of badness that TeX will
 tolerate before it complains, but `\hbadness` does not affect the way
-that TeX typesets your document. The `\hfuzz` parameter determines the
-amount that an hbox can exceed its specified width before TeX considers
+that TeX typesets your document. The `\hfuzz` parameter determines the
+amount that an hbox can exceed its specified width before TeX considers
 it to be erroneous.
 ]],
    prevdepth = [[
-When TeX adds a box to a vertical list, it sets `\prevdepth` to the
-depth of that box. TeX sets `\prevdepth` to $-1000$pt at the start of a
+When TeX adds a box to a vertical list, it sets `\prevdepth` to the
+depth of that box. TeX sets `\prevdepth` to $-1000$pt at the start of a
 vertical list, indicating that the usual interline glue should be
 suppressed.
 ]],
    prevgraf = [[
 In horizontal mode, this parameter specifies the number of lines in the
 paragraph so far; in vertical mode, it specifies the number of lines in
-the previous paragraph. TeX only sets `\prevgraf` after it has finished
+the previous paragraph. TeX only sets `\prevgraf` after it has finished
 breaking some text into lines, i.e., at a math display or at the end of
 a paragraph. See page 103 of *The TeXbook* for more details about it.
 ]],
@@ -2927,9 +2927,9 @@ in the `\delcode` command.
    raggedbottom = [[
 `\normalbottom`, `\raggedbottom`
 
-Normally TeX tries hard to ensure that all pages have the same depth,
+Normally TeX tries hard to ensure that all pages have the same depth,
 i.e., that their bottom margins are equal. The `\raggedbottom` command
-tells TeX to allow some variability among the bottom margins on
+tells TeX to allow some variability among the bottom margins on
 different pages. It’s often appropriate to use `\raggedbottom` when you
 have material that contains large blocks of material that should not be
 split across pages. The `\normalbottom` command cancels the effect of
@@ -2938,7 +2938,7 @@ split across pages. The `\normalbottom` command cancels the effect of
    raggedright = [[
 `\raggedright`, `\ttraggedright`
 
-These commands cause TeX to typeset your document “ragged right”.
+These commands cause TeX to typeset your document “ragged right”.
 Interword spaces all have their natural size, i.e., they all have the
 same width and don’t stretch or shrink. Consequently the right margin is
 generally not even. The alternative, which is TeX’s default, is to
@@ -2957,12 +2957,12 @@ Most of the time you’ll want to apply these commands to an entire
 document, but you can limit their effects by enclosing them in a group.
 ]],
    relax = [[
-This command tells TeX to do nothing. It’s useful in a context where you
-need to provide a command but there’s nothing that you want TeX to do.
+This command tells TeX to do nothing. It’s useful in a context where you
+need to provide a command but there’s nothing that you want TeX to do.
 ]],
    relpenalty = [[
 This parameter specifies the penalty for breaking a math formula after a
-relation when the formula appears in a paragraph. Plain TeX sets
+relation when the formula appears in a paragraph. Plain TeX sets
 `\relpenalty` to $500$.
 ]],
    romannumeral = [[
@@ -2987,7 +2987,7 @@ the original definition. These commands are also used for setting lower
 and upper limits on summations and integrals.
 
 If a subscript or superscript is not a single token, you need to enclose
-it in a group. TeX does not prioritize subscripts or superscripts, so it
+it in a group. TeX does not prioritize subscripts or superscripts, so it
 will reject formulas such as `a_i_j`, `a^i^j`, or `a^i_j`.
 
 Subscripts and superscripts are normally typeset in script style, or in
@@ -3003,13 +3003,13 @@ under the function name as shown in the examples of `\lim` and `\det`
 below.
 ]],
    scriptspace = [[
-This parameter specifies the amount of space that TeX inserts before and
+This parameter specifies the amount of space that TeX inserts before and
 after a subscript or superscript. The `\nonscript` command after a
-subscript or superscript cancels this space. Plain TeX sets
+subscript or superscript cancels this space. Plain TeX sets
 `\scriptspace` to `0.5pt`.
 ]],
    scrollmode = [[
-This command tells TeX not to stop for most errors, but to continue
+This command tells TeX not to stop for most errors, but to continue
 displaying the error messages on your terminal. Typing ‘`S`’ or ‘`s`’ in
 response to an error message puts you into scroll mode.
 ]],
@@ -3035,15 +3035,15 @@ change the value of `\language`.
 ]],
    settabs = [[
 The first form of this command defines a set of tab stops for a tabbing
-alignment. It tells TeX to set the tab stops so as to divide each line
-into `number` equal parts. TeX takes the length of a line to be
+alignment. It tells TeX to set the tab stops so as to divide each line
+into `number` equal parts. TeX takes the length of a line to be
 `\hsize`, as usual. You can make the alignment narrower by decreasing
 `\hsize`.
 ]],
    shipout = [[
-This command instructs TeX to send `box` to the .dvi file.
+This command instructs TeX to send `box` to the .dvi file.
 
-TeX expands any `\write` command in `box` as part of `\shipout`.
+TeX expands any `\write` command in `box` as part of `\shipout`.
 
 The principal use of `\shipout` is in the output routine, but you can
 use it anywhere.
@@ -3051,7 +3051,7 @@ use it anywhere.
    show = [[
 `\showbox`, `\showlists`, `\showthe`, `\show`
 
-These commands record information in the log of your TeX run:
+These commands record information in the log of your TeX run:
 
 -   `\show` records the meaning of `token`.
 
@@ -3062,20 +3062,20 @@ These commands record information in the log of your TeX run:
     `number`. The number of leading dots in the log indicates the number
     of levels of nesting of inner boxes.
 
--   `\showlists` records the contents of each list that TeX is currently
+-   `\showlists` records the contents of each list that TeX is currently
     constructing. (These lists are nested one within another.) See
     pages 88–89 of *The TeXbook* for further information about
     interpreting the output of `\showlists`.
 
-For `\show` and `\showthe`, TeX also displays the information at your
-terminal. For `\showbox` and `\showlists`, TeX displays the information
+For `\show` and `\showthe`, TeX also displays the information at your
+terminal. For `\showbox` and `\showlists`, TeX displays the information
 at your terminal only if `\tracingonline` is greater than zero; if
 `\tracingonline` is zero or less (the default case), the information is
 not displayed.
 
-Whenever TeX encounters a `\show`-type command it stops for interaction.
+Whenever TeX encounters a `\show`-type command it stops for interaction.
 The request for interaction does *not* indicate an error, but it does
-give you an opportunity to ask TeX to show you something else. If you
+give you an opportunity to ask TeX to show you something else. If you
 don’t want to see anything else, just press ⟨return⟩.
 
 You can control the amount of output produced by `\showbox` by setting
@@ -3088,14 +3088,14 @@ aren’t displayed.)
 ]],
    showboxbreadth = [[
 This parameter specifies the maximum number of list items that
-TeX displays for one level of one box when it is producing the output
-for `\showbox` or `\tracingoutput`. Plain TeX sets `\showboxbreadth` to
+TeX displays for one level of one box when it is producing the output
+for `\showbox` or `\tracingoutput`. Plain TeX sets `\showboxbreadth` to
 $5$.
 ]],
    showboxdepth = [[
-This parameter specifies the level of the deepest list that TeX displays
+This parameter specifies the level of the deepest list that TeX displays
 when it is producing the output for `\showbox` or `\showlists`. Plain
-TeX sets `\showboxdepth` is $3$.
+TeX sets `\showboxdepth` is $3$.
 ]],
    skew = [[
 This command shifts the accent `argument_1` by `number` mathematical
@@ -3106,13 +3106,13 @@ accent that’s over another accent.
    skewchar = [[
 The `\skewchar` of a font is the character in the font whose kerns, as
 defined in the font’s metrics file, determine the positions of math
-accents. That is, suppose that TeX is applying a math accent to the
-character ‘`x`’. TeX checks if the character pair ‘`x\skewchar`’ has a
+accents. That is, suppose that TeX is applying a math accent to the
+character ‘`x`’. TeX checks if the character pair ‘`x\skewchar`’ has a
 kern; if so, it moves the accent by the amount of that kern. The
-complete algorithm that TeX uses to position math accents (which
+complete algorithm that TeX uses to position math accents (which
 involves many more things) is in Appendix G of *The TeXbook*.
 
-If the value of `\skewchar` is not in the range $0$–$255$, TeX takes the
+If the value of `\skewchar` is not in the range $0$–$255$, TeX takes the
 kern value to be zero.
 
 Note that `font` is a control sequence that names a font, not a
@@ -3121,15 +3121,15 @@ is *not* undone at the end of a group. If you want to change `\skewchar`
 locally, you’ll need to save and restore its original value explicitly.
 ]],
    slash = [[
-This command produces a solidus (/) and also tells TeX that it can break
+This command produces a solidus (/) and also tells TeX that it can break
 the line after the solidus, if necessary.
 ]],
    smallbreak = [[
 `\bigbreak`, `\medbreak`, `\smallbreak`
 
-These commands indicate increasingly desirable places for TeX to break a
-page. They also cause TeX to insert a `\smallskip`, `\medskip`, or
-`\bigskip` if the page break doesn’t actually happen. TeX suppresses
+These commands indicate increasingly desirable places for TeX to break a
+page. They also cause TeX to insert a `\smallskip`, `\medskip`, or
+`\bigskip` if the page break doesn’t actually happen. TeX suppresses
 this skip if it occurs just after an equal or larger skip.
 ]],
    smallskip = [[
@@ -3167,14 +3167,14 @@ This command is equivalent to an input space character. It differs from
    spacefactor = [[
 `\sfcode`, `\spacefactor`, `\spaceskip`, `\xspaceskip`
 
-These primitive parameters affect how much space TeX puts between two
+These primitive parameters affect how much space TeX puts between two
 adjacent words, i.e., the interword spacing. The normal interword
-spacing is supplied by the current font. As TeX is processing a
+spacing is supplied by the current font. As TeX is processing a
 horizontal list, it keeps track of the space factor $f$ in
 `\spacefactor`. As it processes each input character $c$, it updates $f$
 according to the value of $f_c$, the space factor code of $c$ (see
-below). For most characters, $f_c$ is $1000$ and TeX sets $f$ to $1000$.
-(The initial value of $f$ is also $1000$.) When TeX sees an interword
+below). For most characters, $f_c$ is $1000$ and TeX sets $f$ to $1000$.
+(The initial value of $f$ is also $1000$.) When TeX sees an interword
 space, it adjusts the size of that space by multiplying the stretch and
 shrink of that space by $f/1000$ and $1000/f$ respectively. Thus:
 
@@ -3189,17 +3189,17 @@ the “extra space” parameter associated with the current font.
 
 Each input character $c$ has an entry in the `\sfcode` (space factor
 code) table. The `\sfcode` table entry is independent of the font.
-Usually TeX just sets $f$ to $f_c$ after it processes $c$. However:
+Usually TeX just sets $f$ to $f_c$ after it processes $c$. However:
 
--   If $f_c$ is zero, TeX leaves $f$ unchanged. Thus a character such as
+-   If $f_c$ is zero, TeX leaves $f$ unchanged. Thus a character such as
     ‘`)`’ in plain TeX, for which $f_c$ is zero, is essentially
     transparent to the interword space calculation.
 
--   If $f<1000<f_c$, TeX sets $f$ to $1000$ rather than to $f_c$, i.e.,
+-   If $f<1000<f_c$, TeX sets $f$ to $1000$ rather than to $f_c$, i.e.,
     it refuses to raise $f$ very rapidly.
 
 The `\sfcode` value for a period is normally $3000$, which is why
-TeX usually puts extra space after a period (see the rule above for the
+TeX usually puts extra space after a period (see the rule above for the
 case $f\ge2000$). Noncharacter items in a horizontal list, e.g.,
 vertical rules, generally act like characters with a space factor of
 $1000$.
@@ -3218,7 +3218,7 @@ interword spacing by assigning a different numerical value to
     the ordinary interword glue, is modified according to the value of
     $f$.
 
-See page 76 of *The TeXbook* for the precise rules that TeX uses in
+See page 76 of *The TeXbook* for the precise rules that TeX uses in
 calculating interword glue, and pages 285–287 of *The TeXbook* for the
 adjustments made to `\spacefactor` after various items in a horizontal
 list.
@@ -3227,7 +3227,7 @@ list.
 The meaning of this command depends on whether it appears in a preamble
 or in an alignment entry.
 
--   Normally, TeX does not expand tokens in the preamble when it reads
+-   Normally, TeX does not expand tokens in the preamble when it reads
     them. Putting `\span` in front of a token in the preamble causes
     that token to be expanded immediately according to TeX’s usual rules
     of macro expansion.
@@ -3245,7 +3245,7 @@ or in an alignment entry.
 provides the basic mechanism for defining `\multispan`.
 ]],
    special = [[
-This command tells TeX to write `token list` directly to the .dvi
+This command tells TeX to write `token list` directly to the .dvi
 file when it next ships out a page. A typical use of `\special` would be
 to tell the device driver to incorporate the contents of a named
 graphics file into the output page.
@@ -3261,7 +3261,7 @@ strictly on the device drivers that you have available.
 
 These commands expand to the mark text generated by an earlier `\mark`
 command that produced an item in the item list of a vbox $V$. The mark
-text has the form of a token list. When TeX splits $V$ in response to a
+text has the form of a token list. When TeX splits $V$ in response to a
 `\vsplit` command, it sets the values of these commands as follows:
 
 -   `\splitfirstmark` contains the tokens of the first mark in the item
@@ -3279,7 +3279,7 @@ from a `\vsplit`. `\splitmaxdepth` plays the same role that `\maxdepth`
 plays for a page.
 ]],
    splittopskip = [[
-This parameter specifies the glue that TeX inserts at the top of a box
+This parameter specifies the glue that TeX inserts at the top of a box
 resulting from a `\vsplit`. `\splittopskip` plays the same role that
 `\topskip` plays for a page.
 ]],
@@ -3291,7 +3291,7 @@ This command produces the characters that form the name of
 `control sequence`, including the escape character. The escape character
 is represented by the current value of `\escapechar`.
 
-TeX gives the characters in the list a category code of $12$ (other).
+TeX gives the characters in the list a category code of $12$ (other).
 
 You can perform the reverse operation with the `\csname` command, which
 turns a string into a control sequence.
@@ -3299,7 +3299,7 @@ turns a string into a control sequence.
    strut = [[
 This command produces a box whose width is zero and whose height
 (`8.5pt`) and depth (`3.5pt`) are those of a more or less typical line
-of type in `cmr10`, the default plain TeX font. Its main use is in
+of type in `cmr10`, the default plain TeX font. Its main use is in
 forcing lines to have the same height when you’ve disabled TeX’s
 interline glue with `\offinterlineskip` or a similar command, e.g., when
 you’re constructing an alignment. If the natural height of a line is too
@@ -3312,8 +3312,8 @@ you should redefine `\strut` for that context.
 ]],
    tabskip = [[
 This parameter specifies the amount of horizontal or vertical glue that
-TeX puts between the columns of a horizontal alignment or between the
-rows of a vertical alignment. TeX also puts the `\tabskip` glue to the
+TeX puts between the columns of a horizontal alignment or between the
+rows of a vertical alignment. TeX also puts the `\tabskip` glue to the
 left of the first column and to the right of the last column of a
 horizontal alignment, and above the first row and below the last row of
 a vertical alignment. You can change `\tabskip` within a template— the
@@ -3323,14 +3323,14 @@ well as the glue after the last row or column.
    textfont = [[
 `\scriptfont`, `\scriptscriptfont`, `\textfont`
 
-Each of these parameters specifies the font that TeX is to use for
+Each of these parameters specifies the font that TeX is to use for
 typesetting the indicated style in the indicated family. These choices
 have no effect outside of math mode.
 ]],
    textindent = [[
-This command tells TeX to start a paragraph and indent it by
-`\parindent`, as usual. TeX then right-justifies `argument` within the
-indentation and follows it with an en space (half an em). Plain TeX uses
+This command tells TeX to start a paragraph and indent it by
+`\parindent`, as usual. TeX then right-justifies `argument` within the
+indentation and follows it with an en space (half an em). Plain TeX uses
 this command to typeset footnotes
 
 and items in lists).
@@ -3339,7 +3339,7 @@ and items in lists).
 `\displaystyle`, `\scriptscriptstyle`, `\scriptstyle`, `\textstyle`
 
 These commands override the normal style and hence the font that
-TeX uses in setting a formula. Like font-setting commands such as `\it`,
+TeX uses in setting a formula. Like font-setting commands such as `\it`,
 they are in effect until the end of the group containing them. They are
 useful when TeX’s choice of style is inappropriate for the formula you
 happen to be setting.
@@ -3348,7 +3348,7 @@ happen to be setting.
 This command generally expands to a list of character tokens that
 represents `token`. `token` can be any of the following:
 
--   a TeX parameter, e.g., `\parindent` or `\deadcycles`
+-   a TeX parameter, e.g., `\parindent` or `\deadcycles`
 
 -   a register, e.g., `\count0`
 
@@ -3383,15 +3383,15 @@ These parameters define thin, medium, and thick spaces in math mode.
    thinspace = [[
 This command produces a positive kern whose width is one-sixth of an em
 
-i.e., it causes TeX to move its position right by that amount. It is
+i.e., it causes TeX to move its position right by that amount. It is
 useful when you have a nested quotation, for example, and you want to
-separate the levels of quotes. TeX won’t break a line at a ``.
+separate the levels of quotes. TeX won’t break a line at a ``.
 ]],
    time = [[
-TeX sets this parameter to the number of minutes that have elapsed since
+TeX sets this parameter to the number of minutes that have elapsed since
 midnight (of the current day). At noon, for instance, `\time` is $720$.
 This command and the next three make use of the time and date as
-recorded in your computer. TeX retrieves them just once, at the
+recorded in your computer. TeX retrieves them just once, at the
 beginning of your run, so `\time` at the end of the run always has the
 same value as `\time` at the beginning of the run (unless you’ve
 explicitly changed it).
@@ -3403,12 +3403,12 @@ considered to be at the baseline of an imaginary line of text just above
 the top line of the page. More precisely, it’s a distance `\topskip`
 above the origin as given by `\hoffset` and `\voffset`.
 
-This command is useful because TeX ordinarily adjusts the glue produced
+This command is useful because TeX ordinarily adjusts the glue produced
 by `\topskip` in a complex way. By using `\topglue` you can control the
 position of the first box on the page without worrying about those
 adjustments.
 
-[1] `\topglue` was added to TeX in version 3.0, later than the other
+[1] `\topglue` was added to TeX in version 3.0, later than the other
 enhancements introduced by new TeX . It is first described in the
 *eighteenth* edition of *The TeXbook*.
 ]],
@@ -3416,7 +3416,7 @@ enhancements introduced by new TeX . It is first described in the
 `\midinsert`, `\pageinsert`, `\topinsert`
 
 These commands produce different forms of insertions that instruct (or
-allow) TeX to relocate the `vertical mode material`:
+allow) TeX to relocate the `vertical mode material`:
 
 -   `\topinsert` attempts to put the material at the top of the current
     page. If it won’t fit there, `\topinsert` will move the material to
@@ -3430,7 +3430,7 @@ allow) TeX to relocate the `vertical mode material`:
     an underfull page, be sure to end the inserted material with `\vfil`
     or fill out the excess space some other way.
 
-The `vertical mode material` is said to be “floating” because TeX can
+The `vertical mode material` is said to be “floating” because TeX can
 move it from one place to another. Insertions are very useful for
 material such as figures and tables because you can position such
 material where you want it without knowing where the page breaks will
@@ -3439,16 +3439,16 @@ fall.
 Each of these commands implicitly ends the current paragraph, so you
 should use them only between paragraphs. You should not use them within
 a box or within another insertion. If you have several insertions
-competing for the same space, TeX will retain their relative order.
+competing for the same space, TeX will retain their relative order.
 ]],
    topskip = [[
-TeX inserts glue at the top of each page in order to ensure that the
+TeX inserts glue at the top of each page in order to ensure that the
 baseline of the first box on the page always is the same distance $d$
 from the top of the page. `\topskip` determines the amount of that glue,
 called the “`\topskip` glue”, by specifying what $d$ should be (provided
 that the first box on the page isn’t too tall). $d$ is given by the
 natural size of the `\topskip` glue. If the height of the first box on
-the page exceeds $d$, so that the glue would be negative, TeX simply
+the page exceeds $d$, so that the glue would be negative, TeX simply
 inserts no `\topskip` glue at all on that page.
 
 To understand better the effect of these rules, assume that `\topskip`
@@ -3458,47 +3458,47 @@ baseline will be `\topskip` from the top of the page independently of
 its height. On the other hand, if the height of the box is $e$ greater
 than `\topskip`, its baseline will be `\topskip` + $e$ from the top of
 the page. See pages 113–114 of *The TeXbook* for the remaining details
-of how `\topskip` works. Plain TeX sets `\topskip` to `10pt`.
+of how `\topskip` works. Plain TeX sets `\topskip` to `10pt`.
 ]],
    tracingall = [[
-This command tells TeX to turn on every available form of tracing. It
+This command tells TeX to turn on every available form of tracing. It
 also sets `\tracingonline` to $1$ so that the trace output will appear
 at your terminal.
 ]],
    tracingcommands = [[
-If this parameter is $1$ or greater, TeX will record in the log file
+If this parameter is $1$ or greater, TeX will record in the log file
 most commands that it executes. If `\tracingonline` is greater than
 zero, this information will also appear at your terminal. Typesetting
 the first character of a word counts as a command, but (for the purposes
 of the trace only) the actions of typesetting the subsequent characters
 and any punctuation following them do not count as commands. If
-`\tracingcommands` is $2$ or greater, TeX will also record commands that
+`\tracingcommands` is $2$ or greater, TeX will also record commands that
 are expanded rather than executed, e.g., conditional tests and their
 outcomes.
 ]],
    tracinglostchars = [[
-If this parameter is greater than zero, TeX will record an indication in
+If this parameter is greater than zero, TeX will record an indication in
 the log file of each time that it drops an output character because that
 character does not exist in the current font. If `\tracingonline` is
 greater than zero, this information will also appear at your terminal.
-Plain TeX defaults it to $1$ (unlike the others).
+Plain TeX defaults it to $1$ (unlike the others).
 ]],
    tracingmacros = [[
-If this parameter is $1$ or greater, TeX will record in the log file the
+If this parameter is $1$ or greater, TeX will record in the log file the
 expansion and arguments of every macro that it executes.
 
-If `\tracingmacros` is $2$ or greater, TeX will record, in addition,
+If `\tracingmacros` is $2$ or greater, TeX will record, in addition,
 every expansion of a token list such as `\output` or `\everycr`. If
 `\tracingonline` is greater than zero, this information will also appear
 at your terminal.
 ]],
    tracingonline = [[
-If this parameter is greater than zero, TeX will display the results of
+If this parameter is greater than zero, TeX will display the results of
 tracing (including `\showbox` and `\showlists`) at your terminal in
 addition to recording them in the log file.
 ]],
    tracingoutput = [[
-If this parameter is greater than zero, TeX will record in the log file
+If this parameter is greater than zero, TeX will record in the log file
 the contents of every box that it sends to the .dvi file.
 
 If `\tracingonline` is greater than zero, this information will also
@@ -3511,58 +3511,58 @@ Setting `\tracingoutput` to $1$ can be particularly helpful when you’re
 trying to determine why you’ve gotten extra space on a page.
 ]],
    tracingpages = [[
-If this parameter is greater than zero, TeX will record in the log file
+If this parameter is greater than zero, TeX will record in the log file
 its calculations of the cost of various page breaks that it tries.
 
 If `\tracingonline` is greater than zero, this information will also
-appear at your terminal. TeX produces a line of this output whenever it
+appear at your terminal. TeX produces a line of this output whenever it
 first places a box or insertion on the current page list, and also
 whenever it processes a potential break point for the page. Examining
 this output can be helpful when you’re trying to determine the cause of
 a bad page break. See pages 112–114 of *The TeXbook* for an illustration
 and explanation of this output.
 
-Some production forms of TeX ignore the value of `\tracingpages` so that
+Some production forms of TeX ignore the value of `\tracingpages` so that
 they can run faster. If you need to use this parameter, be sure to use a
 form that responds to it.
 ]],
    tracingparagraphs = [[
-If this parameter is greater than zero, TeX will record in the log file
+If this parameter is greater than zero, TeX will record in the log file
 its calculations of the cost of various line breaks that it tries.
 
 If `\tracingonline` is greater than zero, this information will also
-appear at your terminal. TeX produces this output when it reaches the
+appear at your terminal. TeX produces this output when it reaches the
 end of each paragraph. See pages 98–99 of *The TeXbook* for an
 illustration and explanation of this output.
 
-Some production forms of TeX ignore the value of `\tracingparagraphs` so
+Some production forms of TeX ignore the value of `\tracingparagraphs` so
 that they can run faster. If you need to use this parameter, be sure to
 use a form that responds to it.
 ]],
    tracingrestores = [[
-If this parameter is greater than zero, TeX will record in the log file
+If this parameter is greater than zero, TeX will record in the log file
 the values that it restores when it encounters the end of a group. If
 `\tracingonline` is greater than zero, this information will also appear
 at your terminal.
 
-Some production forms of TeX ignore the value of `\tracingrestores` so
+Some production forms of TeX ignore the value of `\tracingrestores` so
 that they can run faster. If you need to use this parameter, be sure to
 use a form that responds to it.
 ]],
    tracingstats = [[
-If this parameter is $1$ or greater, TeX will include a report on the
+If this parameter is $1$ or greater, TeX will include a report on the
 resources that it used to run your job (see page 300 of *The TeXbook*
 for a list and explanation of these resources). Moreover, if
-`\tracingstats` is $2$ or greater, TeX will report on its memory usage
+`\tracingstats` is $2$ or greater, TeX will report on its memory usage
 whenever it does a `\shipout` for a page. The report appears at the end
 of the log file.
 
 If `\tracingonline` is greater than zero, the information will also
-appear at your terminal. If you’re having trouble with TeX exceeding one
+appear at your terminal. If you’re having trouble with TeX exceeding one
 of its capacities, the information provided by `\tracingstats` may help
 you pinpoint the cause of the difficulty.
 
-Some production forms of TeX ignore the value of `\tracingstats` so that
+Some production forms of TeX ignore the value of `\tracingstats` so that
 they can run faster. If you need to use this parameter, be sure to use a
 form that responds to it.
 
@@ -3573,7 +3573,7 @@ one implementation of TeX. It may be different on other implementations.
 A positive value of `\uchyph` (uppercase hyphenation) permits
 hyphenation of words, such as proper names, that start with a capital
 letter. A zero or negative value inhibits such hyphenation. Plain
-TeX sets `\uchyph` to $1$, so TeX normally tries to hyphenate words that
+TeX sets `\uchyph` to $1$, so TeX normally tries to hyphenate words that
 start with a capital letter.
 ]],
    underbar = [[
@@ -3585,8 +3585,8 @@ regard to anything that protrudes below the baseline of the box.
 `\underbrace`, `\underline`
 
 These commands place extensible braces, lines, or arrows over or under
-the subformula given by `argument`. TeX will make these constructs as
-wide as they need to be for the context. When TeX produces the extended
+the subformula given by `argument`. TeX will make these constructs as
+wide as they need to be for the context. When TeX produces the extended
 braces, lines, or arrows, it considers only the dimensions of the box
 containing `argument`. If you use more than one of these commands in a
 single formula, the braces, lines, or arrows they produce may not line
@@ -3620,7 +3620,7 @@ respectively, these commands remove it from that list. If the item isn’t
 of the right type, these commands have no effect. Like `\lastbox`, you
 can’t apply them to lists in math mode or to the main vertical list.
 These commands are most useful after a macro call that is known to have
-inserted a specific item that you don’t want there. TeX doesn’t provide
+inserted a specific item that you don’t want there. TeX doesn’t provide
 an `\unbox` command because `\lastbox` produces nearly the same effect.
 ]],
    vadjust = [[
@@ -3633,10 +3633,10 @@ space after a certain line.
    valign = [[
 This command produces a vertical alignment consisting of a sequence of
 columns, where each column in turn contains a sequence of row entries.
-TeX adjusts the heights of the row entries to accommodate the tallest
+TeX adjusts the heights of the row entries to accommodate the tallest
 one in each row.
 
-A vertical alignment can only appear when TeX is in a horizontal mode.
+A vertical alignment can only appear when TeX is in a horizontal mode.
 Because vertical alignments are (a) conceptually somewhat difficult and
 (b) not often used, we recommend that you learn about alignments in
 general and the `\halign` command (see above) before you attempt to use
@@ -3647,12 +3647,12 @@ The preamble, which describes the layout of the columns that follow,
 consists of a sequence of row templates, separated by ‘`&`’ and ended by
 `\cr`. Each column consists of a sequence of row entries, also separated
 by ‘`&`’ and ended by `\cr`. Within a template, ‘`#`’ indicates where
-TeX should insert the corresponding text of a row entry.
+TeX should insert the corresponding text of a row entry.
 
-TeX typesets each row entry in internal vertical mode, i.e., as the
+TeX typesets each row entry in internal vertical mode, i.e., as the
 contents of a vbox, and implicitly encloses the entry in a group. It
 always gives the vbox zero depth. Any text or other horizontal mode
-material in a row entry then puts TeX into ordinary horizontal mode.
+material in a row entry then puts TeX into ordinary horizontal mode.
 (This is just an application of the general rules for TeX’s behavior in
 internal vertical mode.) The usual paragraphing parameters apply in this
 case: the row entry has an initial indentation of `\parindent` and its
@@ -3669,17 +3669,17 @@ in each template so that the rows don’t come out crooked as a result of
 the varying heights of the entries in the alignment. You can produce a
 strut with the `\strut` command.
 
-The `to` form of this command instructs TeX to make the vertical extent
+The `to` form of this command instructs TeX to make the vertical extent
 of the alignment be `dimen`, adjusting the space between rows as
-necessary. The `spread` form of this command instructs TeX to make the
+necessary. The `spread` form of this command instructs TeX to make the
 alignment taller by `dimen` than its natural height. These forms are
 like the corresponding forms of `\vbox` .
 ]],
    vcenter = [[
-Every math formula has an invisible “axis” that TeX treats as a kind of
+Every math formula has an invisible “axis” that TeX treats as a kind of
 horizontal centering line for that formula. For instance, the axis of a
 formula consisting of a fraction is at the center of the fraction bar.
-The `\vcenter` command tells TeX to place the `vertical mode material`
+The `\vcenter` command tells TeX to place the `vertical mode material`
 in a vbox and to center the vbox with respect to the axis of the formula
 it is currently constructing.
 
@@ -3701,45 +3701,45 @@ This command produces three vertical dots.
 (≀)
 
 These commands produce the symbols for various binary operations. Binary
-operations are one of TeX’s classes of math symbols. TeX puts different
+operations are one of TeX’s classes of math symbols. TeX puts different
 amounts of space around different classes of math symbols. When
-TeX needs to break a line of text within a math formula, it will
+TeX needs to break a line of text within a math formula, it will
 consider placing the break after a binary operation—but only if the
 operation is at the outermost level of the formula, i.e., not enclosed
 in a group.
 
-In addition to these commands, TeX also treats ‘`+`’ and ‘`-`’ as binary
+In addition to these commands, TeX also treats ‘`+`’ and ‘`-`’ as binary
 operations. It considers ‘`/`’ to be an ordinary symbol, despite the
 fact that mathematically it is a binary operation, because it looks
 better with less space around it.
 ]],
    vsize = [[
 This parameter specifies the current vertical extent of a page.
-TeX examines it only when it is starting a page. Thus if you change
+TeX examines it only when it is starting a page. Thus if you change
 `\vsize` in the middle of a page, your change won’t affect anything
 until the following page. If you want to change the vertical extent of a
 page when you’re in the middle of it, you should assign the new height
 to `\pagegoal` instead. (If you want the change to affect the following
 pages too, you should change *both* `\vsize` and `\pagegoal`.) Plain
-TeX sets `\vsize` to `8.9in`.
+TeX sets `\vsize` to `8.9in`.
 ]],
    vsplit = [[
-This command causes TeX to split the box numbered `number`, which we’ll
+This command causes TeX to split the box numbered `number`, which we’ll
 call $B_2$, into two parts. It uses the same algorithm that it would use
 if $B_2$ was a page and it was breaking that page; the division point
 then corresponds to the page break that it would find. The box $B_2$
-must be a vbox, not an hbox. TeX puts the material preceding the
+must be a vbox, not an hbox. TeX puts the material preceding the
 division point into another box $B_1$ and leaves the material after the
 division point in $B_2$. The `\vsplit` command then produces $B_1$.
 Normally you’d assign $B_1$ to a different box register, as in the
 example below. If the division point is at the end of $B_2$, $B_2$ will
 be empty after the `\vsplit`.
 
-TeX employs its usual page-breaking algorithm
+TeX employs its usual page-breaking algorithm
 
 for the split. It uses `dimen` for `\pagegoal`, the desired height of
 $B_1$. The vertical extent of $B_1$ may not be exactly `dimen` because
-TeX may not be able to achieve its page goal perfectly. TeX does not
+TeX may not be able to achieve its page goal perfectly. TeX does not
 consider insertions in calculating the split, so insertions in the
 original vertical list of $B_2$ will be retained but won’t affect the
 split point.
@@ -3749,10 +3749,10 @@ split point.
 
 These commands produce a vbox (vertical box) containing
 `vertical mode material`. The braces around `vertical mode material`
-define a group. TeX is in internal vertical mode when it’s assembling
-the box. TeX won’t change the size of the box once it’s been produced.
+define a group. TeX is in internal vertical mode when it’s assembling
+the box. TeX won’t change the size of the box once it’s been produced.
 
-The difference between `\vtop` and `\vbox` lies in where TeX puts the
+The difference between `\vtop` and `\vbox` lies in where TeX puts the
 reference point of the constructed vbox. Ordinarily, the reference point
 gotten from `\vtop` tends to be at or near the top of the constructed
 vbox, while the reference point gotten from `\vbox` tends to be at or
@@ -3763,12 +3763,12 @@ their bottoms nearly in a line.
 
 `\vtop` and `\vbox` are often useful when you want to keep some text
 together on a single page. (For this purpose, it usually doesn’t matter
-which command you use.) If your use of these commands prevents TeX from
-breaking pages in an acceptable way, TeX will complain that it’s found
+which command you use.) If your use of these commands prevents TeX from
+breaking pages in an acceptable way, TeX will complain that it’s found
 an overfull or underfull vbox while `\output` is active.
 
 The height of a vbox depends on the arguments to `\vtop` or `\vbox`. For
-`\vbox`, TeX determines the height as follows:
+`\vbox`, TeX determines the height as follows:
 
 -   If you specify only `vertical mode material`, the vbox will have its
     natural height.
@@ -3779,7 +3779,7 @@ The height of a vbox depends on the arguments to `\vtop` or `\vbox`. For
     natural height plus `dimen`, i.e., the height of the vbox will be
     stretched vertically by `dimen`.
 
-For `\vtop`, TeX constructs the box using its rules for `\vbox` and then
+For `\vtop`, TeX constructs the box using its rules for `\vbox` and then
 apportions the vertical extent between the height and the depth as
 described below.
 
@@ -3813,39 +3813,39 @@ to `\boxmaxdepth` and the height is adjusted accordingly.
    widowpenalty = [[
 This parameter specifies the penalty for breaking a page just before the
 last line of a paragraph. A line by itself at the top of a page is
-called a “widow line”. Plain TeX sets `\widowpenalty` to $150$.
+called a “widow line”. Plain TeX sets `\widowpenalty` to $150$.
 ]],
    wlog = [[
 This command writes `token list` on the log file.
 
-TeX expands `token list` according to the same rules that it uses for
+TeX expands `token list` according to the same rules that it uses for
 `\edef`.
 ]],
    write = [[
-This command tells TeX to write `token list` to the file associated with
+This command tells TeX to write `token list` to the file associated with
 the output stream designated by `number`. It generates a whatsit that
 becomes part of a box. The actual writing does not take place until
-TeX ships out that box to the .dvi file, unless you’ve preceded the
+TeX ships out that box to the .dvi file, unless you’ve preceded the
 `\write` with `\immediate`.
 
-For a `\write` that is not immediate, TeX does not expand macros in
+For a `\write` that is not immediate, TeX does not expand macros in
 `token list` until the token list is actually written to the file. The
 macro expansions follow the same rules as `\edef`. In particular, any
 control sequence that is not the name of a macro is written as
 `\escapechar` followed by the control sequence name and a space. Any
 ‘`#`’ tokens in `token list` are doubled, i.e., written as ‘`##`’.
 
-If `number` is not in the range from $0$ to $15$, TeX writes
+If `number` is not in the range from $0$ to $15$, TeX writes
 `token list` to the log file.
 
 If `number` is greater than $15$ or isn’t associated with an output
-stream, TeX also writes `token list` to the terminal.
+stream, TeX also writes `token list` to the terminal.
 ]],
    xdef = [[
 This command is equivalent to `\global\edef`.
 ]],
    year = [[
-TeX sets this parameter to the current year (A.D.). It is a number such
+TeX sets this parameter to the current year (A.D.). It is a number such
 as $1991$. `\year` is set at the beginning of your run (see the comments
 on `\time` above).
 ]]

@@ -47,13 +47,13 @@ commands = {
    abovedisplayshortskip = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/abovedisplayshortskip",
       documentation = "texdoc:plain/impatient/book.pdf#page=237",
-      summary = "Glue TeX inserts before a display when the previous line fits in the display’s indentation, by default 0pt plus 3pt.",
+      summary = "Glue TeX inserts before a display when the previous line fits in the display’s indentation, by default 0pt plus 3pt.",
       type = "glue"
    },
    abovedisplayskip = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/abovedisplayskip",
       documentation = "texdoc:plain/impatient/book.pdf#page=237",
-      summary = "Glue TeX inserts before a display when the previous line doesn’t fit in the display’s indentation, by default 12pt plus 3pt minus 9pt.",
+      summary = "Glue TeX inserts before a display when the previous line doesn’t fit in the display’s indentation, by default 12pt plus 3pt minus 9pt.",
       type = "glue"
    },
    abovewithdelims = {
@@ -176,13 +176,13 @@ commands = {
    belowdisplayshortskip = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/belowdisplayshortskip",
       documentation = "texdoc:plain/impatient/book.pdf#page=237",
-      summary = "Glue TeX inserts after a display when the previous line fits in the display’s indentation, by default 7pt plus 0.3pt minus 4pt.",
+      summary = "Glue TeX inserts after a display when the previous line fits in the display’s indentation, by default 7pt plus 0.3pt minus 4pt.",
       type = "glue"
    },
    belowdisplayskip = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/belowdisplayskip",
       documentation = "texdoc:plain/impatient/book.pdf#page=237",
-      summary = "Glue TeX inserts after a display when the previous line doesn’t fit in the display’s indentation, by default 12pt plus 3pt minus 9pt.",
+      summary = "Glue TeX inserts after a display when the previous line doesn’t fit in the display’s indentation, by default 12pt plus 3pt minus 9pt.",
       type = "glue"
    },
    binoppenalty = {
@@ -490,7 +490,7 @@ commands = {
    displayindent = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/displayindent",
       documentation = "texdoc:plain/impatient/book.pdf#page=236",
-      summary = "TeX sets this to the indentation of a display.",
+      summary = "TeX sets this to the indentation of a display.",
       type = "dimen"
    },
    displaylimits = {
@@ -512,7 +512,7 @@ commands = {
    displaywidth = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/displaywidth",
       documentation = "texdoc:plain/impatient/book.pdf#page=236",
-      summary = "TeX sets this to the width of a display.",
+      summary = "TeX sets this to the width of a display.",
       type = "dimen"
    },
    divide = {
@@ -606,7 +606,7 @@ commands = {
    endlinechar = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/endlinechar",
       documentation = "texdoc:plain/impatient/book.pdf#page=272",
-      summary = "Character TeX inserts at the end of each input line, by default \\twocarets M.",
+      summary = "Character TeX inserts at the end of each input line, by default \\twocarets M.",
       type = "number"
    },
    eqno = {
@@ -617,7 +617,7 @@ commands = {
    errhelp = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/errhelp",
       documentation = "texdoc:plain/impatient/book.pdf#page=281",
-      summary = "Token list whose expansion TeX displays when the user asks for help in response to an \\errmessage.",
+      summary = "Token list whose expansion TeX displays when the user asks for help in response to an \\errmessage.",
       type = "token list"
    },
    errmessage = {
@@ -633,7 +633,7 @@ commands = {
    errorcontextlines = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/errorcontextlines",
       documentation = "texdoc:plain/impatient/book.pdf#page=282",
-      summary = "The number of lines of context TeX displays at an error, by default 5.",
+      summary = "The number of lines of context TeX displays at an error, by default 5.",
       type = "number"
    },
    errorstopmode = {
@@ -644,49 +644,49 @@ commands = {
    escapechar = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/escapechar",
       documentation = "texdoc:plain/impatient/book.pdf#page=246",
-      summary = "Character with which TeX precedes control sequence names that are displayed.",
+      summary = "Character with which TeX precedes control sequence names that are displayed.",
       type = "number"
    },
    everycr = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/everycr",
       documentation = "texdoc:plain/impatient/book.pdf#page=205",
-      summary = "Token list TeX expands after a \\cr, or a \\crcr not following \\cr or \\noalign.",
+      summary = "Token list TeX expands after a \\cr, or a \\crcr not following \\cr or \\noalign.",
       type = "token list"
    },
    everydisplay = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/everymath",
       documentation = "texdoc:plain/impatient/book.pdf#page=238",
-      summary = "Token list TeX expands when a math display begins.",
+      summary = "Token list TeX expands when a math display begins.",
       type = "token list"
    },
    everyhbox = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/everyhbox",
       documentation = "texdoc:plain/impatient/book.pdf#page=184",
-      summary = "Token list TeX expands when an hbox begins.",
+      summary = "Token list TeX expands when an hbox begins.",
       type = "token list"
    },
    everyjob = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/everyjob",
       documentation = "texdoc:plain/impatient/book.pdf#page=283",
-      summary = "Token list TeX expands when a job begins.",
+      summary = "Token list TeX expands when a job begins.",
       type = "token list"
    },
    everymath = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/everymath",
       documentation = "texdoc:plain/impatient/book.pdf#page=238",
-      summary = "Token list TeX expands when text math mode begins.",
+      summary = "Token list TeX expands when text math mode begins.",
       type = "token list"
    },
    everypar = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/everypar",
       documentation = "texdoc:plain/impatient/book.pdf#page=133",
-      summary = "Token list TeX expands when a paragraph begins.",
+      summary = "Token list TeX expands when a paragraph begins.",
       type = "token list"
    },
    everyvbox = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/everyhbox",
       documentation = "texdoc:plain/impatient/book.pdf#page=184",
-      summary = "Token list TeX expands when a vbox begins.",
+      summary = "Token list TeX expands when a vbox begins.",
       type = "token list"
    },
    exhyphenpenalty = {
@@ -713,7 +713,7 @@ commands = {
    fam = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/fam",
       documentation = "texdoc:plain/impatient/book.pdf#page=230",
-      summary = "Font family TeX uses for characters with class seven (i.e., variables) in math.",
+      summary = "Font family TeX uses for characters with class seven (i.e., variables) in math.",
       type = "number"
    },
    fi = {
@@ -1134,17 +1134,17 @@ commands = {
    ifhmode = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/ifhmode",
       documentation = "texdoc:plain/impatient/book.pdf#page=258",
-      summary = "Test if TeX is in a horizontal mode."
+      summary = "Test if TeX is in a horizontal mode."
    },
    ifinner = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/ifhmode",
       documentation = "texdoc:plain/impatient/book.pdf#page=258",
-      summary = "Test if TeX is in an internal mode."
+      summary = "Test if TeX is in an internal mode."
    },
    ifmmode = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/ifhmode",
       documentation = "texdoc:plain/impatient/book.pdf#page=258",
-      summary = "Test if TeX is in a math mode."
+      summary = "Test if TeX is in a math mode."
    },
    ifnum = {
       arguments = {
@@ -1195,7 +1195,7 @@ commands = {
    ifvmode = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/ifhmode",
       documentation = "texdoc:plain/impatient/book.pdf#page=258",
-      summary = "Test if TeX is in a vertical mode."
+      summary = "Test if TeX is in a vertical mode."
    },
    ifvoid = {
       arguments = {
@@ -1283,7 +1283,7 @@ commands = {
    jobname = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/jobname",
       documentation = "texdoc:plain/impatient/book.pdf#page=245",
-      summary = "Base name of the file with which TeX was invoked."
+      summary = "Base name of the file with which TeX was invoked."
    },
    kern = {
       arguments = {
@@ -1360,13 +1360,13 @@ commands = {
    lefthyphenmin = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/lefthyphenmin",
       documentation = "texdoc:plain/impatient/book.pdf#page=148",
-      summary = "Size of the smallest word fragment TeX allows before a hyphen at the beginning of a word, by default 2.",
+      summary = "Size of the smallest word fragment TeX allows before a hyphen at the beginning of a word, by default 2.",
       type = "number"
    },
    leftskip = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/leftskip",
       documentation = "texdoc:plain/impatient/book.pdf#page=135",
-      summary = "Glue TeX inserts at the left of each line.",
+      summary = "Glue TeX inserts at the left of each line.",
       type = "glue"
    },
    leqno = {
@@ -1572,13 +1572,13 @@ commands = {
    mathsurround = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/mathsurround",
       documentation = "texdoc:plain/impatient/book.pdf#page=237",
-      summary = "Space TeX kerns before and after math in text.",
+      summary = "Space TeX kerns before and after math in text.",
       type = "dimen"
    },
    maxdeadcycles = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/maxdeadcycles",
       documentation = "texdoc:plain/impatient/book.pdf#page=168",
-      summary = "Value of \\deadcycles at which TeX complains, and then uses its own output routine, by default 25.",
+      summary = "Value of \\deadcycles at which TeX complains, and then uses its own output routine, by default 25.",
       type = "number"
    },
    maxdepth = {
@@ -1866,7 +1866,7 @@ commands = {
    output = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/output",
       documentation = "texdoc:plain/impatient/book.pdf#page=168",
-      summary = "Token list TeX expands when it finds a page break.",
+      summary = "Token list TeX expands when it finds a page break.",
       type = "token list"
    },
    outputpenalty = {
@@ -1914,49 +1914,49 @@ commands = {
    pagedepth = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/pagedepth",
       documentation = "texdoc:plain/impatient/book.pdf#page=159",
-      summary = "TeX sets this to the current depth of the current page.",
+      summary = "TeX sets this to the current depth of the current page.",
       type = "dimen"
    },
    pagefilllstretch = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/pagestretch",
       documentation = "texdoc:plain/impatient/book.pdf#page=160",
-      summary = "TeX sets this to the amount of filll stretch on the current page.",
+      summary = "TeX sets this to the amount of filll stretch on the current page.",
       type = "dimen"
    },
    pagefillstretch = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/pagestretch",
       documentation = "texdoc:plain/impatient/book.pdf#page=160",
-      summary = "TeX sets this to the amount of fill stretch on the current page.",
+      summary = "TeX sets this to the amount of fill stretch on the current page.",
       type = "dimen"
    },
    pagefilstretch = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/pagestretch",
       documentation = "texdoc:plain/impatient/book.pdf#page=160",
-      summary = "TeX sets this to the amount of fil stretch on the current page.",
+      summary = "TeX sets this to the amount of fil stretch on the current page.",
       type = "dimen"
    },
    pagegoal = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/pagegoal",
       documentation = "texdoc:plain/impatient/book.pdf#page=159",
-      summary = "TeX sets this to the desired height for the current page (i.e., \\vsize when the first box is put on the page).",
+      summary = "TeX sets this to the desired height for the current page (i.e., \\vsize when the first box is put on the page).",
       type = "dimen"
    },
    pageshrink = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/pageshrink",
       documentation = "texdoc:plain/impatient/book.pdf#page=160",
-      summary = "TeX sets this to the total amount of shrinkability on the current page.",
+      summary = "TeX sets this to the total amount of shrinkability on the current page.",
       type = "dimen"
    },
    pagestretch = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/pagestretch",
       documentation = "texdoc:plain/impatient/book.pdf#page=160",
-      summary = "TeX sets this to the total amount of stretchability on the current page.",
+      summary = "TeX sets this to the total amount of stretchability on the current page.",
       type = "dimen"
    },
    pagetotal = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/pagetotal",
       documentation = "texdoc:plain/impatient/book.pdf#page=159",
-      summary = "TeX sets this to the natural height of the current page.",
+      summary = "TeX sets this to the natural height of the current page.",
       type = "dimen"
    },
    par = {
@@ -1966,13 +1966,13 @@ commands = {
    parfillskip = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/parfillskip",
       documentation = "texdoc:plain/impatient/book.pdf#page=131",
-      summary = "Horizontal glue TeX inserts at the end of a paragraph.",
+      summary = "Horizontal glue TeX inserts at the end of a paragraph.",
       type = "glue"
    },
    parindent = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/parindent",
       documentation = "texdoc:plain/impatient/book.pdf#page=133",
-      summary = "Horizontal space TeX inserts at the start of a paragraph.",
+      summary = "Horizontal space TeX inserts at the start of a paragraph.",
       type = "dimen"
    },
    parshape = {
@@ -1983,7 +1983,7 @@ commands = {
    parskip = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/parskip",
       documentation = "texdoc:plain/impatient/book.pdf#page=161",
-      summary = "Vertical glue TeX inserts before a paragraph.",
+      summary = "Vertical glue TeX inserts before a paragraph.",
       type = "glue"
    },
    pausing = {
@@ -2018,7 +2018,7 @@ commands = {
    predisplaysize = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/predisplaysize",
       documentation = "texdoc:plain/impatient/book.pdf#page=236",
-      summary = "TeX sets this to the width of the line preceding a display.",
+      summary = "TeX sets this to the width of the line preceding a display.",
       type = "dimen"
    },
    pretolerance = {
@@ -2036,7 +2036,7 @@ commands = {
    prevgraf = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/prevgraf",
       documentation = "texdoc:plain/impatient/book.pdf#page=140",
-      summary = "TeX sets this to the number of lines in the paragraph so far (in horizontal mode) or in the previous paragraph (in vertical mode).",
+      summary = "TeX sets this to the number of lines in the paragraph so far (in horizontal mode) or in the previous paragraph (in vertical mode).",
       type = "number"
    },
    radical = {
@@ -2088,13 +2088,13 @@ commands = {
    righthyphenmin = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/lefthyphenmin",
       documentation = "texdoc:plain/impatient/book.pdf#page=148",
-      summary = "Size of the smallest word fragment TeX allows after a hyphen at the end of a word, by default 3.",
+      summary = "Size of the smallest word fragment TeX allows after a hyphen at the end of a word, by default 3.",
       type = "number"
    },
    rightskip = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/leftskip",
       documentation = "texdoc:plain/impatient/book.pdf#page=135",
-      summary = "Glue TeX inserts at the right of each line.",
+      summary = "Glue TeX inserts at the right of each line.",
       type = "glue"
    },
    scriptfont = {
@@ -2129,7 +2129,7 @@ commands = {
    scriptspace = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/scriptspace",
       documentation = "texdoc:plain/impatient/book.pdf#page=238",
-      summary = "Additional space TeX kerns after a subscript or superscript, by default 0.5pt.",
+      summary = "Additional space TeX kerns after a subscript or superscript, by default 0.5pt.",
       type = "dimen"
    },
    scriptstyle = {
@@ -2335,7 +2335,7 @@ commands = {
    splittopskip = {
       details = "$DIGESTIFDATA/excerpts-teximpatient/data/splittopskip",
       documentation = "texdoc:plain/impatient/book.pdf#page=170",
-      summary = "Glue TeX inserts at the top of a box resulting from \\vsplit.",
+      summary = "Glue TeX inserts at the top of a box resulting from \\vsplit.",
       type = "glue"
    },
    string = {
