@@ -17,11 +17,11 @@ documentation = {
   },
   {
     summary = "TeX for the Impatient",
-    uri = "doc/plain/impatient/book.pdf"
+    uri = "texdoc:plain/impatient/book.pdf"
   },
   {
     summary = "TeX by Topic, a TeXnician's reference",
-    uri = "doc/plain/texbytopic/TeXbyTopic.pdf"
+    uri = "texdoc:plain/texbytopic/TeXbyTopic.pdf"
   }
 }
 commands = {

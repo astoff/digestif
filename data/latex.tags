@@ -14,7 +14,7 @@ ctan_package = "latex"
 documentation = {
   {
     summary = "A (Not So) Short Introduction to LaTeX 2ε",
-    uri = "texdoc:doc/latex/lshort-english/lshort.pdf"
+    uri = "texdoc:latex/lshort-english/lshort.pdf"
   },
   {
     summary = "LaTeX 2ε for authors",
