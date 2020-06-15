@@ -1,0 +1,6 @@
+package = {
+   dependencies = {
+      "latex"
+   },
+   name = "LaTeX style files"
+}
