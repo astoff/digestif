@@ -4,14 +4,17 @@ local lpeg = require "lpeg"
 
 local co_yield, co_wrap = coroutine.yield, coroutine.wrap
 local to_upper, gsub, substring = string.upper, string.gsub, string.sub
+local to_char, to_byte = string.char, string.byte
+local format = string.format
 local pack, unpack = table.pack, table.unpack
-local P, V, R = lpeg.P, lpeg.V, lpeg.R
-local C, Cp, Cs, Cmt, Cf, Ct = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cmt, lpeg.Cf, lpeg.Ct
+local pairs, getmetatable, setmetatable = pairs, getmetatable, setmetatable
+local P, V, R, S = lpeg.P, lpeg.V, lpeg.R, lpeg.S
+local C, Cp, Cs, Cf, Ct = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cf, lpeg.Ct
 local match, locale_table = lpeg.match, lpeg.locale()
 
 local util = {}
 
--- ¶ Table manipulation
+--* Table manipulation
 
 function util.map(f, t)
   local r = {}
@@ -84,7 +87,7 @@ function util.merge(...)
   return update({}, ...)
 end
 
--- ¶ Cool combinators and friendly functions for LPeg
+--* Cool combinators and friendly functions for LPeg
 
 -- simple things for better legibility of complicated constructions
 
@@ -234,7 +237,7 @@ function util.lines(s, i, n)
   end)
 end
 
--- ¶ Classes
+--* Classes
 
 local function create_object (c, ...)
    local obj = setmetatable({}, c)
@@ -252,7 +255,7 @@ function util.class(parent)
    return setmetatable(c, mt)
 end
 
--- ¶ Memoization
+--* Memoization
 
 local weak_keys, nil_marker, value_marker = {__mode = "k"}, {}, {}
 
@@ -296,7 +299,7 @@ function util.memoize(fun)
   end
 end
 
--- ¶ Reading data and config files
+--* Reading data and config files
 
 --- Evaluate string in a restricted environment.
 -- @tparam string str code to evaluate
@@ -326,7 +329,7 @@ function util.update_config(str)
    update(config, new_config)
 end
 
--- ¶ Path and file manipulation
+--* Path and file manipulation
 
 local path_sep = "/"
 local path_sep_patt = P(path_sep)
@@ -386,6 +389,9 @@ local function try_read_file(path, name)
 end
 util.try_read_file = try_read_file
 
+-- Look for a file in several locations.  `path` is a string or a list
+-- of strings.  The optional `name` is joined to each element.
+-- Returns the first file name that exists on disk.
 local function find_file(path, name)
   if type(path) == "table" then
     for i = 1, #path do
