@@ -11,6 +11,7 @@ local nested_get, update = util.nested_get, util.update
 local path_split = util.path_split
 local find_file, try_read_file = util.find_file, util.try_read_file
 local eval_with_env = util.eval_with_env
+local parse_uri, make_uri = util.parse_uri, util.make_uri
 local log = util.log
 
 local ctan_files = {}
@@ -264,11 +265,20 @@ local function extend(s, t)
 end
 
 local function resolve_uri(uri)
-  local scheme, location = uri:match"([^:]*):(.*)"
-  if scheme == "info" and config.info_command then
+  local scheme, location, fragment = parse_uri(uri)
+  if scheme == "info" then
     return uri
   elseif scheme == "texdoc" then
-    return "https://texdoc.net/texmf-dist/doc/" .. location
+    local path = find_file(config.texmf_dirs, "doc/" .. location)
+    if path then
+      return make_uri("file", path, fragment)
+    else
+      return make_uri(
+        "https",
+        "//texdoc.net/texmf-dist/doc/" .. location,
+        fragment
+      )
+    end
   else
     return uri
   end
@@ -290,7 +300,8 @@ end
 
 local function get_info(uri)
   if config.info_command then
-    local path, fragment = uri:match"^info:([^#]*)#?(.*)"
+    local scheme, path, fragment = parse_uri(uri)
+    if scheme ~= "info" then return end
     local cmd = format("%s '(%s)%s'", config.info_command, path, fragment)
     local pipe = io.popen(cmd)
     local str = pipe:read("a")
