@@ -359,11 +359,8 @@ local function main(arg)
   if arg[1] == "-v" then config.verbose = true end
 
   -- Set up data path and check if it worked
-  local DIGESTIFDATA = os.getenv("DIGESTIFDATA")
   local ROCKPATH = arg[0]:match("^(.*/luarocks/.*)/bin/digestif$")
-  if DIGESTIFDATA then
-    config.data_dirs = util.split";"(DIGESTIFDATA)
-  elseif ROCKPATH then
+  if ROCKPATH then
     table.insert(config.data_dirs, util.path_join(ROCKPATH, 'data'))
   end
   if not require("digestif.data").require("primitives") then
@@ -375,6 +372,7 @@ local function main(arg)
   if config.verbose then
     log("\n━━━━━━ digestif started! ━━━━━━━━━━━━━━ %s", os.date())
   end
+
   while true do process_request() end
 end
 
