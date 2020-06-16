@@ -9,7 +9,7 @@ local C, Cc = lpeg.C, lpeg.Cc
 local tlmgr_command = config.tlmgr_command
 local nested_get, update = util.nested_get, util.update
 local path_split = util.path_split
-local find_file, try_read_file = util.find_file, util.try_read_file
+local find_file = util.find_file
 local eval_with_env = util.eval_with_env
 local parse_uri, make_uri = util.parse_uri, util.make_uri
 local log = util.log
@@ -219,7 +219,7 @@ end
 
 local function load_tags(name)
   if name:find('..', 1, true) then return nil end -- unreasonable file name
-  local src = try_read_file(config.data_dirs, name .. ".tags")
+  local _, src = find_file(config.data_dirs, name .. ".tags", true)
   if not src then return nil end
   local result, err = eval_with_env(src)
   if not result and config.verbose then

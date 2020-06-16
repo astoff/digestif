@@ -152,8 +152,10 @@ end)
 
 describe("Try read file", function()
   it("works", function()
-    local a = util.try_read_file({"spec/nonexistent", "spec/fixtures"}, "file1.tex")
-    local b = util.try_read_file({"spec/nonexistent", "spec/fixtures"}, "nonexistent")
+    local _, a = util.find_file(
+      {"spec/nonexistent", "spec/fixtures"}, "file1.tex", true)
+    local _, b = util.find_file(
+      {"spec/nonexistent", "spec/fixtures"}, "nonexistent", true)
     assert.is_string(a)
     assert.is_nil(b)
   end)
