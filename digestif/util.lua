@@ -6,7 +6,7 @@ local co_yield, co_wrap = coroutine.yield, coroutine.wrap
 local to_upper, gsub, substring = string.upper, string.gsub, string.sub
 local to_char, to_byte = string.char, string.byte
 local format = string.format
-local pack, unpack = table.pack, table.unpack
+local pack, unpack, move = table.pack, table.unpack, table.move
 local pairs, getmetatable, setmetatable = pairs, getmetatable, setmetatable
 local P, V, R, S = lpeg.P, lpeg.V, lpeg.R, lpeg.S
 local C, Cp, Cs, Cf, Ct = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cf, lpeg.Ct
@@ -18,13 +18,24 @@ local util = {}
 
 local function map(f, t)
   local r = {}
-  for i, v in pairs(t) do
-    r[i] = f(v)
+  for k, v in pairs(t) do
+    r[k] = f(v)
   end
   return r
 end
 util.map = map
 
+local function imap(f, t)
+  local r = {}
+  for i = 1, #t do
+    r[i] = f(t[i])
+  end
+  return r
+end
+util.imap = imap
+
+-- Return a table with entries (k, f(k)), where v ranges over the keys
+-- of t and all its __index parents.
 local function map_keys(f, t)
   local mt = getmetatable(t)
   local p = mt and mt.__index
@@ -35,15 +46,6 @@ local function map_keys(f, t)
   return r
 end
 util.map_keys = map_keys
-
-local function imap(f, t)
-  local r = {}
-  for i = 1, #t do
-    r[i] = f(t[i])
-  end
-  return r
-end
-util.imap = imap
 
 local function foldl1(f, t)
   local v = t[1]
@@ -76,10 +78,10 @@ local function nested_put(v, t, ...)
 end
 util.nested_put = nested_put
 
-local function update(t, ...)
-  local arg = pack(...) -- TODO: do we actually need more than 1 argument?
-  for i = 1, arg.n do
-    for k, v in pairs(arg[i] or {}) do -- TODO: should we allow nils?
+-- Copy all entries of s onto t
+local function update(t, s)
+  if s then
+    for k, v in pairs(s) do
       t[k] = v
     end
   end
@@ -87,10 +89,32 @@ local function update(t, ...)
 end
 util.update = update
 
+-- Return a new table containing all entries of the given tables,
+-- priority given to the latter ones.
 local function merge(...)
-  return update({}, ...)
+  return foldl1(update, pack({}, ...))
 end
 util.merge = merge
+
+-- Copy entries of the second list to the end of the first.
+local function extend(s, t)
+  return move(t, 1, #t, #s+1, s)
+end
+util.extend = extend
+
+-- Iterate over a table of tables.
+local function triples(t)
+  return co_wrap(
+    function()
+      for i, u in pairs(t) do
+        for j, v in pairs(u) do
+          co_yield(i, j, v)
+        end
+      end
+    end
+  )
+end
+util.triples = triples
 
 --* Cool combinators and friendly functions for LPeg
 
@@ -375,26 +399,18 @@ local path_is_abs_patt = path_sep_patt + P"~/"
 local path_trim_patt = C((path_sep_patt^0 * (1 - path_sep_patt)^1)^0)
 local path_last_sep_patt = P{Cp() * (1 - path_sep_patt)^0 * -1 + (1 * V(1))}
 
-local function path_join2(p, q)
-  if path_is_abs_patt:match(q) or p == "" then
+-- Concatenate two paths.  If the second is absolute, the first one is
+-- ignored.
+local function path_join(p, q)
+  if match(path_is_abs_patt, q) or p == "" then
     return q
   else
-    return path_trim_patt:match(p) .. path_sep .. q
+    return match(path_trim_patt, p) .. path_sep .. q
   end
-end
-
----
--- Concatenate any number of path names.  If one of the paths is
--- absolute, all the previous ones are ignored.
-local function path_join(...)
-  return foldl1(path_join2, pack(...))
 end
 util.path_join = path_join
 
---- Split a path into directory and file parts.
--- @tparam string p a path name
--- @treturn string the directory
--- @treturn string the file name
+-- Split a path into directory and file parts.
 local function path_split(p)
   p = match(path_trim_patt, p)
   local i = match(path_last_sep_patt, p) or 1
@@ -469,7 +485,7 @@ util.make_uri = make_uri
 --* &c.
 
 local function log(msg, ...)
-  if select("#", ...) > 0 then msg = msg:format(...) end
+  if select("#", ...) > 0 then msg = format(msg, ...) end
   io.stderr:write(msg, "\n")
   io.stderr:flush()
 end

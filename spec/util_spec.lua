@@ -140,8 +140,9 @@ end)
 
 describe("Path manipulation", function()
   it("joins paths", function()
-    assert.same(util.path_join("a", "b/", "c"), "a/b/c")
-    assert.same(util.path_join("a", "/b", "c//", "d/"), "/b/c/d/")
+    assert.same(util.path_join("a", "b/"), "a/b/")
+    assert.same(util.path_join("a", "/b"), "/b")
+    assert.same(util.path_join("b//", "c"), "b/c")
   end)
 
   it("splits paths", function()

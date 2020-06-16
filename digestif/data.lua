@@ -7,7 +7,7 @@ local concat = table.concat
 local P, R, S = lpeg.P, lpeg.R, lpeg.S
 local C, Cc = lpeg.C, lpeg.Cc
 local tlmgr_command = config.tlmgr_command
-local nested_get, update = util.nested_get, util.update
+local nested_get, update, extend = util.nested_get, util.update, util.extend
 local path_split = util.path_split
 local find_file = util.find_file
 local eval_with_env = util.eval_with_env
@@ -259,10 +259,6 @@ local function load_all_tags()
 end
 
 --* User-readable documentation
-
-local function extend(s, t)
-  return table.move(t, 1, #t, #s+1, s)
-end
 
 local function resolve_uri(uri)
   local scheme, location, fragment = parse_uri(uri)
