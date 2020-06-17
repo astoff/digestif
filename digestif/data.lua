@@ -347,6 +347,6 @@ end
 return {
   require = require_tags,
   load_all = load_all_tags,
-  generate_tags = generate_tags,
+  tags_from_manuscript = tags_from_manuscript,
   generate_docstring = generate_docstring
 }

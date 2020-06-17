@@ -355,22 +355,83 @@ local function process_request()
   end
 end
 
-local function main(arg)
-  if arg[1] == "-v" then config.verbose = true end
+local function generate(path)
+  local save_from_table = require "luarocks.persist".save_from_table
+  local tags_from_manuscript = require "digestif.data".tags_from_manuscript
+  local Manuscript = require "digestif.Manuscript"
+  if not util.find_file(path) then
+    print("Error: file \"" .. path .. "\" not found.")
+    os.exit(3)
+  end
+  local manuscript = Manuscript {
+    filename = path,
+    format = "latex-prog",
+    files = cache
+  }
+  local _, basename = util.path_split(path)
+  local tags = tags_from_manuscript(manuscript)
+  local i, j = 0, 0
+  for _, cmd in pairs(tags.commands) do
+    i = i + 1
+    cmd.package = nil
+  end
+  for _, cmd in pairs(tags.environments) do
+    j = j + 1
+    cmd.package = nil
+  end
+  save_from_table(
+    basename .. ".tags",
+    tags,
+    {"generated", "dependencies", "commands", "environments"}
+  )
+  print(("Generated \"%s.tags\" with %i commands and %i environments.")
+        :format(basename, i, j))
+  print(path)
+end
 
+local function main(arg)
   -- Set up data path and check if it worked
   local ROCKPATH = arg[0]:match("^(.*/luarocks/.*)/bin/digestif$")
   if ROCKPATH then
     table.insert(config.data_dirs, util.path_join(ROCKPATH, 'data'))
   end
+
   if not require("digestif.data").require("primitives") then
-    error("Could not find data files at the following locations:\n- "
+    print("Could not find data files at the following locations:\n- "
             .. table.concat(config.data_dirs, "\n- ")
             .. "\nSet the environment variable DIGESTIFDATA to fix this.")
+    os.exit(2)
+  end
+
+  while arg[1] do
+    local switch = table.remove(arg, 1)
+    if switch == "-v" or switch == "--verbose" then
+      config.verbose = true
+    elseif switch == "-g" or switch == "--generate" then
+      for i = 1, #arg do generate(arg[i]) end
+      os.exit()
+    elseif switch == "-h" or switch == "--help" then
+      print [[
+Digestif is a language server for TeX
+
+Optional arguments:
+  -v, --verbose          Enable log output to stderr
+  -g, --generate FILES   Generate data file stubs for FILES
+  --help                 Display this message and quit
+
+Environment variables:
+  DIGESTIFDATA           Paths to look for data files
+  DIGESTIFTEXMF          Paths to look for TeX files
+]]
+      os.exit()
+    else
+      print("Invalid option: " .. switch)
+      os.exit(1)
+    end
   end
 
   if config.verbose then
-    log("\n━━━━━━ digestif started! ━━━━━━━━━━━━━━ %s", os.date())
+    log("%s Digestif started!", os.date())
   end
 
   while true do process_request() end

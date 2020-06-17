@@ -111,12 +111,20 @@ Contributions are welcome!  A haphazard roadmap is as follows:
       modules (see [API on the wiki][api])
 
 The main shortcoming of this program at this point is the lack of a
-more extensive collection of “tags” files.  The typical TeX literate
-documentation is ostensibly not machine readable, so in most cases
-those files (listing all commands and their arguments, preferably with
-docstrings) must be compiled manually.  The tags files are in the
-`data` folder, and their format should be more or less self
-explanatory.
+more extensive collection of “tags” files, which list the commands
+provided by each package, together with their arguments and
+docstrings.  The typical TeX literate documentation is ostensibly not
+machine readable, so these tags can't be reliably generated
+automatically.  To generate a stub tags file from a `.sty`, `.cls` or
+`.dtx` file, use the command
+
+```
+digestif --generate FILES
+```
+
+After some manual polishing, these stubs could be added to this
+repository.  The format of the tags files should be more or less self
+explanatory, see the data folder for examples.
 
 [gif]: https://user-images.githubusercontent.com/6500902/70077785-c5f27100-1601-11ea-9cfb-6e7ebd3c61ae.gif
 [info-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues#info-nodes
