@@ -356,20 +356,16 @@ local function process_request()
 end
 
 local function generate(path)
-  local save_from_table = require "luarocks.persist".save_from_table
-  local tags_from_manuscript = require "digestif.data".tags_from_manuscript
-  local Manuscript = require "digestif.Manuscript"
   if not util.find_file(path) then
     print("Error: file \"" .. path .. "\" not found.")
     os.exit(3)
   end
-  local manuscript = Manuscript {
-    filename = path,
-    format = "latex-prog",
-    files = cache
-  }
-  local _, basename = util.path_split(path)
+  local save_from_table = require "luarocks.persist".save_from_table
+  local tags_from_manuscript = require "digestif.data".tags_from_manuscript
+  local cache = require "digestif.Cache"()
+  local manuscript = cache:manuscript(path, "latex-prog")
   local tags = tags_from_manuscript(manuscript)
+  local _, basename = util.path_split(path)
   local i, j = 0, 0
   for _, cmd in pairs(tags.commands) do
     i = i + 1
@@ -386,7 +382,6 @@ local function generate(path)
   )
   print(("Generated \"%s.tags\" with %i commands and %i environments.")
         :format(basename, i, j))
-  print(path)
 end
 
 local function main(arg)
@@ -396,10 +391,10 @@ local function main(arg)
     table.insert(config.data_dirs, util.path_join(ROCKPATH, 'data'))
   end
 
-  if not require("digestif.data").require("primitives") then
-    print("Could not find data files at the following locations:\n- "
-            .. table.concat(config.data_dirs, "\n- ")
-            .. "\nSet the environment variable DIGESTIFDATA to fix this.")
+  if not util.find_file(config.data_dirs, "primitives.tags") then
+    print("Error: could not find data files at the following locations\n  - "
+            .. table.concat(config.data_dirs, "\n  - ")
+            .. "\nSet the DIGESTIFDATA environment variable to fix this.")
     os.exit(2)
   end
 
