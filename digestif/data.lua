@@ -304,6 +304,7 @@ local function get_info(uri)
     local ok, exitt, exitc = pipe:close()
     if ok and exitt == "exit" and exitc == 0 then
       str = str:gsub(".-\n", "", 2) -- discard header line
+      str = str:gsub("\nFile: " .. path .. ".info.*", "\n") -- discard child nodes
       return str, path, fragment
     elseif config.verbose then
       log("Error running info (%d)", exitc)
@@ -329,7 +330,7 @@ local function generate_docstring(item, name)
   elseif type(item_doc) == "string" and item_doc:match"^info:" then
     local str, node, subnode = get_info(item_doc)
     if str then
-      t[#t+1] = format("# Info: (%s)%s\n\n```text\n%s```", node, subnode, str)
+      t[#t+1] = format("# Info: (%s)%s\n\n```Info\n%s```", node, subnode, str)
     end
   end
   if item_doc then
