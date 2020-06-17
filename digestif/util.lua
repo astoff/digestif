@@ -237,7 +237,7 @@ util.line_indices = matcher(Ct(Cp() * search(eol * Cp())^0))
 
 local utf8_sync_patt = R("\128\191")^-3 * Cp() + Cp()
 
--- Like string.gsub, but don't break up UTF-8 codepoints.  May return
+-- Like string.sub, but don't break up UTF-8 codepoints.  May return
 -- a string slightly longer or shorter than j - i + 1 bytes.
 local function substring8(s, i, j)
   i = match(utf8_sync_patt, s, i)
@@ -392,12 +392,21 @@ util.update_config = update_config
 
 --* Path and file manipulation
 
--- TODO: make this platform-dependent
-local path_sep = "/"
-local path_sep_patt = P(path_sep)
-local path_is_abs_patt = path_sep_patt + P"~/"
-local path_trim_patt = C((path_sep_patt^0 * (1 - path_sep_patt)^1)^0)
-local path_last_sep_patt = P{Cp() * (1 - path_sep_patt)^0 * -1 + (1 * V(1))}
+local path_sep = package.config:sub(1, 1)
+local path_sep_patt, path_is_abs_patt
+
+if path_sep == "/" then
+  path_sep_patt = P"/"
+  path_is_abs_patt = path_sep_patt
+elseif path_sep == "\\" then -- TODO: test this case
+  path_sep_patt = S"\\/"
+  path_is_abs_patt = (R("AZ", "az") * P":")^-1 * path_sep_patt
+else
+  error "Invalid path separator found in package.config"
+end
+
+local path_trim_patt = C(gobble_until(path_sep_patt^0 * -1))
+local path_split_patt = C(search(path_sep_patt)^0) * C(P(1)^0)
 
 -- Concatenate two paths.  If the second is absolute, the first one is
 -- ignored.
@@ -412,9 +421,7 @@ util.path_join = path_join
 
 -- Split a path into directory and file parts.
 local function path_split(p)
-  p = match(path_trim_patt, p)
-  local i = match(path_last_sep_patt, p) or 1
-  return substring(p, 1, i-1), substring(p, i)
+  return match(path_split_patt, match(path_trim_patt, p))
 end
 util.path_split = path_split
 
