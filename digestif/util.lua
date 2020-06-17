@@ -493,7 +493,7 @@ util.make_uri = make_uri
 
 local function log(msg, ...)
   if select("#", ...) > 0 then msg = format(msg, ...) end
-  io.stderr:write(msg, "\n")
+  io.stderr:write(os.date("%H:%M:%S "), msg, "\n")
   io.stderr:flush()
 end
 util.log = log

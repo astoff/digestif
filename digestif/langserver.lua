@@ -431,7 +431,7 @@ Environment variables:
   end
 
   if config.verbose then
-    log("%s Digestif started!", os.date())
+    log("Digestif started!")
   end
 
   while true do process_request() end

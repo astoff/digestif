@@ -23,6 +23,9 @@ local require_tags -- to be defined
 --* CTAN data
 
 if tlmgr_command then
+  if config.verbose then
+    log("Reading tlmgr dump")
+  end
   local pipe = io.popen(tlmgr_command .. " dump-tlpdb --local")
   local nonblank = R"!z"
   local parse_line = util.matcher(
@@ -307,7 +310,7 @@ local function get_info(uri)
       str = str:gsub("\nFile: " .. path .. ".info.*", "\n") -- discard child nodes
       return str, path, fragment
     elseif config.verbose then
-      log("Error running info (%d)", exitc)
+      log("Error running info (%s %d)", exitt, exitc)
     end
   end
 end
