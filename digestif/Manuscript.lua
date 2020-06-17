@@ -857,24 +857,27 @@ function Manuscript.completion_handlers.value(self, ctx, pos)
 end
 
 function Manuscript.completion_handlers.begin(self, ctx, pos)
-   local prefix = self:substring(ctx.pos, pos - 1)
-   local len = #prefix
-   local r = {
-      pos = ctx.pos,
-      prefix = prefix,
-      kind = "environment"
-   }
-   for text, env in pairs(self.root:all_environments()) do
-      if prefix == text:sub(1, len) then
-         r[#r+1] = {
-            text = text,
-            summary = env.summary,
-            annotation = self:signature_arg(env.arguments),
-         }
-      end
-   end
-   return r
+  local environments = self.environments
+  local prefix = self:substring(ctx.pos, pos - 1)
+  local has_prefix = matcher(prefix)
+  local r = {
+    pos = ctx.pos,
+    prefix = prefix,
+    kind = "environment"
+  }
+  for env in pairs(map_keys(has_prefix, environments)) do
+    local cmd = environments[env]
+    r[#r+1] = {
+      text = env,
+      summary = cmd.summary,
+    }
+  end
+  return r
 end
+
+Manuscript.completion_handlers["end"] = Manuscript.completion_handlers.begin
+
+
 
 --- Get a short piece of text around a label.
 -- If there is a recognized command ending right before the label, the
