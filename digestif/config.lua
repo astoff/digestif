@@ -4,22 +4,51 @@ local format = string.format
 
 local config = {}
 
--- TODO: Make OS-independent
-
-local HOME = os.getenv("HOME")
-local DIGESTIFDATA = os.getenv("DIGESTIFDATA")
-
 local function has_command(name)
   local ok = os.execute(format("command -v %q > /dev/null", name))
   return ok and name or nil
 end
 
-if DIGESTIFDATA then
-  config.data_dirs = util.split";"(DIGESTIFDATA)
+local DIGESTIF_DATA = os.getenv("DIGESTIF_DATA") or os.getenv("DIGESTIFDATA")
+
+if DIGESTIF_DATA then
+  config.data_dirs = util.path_list_split(DIGESTIF_DATA)
 else
   config.data_dirs = {} -- TODO: What should be the default?
 end
 
+local DIGESTIF_TEXMF = os.getenv("DIGESTIF_TEXMF")
+
+if DIGESTIF_TEXMF then
+  config.texmf_dirs = util.path_list_split(DIGESTIF_TEXMF)
+elseif has_command "kpsewhich" then
+  local pipe = io.popen("kpsewhich -var-brace-value=TEXMF")
+  local str = pipe:read("l"):gsub("!!", "")
+  local ok, exitt, exitc = pipe:close()
+  if ok and exitt == "exit" and exitc == 0 then
+    config.texmf_dirs = util.path_list_split(str)
+  elseif config.verbose then
+    log("Error running kpsewhich (%s %d)", exitt, exitc)
+  end
+else -- TODO: What should be the default?
+  config.texmf_dirs = {
+    "/usr/local/share/texmf",
+    "/usr/share/texmf",
+    "/usr/share/texlive/texmf-local",
+    "/usr/share/texlive/texmf-dist",
+  }
+end
+
+local DIGESTIF_TLPDB = os.getenv("DIGESTIF_TLPDB")
+
+if DIGESTIF_TLPDB then
+  config.tlpdb_path = util.path_list_split(DIGESTIF_TLPDB)
+else
+  config.tlpdb_path = {
+    "/usr/share/texlive/tlpkg/texlive.tlpdb",
+    "/usr/share/texlive/texlive.tlpdb"
+  }
+end
 
 config.provide_snippets = false
 config.extra_snippets = {
@@ -30,11 +59,5 @@ config.extra_snippets = {
 config.fuzzy_cite = true
 config.fuzzy_ref = true
 config.info_command = has_command("info")
-config.texmf_dirs = "/usr/share/texlive/texmf-dist"
-config.tlpdb_path = {
-  "/usr/share/texlive/tlpkg/texlive.tlpdb",
-  "/usr/share/texlive/texlive.tlpdb"
-}
-config.eol = "\n"
 
 return config

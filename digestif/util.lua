@@ -425,6 +425,12 @@ local function path_split(p)
 end
 util.path_split = path_split
 
+if path_separator == "\\" then
+  util.path_list_split = split";"
+else
+  util.path_list_split = split":"
+end
+
 local function format_filename_template(template, name)
   name = gsub(name, "%%", "%%%%")
   return gsub(template, "?", name)
