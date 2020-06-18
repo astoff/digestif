@@ -327,7 +327,7 @@ local function rpc_receive()
   local msg = read_msg()
   local success, request = xpcall(json.decode, log_error, msg)
   if not success then
-    rpc_send(json.null, request, -32700)
+    rpc_send(null, request, -32700)
     return
   end
   return request.id, request.method, request.params
@@ -358,7 +358,7 @@ end
 local function generate(path)
   if not util.find_file(path) then
     print("Error: file \"" .. path .. "\" not found.")
-    os.exit(3)
+    os.exit(false)
   end
   local save_from_table = require "luarocks.persist".save_from_table
   local tags_from_manuscript = require "digestif.data".tags_from_manuscript
@@ -367,35 +367,28 @@ local function generate(path)
   local tags = tags_from_manuscript(manuscript)
   local _, basename = util.path_split(path)
   local i, j = 0, 0
-  for _, cmd in pairs(tags.commands) do
-    i = i + 1
-    cmd.package = nil
-  end
-  for _, cmd in pairs(tags.environments) do
-    j = j + 1
-    cmd.package = nil
-  end
+  for _, cmd in pairs(tags.commands) do i = i + 1 end
+  for _, cmd in pairs(tags.environments) do j = j + 1 end
   save_from_table(
     basename .. ".tags",
     tags,
     {"generated", "dependencies", "commands", "environments"}
   )
-  print(("Generated \"%s.tags\" with %i commands and %i environments.")
+  print(("Generated %s.tags \twith %3i commands and %3i environments.")
         :format(basename, i, j))
 end
 
 local function main(arg)
   -- Set up data path and check if it worked
-  local ROCKPATH = arg[0]:match("^(.*/luarocks/.*)/bin/digestif$")
-  if ROCKPATH then
-    table.insert(config.data_dirs, util.path_join(ROCKPATH, 'data'))
+  local script_path = util.path_split(arg[0])
+  if util.find_file(script_path, "../data/primitives.tags") then
+    table.insert(config.data_dirs, util.path_join(script_path, '../data'))
   end
-
   if not util.find_file(config.data_dirs, "primitives.tags") then
     print("Error: could not find data files at the following locations\n  - "
             .. table.concat(config.data_dirs, "\n  - ")
             .. "\nSet the DIGESTIFDATA environment variable to fix this.")
-    os.exit(2)
+    os.exit(false)
   end
 
   while arg[1] do
@@ -421,7 +414,7 @@ Environment variables:
       os.exit()
     else
       print("Invalid option: " .. switch)
-      os.exit(1)
+      os.exit(false)
     end
   end
 

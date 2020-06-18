@@ -140,13 +140,11 @@ local function tags_from_manuscript(script, ctan_data)
   for _, it in script:index_pairs("newcommand") do
     commands[it.name] = {
       arguments = it.arguments,
-      package = tags
     }
   end
   for _, it in script:index_pairs("newenvironment") do
     environments[it.name] = {
       arguments = it.arguments,
-      package = tags
     }
   end
   return tags
@@ -159,16 +157,10 @@ local function generate_tags(name)
   local texformat = infer_format(path)
   if not texformat then return end
   loaded_tags[name] = {} -- TODO: this is to avoid loops, find a better way
-  local Manuscript = require "digestif.Manuscript"
   local cache = require "digestif.Cache"()
-  local script = Manuscript{
-    filename = path,
-    format = texformat,
-    files = cache
-  }
+  local script = cache:manuscript(path, texformat)
   local ctan_data = ctan_files[name]
   local tags = tags_from_manuscript(script, ctan_data)
-  loaded_tags[name] = tags
   return tags
 end
 
@@ -220,29 +212,37 @@ local function resolve_refs(tbl, seen)
   end
 end
 
+local unreasonable_name = util.matcher(util.search(".."))
+
 local function load_tags(name)
-  if name:find('..', 1, true) then return nil end -- unreasonable file name
+  if unreasonable_name(name) then return end
   local _, src = find_file(config.data_dirs, name .. ".tags", true)
   if not src then return nil end
-  local result, err = eval_with_env(src)
-  if not result and config.verbose then
+  local tags, err = eval_with_env(src)
+  if not tags and config.verbose then
     log("Error loading %s.tags: %s", name, err)
     return -- TODO: should throw an error?
   end
-  for _, kind in ipairs{"commands", "environments"} do
-    for _, cmd in pairs(result[kind] or {}) do
-      if type(cmd) == "table" then cmd.package = result end
-    end
-  end
-  local ctan_package =  ctan_packages[result.ctan_package] or ctan_files[name]
-  setmetatable(result, {__index = ctan_package})
-  loaded_tags[name] = result
-  resolve_refs(result)
-  return result
+  local ctan_package =  ctan_packages[tags.ctan_package] or ctan_files[name]
+  setmetatable(tags, {__index = ctan_package})
+  return tags
 end
 
 require_tags = function(name)
-  return loaded_tags[name] or load_tags(name) or generate_tags(name)
+  local tags = loaded_tags[name]
+  if not tags then
+    tags = load_tags(name) or generate_tags(name)
+    if tags then
+      loaded_tags[name] = tags
+      resolve_refs(tags)
+      for _, kind in ipairs{"commands", "environments"} do
+        for _, cmd in pairs(tags[kind] or {}) do
+          if not cmd.package then cmd.package = tags end
+        end
+      end
+    end
+  end
+  return tags
 end
 
 -- Load all data files, and return them in a table.  This is intended
