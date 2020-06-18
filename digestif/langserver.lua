@@ -15,7 +15,7 @@ local tex_format_table = setmetatable({}, {
   end
 })
 
--- ¶ Convert LSP API objects to/from internal representations
+--* Convert LSP API objects to/from internal representations
 
 -- TODO: deal with weird path separators
 -- TODO: use util.parse_uri, etc.
@@ -129,7 +129,7 @@ local languageId_translation_table = {
   texinfo = "texinfo"
 }
 
--- ¶ LSP methods
+--* LSP methods
 
 local methods = {}
 
@@ -286,7 +286,7 @@ methods["textDocument/documentSymbol"] = function(params)
   return util.imap(to_DocumentSymbol, outline)
 end
 
--- ¶ RPC functions and the main loop
+--* RPC functions
 
 local function log_error(err)
   if config.verbose then
@@ -332,6 +332,8 @@ local function rpc_receive()
   end
   return request.id, request.method, request.params
 end
+
+--* The main loop
 
 local is_optional = util.matcher("$/")
 
@@ -387,7 +389,7 @@ local function main(arg)
   if not util.find_file(config.data_dirs, "primitives.tags") then
     print("Error: could not find data files at the following locations\n  - "
             .. table.concat(config.data_dirs, "\n  - ")
-            .. "\nSet the DIGESTIFDATA environment variable to fix this.")
+            .. "\nSet the DIGESTIF_DATA environment variable to fix this.")
     os.exit(false)
   end
 
@@ -405,11 +407,12 @@ Digestif is a language server for TeX
 Optional arguments:
   -v, --verbose          Enable log output to stderr
   -g, --generate FILES   Generate data file stubs for FILES
-  --help                 Display this message and quit
+  -h, --help             Display this message and quit
 
 Environment variables:
-  DIGESTIFDATA           Paths to look for data files
-  DIGESTIFTEXMF          Paths to look for TeX files
+  DIGESTIF_DATA          Paths to look for data files
+  DIGESTIF_TEXMF         Paths to look for TeX files
+  DIGESTIF_TLPDB         Path to the TeXLive package database file
 ]]
       os.exit()
     else
