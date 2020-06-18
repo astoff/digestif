@@ -30,8 +30,11 @@ config.extra_snippets = {
 config.fuzzy_cite = true
 config.fuzzy_ref = true
 config.info_command = has_command("info")
-config.tlmgr_command = has_command("tlmgr")
 config.texmf_dirs = "/usr/share/texlive/texmf-dist"
+config.tlpdb_path = {
+  "/usr/share/texlive/tlpkg/texlive.tlpdb",
+  "/usr/share/texlive/texlive.tlpdb"
+}
 config.eol = "\n"
 
 return config

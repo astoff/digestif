@@ -6,7 +6,6 @@ local format = string.format
 local concat = table.concat
 local P, R, S = lpeg.P, lpeg.R, lpeg.S
 local C, Cc = lpeg.C, lpeg.Cc
-local tlmgr_command = config.tlmgr_command
 local nested_get, update, extend = util.nested_get, util.update, util.extend
 local path_split = util.path_split
 local find_file = util.find_file
@@ -22,11 +21,12 @@ local require_tags -- to be defined
 
 --* CTAN data
 
-if tlmgr_command then
+local tlpdb_path = find_file(config.tlpdb_path)
+
+if tlpdb_path then
   if config.verbose then
-    log("Reading tlmgr dump")
+    log("Reading package database from " .. tlpdb_path)
   end
-  local pipe = io.popen(tlmgr_command .. " dump-tlpdb --local")
   local nonblank = R"!z"
   local parse_line = util.matcher(
     util.choice(
@@ -35,28 +35,29 @@ if tlmgr_command then
         S" \t",
         C((P(1))^1)),
       util.sequence(
-        Cc"FILE",
+        Cc"TEXMF_FILE",
         P" ",
+        P"RELOC/" + P"texmf-dist/",
         C(P(1)^1)),
+      util.sequence(
+        Cc"OTHER_FILE",
+        P" "),
       util.sequence(
         Cc"END",
         S" \t"^0 * P(-1))))
   local parse_docitem = util.matcher(
     util.sequence(
-      "RELOC/doc/",
       C(nonblank^1),
       " details=\"" * C(util.gobble_until"\"") * "\"" + Cc(nil),
       " language=\"" * C(util.gobble_until"\"") * "\"" + Cc(nil)))
-  local parse_reloc_file = util.matcher(
-    util.sequence("RELOC/", C(nonblank^1)))
+  local tlpdb_file = io.open(tlpdb_path)
   local function iter()
-    local line = pipe:read("l")
+    local line = tlpdb_file:read("l")
     if line then return parse_line(line) end
   end
   for k, name in iter do
     if k == "name" then
-      local pkg, files, details = {}, {}, {}
-      local current_files
+      local pkg, files, details, current_files = {}, {}, {}
       for k, v in iter do
         if k == "category" then
           if v ~= "Package" then break end
@@ -67,7 +68,7 @@ if tlmgr_command then
         elseif k:sub(-5) == "files" then
           current_files = {}
           files[k] = current_files
-        elseif k == "FILE" then
+        elseif k == "TEXMF_FILE" then
           current_files[#current_files+1] = v
         elseif k == "END" then
           pkg.ctan_package = name
@@ -81,7 +82,7 @@ if tlmgr_command then
               local path, desc, lang = parse_docitem(v)
               if desc then
                 docs[#docs+1] = {
-                  uri = "texdoc:" .. path,
+                  uri = "texmf:" .. path,
                   summary = desc,
                   language = lang
                 }
@@ -90,13 +91,10 @@ if tlmgr_command then
             end
           end
           if files.runfiles then
-            for _, v in ipairs(files.runfiles) do
-              local path = parse_reloc_file(v)
-              if path then
-                local _, basename = path_split(path)
-                ctan_files[basename] = pkg
-                ctan_paths[basename] = path
-              end
+            for _, path in ipairs(files.runfiles) do
+              local _, basename = path_split(path)
+              ctan_files[basename] = pkg
+              ctan_paths[basename] = path
             end
           end
           ctan_packages[name] = pkg
@@ -105,6 +103,8 @@ if tlmgr_command then
       end
     end
   end
+elseif config.verbose then
+  log "Package database not found, skipping"
 end
 
 -- Generate tags from the user's TeX installation
@@ -267,17 +267,19 @@ local function resolve_uri(uri)
   local scheme, location, fragment = parse_uri(uri)
   if scheme == "info" then
     return uri
-  elseif scheme == "texdoc" then
-    local path = find_file(config.texmf_dirs, "doc/" .. location)
+  elseif scheme == "texmf" then
+    local path = find_file(config.texmf_dirs, location)
     if path then
       return make_uri("file", path, fragment)
     else
       return make_uri(
         "https",
-        "//texdoc.net/texmf-dist/doc/" .. location,
+        "//texdoc.net/texmf-dist/" .. location,
         fragment
       )
     end
+  elseif scheme == "texdoc" then -- TODO: make obsolete
+    return resolve_uri(make_uri("texmf", "doc/" .. location, fragment))
   else
     return uri
   end
