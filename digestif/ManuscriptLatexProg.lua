@@ -76,7 +76,7 @@ function ManuscriptLatexProg.init_callbacks.newcommand(self, pos, cs)
       name = csname,
       pos = pos,
       cont = cont,
-      --manuscript = self,
+      manuscript = self,
       arguments = newcommand_args(nargs, optdefault)
     }
   end
@@ -101,11 +101,78 @@ function ManuscriptLatexProg.init_callbacks.newenvironment(self, pos, cs)
       name = csname,
       pos = pos,
       cont = cont,
+      manuscript = self,
       arguments = newcommand_args(nargs, optdefault)
     }
   end
   return cont
 end
 
+local P, C, Cc, Cg, Ct = lpeg.P, lpeg.C, lpeg.Cc, lpeg.Cg, lpeg.Ct
+local Pgroup = util.between_balanced("{", "}")
+local Pdefault = Cg(Pgroup / "Default: “%1”", "details")
+
+local xparse_args = util.matcher(
+  Ct(util.many(Ct(util.sequence(
+    P" "^0,
+    (P"+" * Cg(Cc(true), "long"))^-1,
+    P"!"^-1,
+    util.choice(
+      "m",
+      "r" * Cg(Ct(C(1) * C(1)), "delimiters"),
+      "R" * Cg(Ct(C(1) * C(1)), "delimiters") * Pdefault,
+      "v" * Cg(Cc"verbatim", "type"),
+      "o" * Cg(Cc{"[", "]"}, "delimiters") * Cg(Cc(true), "optional"),
+      "O" * Cg(Cc{"[", "]"}, "delimiters") * Cg(Cc(true), "optional") * Pdefault,
+      "d" * Cg(Ct(C(1) * C(1)), "delimiters") * Cg(Cc(true), "optional"),
+      "D" * Cg(Ct(C(1) * C(1)), "delimiters") * Cg(Cc(true), "optional") * Pdefault,
+      "s" * Cg(Cc"*", "literal") * Cg(Cc"literal", "type") * Cg(Cc(true), "optional"),
+      "t" * Cg(C(1), "literal") * Cg(Cc"literal", "type") * Cg(Cc(true), "optional"),
+      "e" * Pgroup,
+      "E" * Pgroup * Pdefault))))))
+
+function ManuscriptLatexProg.init_callbacks.NewDocumentCommand(self, pos, cs)
+  local cont = self:parse_command(pos, cs).cont
+  local csname, arg_spec
+  for r in self:argument_items("command", pos, cs) do
+    csname = self:substring_stripped(r):sub(2)
+  end
+  for r in self:argument_items("arg spec", pos, cs) do
+    arg_spec = self:substring_stripped(r)
+  end
+  if csname then
+    local idx = self:get_index "newcommand"
+    idx[#idx+1] = {
+      name = csname,
+      pos = pos,
+      cont = cont,
+      manuscript = self,
+      arguments = xparse_args(arg_spec)
+    }
+  end
+  return cont
+end
+
+function ManuscriptLatexProg.init_callbacks.NewDocumentEnvironment(self, pos, cs)
+  local cont = self:parse_command(pos, cs).cont
+  local csname, arg_spec
+  for r in self:argument_items("environment", pos, cs) do
+    csname = self:substring_stripped(r)
+  end
+  for r in self:argument_items("arg spec", pos, cs) do
+    arg_spec = self:substring_stripped(r)
+  end
+  if csname then
+    local idx = self:get_index "newenvironment"
+    idx[#idx+1] = {
+      name = csname,
+      pos = pos,
+      cont = cont,
+      manuscript = self,
+      arguments = xparse_args(arg_spec)
+    }
+  end
+  return cont
+end
 
 return ManuscriptLatexProg

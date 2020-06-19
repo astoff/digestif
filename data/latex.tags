@@ -391,11 +391,10 @@ commands = {
       summary = "How to handle file types."
    },
    DeclareOption = {
+      action = "DeclareOption",
       arguments = {
          {
-            literal = "*",
-            meta = "star",
-            optional = true
+            meta = "option"
          },
          {
             meta = "code"
@@ -491,7 +490,7 @@ commands = {
             optional = true
          },
          {
-            meta = "defn"
+            meta = "code"
          }
       },
       documentation = "info:latex2e#\\DeclareTextCommandDefault & \\ProvideTextCommandDefault",
@@ -504,7 +503,7 @@ commands = {
             meta = "command"
          },
          {
-            meta = "defn"
+            meta = "code"
          }
       },
       documentation = "info:latex2e#\\DeclareTextCommandDefault & \\ProvideTextCommandDefault",
@@ -591,7 +590,8 @@ commands = {
    ExecuteOptions = {
       arguments = {
          {
-            meta = "options-list"
+           meta = "options",
+           list = true
          }
       },
       documentation = "info:latex2e#Class and package commands"
@@ -691,13 +691,16 @@ commands = {
       symbol = "⇔"
    },
    LoadClass = {
+      action = "input",
+      filename = "?.cls",
       arguments = {
          {
             delimiters = {
                "[",
                "]"
             },
-            meta = "options list",
+            meta = "options",
+            list = true,
             optional = true
          },
          {
@@ -715,6 +718,8 @@ commands = {
       documentation = "info:latex2e#Class and package commands"
    },
    LoadClassWithOptions = {
+      action = "input",
+      filename = "?.cls",
       arguments = {
          {
             meta = "class name"
@@ -843,7 +848,8 @@ commands = {
    PassOptionsToClass = {
       arguments = {
          {
-            meta = "option list"
+           meta = "options",
+           list = true
          },
          {
             meta = "class name"
@@ -854,7 +860,8 @@ commands = {
    PassOptionsToPackage = {
       arguments = {
          {
-            meta = "option list"
+           meta = "options",
+           list = true
          },
          {
             meta = "package name"
@@ -909,7 +916,7 @@ commands = {
             optional = true
          },
          {
-            meta = "defn"
+            meta = "code"
          }
       },
       documentation = "info:latex2e#\\DeclareTextCommandDefault & \\ProvideTextCommandDefault",
@@ -922,7 +929,7 @@ commands = {
             meta = "command"
          },
          {
-            meta = "defn"
+            meta = "code"
          }
       },
       documentation = "info:latex2e#\\DeclareTextCommandDefault & \\ProvideTextCommandDefault",
@@ -993,11 +1000,13 @@ commands = {
                "[",
                "]"
             },
-            meta = "option list",
+            meta = "options",
+            list = true,
             optional = true
          },
          {
-            meta = "package name"
+            meta = "package name",
+            list = true
          },
          {
             delimiters = {
@@ -1015,7 +1024,8 @@ commands = {
       filename = "?.sty",
       arguments = {
          {
-            meta = "package name"
+            meta = "package name",
+            list = true
          },
          {
             delimiters = {
@@ -2526,7 +2536,8 @@ commands = {
    includeonly = {
       arguments = {
          {
-            meta = "files"
+            meta = "files",
+            list = true
          }
       },
       documentation = "info:latex2e#\\include & \\includeonly",
@@ -3213,7 +3224,7 @@ commands = {
             optional = true
          },
          {
-            meta = "defn"
+            meta = "code"
          }
       },
       documentation = "info:latex2e#\\newcommand & \\renewcommand",
@@ -3808,7 +3819,7 @@ commands = {
             optional = true
          },
          {
-            meta = "defn"
+            meta = "code"
          }
       },
       documentation = "info:latex2e#\\providecommand",
@@ -4013,7 +4024,7 @@ commands = {
             optional = true
          },
          {
-            meta = "defn"
+            meta = "code"
          }
       },
       summary = "Redefine an existing new command."
@@ -5121,6 +5132,7 @@ commands = {
                "]"
             },
             meta = "options",
+            list = true,
             optional = true
          },
          {

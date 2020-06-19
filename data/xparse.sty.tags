@@ -1,0 +1,86 @@
+ctan_package = "xparse"
+dependencies = {
+  "expl3.sty"
+}
+commands = {
+  NewDocumentCommand = {
+    action = "NewDocumentCommand",
+    arguments = {
+      [1] = {meta = "command"},
+      [2] = {meta = "arg spec"},
+      [3] = {meta = "code"}
+    },
+    summary = "Define a new command."
+  },
+  RenewDocumentCommand  = {
+    action = "NewDocumentCommand",
+    arguments = {
+      [1] = {meta = "command"},
+      [2] = {meta = "arg spec"},
+      [3] = {meta = "code"}
+    },
+    summary = "Redefine an existing command."
+  },
+  ProvideDocumentCommand = {
+    action = "NewDocumentCommand",
+    arguments = {
+      [1] = {meta = "command"},
+      [2] = {meta = "arg spec"},
+      [3] = {meta = "code"}
+    },
+    summary = "Define a new command, unless already defined."
+  },
+  DeclareDocumentCommand = {
+    action = "NewDocumentCommand",
+    arguments = {
+      [1] = {meta = "command"},
+      [2] = {meta = "arg spec"},
+      [3] = {meta = "code"}
+    },
+    summary = "Define a new command, overriding an existing definition."
+  },
+  NewDocumentEnvironment = {
+    action = "NewDocumentEnvironment",
+    arguments = {
+      [1] = {meta = "environment"},
+      [2] = {meta = "arg spec"},
+      [3] = {meta = "start code"},
+      [4] = {meta = "end code"}
+    },
+    summary = "Define a new environment."
+  },
+  RenewDocumentEnvironment = {
+    action = "NewDocumentEnvironment",
+    arguments = {
+      [1] = {meta = "environment"},
+      [2] = {meta = "arg spec"},
+      [3] = {meta = "start code"},
+      [4] = {meta = "end code"}
+    },
+    summary = "Redefine an existing environment."
+  },
+  ProvideDocumentEnvironment = {
+    action = "NewDocumentEnvironment",
+    arguments = {
+      [1] = {meta = "environment"},
+      [2] = {meta = "arg spec"},
+      [3] = {meta = "start code"},
+      [4] = {meta = "end code"}
+    },
+    summary = "Define a new environment, unless already defined."
+  },
+  DeclareDocumentEnvironment = {
+    action = "NewDocumentEnvironment",
+    arguments = {
+      [1] = {meta = "environment"},
+      [2] = {meta = "arg spec"},
+      [3] = {meta = "start code"},
+      [4] = {meta = "end code"}
+    },
+    summary = "Define a new environment, overriding an existing definition."
+  },
+  NewExpandableDocumentCommand     = "$DIGESTIFDATA/xparse.sty/commands/NewDocumentCommand",
+  RenewExpandableDocumentCommand   = "$DIGESTIFDATA/xparse.sty/commands/RenewDocumentCommand",
+  ProvideExpandableDocumentCommand = "$DIGESTIFDATA/xparse.sty/commands/ProvideDocumentCommand",
+  DeclareExpandableDocumentCommand = "$DIGESTIFDATA/xparse.sty/commands/DeclareDocumentCommand" 
+}
