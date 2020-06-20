@@ -4,10 +4,10 @@ Digestif
 [![LuaRocks](https://img.shields.io/luarocks/v/astoff/digestif.svg)](https://luarocks.org/modules/astoff/digestif)
 [![Build Status](https://travis-ci.com/astoff/digestif.svg?branch=master)](https://travis-ci.com/astoff/digestif)
 
-Digestif is a code analyzer, and a [language server][lsp], for LaTeX
-et caterva.  It provides context-sensitive completion, documentation
-and related functionality to any text editor that speaks the LSP
-protocol.
+Digestif is a code analyzer, and a [language server][lsp], for LaTeX,
+ConTeXt et caterva.  It provides context-sensitive completion,
+documentation and related functionality to any text editor that speaks
+the LSP protocol.
 
 ![Mandatory GIF][gif]
 
@@ -48,18 +48,24 @@ Features
 Installation and set-up
 -----------------------
 
-Lua 5.3 is required.  The easiest way to install the library and
-language server is using LuaRocks (on most Linux distros, this is
-package `luarocks`).  Just type
+Digestif can run on LuaTeX or on a standalone Lua interpreter.
+Correspondingly, there are two ways to install it.
 
-``` shell
-luarocks install digestif
-```
+- **For LuaTeX with the self-install script:** The only dependencies
+  for this are git and a recent TeX installation.
 
-This should be done either as root or with the `--local` option, in
-which case the executable script will land in
-`~/.luarocks/bin/digestif` and you need to adapt your text editor
-configuration accordingly.
+  1. Download the [digestif][self-install] script
+  2. Place it in your `$PATH` (say, `~/.local/bin`)
+  3. Make it executable (`chmod +x ~/.local/bin/digestif`)
+
+  In the first run, the script will automatically download the
+  package, by default to `~/.digestif`.
+
+- **For standalone Lua via LuaRocks:** Run `luarocks install
+  digestif`.  This should be done either as root or with the `--local`
+  option, in which case the executable script will land in
+  `~/.luarocks/bin/digestif`; make sure this is in your `$PATH` or
+  adapt your text editor configuration accordingly.
 
 Next, you need to enable Digestif as a language server in your
 favorite text editor.
@@ -136,3 +142,4 @@ explanatory, see the data folder for examples.
 [lsp]: https://microsoft.github.io/language-server-protocol/
 [api]: https://github.com/astoff/digestif/wiki/API
 [tlmgr]: https://www.tug.org/texlive/tlmgr.html
+[self-install]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif
