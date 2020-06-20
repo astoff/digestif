@@ -1,11 +1,10 @@
-local Cache = require "digestif.Cache"
 local config = require "digestif.config"
-local json = require "dkjson"
 local util = require "digestif.util"
+local json = require "dkjson"
 
 local log, nested_get = util.log, util.nested_get
 
-local cache = Cache()
+local cache -- Loading deferred to `initialized` method
 local null = json.null
 
 -- a place to store the tex_format/languageId of open files
@@ -157,7 +156,10 @@ methods["initialize"] = function(params)
   }
 end
 
-methods["initialized"] = function() end
+methods["initialized"] = function()
+  cache = require "digestif.Cache"()
+end
+
 methods["shutdown"] = function() return null end
 methods["exit"] = function() os.exit() end
 methods["workspace/didChangeConfiguration"] = function() end
