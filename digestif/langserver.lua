@@ -382,6 +382,27 @@ local function generate(path)
         :format(basename, i, j))
 end
 
+local usage = [[
+Usage: digestif [-h] [-v] [-g FILES]
+]]
+
+local help = [[
+Digestif is a language server for TeX
+
+Optional arguments:
+  -v, --verbose          Enable log output to stderr
+  -g, --generate FILES   Generate data file stubs for FILES
+  -h, --help             Display this message and quit
+
+Environment variables:
+  DIGESTIF_DATA          Paths to look for data files
+  DIGESTIF_TEXMF         Paths to look for TeX files
+  DIGESTIF_TLPDB         Path to the TeXLive package database file
+
+  If your TeX distribution or Digestif are installed in a non-standard
+  location, you may need to set some of the above variables.
+]]
+
 local function main(arg)
   -- Set up data path and check if it worked
   local script_path = util.path_split(arg[0])
@@ -403,21 +424,11 @@ local function main(arg)
       for i = 1, #arg do generate(arg[i]) end
       os.exit()
     elseif switch == "-h" or switch == "--help" then
-      print [[
-Digestif is a language server for TeX
-
-Optional arguments:
-  -v, --verbose          Enable log output to stderr
-  -g, --generate FILES   Generate data file stubs for FILES
-  -h, --help             Display this message and quit
-
-Environment variables:
-  DIGESTIF_DATA          Paths to look for data files
-  DIGESTIF_TEXMF         Paths to look for TeX files
-  DIGESTIF_TLPDB         Path to the TeXLive package database file
-]]
+      print(usage)
+      print(help)
       os.exit()
     else
+      print(usage)
       print("Invalid option: " .. switch)
       os.exit(false)
     end
