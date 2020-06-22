@@ -399,21 +399,18 @@ util.update_config = update_config
 
 --* Path and file manipulation
 
-local path_sep = package.config:sub(1, 1)
-local path_sep_patt, path_is_abs_patt
+local dir_sep = package.config:sub(1, 1)
+local dir_sep_patt, path_is_abs_patt
 
-if path_sep == "/" then
-  path_sep_patt = P"/"
-  path_is_abs_patt = path_sep_patt
-elseif path_sep == "\\" then -- TODO: test this case
-  path_sep_patt = S"\\/"
-  path_is_abs_patt = (R("AZ", "az") * P":")^-1 * path_sep_patt
+if dir_sep == "/" then
+  dir_sep_patt = P"/"
+  path_is_abs_patt = dir_sep_patt
+elseif dir_sep == "\\" then -- TODO: test this case
+  dir_sep_patt = S"\\/"
+  path_is_abs_patt = (R("AZ", "az") * P":")^-1 * dir_sep_patt
 else
-  error "Invalid path separator found in package.config"
+  error "Invalid directory separator found in package.config"
 end
-
-local path_trim_patt = C(gobble(path_sep_patt^0 * -1))
-local path_split_patt = C(search(path_sep_patt)^0) * C(P(1)^0)
 
 -- Concatenate two paths.  If the second is absolute, the first one is
 -- ignored.
@@ -421,18 +418,31 @@ local function path_join(p, q)
   if match(path_is_abs_patt, q) or p == "" then
     return q
   else
-    return match(path_trim_patt, p) .. path_sep .. q
+    local sep = match(dir_sep_patt, p, #p) and "" or dir_sep
+    return p .. sep .. q
   end
 end
 util.path_join = path_join
 
 -- Split a path into directory and file parts.
+local path_split_patt = sequence(
+    C(sequence(
+        many(dir_sep_patt),
+        gobble(
+          sequence(
+            dir_sep_patt^0,
+            many(1 - dir_sep_patt),
+            P(-1))))),
+    dir_sep_patt^0,
+    C(many(char))
+)
+
 local function path_split(p)
-  return match(path_split_patt, match(path_trim_patt, p))
+  return match(path_split_patt, p)
 end
 util.path_split = path_split
 
-if path_separator == "\\" then
+if dir_sep == "\\" then
   util.path_list_split = split";"
 else
   util.path_list_split = split":"
