@@ -138,8 +138,12 @@ local function sequence(...)
 end
 util.sequence = sequence
 
-local function many(p)
-  return lpeg_pow(p,0)
+local function many(times, patt)
+  if patt then
+    return lpeg_pow(patt, times)
+  else
+    return lpeg_pow(times, 0)
+  end
 end
 util.many = many
 

@@ -4,110 +4,180 @@ local config = require "digestif.config"
 
 local format = string.format
 local concat = table.concat
-local P, R, S = lpeg.P, lpeg.R, lpeg.S
-local C, Cc = lpeg.C, lpeg.Cc
+local P, R, S, V, I = lpeg.P, lpeg.R, lpeg.S, lpeg.V, lpeg.Cp()
+local C, Cc, Cb, Cg, Ct = lpeg.C, lpeg.Cc, lpeg.Cb, lpeg.Cg, lpeg.Ct
+local match = lpeg.match
+local choice, many, sequence = util.choice, util.many, util.sequence
+local gobble, search = util.gobble, util.search
 local nested_get, update, extend = util.nested_get, util.update, util.extend
-local path_split = util.path_split
 local find_file = util.find_file
 local eval_with_env = util.eval_with_env
 local parse_uri, make_uri = util.parse_uri, util.make_uri
 local log = util.log
+local path_split, path_join = util.path_split, util.path_join
 
-local ctan_files = {}
-local ctan_packages = {}
-local ctan_paths = {}
 local loaded_tags = {}
-local require_tags -- to be defined
 
 --* CTAN data
 
-local tlpdb_path = find_file(config.tlpdb_path)
+local ctan_package, ctan_package_of -- to be defined
+
+local tlpdb_path = config.tlpdb_path
+  and find_file(config.tldb_path)
+  or find_file(config.texmf_dirs, "../tlpkg/texlive.tlpdb")
 
 if tlpdb_path then
+
+  local _, tlpdb_text = find_file(tlpdb_path, nil, true)
+
   if config.verbose then
-    log("Reading package database from " .. tlpdb_path)
+    log("Reading TLPDB from " .. tlpdb_path)
   end
-  local nonblank = R"!z"
-  local parse_line = util.matcher(
-    util.choice(
-      util.sequence(
-        C(nonblank^1),
-        S" \t",
-        C((P(1))^1)),
-      util.sequence(
-        Cc"TEXMF_FILE",
-        P" ",
-        P"RELOC/" + P"texmf-dist/",
-        C(P(1)^1)),
-      util.sequence(
-        Cc"OTHER_FILE",
-        P" "),
-      util.sequence(
-        Cc"END",
-        S" \t"^0 * P(-1))))
-  local parse_docitem = util.matcher(
-    util.sequence(
-      C(nonblank^1),
-      " details=\"" * C(util.gobble_until"\"") * "\"" + Cc(nil),
-      " language=\"" * C(util.gobble_until"\"") * "\"" + Cc(nil)))
-  local tlpdb_file = io.open(tlpdb_path)
-  local function iter()
-    local line = tlpdb_file:read("l")
-    if line then return parse_line(line) end
+
+  local Peol = P"\n"
+  local concat_lines = function(...) return concat({...}, "\n") end
+
+  local within_item = 1 - Peol * Peol
+  local within_files = (1 - Peol) + Peol * P" "
+  local gobble_to_eol = gobble("\n")
+
+  -- Pattern to turn an entry in the TLPDB file into a table with
+  -- entries name, summary, details, documentation, runfiles.
+  local tlpdb_item_patt = Ct(
+    sequence(
+      Cg( -- collect the name
+        P"name " * C(gobble_to_eol),
+        "ctan_package"),
+      Cg( -- find a shortdesc or give up
+        search(
+          Peol * "shortdesc " * C(gobble_to_eol),
+          within_item),
+        "summary"),
+      Cg( -- find a longdesc or give up
+        search(
+          (Peol * "longdesc " * C(gobble_to_eol))^1 / concat_lines,
+          within_item),
+        "details"),
+      Cg( -- find docfiles section
+        many(-1, -- or continue
+             sequence(
+               search(Peol * "docfiles " * gobble_to_eol, within_item),
+               Ct(many( -- collect several docfile entries in a list
+                    search( -- looking for the interesting ones only
+                      Ct( -- parse one docfile entry
+                        sequence(
+                          Peol * " RELOC/",                                      -- discard the file line marker
+                          Cg(gobble(" ", 1 - Peol) / "texmf:%0", "uri"),   -- collect the uri,
+                          Cg(P" details=\"" * C(gobble"\""), "summary"))), -- but only if details exist
+                      within_files))))),
+        "documentation"),
+      Cg( -- find runfiles section or give up
+        sequence(
+          search(Peol * "runfiles " * gobble_to_eol, within_item),
+          Ct(many( -- collect the runfile entries is a list
+               sequence( -- parse one runfile entry
+                 Peol * " ",                   -- discard the file line marker
+                 many(search("/", 1 - Peol)),  -- discard folder part
+                 C(gobble_to_eol))))),         -- collect base name
+        "runfiles")))
+
+  local tlpdb_items = Ct(many(search(Peol * tlpdb_item_patt))):match(tlpdb_text)
+
+  function ctan_package(name)
+    for i = 1, #tlpdb_items do
+      local item = tlpdb_items[i]
+      if item.name == name then
+        return item
+      end
+    end
   end
-  for k, name in iter do
-    if k == "name" then
-      local pkg, files, details, current_files = {}, {}, {}
-      for k, v in iter do
-        if k == "category" then
-          if v ~= "Package" then break end
-        elseif k == "shortdesc" then
-          pkg.summary = v
-        elseif k == "longdesc" then
-          details[#details+1] = v
-        elseif k:sub(-5) == "files" then
-          current_files = {}
-          files[k] = current_files
-        elseif k == "TEXMF_FILE" then
-          current_files[#current_files+1] = v
-        elseif k == "END" then
-          pkg.ctan_package = name
-          if #details > 0 then
-            details[#details+1] = ""
-            pkg.details = table.concat(details, "\n")
-          end
-          if files.docfiles then
-            local docs = {}
-            for _, v in ipairs(files.docfiles) do
-              local path, desc, lang = parse_docitem(v)
-              if desc then
-                docs[#docs+1] = {
-                  uri = "texmf:" .. path,
-                  summary = desc,
-                  language = lang
-                }
-              end
-              if #docs > 0 then pkg.documentation = docs end
-            end
-          end
-          if files.runfiles then
-            for _, path in ipairs(files.runfiles) do
-              local _, basename = path_split(path)
-              ctan_files[basename] = pkg
-              ctan_paths[basename] = path
-            end
-          end
-          ctan_packages[name] = pkg
-          break
+  ctan_package = util.memoize1(ctan_package)
+
+  function ctan_package_of(file)
+    for i = 1, #tlpdb_items do
+      local item = tlpdb_items[i]
+      local runfiles = item.runfiles
+      for j = 1, #runfiles do
+        if runfiles[j] == file then
+          return item
         end
       end
     end
   end
-elseif config.verbose then
-  log "Package database not found, skipping"
+  ctan_package_of = util.memoize1(ctan_package_of)
+
+else
+
+  ctan_package = function() end
+  ctan_package_of = function() end
+  if config.verbose then log("TLPDB not found ") end
+
 end
 
--- Generate tags from the user's TeX installation
+--* kpathsea emulation
+
+local kpsewhich
+
+if kpse then -- we're on luatex
+
+  local kpse_obj = kpse:new("luatex")
+
+  function kpsewhich(name)
+    return kpse_obj:find_file(name, "tex")
+  end
+
+else -- on plain lua, we look for ls-R files
+
+  -- local ls_R = {}
+  -- local texmf_dirs = config.texmf_dirs
+  -- for i = 1, #texmf_dirs do
+  --   local ok, str = find_file(texmf_dirs[i], "ls-R", true)
+  --   if ok then ls_R[i] = str end
+  -- end
+  -- local function search_patt(name)
+  --   return search(
+  --     P"\n" * P(name) * P"\n" * Cb(1),
+  --     P"\n./" * Cg(C(gobble(":\n")), 1) + P(1)
+  --   )
+  -- end
+  -- function kpsewhich(name)
+  --   local patt = search_patt(name)
+  --   for i = 1, #texmf_dirs do
+  --     local path = ls_R[i] and match(patt, ls_R[i])
+  --     if path then
+  --       path = path_join(texmf_dirs[i], path)
+  --       return path_join(path, name)
+  --     end
+  --   end
+  --   return false -- so we memoize the non-existence of a file
+  -- end
+  -- kpsewhich = memoize1(kpsewhich)
+
+  local texmf_files = {}
+  local texmf_dirs = config.texmf_dirs
+  local dir_patt = P"./" * C(gobble(":" * P(-1)))
+  for i = 1, #texmf_dirs do
+    local texmf_dir = texmf_dirs[i]
+    local listing_path = find_file(texmf_dir, "ls-R")
+    if listing_path then
+      local current_dir
+      for line in io.lines(listing_path) do
+        local subdir = match(dir_patt, line)
+        if subdir then
+          current_dir = path_join(texmf_dir, subdir)
+        elseif current_dir and not texmf_files[line] then
+          texmf_files[line] = path_join(current_dir, line)
+        end
+      end
+    end
+  end
+
+  function kpsewhich(name)
+    return texmf_files[name]
+  end
+end
+
+--* Generate tags from the user's TeX installation
 
 local function infer_format(path)
   local ext = path:sub(-4)
@@ -151,7 +221,7 @@ local function tags_from_manuscript(script, ctan_data)
 end
 
 local function generate_tags(name)
-  local path = ctan_paths[name]
+  local path = kpsewhich(name)
   path = path and find_file(config.texmf_dirs, path)
   if not path then return end
   local texformat = infer_format(path)
@@ -159,13 +229,14 @@ local function generate_tags(name)
   loaded_tags[name] = {} -- TODO: this is to avoid loops, find a better way
   local cache = require "digestif.Cache"()
   local script = cache:manuscript(path, texformat)
-  local ctan_data = ctan_files[name]
-  local tags = tags_from_manuscript(script, ctan_data)
+  local pkg = ctan_package_of(name)
+  local tags = tags_from_manuscript(script, pkg)
   return tags
 end
 
---* Digestif data
+--* Load tags
 
+local require_tags -- to be defined
 local ref_patt = P"$DIGESTIFDATA/" * C(P(1)^0)
 local ref_split = util.split("/")
 
@@ -196,8 +267,8 @@ local function load_tags(name)
     log("Error loading %s.tags: %s", name, err)
     return -- TODO: should throw an error?
   end
-  local ctan_package =  ctan_packages[tags.ctan_package] or ctan_files[name]
-  setmetatable(tags, {__index = ctan_package})
+  local pkg =  ctan_package(tags.ctan_package) or ctan_package_of(name)
+  setmetatable(tags, {__index = pkg})
   return tags
 end
 
@@ -324,6 +395,7 @@ end
 
 return {
   require = require_tags,
+  require_tags = require_tags,
   load_all = load_all_tags,
   tags_from_manuscript = tags_from_manuscript,
   generate_docstring = generate_docstring

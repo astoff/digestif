@@ -43,11 +43,6 @@ local DIGESTIF_TLPDB = os.getenv("DIGESTIF_TLPDB")
 
 if DIGESTIF_TLPDB then
   config.tlpdb_path = util.path_list_split(DIGESTIF_TLPDB)
-else
-  config.tlpdb_path = {
-    "/usr/share/texlive/tlpkg/texlive.tlpdb",
-    "/usr/share/texlive/texlive.tlpdb"
-  }
 end
 
 config.provide_snippets = false
