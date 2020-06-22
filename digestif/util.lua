@@ -173,11 +173,12 @@ local function search(patt, token)
 end
 util.search = search
 
-local function gobble_until(patt, token)
+local function gobble(patt, token)
   token = token and P(token) or char
   return (token - P(patt))^0
 end
-util.gobble_until = gobble_until
+util.gobble = gobble
+util.gobble_until = gobble
 
 local function between_balanced(l, r, token) --nicer name?
   l, r = P(l), P(r)
@@ -409,7 +410,7 @@ else
   error "Invalid path separator found in package.config"
 end
 
-local path_trim_patt = C(gobble_until(path_sep_patt^0 * -1))
+local path_trim_patt = C(gobble(path_sep_patt^0 * -1))
 local path_split_patt = C(search(path_sep_patt)^0) * C(P(1)^0)
 
 -- Concatenate two paths.  If the second is absolute, the first one is
@@ -480,7 +481,7 @@ local percent_encode = replace(
 local uri_patt = sequence(
   C(R("AZ", "az")^1),
   P":",
-  C(gobble_until("#")),
+  C(gobble("#")),
   (P"#" * C(char^0))^-1
 )
 
