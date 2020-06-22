@@ -323,11 +323,13 @@ util.class = class
 
 local weak_keys, nil_marker, value_marker = {__mode = "k"}, {}, {}
 
--- Memoize a function of one argument with one return value.  Nil is
--- not allowed as argument or return value.
+-- Memoize a function of one argument with one return value.  Nil as
+-- an argument is equivalent to false, and nil as return value is not
+-- memoized.
 local function memoize1(fun)
   local values = setmetatable({}, weak_keys)
   return function(arg)
+    arg = arg or false
     local val = values[arg]
     if val == nil then
       val = fun(arg)
