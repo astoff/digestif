@@ -6,8 +6,11 @@ Digestif
 
 Digestif is a code analyzer, and a [language server][lsp], for LaTeX,
 ConTeXt et caterva.  It provides context-sensitive completion,
-documentation and related functionality to any text editor that speaks
-the LSP protocol.
+documentation, code navigation, and related functionality to any text
+editor that speaks the LSP protocol.
+
+Check it out online: Digestif is the autocompletion engine of the
+[SwiftLaTeX] web-based editor.
 
 ![Mandatory GIF][gif]
 
@@ -143,3 +146,4 @@ explanatory, see the data folder for examples.
 [api]: https://github.com/astoff/digestif/wiki/API
 [tlmgr]: https://www.tug.org/texlive/tlmgr.html
 [self-install]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif
+[SwiftLaTeX]: https://www.swiftlatex.com
