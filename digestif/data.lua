@@ -120,7 +120,7 @@ local kpsewhich
 
 if kpse then -- we're on luatex
 
-  local kpse_obj = kpse:new("luatex")
+  local kpse_obj = kpse.new("luatex")
 
   function kpsewhich(name)
     return kpse_obj:find_file(name, "tex")
