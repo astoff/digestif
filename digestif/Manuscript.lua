@@ -560,7 +560,7 @@ local function local_scan_parse_list(m, context, pos)
   for i = 1, #items do -- are we inside a key/list item?
     local it = items[i]
     if it.pos and it.pos <= pos and pos <= it.cont then
-      return {
+      context = {
         item = i,
         pos = it.pos,
         cont = it.cont,
@@ -568,6 +568,7 @@ local function local_scan_parse_list(m, context, pos)
       }
     end
   end
+  return context
 end
 
 Manuscript.context_callbacks = {}
