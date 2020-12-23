@@ -1,23 +1,22 @@
-#!/bin/bash
+#!/bin/sh
 # Self-installing wrapper script for Digestif
 
-set -euo pipefail
-IFS=$'\n\t'
+set -eu
 
-# Change this if you want to install at a different location
+# Change this or set the DIGESTIF_HOME environment variable if you
+# want to install at a different location
 DIGESTIF_HOME="${DIGESTIF_HOME:-"$HOME/.digestif"}"
+
+# Change the lines below to choose a different Lua interpreter
+LUA=texlua
+export LUA_PATH="$DIGESTIF_HOME/?.lua"
 
 if [ ! -r "$DIGESTIF_HOME/bin/digestif" ]; then
     DIGESTIF_REPO="https://github.com/astoff/digestif"
-    DKJSON_URL="http://dkolf.de/src/dkjson-lua.fsl/raw/dkjson.lua?name=16cbc26080996d9da827df42cb0844a25518eeb3"
-
-    echo "Digestif not found in $DIGESTIF_HOME, fetching it now" >&2
+    echo >&2 "Digestif not found in $DIGESTIF_HOME, fetching it now"
     mkdir -p "$DIGESTIF_HOME"
     git clone --depth 1 "$DIGESTIF_REPO" "$DIGESTIF_HOME"
-    wget -nv -O "$DIGESTIF_HOME/dkjson.lua" "$DKJSON_URL"
-    echo "Done! If you are running this interactively, press Control-C to quit." >&2 
+    echo >&2 "Done! If you are running this interactively, press Control-C to quit."
 fi
 
-export LUA_PATH="$DIGESTIF_HOME/?.lua"
-
-texlua "$DIGESTIF_HOME/bin/digestif" "$@"
+"$LUA" "$DIGESTIF_HOME/bin/digestif" "$@"

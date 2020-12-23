@@ -3,13 +3,13 @@
 local lpeg = require "lpeg"
 
 local co_yield, co_wrap = coroutine.yield, coroutine.wrap
-local to_upper, gsub, substring = string.upper, string.gsub, string.sub
-local to_char, to_byte = string.char, string.byte
+local strupper, gsub, strsub = string.upper, string.gsub, string.sub
+local strchar, strbyte, utf8_char = string.char, string.byte, utf8.char
 local format = string.format
-local pack, unpack, move = table.pack, table.unpack, table.move
+local pack, unpack, move, concat = table.pack, table.unpack, table.move, table.concat
 local pairs, getmetatable, setmetatable = pairs, getmetatable, setmetatable
 local P, V, R, S = lpeg.P, lpeg.V, lpeg.R, lpeg.S
-local C, Cp, Cs, Cf, Ct = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cf, lpeg.Ct
+local C, Cp, Cs, Cf, Ct, Cc, Cg = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cf, lpeg.Ct, lpeg.Cc, lpeg.Cg
 local match, locale_table = lpeg.match, lpeg.locale()
 
 local util = {}
@@ -188,7 +188,7 @@ end
 util.between_balanced = between_balanced
 
 local function case_fold_char(c)
-  local u = to_upper(c) -- FIX: doesn't handle well non-ASCII characters
+  local u = strupper(c) -- FIX: doesn't handle well non-ASCII characters
   if c == u then
     return P(c)
   else
@@ -247,7 +247,7 @@ local utf8_sync_patt = R("\128\191")^-3 * Cp() + Cp()
 local function substring8(s, i, j)
   i = match(utf8_sync_patt, s, i)
   j = j and match(utf8_sync_patt, s, j + 1) - 1
-  return substring(s, i, j)
+  return strsub(s, i, j)
 end
 util.substring8 = substring8
 
@@ -450,12 +450,12 @@ local Phex = R("09", "AF", "af")
 
 local percent_decode = replace(
   P"%" * C(Phex * Phex),
-  function(s) return to_char(tonumber(s, 16)) end
+  function(s) return strchar(tonumber(s, 16)) end
 )
 
 local percent_encode = replace(
   char - (R("09", "AZ", "az") + S"-._~/="),
-  function(s) return format("%%%X", to_byte(s)) end
+  function(s) return format("%%%X", strbyte(s)) end
 )
 
 local uri_patt = sequence(
@@ -480,7 +480,159 @@ local function make_uri(scheme, path, fragment)
 end
 util.make_uri = make_uri
 
---* &c.
+--* JSON
+
+util.json_null = setmetatable({}, {__json = "null"})
+
+--** Decoding
+
+do
+  local ws = S" \n\t\r"^0
+  local quote = P"\""
+  local hex = R"09" + R"AF" + R"af"
+
+  local function decode_number(s)
+    return tonumber(s) or error("Error parsing “" .. s .. "” as a number")
+  end
+
+  local char_or_escape = choice(
+    P(1) - P"\\", -- R("\0[", "]\255"),--
+    P"\\n"  / "\n",
+    P"\\\"" / "\"",
+    P"\\\\" / "\\",
+    P"\\/"  / "/",
+    P"\\r" / "\r",
+    P"\\t" / "\t",
+    P"\\b" / "\b",
+    P"\\f" / "\f",
+    P"\\u" * C(S"Dd" * S"89ABab" * hex * hex)
+      * P"\\u" * C(S"Dd" * R("CF","cf") * hex * hex)
+      / function(high, low)
+          high = tonumber(high, 16)
+          low = tonumber(low, 16)
+          return utf8_char(
+            (high - 0xD800) * 2^10 + low - 0xDC00 + 0x10000)
+        end,
+    P"\\u" * C(hex * hex * hex * hex)
+      / function(s) return utf8_char(tonumber(s, 16)) end
+  )
+
+  local json_patt = P{
+    [1]       = ws * V"element" * P(-1),
+    ["true"]  = P"true" * Cc(true) * ws,
+    ["false"] = P"false" * Cc(false) * ws,
+    null      = P"null" * Cc(util.json_null) * ws,
+    number    = (R"09" + S"-+.") * (1 - S",]}")^0 / decode_number,
+    string    = quote * Cs(gobble(quote, char_or_escape)) * quote * ws,
+    element   = V"string" + V"number" + V"true" + V"false" + V"null" + V"array" + V"object",
+    elements  = V"element" * (P"," * ws * V"element")^0,
+    array     = P"[" * ws * Ct(V"elements"^-1) * P"]" * ws,
+    member    = Cg(V"string" * P":" * ws * V"element"),
+    members   = V"member" * (P"," * ws * V"member")^0,
+    object    = P"{" * ws * Cf(Ct(true) * V"members"^-1, rawset) * P"}" * ws
+  }
+
+  function util.json_decode(str)
+    return match(json_patt, str) or error "Error decoding json"
+  end
+end
+
+--** Encoding
+
+do
+  local control_chars = {}
+  for i = 0, 31 do
+    control_chars[string.char(i)] = string.format("\\u%04x", i)
+  end
+
+  local encode_string = matcher(
+    Cs(many(choice(
+      P(1) - R"\0\31" - S"\"\\",
+      P"\n" / "\\n",
+      P"\"" / "\\\"",
+      P"\\" / "\\\\",
+      P"\r" / "\\r",
+      P"\t" / "\\t",
+      P"\b" / "\\b",
+      P"\f" / "\\f",
+      R"\0\31" / control_chars
+  ))))
+
+  local decimal_sep, fix_decimal = tostring(5.5):gsub("5", "")
+
+  if decimal_sep == "." then
+    fix_decimal = function(x) return x end
+  else
+    fix_decimal = replace(decimal_sep, ".")
+  end
+
+  local inf = math.huge
+
+  local function encode_number(v)
+    if -inf < v and v < inf then
+      return fix_decimal(tostring(v))
+    else
+      return "null"
+    end
+  end
+
+  local function do_encode(obj, t, n)
+    local obj_type = type(obj)
+    if obj_type == "string" then
+      t[n] = "\""
+      t[n + 1] = encode_string(obj)
+      t[n + 2] = "\""
+      return n + 3
+    elseif obj_type == "number" then
+      t[n] = encode_number(obj)
+      return n + 1
+    elseif obj_type == "table" then
+      local v = obj[1]
+      if v ~= nil then
+        t[n] = "["
+        n = do_encode(v, t, n + 1)
+        for i = 2, #obj do
+          t[n] = ","
+          n = do_encode(obj[i], t, n + 1)
+        end
+        t[n] = "]"
+        return n + 1
+      end
+      local k, v = next(obj)
+      if k ~= nil then
+        t[n] = "{\""
+        t[n + 1] = encode_string(k)
+        t[n + 2] = "\":"
+        n = do_encode(v, t, n + 3)
+        for k, v in next, obj, k do
+          t[n] = ",\""
+          t[n + 1] = encode_string(k)
+          t[n + 2] = "\":"
+          n = do_encode(v, t, n + 3)
+        end
+        t[n] = "}"
+        return n + 1
+      else
+        local mt = getmetatable(obj)
+        t[n] = mt and mt.__json or "[]"
+        return n + 1
+      end
+    elseif obj_type == "boolean" then
+      t[n] = obj and "true" or "false"
+      return n + 1
+    else
+      error("Error encoding json, found object of type " .. type)
+    end
+  end
+
+  function util.json_encode(obj)
+    local t = {}
+    do_encode(obj, t, 1)
+    return concat(t)
+  end
+end
+
+--* Logging
 
 local function log(msg, ...)
   if select("#", ...) > 0 then msg = format(msg, ...) end

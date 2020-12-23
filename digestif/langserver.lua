@@ -1,11 +1,26 @@
 local config = require "digestif.config"
 local util = require "digestif.util"
-local json = require "dkjson"
 
 local log, nested_get = util.log, util.nested_get
 
-local cache -- Loading deferred to `initialized` method
-local null = json.null
+-- Use cjson if available, otherwise fall back to `digestif.util`
+-- implementation.
+local null, json_decode, json_encode
+if pcall(require, "cjson") then
+  local cjson = require "cjson"
+  cjson.encode_empty_table_as_object(false)
+  null = cjson.null
+  json_decode, json_encode = cjson.decode, cjson.encode
+else
+  null = util.json_null
+  json_decode, json_encode = util.json_decode, util.json_encode
+end
+
+--* Convert LSP API objects to/from internal representations
+
+-- This will be a `digestif.Cache` object.  Its initialization is
+-- deferred to `initialized` method.
+local cache
 
 -- a place to store the tex_format/languageId of open files
 local tex_format_table = setmetatable({}, {
@@ -13,8 +28,6 @@ local tex_format_table = setmetatable({}, {
     error(("Trying to access unopened file %s"):format(k))
   end
 })
-
---* Convert LSP API objects to/from internal representations
 
 -- TODO: deal with weird path separators
 -- TODO: use util.parse_uri, etc.
@@ -317,7 +330,7 @@ end
 
 local function rpc_send(id, result, error_code)
   write_msg(
-    json.encode({
+    json_encode({
         jsonrpc = "2.0",
         id = id,
         result = not error_code and result,
@@ -327,7 +340,7 @@ end
 
 local function rpc_receive()
   local msg = read_msg()
-  local success, request = xpcall(json.decode, log_error, msg)
+  local success, request = xpcall(json_decode, log_error, msg)
   if not success then
     rpc_send(null, request, -32700)
     return
