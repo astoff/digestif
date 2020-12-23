@@ -365,38 +365,6 @@ local function memoize(fun)
 end
 util.memoize = memoize
 
---* Reading data and config files
-
---- Evaluate string in a restricted environment.
--- @tparam string str code to evaluate
--- @tparam table mt a metatable for the restricted environment
--- @return the return value of the chunk, if truthy; otherwise a table
--- with all global assignments
-local function eval_with_env(str, mt)
-   local globals, ok = {}, nil
-   setmetatable(globals, mt)
-   local chunk, result = load(str, nil, "t", globals)
-   if chunk then
-      ok, result = pcall(chunk)
-   end
-   if not ok then return nil, result end
-   return result or setmetatable(globals, nil)
-end
-util.eval_with_env = eval_with_env
-
-local function update_config(str)
-   local config = require"digestif.config"
-   local mt = {
-      __index = config,
-      __newindex = function (_, k)
-         error("Invalid option '" .. k .. "' in config file.")
-      end
-   }
-   local new_config = eval_with_env(str, mt)
-   update(config, new_config)
-end
-util.update_config = update_config
-
 --* Path and file manipulation
 
 local dir_sep = package.config:sub(1, 1)

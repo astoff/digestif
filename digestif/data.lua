@@ -2,16 +2,14 @@ local lpeg = require "lpeg"
 local util = require "digestif.util"
 local config = require "digestif.config"
 
-local format = string.format
+local format, strfind = string.format, string.find
 local concat = table.concat
-local P, R, S, V, I = lpeg.P, lpeg.R, lpeg.S, lpeg.V, lpeg.Cp()
-local C, Cc, Cb, Cg, Ct = lpeg.C, lpeg.Cc, lpeg.Cb, lpeg.Cg, lpeg.Ct
+local P, C, Cg, Ct = lpeg.P, lpeg.C, lpeg.Cg, lpeg.Ct
 local match = lpeg.match
-local choice, many, sequence = util.choice, util.many, util.sequence
+local many, sequence = util.many, util.sequence
 local gobble, search = util.gobble, util.search
-local nested_get, update, extend = util.nested_get, util.update, util.extend
+local nested_get, extend = util.nested_get, util.extend
 local find_file = util.find_file
-local eval_with_env = util.eval_with_env
 local parse_uri, make_uri = util.parse_uri, util.make_uri
 local log = util.log
 local path_split, path_join = util.path_split, util.path_join
@@ -128,31 +126,6 @@ if kpse then -- we're on luatex
 
 else -- on plain lua, we look for ls-R files
 
-  -- local ls_R = {}
-  -- local texmf_dirs = config.texmf_dirs
-  -- for i = 1, #texmf_dirs do
-  --   local ok, str = find_file(texmf_dirs[i], "ls-R", true)
-  --   if ok then ls_R[i] = str end
-  -- end
-  -- local function search_patt(name)
-  --   return search(
-  --     P"\n" * P(name) * P"\n" * Cb(1),
-  --     P"\n./" * Cg(C(gobble(":\n")), 1) + P(1)
-  --   )
-  -- end
-  -- function kpsewhich(name)
-  --   local patt = search_patt(name)
-  --   for i = 1, #texmf_dirs do
-  --     local path = ls_R[i] and match(patt, ls_R[i])
-  --     if path then
-  --       path = path_join(texmf_dirs[i], path)
-  --       return path_join(path, name)
-  --     end
-  --   end
-  --   return false -- so we memoize the non-existence of a file
-  -- end
-  -- kpsewhich = memoize1(kpsewhich)
-
   local texmf_files = {}
   local texmf_dirs = config.texmf_dirs
   local dir_patt = P"./" * C(gobble(":" * P(-1)))
@@ -175,6 +148,7 @@ else -- on plain lua, we look for ls-R files
   function kpsewhich(name)
     return texmf_files[name]
   end
+
 end
 
 --* Generate tags from the user's TeX installation
@@ -256,15 +230,14 @@ local function resolve_refs(tbl, seen)
   end
 end
 
-local unreasonable_name = util.matcher(util.search(".."))
-
 local function load_tags(name)
-  if unreasonable_name(name) then return end
-  local _, src = find_file(config.data_dirs, name .. ".tags", true)
-  if not src then return nil end
-  local tags, err = eval_with_env(src)
-  if not tags and config.verbose then
-    log("Error loading %s.tags: %s", name, err)
+  if strfind(name, "..", 1, true) then return end -- bad file name
+  local path = find_file(config.data_dirs, name .. ".tags")
+  if not path then return end
+  local tags = {}
+  local ok, message = pcall(loadfile(path, "t", tags))
+  if not ok and config.verbose then
+    log("Error loading %s.tags: %s", name, message)
     return -- TODO: should throw an error?
   end
   local pkg =  ctan_package(tags.ctan_package) or ctan_package_of(name)
