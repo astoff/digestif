@@ -1,7 +1,9 @@
 local config = require "digestif.config"
 local util = require "digestif.util"
 
-local log, nested_get = util.log, util.nested_get
+local imap, nested_get, lines = util.imap, util.nested_get, util.lines
+local parse_uri, make_uri = util.parse_uri, util.make_uri
+local log = util.log
 
 -- Use cjson if available, otherwise fall back to `digestif.util`
 -- implementation.
@@ -30,23 +32,16 @@ local tex_format_table = setmetatable({}, {
 })
 
 -- TODO: deal with weird path separators
--- TODO: use util.parse_uri, etc.
 local function from_DocumentUri(str)
-  str = str:match("^file://([^#%?]*)$")
-    or error("Invalid or unsupported URI: " .. str)
-  str = str:gsub('%%(%x%x)',
-                 function(x)
-                   return string.char(tonumber(x, 16))
-                 end)
-  return str
+  local scheme, auth, path, query, fragment = parse_uri(str)
+  if scheme ~= "file" or (auth and auth ~= "") or query or fragment then
+    error("Invalid or unsupported URI: " .. str)
+  end
+  return path
 end
 
 local function to_DocumentUri(str)
-  str = str:gsub("[^0-9A-Za-z%-._~/]",
-                 function(s)
-                   return string.format("%%%X", string.byte(s))
-                 end)
-  return "file://" .. str
+  return make_uri("file", "", str)
 end
 
 -- p0 is the position of a line l0, provided as a hint for the search
@@ -54,7 +49,7 @@ end
 local function from_Position(str, position, p0, l0)
   local l, c = position.line + 1, position.character + 1
   if l0 and l0 > l then p0, l0 = nil, nil end
-  for n, i in util.lines(str, p0, l0) do
+  for n, i in lines(str, p0, l0) do
     if n == l then
       return utf8.offset(str, c, i), i, l
     end
@@ -126,7 +121,7 @@ local function to_DocumentSymbol(outline)
     kind = to_SymbolKind[outline.kind],
     range = to_Range(outline),
     selectionRange = to_Range(outline),
-    children = outline[1] and util.imap(to_DocumentSymbol, outline)
+    children = outline[1] and imap(to_DocumentSymbol, outline)
   }
 end
 
@@ -298,7 +293,7 @@ end
 methods["textDocument/documentSymbol"] = function(params)
   local script = from_TextDocumentIdentifier(params.textDocument)
   local outline = script:outline(true) -- local only
-  return util.imap(to_DocumentSymbol, outline)
+  return imap(to_DocumentSymbol, outline)
 end
 
 --* RPC functions
@@ -384,8 +379,8 @@ local function generate(path)
   local tags = tags_from_manuscript(manuscript)
   local _, basename = util.path_split(path)
   local i, j = 0, 0
-  for _, cmd in pairs(tags.commands) do i = i + 1 end
-  for _, cmd in pairs(tags.environments) do j = j + 1 end
+  for _ in pairs(tags.commands) do i = i + 1 end
+  for _ in pairs(tags.environments) do j = j + 1 end
   save_from_table(
     basename .. ".tags",
     tags,

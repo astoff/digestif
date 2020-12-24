@@ -8,8 +8,8 @@ local strchar, strbyte, utf8_char = string.char, string.byte, utf8.char
 local format = string.format
 local pack, unpack, move, concat = table.pack, table.unpack, table.move, table.concat
 local pairs, getmetatable, setmetatable = pairs, getmetatable, setmetatable
-local P, V, R, S = lpeg.P, lpeg.V, lpeg.R, lpeg.S
-local C, Cp, Cs, Cf, Ct, Cc, Cg = lpeg.C, lpeg.Cp, lpeg.Cs, lpeg.Cf, lpeg.Ct, lpeg.Cc, lpeg.Cg
+local P, V, R, S, I = lpeg.P, lpeg.V, lpeg.R, lpeg.S, lpeg.Cp()
+local C, Cs, Cf, Ct, Cc, Cg = lpeg.C, lpeg.Cs, lpeg.Cf, lpeg.Ct, lpeg.Cc, lpeg.Cg
 local match, locale_table = lpeg.match, lpeg.locale()
 
 local util = {}
@@ -126,6 +126,9 @@ local lpeg_pow = getmetatable(P(true)).__pow
 
 local char = P(1) -- in most cases, this works with utf8 too
 local uchar = R("\0\127") + R("\194\244") * R("\128\191")^-3
+local hex = R("09", "AF", "af")
+local alnum = R("09", "AZ", "az")
+local alpha = R("AZ", "az")
 local eol = P("\n")
 
 local function choice(...)
@@ -238,23 +241,23 @@ end
 util.clean = clean
 
 -- Return a list of new lines in the subject string.
-util.line_indices = matcher(Ct(Cp() * search(eol * Cp())^0))
+util.line_indices = matcher(Ct(I * search(eol * I)^0))
 
-local utf8_sync_patt = R("\128\191")^-3 * Cp() + Cp()
+local utf8_sync_patt = R("\128\191")^-3 * I + I
 
 -- Like string.sub, but don't break up UTF-8 codepoints.  May return
 -- a string slightly longer or shorter than j - i + 1 bytes.
-local function substring8(s, i, j)
+local function strsub8(s, i, j)
   i = match(utf8_sync_patt, s, i)
   j = j and match(utf8_sync_patt, s, j + 1) - 1
   return strsub(s, i, j)
 end
-util.substring8 = substring8
+util.strsub8 = strsub8
 
 --** Fuzzy matching
 
 local fuzzy_aux_patt
-  = C(uchar) / function(c) return search(Cp() * case_fold_char(c)) end
+  = C(uchar) / function(c) return search(I * case_fold_char(c)) end
 
 local fuzzy_build_patt = Cf(fuzzy_aux_patt^1, lpeg_mul)
 
@@ -286,7 +289,7 @@ util.fuzzy_matcher = fuzzy_matcher
 
 --** Iterators
 
-local line_patt = Cp() * (search(Cp() * eol) * Cp() + P(true))
+local line_patt = I * (search(I * eol) * I + P(true))
 
 local function lines(s, i, n)
   return co_wrap(function()
@@ -375,7 +378,7 @@ if dir_sep == "/" then
   path_is_abs_patt = dir_sep_patt
 elseif dir_sep == "\\" then -- TODO: test this case
   dir_sep_patt = S"\\/"
-  path_is_abs_patt = (R("AZ", "az") * P":")^-1 * dir_sep_patt
+  path_is_abs_patt = (alpha * P":")^-1 * dir_sep_patt
 else
   error "Invalid directory separator found in package.config"
 end
@@ -446,35 +449,30 @@ util.find_file = find_file
 
 --* URI manipulation
 
-local Phex = R("09", "AF", "af")
-
 local percent_decode = replace(
-  P"%" * C(Phex * Phex),
+  P"%" * C(hex * hex),
   function(s) return strchar(tonumber(s, 16)) end
 )
 
 local percent_encode = replace(
-  char - (R("09", "AZ", "az") + S"-._~/="),
+  char - (alnum + S"-._~/="),
   function(s) return format("%%%X", strbyte(s)) end
 )
 
 local uri_patt = sequence(
-  C(R("AZ", "az")^1),
-  P":",
-  C(gobble("#")),
-  (P"#" * C(char^0))^-1
+    C(alpha^1) * P":",
+    (P"//" * C(gobble("/"))) + Cc(nil),
+    C(gobble(S"?#")) / percent_decode,
+    (P"?" * C(gobble("#")) / percent_decode) + Cc(nil),
+    (P"#" * C(char^0) / percent_decode) + Cc(nil)
 )
+util.parse_uri = matcher(uri_patt)
 
-local function parse_uri(uri)
-  local scheme, path, fragment = match(uri_patt, uri)
-  path = path and percent_decode(path)
-  fragment = fragment and percent_decode(fragment)
-  return scheme, path, fragment
-end
-util.parse_uri = parse_uri
-
-local function make_uri(scheme, path, fragment)
-  local uri = scheme .. ":" .. percent_encode(path)
+local function make_uri(scheme, authority, path, query, fragment)
+  local uri = scheme .. ":"
+  if authority then uri = uri .. "//" .. authority end
+  uri = uri .. percent_encode(path)
+  if query then uri = uri .. "?" .. percent_encode(query) end
   if fragment then uri = uri .. "#" .. percent_encode(fragment) end
   return uri
 end
@@ -489,14 +487,13 @@ util.json_null = setmetatable({}, {__json = "null"})
 do
   local ws = S" \n\t\r"^0
   local quote = P"\""
-  local hex = R"09" + R"AF" + R"af"
 
   local function decode_number(s)
     return tonumber(s) or error("Error parsing “" .. s .. "” as a number")
   end
 
   local char_or_escape = choice(
-    P(1) - P"\\", -- R("\0[", "]\255"),--
+    P(1) - P"\\",
     P"\\n"  / "\n",
     P"\\\"" / "\"",
     P"\\\\" / "\\",
@@ -558,8 +555,8 @@ do
       R"\0\31" / control_chars
   ))))
 
-  local decimal_sep, fix_decimal = tostring(5.5):gsub("5", "")
-
+  local fix_decimal
+  local decimal_sep = tostring(5.5):gsub("5", "")
   if decimal_sep == "." then
     fix_decimal = function(x) return x end
   else

@@ -281,22 +281,19 @@ end
 --* User-readable documentation
 
 local function resolve_uri(uri)
-  local scheme, location, fragment = parse_uri(uri)
+  local scheme, _, location, _, fragment = parse_uri(uri)
   if scheme == "info" then
     return uri
   elseif scheme == "texmf" then
     local path = find_file(config.texmf_dirs, location)
     if path then
-      return make_uri("file", path, fragment)
+      return make_uri("file", nil, path, nil, fragment)
     else
       return make_uri(
-        "https",
-        "//texdoc.net/texmf-dist/" .. location,
-        fragment
-      )
+        "https", "texdoc.net", "/texmf-dist/" .. location, nil, fragment)
     end
   elseif scheme == "texdoc" then -- TODO: make obsolete
-    return resolve_uri(make_uri("texmf", "doc/" .. location, fragment))
+    return resolve_uri(make_uri("texmf", nil, "doc/" .. location, nil, fragment))
   else
     return uri
   end
@@ -318,7 +315,7 @@ end
 
 local function get_info(uri)
   if config.info_command then
-    local scheme, path, fragment = parse_uri(uri)
+    local scheme, _, path, _, fragment = parse_uri(uri)
     if scheme ~= "info" then return end
     local cmd = format("%s '(%s)%s'", config.info_command, path, fragment)
     local pipe = io.popen(cmd)

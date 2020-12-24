@@ -118,7 +118,7 @@ describe("Line splitting", function()
 end)
 
 describe("UTF-8 agnostic substring", function()
-   local substring8 = util.substring8
+   local substring8 = util.strsub8
    it("works", function()
      assert.equal("😃", substring8("😠😃", 2))
      assert.equal("😃", substring8("😃😠", 1, 1))
