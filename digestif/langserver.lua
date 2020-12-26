@@ -20,9 +20,11 @@ end
 
 --* Convert LSP API objects to/from internal representations
 
--- This will be a `digestif.Cache` object.  Its initialization is
+-- This will be a digestif.Cache object.  Its initialization is
 -- deferred to `initialized` method.
-local cache
+local cache = setmetatable({}, {
+    __index = function () error "Server not initialized!" end
+})
 
 -- a place to store the tex_format/languageId of open files
 local tex_format_table = setmetatable({}, {
