@@ -22,8 +22,7 @@ Features
 
 - Popup help messages, including command signature and documentation.
   For the best results, make sure you have the [LaTeX reference
-  manual][latexref] installed as an [info node][info-issues], as well
-  as the [tlmgr] utility.
+  manual][latexref] installed as an [info node][info-issues].
 
 - Multi-file documents are supported via TeXShop-style magic comments.
   Just add a comment like this near the top of each child document:
@@ -112,8 +111,7 @@ Contributions are welcome!  A haphazard roadmap is as follows:
       commands systematically
 - [X] Integrate with texdoc.  We provide links to
       <http://texdoc.net/>, or to the locally-installed documentation,
-      if present.  This latter functionality requires `tlmgr`.  We
-      should eventually support MiKTeX as well.
+      if present.
 - [ ] Digestif probably runs on macOS, but needs testing.  Some work
       and testing is need for Windows support.
 - [X] Provide a Lua API, for use in editors capable of loading Lua
@@ -144,6 +142,5 @@ explanatory, see the data folder for examples.
 [lsp-mode]: https://github.com/emacs-lsp/lsp-mode
 [lsp]: https://microsoft.github.io/language-server-protocol/
 [api]: https://github.com/astoff/digestif/wiki/API
-[tlmgr]: https://www.tug.org/texlive/tlmgr.html
 [self-install]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif
 [SwiftLaTeX]: https://www.swiftlatex.com
