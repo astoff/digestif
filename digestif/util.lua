@@ -629,6 +629,98 @@ do
   end
 end
 
+--* Inspect and serialize Lua values
+
+local is_lua_identifier = util.matcher(
+  C(R("AZ", "az", "__") * R("09", "AZ", "az", "__")^0) * P(-1)
+  / function(s) return load("local " .. s) and s end
+)
+
+local function lua_encode_key(obj)
+  if type(obj) == "string" then
+    if is_lua_identifier(obj) then
+      return obj
+    else
+      return "[" .. string.format("%q", obj) .. "]"
+    end
+  else
+    return "[" .. tostring(obj) .. "]"
+  end
+end
+
+local function lua_encode_string(obj)
+  if string.find(obj, "\n", 1, true) then
+    local delim = ""
+    while string.find(obj, "]" .. delim .. "]", 1, true) do
+      delim = delim .. "="
+    end
+    return "[" .. delim .. "[\n" .. obj .. "]" .. delim .. "]"
+  else
+    return string.format("%q", obj)
+  end
+end
+
+-- Return a string representation of obj, with at most max_l layers of
+-- nested tables.  If obj consists solely of scalars, strings and
+-- tables and does not exceed the maximum nesting, the return value is
+-- valid Lua code.
+local function inspect(obj, max_l)
+  local t = {}
+  local l = 0
+  local max_l = max_l or 20
+  local function newline(i)
+    l = l + (i or 0)
+    t[#t+1] = "\n" .. string.rep("  ", l)
+  end
+  local function write(str)
+    t[#t+1] = str
+  end
+  local function do_encode(obj)
+    if l >= max_l then
+      write(type(obj))
+    elseif type(obj) == "table" then
+      if next(obj) == nil then
+        write("{}")
+      else
+        write("{"); newline(1)
+        local array_keys, hash_keys = {}, {}
+        for i = 1, #obj do
+          if i > 1 then
+            write(","); newline()
+          end
+          array_keys[i] = true
+          do_encode(obj[i])
+        end
+        for k in pairs(obj) do
+          if not array_keys[k] then
+            hash_keys[#hash_keys+1] = k
+          end
+        end
+        table.sort(
+          hash_keys,
+          function(v, w) return tostring(v) < tostring(w) end
+        )
+        for i = 1, #hash_keys do
+          local k = hash_keys[i]
+          if i > 1 or #array_keys > 0 then
+            write(","); newline()
+          end
+          local v = obj[k]
+          write(lua_encode_key(k)); write(" = "); do_encode(v)
+        end
+        newline(-1); write("}")
+      end
+    elseif type(obj) == "string" then
+      write(lua_encode_string(obj))
+    else
+      write(tostring(obj))
+    end
+  end
+  do_encode(obj)
+  return table.concat(t)
+end
+util.inspect = inspect
+
 --* Logging
 
 local function log(msg, ...)
@@ -638,8 +730,8 @@ local function log(msg, ...)
 end
 util.log = log
 
-local function log_objects(msg, ...)
-  return log(msg, unpack(map(require "serpent".block, {...})))
+local function log_objects(...)
+  return log(concat(map(inspect, {...}), "\n"))
 end
 util.log_objects = log_objects
 

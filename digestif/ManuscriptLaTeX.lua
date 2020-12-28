@@ -149,17 +149,6 @@ function ManuscriptLaTeX.init_callbacks.amsrefs_bib(self, pos, cs)
   return r.cont
 end
 
--- function ManuscriptLaTeX.init_callbacks.begin(m, pos, cs)
---    local r = m:parse_command(pos, cs)
---    if r[1] then
---       m:add_outline({
---             env = m:substring_stripped(r[1]),
---             pos = r[1].pos,
---             level = math.huge})
---    end
---    return r.cont
--- end
-
 function ManuscriptLaTeX.init_callbacks.input(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
   local idx = self.child_index -- should this include the known modules, or just the filenames not know in /data?

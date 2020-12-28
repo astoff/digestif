@@ -374,22 +374,25 @@ local function generate(path)
     print("Error: file \"" .. path .. "\" not found.")
     os.exit(false)
   end
-  local save_from_table = require "luarocks.persist".save_from_table
   local tags_from_manuscript = require "digestif.data".tags_from_manuscript
   local cache = require "digestif.Cache"()
   local manuscript = cache:manuscript(path, "latex-prog")
   local tags = tags_from_manuscript(manuscript)
   local _, basename = util.path_split(path)
+  local file = io.open(basename .. ".tags", "w")
+  for _, item in ipairs(
+    {"generated", "dependencies", "commands", "environments"})
+  do
+    if tags[item] then
+      file:write(item, " = ", util.inspect(tags[item]), "\n")
+    end
+  end
   local i, j = 0, 0
   for _ in pairs(tags.commands) do i = i + 1 end
   for _ in pairs(tags.environments) do j = j + 1 end
-  save_from_table(
-    basename .. ".tags",
-    tags,
-    {"generated", "dependencies", "commands", "environments"}
-  )
-  print(("Generated %s.tags \twith %3i commands and %3i environments.")
-        :format(basename, i, j))
+  print(string.format(
+          "Generated %s.tags \twith %3i commands and %3i environments.",
+          basename, i, j))
 end
 
 local usage = [[

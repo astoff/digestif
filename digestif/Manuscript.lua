@@ -484,16 +484,6 @@ function Manuscript:find_manuscript(filename)
    return nil
 end
 
-function Manuscript:add_outline(e, tree)
-   tree = tree or self.outline
-   local last = tree[#tree]
-   if last == nil or last.level >= e.level then
-      tree[#tree + 1] = e
-   else
-      self:add_outline(e, last.children)
-   end
-end
-
 --* Getting the local context
 
 -- The context at a given manuscript postion is described by a linked
