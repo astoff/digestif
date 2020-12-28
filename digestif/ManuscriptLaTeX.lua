@@ -38,7 +38,7 @@ end
 -- @return A string
 --
 function ManuscriptLaTeX:signature_env(cs, args)
-  return "\\begin{" .. cs .. "}" .. (args and self:signature_arg(args) or "")
+  return self:signature_args(args, "\\begin{" .. cs .. "}")
 end
 
 -- ¶ Helper functions

@@ -30,7 +30,7 @@ end
 -- @return A string
 --
 function Manuscript:signature_cmd(cs, args)
-  return "@" .. cs .. (args and self:signature_arg(args) or "")
+  return self:signature_arg(args, "@" .. cs)
 end
 
 return ManuscriptTexinfo

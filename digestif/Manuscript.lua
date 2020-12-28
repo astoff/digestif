@@ -652,34 +652,40 @@ end
 
 --* Snippets and pretty-printing commands
 
--- Pretty-print an argument list.
-function Manuscript:signature_arg(args)
-  if not args then return nil end
-  local t = {}
-  for i, arg in ipairs(args) do
-    local l, r
+-- Pretty-print an argument list.  Returns a string and a list of
+-- numbers (of length twice that of args) indicating the positions of
+-- each argument within that string.  before is an initial piece of
+-- text
+function Manuscript:signature_args(args, before)
+  if not args then return before, {} end
+  local t, p, pos = {before}, {}, 1 + (before and #before or 0)
+  for i = 1, #args do
+    local arg, l, r = args[i]
     if arg.literal then
       l, r = "", ""
     elseif arg.delimiters == false then
       l, r = "〈", "〉"
     elseif arg.delimiters then
-      l, r = arg.delimiters[1] or "{", arg.delimiters[2] or "}"
+      l, r = arg.delimiters[1] or "", arg.delimiters[2] or ""
+      if l == "" or r == "" then
+        l, r = l .."〈", "〉" .. r
+      end
     else
       l, r = "{", "}"
     end
-    if l == "" or r == "" then
-      l, r = l .."〈", "〉" .. r
-    end
-    t[#t+1] = l .. (arg.literal or arg.meta or "#" .. i) .. r
+    local text = arg.literal or arg.meta or "#" .. i
+    t[#t+1] = l; pos = pos + #l; p[#p+1] = pos
+    t[#t+1] = text; pos = pos + #text; p[#p+1] = pos
+    t[#t+1] = r; pos = pos + #r
   end
-  return concat(t)
+  return concat(t), p
 end
 
 -- Pretty-print a command signature.
 -- cs: The command name
 -- args: An argument list, or nil
 function Manuscript:signature_cmd(cs, args)
-  return "\\" .. cs .. (args and self:signature_arg(args) or "")
+  return self:signature_args(args, "\\" .. cs)
 end
 
 -- This is for plain TeX.  Other formats should override this
@@ -785,7 +791,7 @@ function Manuscript.completion_handlers.cs(self, ctx)
     ret[#ret+1] = {
       text = cs,
       summary = cmd.summary,
-      annotation = args and self:signature_arg(args) or cmd.symbol,
+      annotation = args and self:signature_args(args) or cmd.symbol,
       snippet = user_snippet or args and self:snippet_cmd(cs, args)
     }
   end
@@ -793,7 +799,7 @@ function Manuscript.completion_handlers.cs(self, ctx)
     local cmd = environments[env]
     local args = cmd.arguments
     local user_snippet = extra_snippets[env]
-    local annotation = args and self:signature_arg(args)
+    local annotation = args and self:signature_args(args)
     ret[#ret+1] = {
       text = env,
       summary = cmd.summary,
@@ -1066,11 +1072,13 @@ function Manuscript.help_handlers.begin(self, ctx)
   local data = self.environments[env_name]
   if not data then return nil end
   local args = data.arguments
+  local sig_text, sig_pos = self:signature_cmd(ctx.cs, args)
   return {
     pos = ctx.pos,
     cont = ctx.cont,
     kind = "environment",
-    label = self:signature_env(env_name, args),
+    label = sig_text,
+    label_positions = sig_pos,
     summary = data.summary,
     details = self:make_docstring("env", env_name, data),
     data = data
@@ -1082,11 +1090,13 @@ Manuscript.help_handlers['end'] = function(self, ctx)
   local data = self.environments[env_name]
   if not data then return nil end
   local args = data.arguments
+  local sig_text, sig_pos = self:signature_env(ctx.cs, args)
   return {
     pos = ctx.pos,
     cont = ctx.cont,
     kind = "environment",
-    label = self:signature_env(env_name, args),
+    label = sig_text,
+    label_positions = sig_pos,
     summary = data.summary,
     details = self:make_docstring("env", env_name, data),
     data = data
@@ -1097,11 +1107,13 @@ function Manuscript.help_handlers.cs(self, ctx)
   local data = ctx.data
   if not data then return nil end
   local args = data.arguments
+  local sig_text, sig_pos = self:signature_cmd(ctx.cs, args)
   return {
     pos = ctx.pos,
     cont = ctx.cont,
     kind = "command",
-    label = self:signature_cmd(ctx.cs, args),
+    label = sig_text,
+    label_positions = sig_pos,
     summary = data.summary,
     details = self:make_docstring("cs", ctx.cs, data),
     data = data

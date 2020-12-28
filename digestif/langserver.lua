@@ -212,11 +212,11 @@ end
 methods["textDocument/signatureHelp"] = function(params)
   local script, pos = from_TextDocumentPositionParams(params)
   local help = script:describe(pos)
-  if not nested_get(help, "data", "arguments") then return null end
-  local parameters = {}
-  for i, arg in ipairs(help.data.arguments) do
+  if not help or not help.arg then return null end
+  local parameters, label_positions = {}, help.label_positions or {}
+  for i, arg in ipairs(nested_get(help, "data", "arguments") or {}) do
     parameters[i] = {
-      label = arg.meta,
+      label = {label_positions[2*i-1] - 1, label_positions[2*i] - 1},
       documentation = arg.summary
     }
   end
@@ -225,11 +225,12 @@ methods["textDocument/signatureHelp"] = function(params)
       [1] = {
         label = help.label,
         documentation = help.summary,
-        parameters = parameters
+        parameters = parameters,
+        activeParameter = help.arg - 1
       }
     },
     activeSignature = 0,
-    activeParameter = help.arg and help.arg - 1
+    activeParameter = help.arg - 1
   }
 end
 
