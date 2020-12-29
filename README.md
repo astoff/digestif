@@ -54,7 +54,7 @@ Digestif can run on LuaTeX or on a standalone Lua interpreter.
 Correspondingly, there are two ways to install it.
 
 - **For LuaTeX with the self-install script:** The only dependencies
-  for this are git and a recent TeX installation.
+  for this are git and a recent TeX installation. ![easy]
 
   1. Download the [digestif][self-install] script
   2. Place it in your `$PATH` (say, `~/.local/bin`)
@@ -144,3 +144,4 @@ explanatory, see the data folder for examples.
 [api]: https://github.com/astoff/digestif/wiki/API
 [self-install]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif
 [SwiftLaTeX]: https://www.swiftlatex.com
+[easy]: https://user-images.githubusercontent.com/6500902/103299764-9331cc80-49fd-11eb-9a1e-928bfab578ed.png

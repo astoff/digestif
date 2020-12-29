@@ -9,6 +9,7 @@ local format = string.format
 local co_wrap, co_yield = coroutine.wrap, coroutine.yield
 local concat, sort = table.concat, table.sort
 local infty = math.huge
+local utf8_len, utf8_offset = utf8.len, utf8.offset
 local nested_get = util.nested_get
 local map_keys, update = util.map_keys, util.update
 local line_indices = util.line_indices
@@ -52,26 +53,29 @@ end
 -- Create a new manuscript object.  The argument is a table with the
 -- following keys:
 --
--- - filename: the manuscript's file name
--- - files: a function that returns file contents
--- - parent: a parent manuscript object (optional)
--- - format: the TeX format ("latex", "plain", etc.).  This is
+-- filename: the manuscript's file name
+-- files: a function that returns file contents
+-- parent: a parent manuscript object (optional)
+-- format: the TeX format ("latex", "plain", etc.).  This is
 --   actually only used by ManuscriptFactory
+--
 function Manuscript:__init(args)
-  local parent, filename, files, src
-    = args.parent, args.filename, args.files
+  local filename, parent, files = args.filename, args.parent, args.files
   self.filename = filename
   self.parent = parent
+  self.files = files
   self.root = parent and parent.root or self
-  src, self.token = files(filename)
-  self.src = src or ""
+  local src, cache_cookie = files(filename)
+  self.src, self.cache_cookie = src or "", cache_cookie
   self.lines = line_indices(self.src)
-  self.depth = 1 + (parent and parent.depth or 0)
   local super = parent or self.__index
   self.packages = setmetatable({}, {__index = super.packages})
   self.commands = setmetatable({}, {__index = super.commands})
   self.environments = setmetatable({}, {__index = super.environments})
-  self.children = {}
+  -- We eagerly initialize most indexes here because the overhead of
+  -- going through the document is substantial.  Only the indices used
+  -- by Manuscript:find_references are computed on demand.
+  self._children = {}
   self.bib_index = {}
   self.child_index = {}
   self.section_index = {}
@@ -79,24 +83,36 @@ function Manuscript:__init(args)
   if self.init_callbacks then
     self:scan(self.init_callbacks)
   end
-  if self.depth > 15 then return end
-  for _, item in ipairs(self.child_index) do
-    local name = item.name
-    local file_exists, _ = files(name)
-    local ancestor = self
-    while ancestor do
-      if ancestor.filename == name then break end
-      ancestor = ancestor.parent
+end
+
+function Manuscript:is_current()
+  local current_src, cookie = self.files(self.filename)
+  return (self.src == (current_src or "")) and (cookie or true)
+end
+
+-- Return a child manuscript, provided its name appear in the
+-- child_index.  It inherits this manuscript's `files` function.
+-- Memoization is used to make this efficient.
+function Manuscript:child(name)
+  local child = self._children[name]
+  local is_current = child and child:is_current()
+  if not is_current then
+    if not child then
+      local ancestor = self
+      while ancestor do
+        if ancestor.filename == name then return end
+        ancestor = ancestor.parent
+      end
     end
-    if file_exists and not ancestor then
-      self.children[name] = Manuscript{
-        filename = name,
-        parent = self,
-        format = infer_format(name),
-        files = files
-      }
-    end
+    child = Manuscript{
+      filename = name,
+      parent = self,
+      format = infer_format(name),
+      files = self.files
+    }
+    self._children[name] = child
   end
+  return child
 end
 
 --* Substrings
@@ -171,11 +187,16 @@ function Manuscript:read_list(i, j)
   return parser.read_list(s)
 end
 
--- Parse the arguments of a command.  Arguments:
--- - pos: a position in the source
--- - cs: the command name (optional).  If omitted, it's read from the
---   manuscript.
--- Returns a list of ranges.
+-- Parse the arguments of a command.
+--
+-- Arguments:
+--   pos (number): A position in the source.
+--   cs (string, optional): The command name.  If omitted, it is read
+--     from the manuscript.
+--
+-- Returns:
+--   A list of ranges.
+--
 function Manuscript:parse_command(pos, cs)
   local parser = self.parser
   if not cs then
@@ -214,13 +235,13 @@ function Manuscript:line_number_at(pos)
   return l, lines[l]
 end
 
--- Compute the line and column number (both 1-based) at the give
+-- Compute the line and column number (both 1-based) at the given
 -- position.
 --
 -- TODO: make len function a parameter
 function Manuscript:line_column_at(pos)
   local l, line_pos = self:line_number_at(pos)
-  local c = utf8.len(self.src, line_pos, pos) or error("Invalid UTF-8")
+  local c = utf8_len(self.src, line_pos, pos) or error("Invalid UTF-8")
   return l, c
 end
 
@@ -229,7 +250,7 @@ end
 -- TODO: make offset function a parameter
 function Manuscript:position_at(line, col)
   local line_pos = self.lines[line] or error("Position out of bounds")
-  return utf8.offset(self.src, col, line_pos) or error("Position out of bounds")
+  return utf8_offset(self.src, col, line_pos) or error("Position out of bounds")
 end
 
 
@@ -299,10 +320,10 @@ local function traverse_indexes(script, indexes, max_depth)
     end
   end
   if max_depth > 0 then
-    local child_idx, children = script.child_index, script.children
-    for i = 1, #child_idx do
-      local item = child_idx[i]
-      local child = children[item.name]
+    local child_index = script.child_index
+    for i = 1, #child_index do
+      local item = child_index[i]
+      local child = script:child(item.name)
       if child then
         items[#items+1] = {
           pos = item.pos,
@@ -331,12 +352,10 @@ end
 -- belongs.
 --
 -- Arguments:
---
--- indexes: is the name of an index, as a string, or a list of
---   such.
---
--- max_depth: optional, leave at the default for the recursive
---   behavior or set to 0 to disable it.
+--   indexes: is the name of an index, as a string, or a list of
+--     such.
+--   max_depth: optional, leave at the default for the recursive
+--     behavior or set to 0 to disable it.
 --
 function Manuscript:traverse(indexes, max_depth)
   if type(indexes) == "string" then indexes = {indexes} end
@@ -378,15 +397,12 @@ end
 -- property is true.
 --
 -- Arguments:
---
--- sel: determines which argument to look for; it it's a string, the
---   first argument with that meta property is used; otherwise, sel
---   should be a function that takes an `arguments` table and return
---   the relevant index.
---
--- pos: the position of the command to analyze
---
--- cs: optional, the name of the command
+--   sel: determines which argument to look for; it it's a string, the
+--     first argument with that meta property is used; otherwise, sel
+--     should be a function that takes an `arguments` table and return
+--     the relevant index.
+--   pos: the position of the command to analyze
+--   cs: optional, the name of the command
 --
 function Manuscript:argument_items(sel, pos, cs)
   return co_wrap(function() return argument_items(self, sel, pos, cs) end)
@@ -408,6 +424,7 @@ end
 -- The callbacks argument is a table.  Its keys correspond to either
 -- the "action" field of a command, or the "type" field of an item
 -- found by the parser ("cs", "mathshift" or "par").
+--
 function Manuscript:scan(callbacks, pos, ...)
   local patt = self.parser.next_thing
   local match = patt.match
@@ -427,32 +444,12 @@ function Manuscript:scan(callbacks, pos, ...)
   return scan(pos or 1, ...)
 end
 
+-- Copy entries from t to s, but only if not already present.
 local function copy_new(s, t)
   for k, v in pairs(t) do
     if not s[k] then s[k] = v end
   end
 end
-
--- function Manuscript:add_module(name)
---   if self.modules[name] then return end
---   local mod = require_data(name)
---   if not mod then return end
---   self.modules[name] = mod
---   local deps = mod.package and mod.package.dependencies or mod.dependencies -- TODO: use only the latter case
---   if deps then
---     for _, n in ipairs(deps) do
---       self:add_module(n)
---     end
---   end
---    -- Don't overwrite stuff from generated data files
---   local update_fn = mod.generated and copy_new or update
---   if mod.commands then
---     update_fn(self.commands, mod.commands)
---   end
---   if mod.environments then
---     update_fn(self.environments, mod.environments)
---   end
--- end
 
 function Manuscript:add_package(name)
   if self.packages[name] then return end
@@ -476,12 +473,14 @@ function Manuscript:add_package(name)
 end
 
 function Manuscript:find_manuscript(filename)
-   if self.filename == filename then return self end
-   for _, m in pairs(self.children) do
-      local c = m:find_manuscript(filename)
-      if c then return c end
-   end
-   return nil
+  if self.filename == filename then return self end
+  local idx = self.child_index
+  for i = 1, #idx do
+    local script = self:child(idx[i].name)
+    local found = script and script:find_manuscript(filename)
+    if found then return found end
+  end
+  return nil
 end
 
 --* Getting the local context
@@ -652,12 +651,19 @@ end
 
 --* Snippets and pretty-printing commands
 
--- Pretty-print an argument list.  Returns a string and a list of
--- numbers (of length twice that of args) indicating the positions of
--- each argument within that string.  before is an initial piece of
--- text
+-- Pretty-print an argument list.
+--
+-- Arguments:
+--   args: A list of argument descriptors
+--   before: A piece of text inserted at the beginning of the
+--     formatted argument list.
+-- Returns:
+--   The formatted argument list (as a string) and a list of numbers
+--   (of length twice that of args) indicating the positions of each
+--   argument within that string.
+--
 function Manuscript:signature_args(args, before)
-  if not args then return before, {} end
+  if not args then return before or "", {} end
   local t, p, pos = {before}, {}, 1 + (before and #before or 0)
   for i = 1, #args do
     local arg, l, r = args[i]
@@ -682,8 +688,11 @@ function Manuscript:signature_args(args, before)
 end
 
 -- Pretty-print a command signature.
--- cs: The command name
--- args: An argument list, or nil
+--
+-- Arguments:
+--   cs: The command name.
+--   args: An argument list, or nil.
+--
 function Manuscript:signature_cmd(cs, args)
   return self:signature_args(args, "\\" .. cs)
 end
@@ -693,8 +702,15 @@ end
 Manuscript.signature_env = Manuscript.signature_cmd
 
 -- Make a snippet fragment from an argument list.
--- args: An argument list
--- i: The initial counter
+--
+-- Arguments:
+--   args: An argument list
+--   i (optional, default 1): The number of the first placeholder in
+--     the snippet.
+--
+-- Returns:
+--   The formatted snippet, as a string, without the $0 placeholder.
+--
 function Manuscript:snippet_args(args, i)
   if not args then return "" end
   i = i or 1
@@ -734,6 +750,7 @@ end
 --
 -- This is the plain TeX version.  It's intended to be overwritten by
 -- other classes.
+--
 function Manuscript:snippet_env(cs, args)
   local argsnippet = args and self:snippet_args(args) or ""
   return cs .. argsnippet .. "\n\t$0\n\\end" .. cs
@@ -778,13 +795,12 @@ function Manuscript.completion_handlers.cs(self, ctx)
   local commands, environments = self.commands, self.environments
   local extra_snippets = config.extra_snippets
   local prefix = ctx.cs
-  local has_prefix = matcher(prefix)
   local ret = {
     pos = ctx.pos + 1,
     prefix = prefix,
     kind = "command"
   }
-  for cs in pairs(map_keys(has_prefix, commands)) do
+  for cs in pairs(map_keys(self.parser.cs_matcher(prefix), commands)) do
     local cmd = commands[cs]
     local args = cmd.arguments
     local user_snippet = extra_snippets[cs]
@@ -795,7 +811,7 @@ function Manuscript.completion_handlers.cs(self, ctx)
       snippet = user_snippet or args and self:snippet_cmd(cs, args)
     }
   end
-  for env in pairs(map_keys(has_prefix, environments)) do
+  for env in pairs(map_keys(matcher(prefix), environments)) do
     local cmd = environments[env]
     local args = cmd.arguments
     local user_snippet = extra_snippets[env]
@@ -876,12 +892,13 @@ Manuscript.completion_handlers["end"] = Manuscript.completion_handlers.begin
 
 
 
---- Get a short piece of text around a label.
--- If there is a recognized command ending right before the label, the
--- context starts there.
+-- Get a short piece of text around a label.  If there is a recognized
+-- command ending right before the label, the context starts there.
+--
 -- TODO: For now, the context is 60 bytes, but it should be smart and
 -- choose a lenght close to 100 characters but ending at a line end.
 -- It should also be Unicode-safe.
+--
 function Manuscript:label_context_short(item)
   local pos, cs, _ = self:find_preceding_command(item.outer_pos)
   local cmd = self.commands[cs]
@@ -1072,7 +1089,7 @@ function Manuscript.help_handlers.begin(self, ctx)
   local data = self.environments[env_name]
   if not data then return nil end
   local args = data.arguments
-  local sig_text, sig_pos = self:signature_cmd(ctx.cs, args)
+  local sig_text, sig_pos = self:signature_env(env_name, args)
   return {
     pos = ctx.pos,
     cont = ctx.cont,
@@ -1090,7 +1107,7 @@ Manuscript.help_handlers['end'] = function(self, ctx)
   local data = self.environments[env_name]
   if not data then return nil end
   local args = data.arguments
-  local sig_text, sig_pos = self:signature_env(ctx.cs, args)
+  local sig_text, sig_pos = self:signature_env(env_name, args)
   return {
     pos = ctx.pos,
     cont = ctx.cont,
@@ -1225,8 +1242,10 @@ function Manuscript:scan_references()
     self.cite_index = {}
     self:scan(self.scan_references_callbacks)
   end
-  for _, script in pairs(self.children) do
-    script:scan_references()
+  local idx = self.child_index
+  for i = 1, #idx do
+    local script = self:child(idx[i].name)
+    if script then script:scan_references() end
   end
 end
 
@@ -1237,8 +1256,10 @@ function Manuscript:scan_control_sequences()
     self.cs_index = {}
     self:scan(self.scan_cs_callbacks)
   end
-  for _, script in pairs(self.children) do
-    script:scan_control_sequences()
+  local idx = self.child_index
+  for i = 1, #idx do
+    local script = self:child(idx[i].name)
+    if script then script:scan_control_sequences() end
   end
 end
 
@@ -1256,8 +1277,11 @@ function Manuscript.scan_cs_callbacks.cs(self, pos, cs)
   return cont
 end
 
--- List all references to the thing at the given position.  Returns a
--- list of annotated ranges.
+-- List all references to the thing at the given position.
+--
+-- Returns:
+--   A list of annotated ranges.
+--
 function Manuscript:find_references(pos)
   local ctx = self:get_context(pos)
   if not ctx then return nil end
@@ -1330,6 +1354,10 @@ end
 
 --* Outline
 
+-- Compute a table of contents for the document.  If loc is false or
+-- omitted, this includes the entire document; otherwise, restrict to
+-- the current manuscript.
+--
 function Manuscript:outline(loc)
   local root = loc and self or self.root
   local val = {}

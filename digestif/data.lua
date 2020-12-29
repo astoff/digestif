@@ -4,6 +4,7 @@ local config = require "digestif.config"
 
 local format, strfind = string.format, string.find
 local concat = table.concat
+local popen = io.popen
 local P, C, Cg, Ct = lpeg.P, lpeg.C, lpeg.Cg, lpeg.Ct
 local match = lpeg.match
 local many, sequence = util.many, util.sequence
@@ -287,7 +288,7 @@ local function resolve_uri(uri)
   elseif scheme == "texmf" then
     local path = find_file(config.texmf_dirs, location)
     if path then
-      return make_uri("file", nil, path, nil, fragment)
+      return make_uri("file", "", path, nil, fragment)
     else
       return make_uri(
         "https", "texdoc.net", "/texmf-dist/" .. location, nil, fragment)
@@ -318,7 +319,7 @@ local function get_info(uri)
     local scheme, _, path, _, fragment = parse_uri(uri)
     if scheme ~= "info" then return end
     local cmd = format("%s '(%s)%s'", config.info_command, path, fragment)
-    local pipe = io.popen(cmd)
+    local pipe = popen(cmd)
     local str = pipe:read("a")
     local ok, exitt, exitc = pipe:close()
     if ok and exitt == "exit" and exitc == 0 then
@@ -330,6 +331,7 @@ local function get_info(uri)
     end
   end
 end
+get_info=util.memoize(get_info)
 
 local function generate_docstring(item, name)
   local t = {}

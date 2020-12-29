@@ -1,6 +1,5 @@
---- A class to store transient file contents and manage the creation
---- of Manuscript objects.
--- @classmod digestif.Cache
+-- A class to store transient file contents and manage the creation of
+-- Manuscript objects.
 
 local Manuscript = require "digestif.Manuscript"
 local lpeg = require "lpeg"
@@ -10,6 +9,7 @@ local S, C = lpeg.S, lpeg.C
 local sequence, gobble_until = util.sequence, util.gobble_until
 local path_split, path_join = util.path_split, util.path_join
 local weak_values = {__mode = "v"}
+local io_open = io.open
 
 local Cache = util.class()
 
@@ -24,7 +24,7 @@ function Cache:__init(tbl)
   end
 end
 
---- Set the contents of a file in the cache.
+-- Set the contents of a file in the cache.
 function Cache:put(filename, str)
   local props = self.store[filename]
   if not props then
@@ -37,19 +37,17 @@ function Cache:put(filename, str)
   self.persist[filename] = props
 end
 
---- Get the contents of a file.
--- Returns the value stored with the put method, or attempts to read
--- the file from disk.  If neither succeeds, returns nil.  The second
--- return value is a token.  Values read from disk will be garbage
--- collected when no reference to the token exists.  Values stored by
--- the put method are not subject to garbage collection.
--- @param filename the path of the file
--- @return the file contents, or nil
--- @return a token
+-- Return the contents of a file, as stored with the put method, or
+-- attempt to read the file from disk.  If neither succeeds, return
+-- nil.  The second return value is a cookie.  Values read from disk
+-- will be garbage collected when no reference to the cookie exists.
+-- Values stored by the put method are not subject to garbage
+-- collection until an explicit call to Cache.forget.
+--
 function Cache:__call(filename)
   local props = self.store[filename]
   if not props then
-    local file, str = io.open(filename), nil
+    local file, str = io_open(filename), nil
     if file then
       str = file:read("*all")
       file:close()
@@ -60,7 +58,7 @@ function Cache:__call(filename)
   return props.contents, props
 end
 
---- Remove a file from the cache.
+-- Remove a file from the cache.
 function Cache:forget(filename)
   self.store[filename] = nil
   self.persist[filename] = nil
@@ -77,9 +75,9 @@ local search_magic_comment_patt = util.choice(
   magic_comment_patt,
   util.search("\n" * magic_comment_patt))
 
---- Determine the root path of a document from magic comments.
+-- Determine the root path of a document from magic comments.
 function Cache:rootname(filename)
-  self(filename) -- warm up
+  local _, cookie = self(filename) -- warm up
   local props = assert(self.store[filename])
   local rootname = props.rootname
   if rootname == nil then
@@ -95,48 +93,25 @@ function Cache:rootname(filename)
   return rootname
 end
 
---- Check if a Manuscript object has up-to-date content.
--- @param script a Manuscript object
-function Cache:is_current(script)
-  return self(script.filename) == script.src
-end
-
---- Mutate a Manuscript object so that its children are up to date.
--- @param script a Manuscript object
--- @return the Manuscript
-function Cache:refresh_manuscript(script)
-  local children = script.children
-  for name, child in pairs(children) do
-    if self:is_current(child) then
-      self:refresh_manuscript(child)
-    else
-      children[name] = Manuscript{
-        filename = name,
-        parent = script,
-        format = child.format,
-        files = self
-      }
-    end
-  end
-  return script
-end
-
---- Return a Manuscript object.
--- This method ensures that the result belongs to a tree of Manuscript
--- objects representing a multi-file TeX document.  If the rootname
--- argument is omitted, try to infer it using magic comments.
+-- Produce a Manuscript object.  This method ensures that the result
+-- belongs to a tree of Manuscript objects representing a multi-file
+-- TeX document.  If the rootname argument is omitted, try to infer it
+-- using magic comments.
 --
 -- This method reuses as much information as possible from the cache.
 --
--- @param filename the path of the manuscript
--- @param format the TeX format
--- @param[opt] rootname the root path of the TeX document
+-- Arguments:
+--   filename (string): the path of the manuscript
+--   format (string): the TeX format
+--   rootname (string, optional): the root path of the TeX document
+--
+-- Returns:
+--   a Manuscript object
+--
 function Cache:manuscript(filename, format, rootname)
   rootname = rootname or self:rootname(filename) or filename
   local root = self.store[rootname] and self.store[rootname][format]
-  if root and self:is_current(root) then
-    root = self:refresh_manuscript(root)
-  else
+  if not root or not root:is_current() then
     root = Manuscript{
       filename = rootname,
       format = format,

@@ -46,8 +46,8 @@ local function to_DocumentUri(str)
   return make_uri("file", "", str)
 end
 
--- p0 is the position of a line l0, provided as a hint for the search
--- returns a position in btyes, and a new hint p0, l0
+-- p0 is the position of a line l0, provided as a hint for the search.
+-- Return a position in bytes, and a new hint p0, l0.
 local function from_Position(str, position, p0, l0)
   local l, c = position.line + 1, position.character + 1
   if l0 and l0 > l then p0, l0 = nil, nil end
