@@ -316,7 +316,7 @@ local function traverse_indexes(script, indexes, max_depth)
   for i = 1, #indexes do
     local idx_name = indexes[i]
     local idx = script[idx_name]
-    for j = 1, #idx do
+    for j = 1, (idx and #idx or 0) do
       items[#items+1] = idx[j]
       items[idx[j]] = idx_name
     end
@@ -453,8 +453,12 @@ local function copy_new(s, t)
   end
 end
 
+-- Adds a package to the manuscript.  This entails copying the command
+-- and environment definitions from the package tags to the
+-- manuscript.  Returns true if package is (or already was) present,
+-- nil if the package tags weren't not found.
 function Manuscript:add_package(name)
-  if self.packages[name] then return end
+  if self.packages[name] then return true end
   local pkg = require_data(name)
   if not pkg then return end
   self.packages[name] = pkg
@@ -472,6 +476,7 @@ function Manuscript:add_package(name)
   if pkg.environments then
     update_fn(self.environments, pkg.environments)
   end
+  return true
 end
 
 function Manuscript:find_manuscript(filename)
@@ -891,8 +896,6 @@ end
 
 Manuscript.completion_handlers["end"] = Manuscript.completion_handlers.begin
 
-
-
 -- Get a short piece of text around a label.  If there is a recognized
 -- command ending right before the label, the context starts there.
 --
@@ -1270,8 +1273,8 @@ function Manuscript:find_definition(pos)
   local handlers = self.find_definition_handlers
   if handlers[action] then
     return handlers[action](self, ctx)
-  -- elseif ctx.cs then -- TODO
-  --   return handlers.cs(self, ctx)
+  elseif ctx.cs then
+    return handlers.cs(self, ctx)
   else
     return nil
   end
@@ -1306,6 +1309,38 @@ function Manuscript.find_definition_handlers.cite(self, ctx)
     end
   end
 end
+
+function Manuscript.find_definition_handlers.cs(self, ctx)
+  local name = ctx.cs
+  for item in self.root:traverse "newcommand_index" do
+    if name == item.name then
+      return {
+        pos = item.pos,
+        cont = item.cont,
+        manuscript = item.manuscript,
+        kind = "cs"
+      }
+    end
+  end
+end
+
+function Manuscript.find_definition_handlers.begin(self, ctx)
+  local name = self:substring(ctx)
+  for item in self.root:traverse "newenvironment_index" do
+    util.log("Compare %s %s", item.name, name)
+    if name == item.name then
+      return {
+        pos = item.pos,
+        cont = item.cont,
+        manuscript = item.manuscript,
+        kind = "env"
+      }
+    end
+  end
+end
+
+Manuscript.find_definition_handlers["end"]
+  = Manuscript.find_definition_handlers.begin
 
 --* Find references
 

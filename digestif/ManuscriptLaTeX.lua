@@ -26,7 +26,7 @@ ManuscriptLatex:add_package("latex")
 -- Arguments:
 --   cs: The command name
 --   args: An argument list
---   
+--
 -- Returns:
 --   A snippet string
 --
@@ -54,7 +54,29 @@ local function first_opt(args)
    end
 end
 
---* Global scan callbacks
+--* Global scanning
+
+--** Basic document elements
+
+function ManuscriptLatex.init_callbacks.input(self, pos, cs)
+  local cont = self:parse_command(pos, cs).cont
+  local idx = self.child_index
+  local template = self.commands[cs].filename or "?"
+  for r in self:argument_items(first_mand, pos, cs) do
+    local f = format_filename_template(template, self:substring_stripped(r))
+    local ok = self:add_package(f)
+    if not ok then
+      f = path_join(path_split(self.filename), f)
+      idx[#idx + 1] = {
+        name = f,
+        pos = r.pos,
+        cont = r.cont,
+        manuscript = self
+      }
+    end
+  end
+  return cont
+end
 
 function ManuscriptLatex.init_callbacks.label (m, pos, cs)
    local idx = m.label_index
@@ -89,6 +111,8 @@ function ManuscriptLatex.init_callbacks.section(self, pos, cs)
   end
   return pos + #cs + 1
 end
+
+--** Bibliographic items
 
 function ManuscriptLatex.init_callbacks.bibitem (m, pos, cs)
   local idx = m.bib_index
@@ -140,21 +164,155 @@ function ManuscriptLatex.init_callbacks.amsrefs_bib(self, pos, cs)
   return r.cont
 end
 
-function ManuscriptLatex.init_callbacks.input(self, pos, cs)
+--** Command and environment definitions, LaTeX style
+
+local to_args = {}
+for i = 1, 9 do
+  local t = merge(to_args[i-1] or {})
+  t[i] = {meta = "#" .. i}
+  to_args[i] = t
+end
+
+local function newcommand_args(number, default)
+  local args = to_args[number]
+  if default and args then
+    args = merge(args) -- make a copy
+    args[1] = {
+      meta = "#1",
+      optional = true,
+      delimiters = {"[", "]"},
+      details = "Default: “" .. default .. "”."
+    }
+  end
+  return args
+end
+
+function ManuscriptLatex.init_callbacks.newcommand(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
-  local idx = self.child_index
-  local template = self.commands[cs].filename or "?"
+  local csname, nargs, optdefault
   for r in self:argument_items(first_mand, pos, cs) do
-    local f = format_filename_template(template, self:substring_stripped(r))
-    self:add_package(f)
-    if not self.packages[f] then
-      f = path_join(path_split(self.filename), f)
-      idx[#idx + 1] = {
-        name = f,
-        pos = r.pos,
-        cont = r.cont,
-        manuscript = self
-      }
+    csname = self:substring_stripped(r):sub(2)
+  end
+  for r in self:argument_items("number", pos, cs) do
+    nargs = tonumber(self:substring_stripped(r))
+  end
+  for r in self:argument_items("default", pos, cs) do
+    optdefault = self:substring_stripped(r)
+  end
+  if csname then
+    local idx = self:get_index "newcommand"
+    idx[#idx+1] = {
+      name = csname,
+      pos = pos,
+      cont = cont,
+      manuscript = self,
+      arguments = newcommand_args(nargs, optdefault)
+    }
+    if not self.commands[csname] then
+      self.commands[csname] = idx[#idx]
+    end
+  end
+  return cont
+end
+
+function ManuscriptLatex.init_callbacks.newenvironment(self, pos, cs)
+  local cont = self:parse_command(pos, cs).cont
+  local csname, nargs, optdefault
+  for r in self:argument_items(first_mand, pos, cs) do
+    csname = self:substring_stripped(r)
+  end
+  for r in self:argument_items("number", pos, cs) do
+    nargs = tonumber(self:substring_stripped(r))
+  end
+  for r in self:argument_items("default", pos, cs) do
+    optdefault = self:substring_stripped(r)
+  end
+  if csname then
+    local idx = self:get_index("newenvironment")
+    idx[#idx+1] = {
+      name = csname,
+      pos = pos,
+      cont = cont,
+      manuscript = self,
+      arguments = newcommand_args(nargs, optdefault)
+    }
+    if not self.environments[csname] then
+      self.environments[csname] = idx[#idx]
+    end
+  end
+  return cont
+end
+
+--** Command and environment definitions, xparse style
+
+local P, C, Cc, Cg, Ct = lpeg.P, lpeg.C, lpeg.Cc, lpeg.Cg, lpeg.Ct
+local Pgroup = util.between_balanced("{", "}")
+local Pdefault = Cg(Pgroup / "Default: “%1”", "details")
+
+local xparse_args = util.matcher(
+  Ct(util.many(Ct(util.sequence(
+    P" "^0,
+    (P"+" * Cg(Cc(true), "long"))^-1,
+    P"!"^-1,
+    util.choice(
+      "m",
+      "r" * Cg(Ct(C(1) * C(1)), "delimiters"),
+      "R" * Cg(Ct(C(1) * C(1)), "delimiters") * Pdefault,
+      "v" * Cg(Cc"verbatim", "type"),
+      "o" * Cg(Cc{"[", "]"}, "delimiters") * Cg(Cc(true), "optional"),
+      "O" * Cg(Cc{"[", "]"}, "delimiters") * Cg(Cc(true), "optional") * Pdefault,
+      "d" * Cg(Ct(C(1) * C(1)), "delimiters") * Cg(Cc(true), "optional"),
+      "D" * Cg(Ct(C(1) * C(1)), "delimiters") * Cg(Cc(true), "optional") * Pdefault,
+      "s" * Cg(Cc"*", "literal") * Cg(Cc"literal", "type") * Cg(Cc(true), "optional"),
+      "t" * Cg(C(1), "literal") * Cg(Cc"literal", "type") * Cg(Cc(true), "optional"),
+      "e" * Pgroup,
+      "E" * Pgroup * Pdefault))))))
+
+function ManuscriptLatex.init_callbacks.NewDocumentCommand(self, pos, cs)
+  local cont = self:parse_command(pos, cs).cont
+  local csname, arg_spec
+  for r in self:argument_items("command", pos, cs) do
+    csname = self:substring_stripped(r):sub(2)
+  end
+  for r in self:argument_items("arg spec", pos, cs) do
+    arg_spec = self:substring_stripped(r)
+  end
+  if csname then
+    local idx = self:get_index "newcommand"
+    idx[#idx+1] = {
+      name = csname,
+      pos = pos,
+      cont = cont,
+      manuscript = self,
+      arguments = xparse_args(arg_spec)
+    }
+    if not self.commands[csname] then
+      self.commands[csname] = idx[#idx]
+    end
+  end
+  return cont
+end
+
+function ManuscriptLatex.init_callbacks.NewDocumentEnvironment(self, pos, cs)
+  local cont = self:parse_command(pos, cs).cont
+  local csname, arg_spec
+  for r in self:argument_items("environment", pos, cs) do
+    csname = self:substring_stripped(r)
+  end
+  for r in self:argument_items("arg spec", pos, cs) do
+    arg_spec = self:substring_stripped(r)
+  end
+  if csname then
+    local idx = self:get_index "newenvironment"
+    idx[#idx+1] = {
+      name = csname,
+      pos = pos,
+      cont = cont,
+      manuscript = self,
+      arguments = xparse_args(arg_spec)
+    }
+    if not self.environments[csname] then
+      self.environments[csname] = idx[#idx]
     end
   end
   return cont
