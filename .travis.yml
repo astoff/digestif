@@ -22,5 +22,5 @@ install:
   - luarocks make digestif-dev-1.rockspec
 
 script:
-  - busted
+  - busted --exclude-tags=ctx
   - runhaskell spec/test-lsp.hs

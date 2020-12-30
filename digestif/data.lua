@@ -15,10 +15,21 @@ local parse_uri, make_uri = util.parse_uri, util.make_uri
 local log = util.log
 local path_split, path_join = util.path_split, util.path_join
 
+local data = {}
 local loaded_tags = {}
 
 --* CTAN data
 
+-- function ctan_package(name)
+--
+-- Return a little tags table with the package's details on CTAN
+-- (package description, ctan link, documentation).  No command
+-- information.
+--
+-- function ctan_package_of(file)
+--
+-- The name of the CTAN package to which file belongs.
+--
 local ctan_package, ctan_package_of -- to be defined
 
 local tlpdb_path = config.tlpdb_path
@@ -115,6 +126,12 @@ end
 
 --* kpathsea emulation
 
+-- function kpsewhich(name)
+--
+-- Like the kpsewhich command, return the full path of tex input file
+-- name.  We use luatex's kpse bindings if available, and parse the
+-- system's ls-R files otherwise.
+--
 local kpsewhich
 
 if kpse then -- we're on luatex
@@ -160,8 +177,8 @@ local function infer_format(path)
     return "bibtex"
   elseif ext == ".sty" or ext == ".cls" then
     return "latex-prog"
-  elseif ext == ".tex" and path:match("%Acontext%A") then
-    return --"context-prog" -- TODO: add this format
+  elseif ext == ".xml" and path:match("%Acontext%A") then
+    return "context-xml"
   elseif ext == ".tex" then
     return "latex-prog" -- TODO: should be plain-prog
   end
@@ -195,23 +212,42 @@ local function tags_from_manuscript(script, ctan_data)
   return tags
 end
 
+-- Generate tags from TeX source code (or ConTeXt interface XML file,
+-- if appicable).  `name` is a file name found by kpsewhich.
+--
 local function generate_tags(name)
   local path = kpsewhich(name)
   path = path and find_file(config.texmf_dirs, path)
   if not path then return end
   local texformat = infer_format(path)
   if not texformat then return end
-  loaded_tags[name] = {} -- TODO: this is to avoid loops, find a better way
-  local cache = require "digestif.Cache"()
-  local script = cache:manuscript(path, texformat)
+  if config.verbose then
+    log("Generating tags from ‘%s’", path)
+  end
   local pkg = ctan_package_of(name)
-  local tags = tags_from_manuscript(script, pkg)
-  return tags
+  if texformat == "context-xml" then
+    -- The function below is defined and monkey-patched in
+    -- ManuscriptConTeXt, to keep the XML dependency separated.
+    if not data.tags_from_xml then require "digestif.ManuscriptConTeXt" end
+    return data.tags_from_xml(path, pkg)
+  else
+    loaded_tags[name] = {} -- TODO: this is to avoid loops, find a better way
+    local cache = require "digestif.Cache"()
+    local script = cache:manuscript(path, texformat)
+    return tags_from_manuscript(script, pkg)
+  end
 end
+data.generate_tags = generate_tags
 
 --* Load tags
 
-local require_tags -- to be defined
+-- function require_tags(name)
+--
+-- Return tags table for input file name.  Either loads from a tags
+-- file in the data directory, or generate from source on the fly.
+--
+local require_tags
+
 local ref_patt = P"$DIGESTIFDATA/" * C(P(1)^0)
 local ref_split = util.split("/")
 
@@ -231,6 +267,7 @@ local function resolve_refs(tbl, seen)
   end
 end
 
+-- Load a tags file from the data directory.
 local function load_tags(name)
   if strfind(name, "..", 1, true) then return end -- bad file name
   local path = find_file(config.data_dirs, name .. ".tags")
@@ -262,6 +299,8 @@ require_tags = function(name)
   end
   return tags
 end
+data.require = require_tags
+data.require_tags = require_tags
 
 -- Load all data files, and return them in a table.  This is intended
 -- for debugging and testing only, and depends on luafilesystem.
@@ -278,6 +317,7 @@ local function load_all_tags()
   end
   return loaded_tags
 end
+data.load_all = load_all_tags
 
 --* User-readable documentation
 
@@ -300,7 +340,9 @@ local function resolve_uri(uri)
   end
 end
 
-local function make_doc(items)
+-- Given a list of documentation items, return a markdown-formatted
+-- string of links to these documents.
+local function resolve_doc_items(items)
   if type(items) == "string" then items = {items} end
   local t = {}
   for _, item in ipairs(items) do
@@ -310,10 +352,11 @@ local function make_doc(items)
       t[#t+1] = format("- [%s](%s)", item.summary, resolve_uri(item.uri))
     end
   end
-  t[#t+1] = ""
   return t
 end
+data.resolve_doc_items = resolve_doc_items
 
+-- Call info, return the relevant part of the info node.
 local function get_info(uri)
   if config.info_command then
     local scheme, _, path, _, fragment = parse_uri(uri)
@@ -331,44 +374,6 @@ local function get_info(uri)
     end
   end
 end
-get_info=util.memoize(get_info)
+data.get_info=util.memoize(get_info)
 
-local function generate_docstring(item, name)
-  local t = {}
-  local pkg = item.package
-  local details = item.details
-  local item_doc = item.documentation
-  local pkg_doc = pkg and pkg.documentation
-  if pkg and pkg.ctan_package then
-    t[#t+1] = format(
-      "`%s` is defined in the [%s](https://www.ctan.org/pkg/%s) package.\n",
-      name, pkg.ctan_package, pkg.ctan_package
-    )
-  end
-  if details then
-    t[#t+1] = "# Details\n"
-    t[#t+1] = details
-  elseif type(item_doc) == "string" and item_doc:match"^info:" then
-    local str, node, subnode = get_info(item_doc)
-    if str then
-      t[#t+1] = format("# Info: (%s)%s\n\n```Info\n%s```", node, subnode, str)
-    end
-  end
-  if item_doc then
-    t[#t+1] = "# Documentation\n"
-    extend(t, make_doc(item_doc))
-  end
-  if pkg_doc then
-    t[#t+1] = "# Package documentation\n"
-    extend(t, make_doc(pkg_doc))
-  end
-  return concat(t, "\n")
-end
-
-return {
-  require = require_tags,
-  require_tags = require_tags,
-  load_all = load_all_tags,
-  tags_from_manuscript = tags_from_manuscript,
-  generate_docstring = generate_docstring
-}
+return data

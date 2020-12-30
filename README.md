@@ -53,15 +53,16 @@ Installation and set-up
 Digestif can run on LuaTeX or on a standalone Lua interpreter.
 Correspondingly, there are two ways to install it.
 
-- **For LuaTeX with the self-install script:** The only dependencies
-  for this are git and a recent TeX installation. ![easy]
+- **For LuaTeX with the self-installing script:** The only
+  dependencies for this are git and a recent TeX installation. ![easy]
 
-  1. Download the [digestif][self-install] script
-  2. Place it in your `$PATH` (say, `~/.local/bin`)
-  3. Make it executable (`chmod +x ~/.local/bin/digestif`)
+  1. Download the [digestif][self-install] wrapper script.
+  2. Place it in your `$PATH` (say, `~/.local/bin`).
+  3. Make it executable (`chmod +x ~/.local/bin/digestif`).
 
   In the first run, the script will automatically download the
-  package, by default to `~/.digestif`.
+  package, by default to `~/.digestif`.  To update or uninstall,
+  simply delete that folder.
 
 - **For standalone Lua via LuaRocks:** Run `luarocks install
   digestif`.  This should be done either as root or with the `--local`
@@ -106,9 +107,9 @@ Contributions are welcome!  A haphazard roadmap is as follows:
   Texinfo
 - [ ] Test on more editors (VS Code plugin?)
 - [ ] Linting/diagnostics
-- [ ] Extract data files from LaTeX literate code?  For packages using
+- [X] Extract data files from LaTeX literate code?  For packages using
       xparse, it is possible to at least obtain the signature of
-      commands systematically
+      commands systematically.
 - [X] Integrate with texdoc.  We provide links to
       <http://texdoc.net/>, or to the locally-installed documentation,
       if present.
@@ -117,13 +118,12 @@ Contributions are welcome!  A haphazard roadmap is as follows:
 - [X] Provide a Lua API, for use in editors capable of loading Lua
       modules (see [API on the wiki][api])
 
-The main shortcoming of this program at this point is the lack of a
-more extensive collection of “tags” files, which list the commands
-provided by each package, together with their arguments and
-docstrings.  The typical TeX literate documentation is ostensibly not
-machine readable, so these tags can't be reliably generated
-automatically.  To generate a stub tags file from a `.sty`, `.cls` or
-`.dtx` file, use the command
+Digestif tries to learn about the commands provided by a package by
+looking at its source code, but this has limitations, since the
+typical TeX literate documentation is ostensibly not machine readable.
+Ideally, a detailed “tags” file, listing commands and their signatures
+and docstrings, should be created (semi)manually.  To generate a stub
+tags file from a `.sty`, `.cls` or `.dtx` file, use the command
 
 ```
 digestif --generate FILES
@@ -131,7 +131,7 @@ digestif --generate FILES
 
 After some manual polishing, these stubs could be added to this
 repository.  The format of the tags files should be more or less self
-explanatory, see the data folder for examples.
+explanatory.  See the data folder for examples.
 
 [gif]: https://user-images.githubusercontent.com/6500902/70077785-c5f27100-1601-11ea-9cfb-6e7ebd3c61ae.gif
 [info-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues#info-nodes

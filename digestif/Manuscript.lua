@@ -1,9 +1,11 @@
 -- Manuscript class
 
 local config = require "digestif.config"
-local require_data = require "digestif.data".require
-local generate_docstring = require "digestif.data".generate_docstring
 local util = require "digestif.util"
+
+local require_data = require "digestif.data".require
+local get_info = require "digestif.data".get_info
+local resolve_doc_items = require "digestif.data".resolve_doc_items
 
 local format = string.format
 local co_wrap, co_yield = coroutine.wrap, coroutine.yield
@@ -11,7 +13,7 @@ local concat, sort = table.concat, table.sort
 local infty = math.huge
 local utf8_len, utf8_offset = utf8.len, utf8.offset
 local nested_get = util.nested_get
-local map_keys, update = util.map_keys, util.update
+local map_keys, update, extend = util.map_keys, util.update, util.extend
 local line_indices = util.line_indices
 local matcher, fuzzy_matcher = util.matcher, util.fuzzy_matcher
 
@@ -672,10 +674,9 @@ function Manuscript:signature_args(args, before)
     elseif arg.delimiters == false then
       l, r = "〈", "〉"
     elseif arg.delimiters then
-      l, r = arg.delimiters[1] or "", arg.delimiters[2] or ""
-      if l == "" or r == "" then
-        l, r = l .."〈", "〉" .. r
-      end
+      l, r = arg.delimiters[1], arg.delimiters[2]
+      if r == "\n" then r = "⏎" end
+      if l == "" then l, r = " 〈", "〉" .. r end
     else
       l, r = "{", "}"
     end
@@ -1160,19 +1161,14 @@ function Manuscript.help_handlers.key(self, ctx)
   }
 end
 
-function Manuscript:make_docstring(kind, name, data)
-  local ret, print_name
+function Manuscript:make_docstring_header(kind, name, data)
+  local ret = name
   if kind == "cs" then
-    print_name = "\\" .. name
     ret = self:signature_cmd(name, data.arguments)
   elseif kind == "env" then
-    print_name = "{" .. name .. "}"
     ret = self:signature_env(name, data.arguments)
-  elseif kind == "key" then
-    ret = name
-    if data.meta then ret = ret .. " = " .. data.meta end
-  else
-    ret = name
+  elseif kind == "key" and data.meta then
+    ret = ret .. " = " .. data.meta
   end
   if data.summary then
     ret = "`" .. ret .. "`: " .. data.summary
@@ -1182,8 +1178,85 @@ function Manuscript:make_docstring(kind, name, data)
   if data.symbol then
     ret = ret .. " (" .. data.symbol .. ")"
   end
-  ret = ret .. "\n\n" .. generate_docstring(data, print_name or name)
   return ret
+end
+
+local function make_docstring_args(data)
+  local t = {"# Arguments\n"}
+  local args = data.arguments
+  if args then
+    for i = 1, #args do
+      local arg = args[i]
+      if arg.summary then
+        t[#t+1] = "- " .. (arg.meta or "#" .. i)
+          .. (arg.optional and " (optional): " or ": ")
+          .. arg.summary
+      end
+    end
+    t[#t+1] = ""
+  end
+  if #t > 2 then return concat(t, "\n") end
+end
+
+function Manuscript:make_docstring_variants(kind, name, data)
+  local variants = data.variants
+  if not variants then return end
+  local t = {"# Alternative forms\n"}
+  local fun = (kind == "env") and self.signature_env or self.signature_cmd
+  for i = 1, #variants do
+    t[#t+1] = "- `" .. fun(self, name, variants[i].arguments) .. "`"
+  end
+  t[#t+1] = ""
+  return concat(t, "\n")
+end
+
+local function make_docstring_details(data)
+  local details = data.details
+  local doc_field = data.documentation
+  if details then
+    return "# Details\n\n" .. details
+  elseif type(doc_field) == "string" and doc_field:match"^info:" then
+    local str, node, subnode = get_info(doc_field)
+    if str then
+      return format("# Info: (%s)%s\n\n```Info\n%s```", node, subnode, str)
+    end
+  else
+    return
+  end
+end
+
+function Manuscript:make_docstring_docs(kind, name, data)
+  local item_doc = data.documentation
+  local pkg = data.package
+  local pkg_doc = pkg and pkg.documentation
+  local t = {"# Documentation\n"}
+  if pkg and pkg.ctan_package then
+    if kind == "env" then
+      name = "{" .. name .. "}"
+    elseif kind == "cs" then
+      name = self:signature_cmd(name)
+    end
+    t[#t+1] = format(
+      "`%s` is defined in the [%s](https://www.ctan.org/pkg/%s) package.\n",
+      name, pkg.ctan_package, pkg.ctan_package
+    )
+  end
+  if item_doc then
+    extend(t, resolve_doc_items(item_doc))
+  end
+  if pkg_doc then
+    extend(t, resolve_doc_items(pkg_doc))
+  end
+  if #t > 1 then return concat(t, "\n") else return end
+end
+
+function Manuscript:make_docstring(kind, name, data)
+  local t = {self:make_docstring_header(kind, name, data), ""}
+  t[#t+1] = make_docstring_args(data)
+  t[#t+1] = self:make_docstring_variants(kind, name, data)
+  t[#t+1] = make_docstring_details(data)
+  t[#t+1] = self:make_docstring_docs(kind, name, data)
+  return concat(t, "\n")
 end
 
 --* Find definition

@@ -28,7 +28,7 @@ elseif has_command "kpsewhich" then
   if ok and exitt == "exit" and exitc == 0 then
     config.texmf_dirs = util.path_list_split(str)
   elseif config.verbose then
-    log("Error running kpsewhich (%s %d)", exitt, exitc)
+    util.log("Error running kpsewhich (%s %d)", exitt, exitc)
   end
 else -- TODO: What should be the default?
   config.texmf_dirs = {

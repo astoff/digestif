@@ -371,14 +371,12 @@ local function process_request()
 end
 
 local function generate(path)
-  if not util.find_file(path) then
-    print("Error: file \"" .. path .. "\" not found.")
+  local generate_tags = require "digestif.data".generate_tags
+  local tags = generate_tags(path)
+  if not tags then
+    print("Error: can't find ‘" .. path .. "’ or can't generate tags from it.")
     os.exit(false)
   end
-  local tags_from_manuscript = require "digestif.data".tags_from_manuscript
-  local cache = require "digestif.Cache"()
-  local manuscript = cache:manuscript(path, "latex-prog")
-  local tags = tags_from_manuscript(manuscript)
   local _, basename = util.path_split(path)
   local file = io.open(basename .. ".tags", "w")
   for _, item in ipairs(

@@ -2,16 +2,16 @@ local Cache = require "digestif.Cache"
 local Manuscript = require"digestif.Manuscript"
 require "digestif.config".data_dirs = {"./data"}
 
-describe("ConTeXt optional arguments", function()
+describe("ConTeXt optional arguments #ctx", function()
   local cache = Cache{
     ["one.tex"] = [[
-\margindata[optional1][optional2][mandatory]
+\margindata[optional1][optional2]{mandatory}
 ]],
     ["two.tex"] = [[
-\margindata[optional2][mandatory]
+\setuptext[optional][mandatory]
 ]],
     ["three.tex"] = [[
-\margindata[mandatory]
+\setuptext[mandatory]
 ]],
   }
 
@@ -23,25 +23,23 @@ describe("ConTeXt optional arguments", function()
      assert.equal("mandatory", script:substring(r[3]))
   end)
 
-  it("finds one optional", function()
+  it("finds optional when mandatory with bracket follows", function()
      local script = Manuscript{filename="two.tex", format="context", files=cache}
      local r = script:parse_command(1)
-     assert.is_true(r[1].omitted)
-     assert.equal("optional2", script:substring(r[2]))
-     assert.equal("mandatory", script:substring(r[3]))
+     assert.equal("optional", script:substring(r[1]))
+     assert.equal("mandatory", script:substring(r[2]))
   end)
 
   it("skips optional", function()
      local script = Manuscript{filename="three.tex", format="context", files=cache}
      local r = script:parse_command(1)
      assert.is_true(r[1].omitted)
-     assert.is_true(r[2].omitted)
-     assert.equal("mandatory", script:substring(r[3]))
+     assert.equal("mandatory", script:substring(r[2]))
   end)
 
 end)
 
-describe("ConTeXt init scanning", function()
+describe("ConTeXt init scanning #ctx", function()
   local cache = Cache{
     ["one.tex"] = [[
 \title[label1, label2]{Title}
@@ -81,7 +79,7 @@ describe("ConTeXt init scanning", function()
      for i = 1, #t do u[i] = t[i].name; v[i] = t[i].pos end
      assert.same({"two.tex", "biblio.bib"}, u)
      assert.same({112, 141}, v)
-     assert.not_nil(script.packages["t-tikz.tex"])
+     assert.not_nil(script.packages["t-tikz.xml"])
   end)
 
   it("finds references", function()
