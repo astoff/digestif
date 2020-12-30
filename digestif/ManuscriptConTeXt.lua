@@ -379,21 +379,21 @@ if ctx_tags then
 
 end
 
---* ManuscriptConTeXt class
+--* ManuscriptContext class
 
-local ManuscriptConTeXt = util.class(Manuscript)
+local ManuscriptContext = util.class(Manuscript)
 
-ManuscriptConTeXt.parser = Parser()
-ManuscriptConTeXt.format = "context"
-ManuscriptConTeXt.packages = {}
-ManuscriptConTeXt.commands = {}
-ManuscriptConTeXt.environments = {}
-ManuscriptConTeXt.init_callbacks = {}
-ManuscriptConTeXt.scan_references_callbacks = {}
-ManuscriptConTeXt:add_package("context-en.xml")
+ManuscriptContext.parser = Parser()
+ManuscriptContext.format = "context"
+ManuscriptContext.packages = {}
+ManuscriptContext.commands = {}
+ManuscriptContext.environments = {}
+ManuscriptContext.init_callbacks = {}
+ManuscriptContext.scan_references_callbacks = {}
+ManuscriptContext:add_package("context-en.xml")
 
 -- Make a snippet for an environment.
-function ManuscriptConTeXt:snippet_env(cs, args)
+function ManuscriptContext:snippet_env(cs, args)
   local argsnippet = args and self:snippet_args(args) or ""
   return "start" .. cs .. argsnippet .. "\n\t$0\n\\stop" .. cs
 end
@@ -403,7 +403,7 @@ end
 -- patch Parser.parse_args to deal with this case, but just in the
 -- simplest case where the optional arguments are in the beginning of
 -- the argument list.
-local original_parse_args = ManuscriptConTeXt.parser.parse_args
+local original_parse_args = ManuscriptContext.parser.parse_args
 
 local function new_parse_args(arglist, str, pos)
   local val = original_parse_args(arglist, str, pos)
@@ -415,7 +415,7 @@ local function new_parse_args(arglist, str, pos)
   return val
 end
 
-ManuscriptConTeXt.parser.parse_args = new_parse_args
+ManuscriptContext.parser.parse_args = new_parse_args
 
 --* Init scanning
 
@@ -426,7 +426,7 @@ for i = 1, 9 do
   to_args[i] = t
 end
 
-function ManuscriptConTeXt.init_callbacks.define(self, pos, cs)
+function ManuscriptContext.init_callbacks.define(self, pos, cs)
   -- ugly! this function (and others below) parses the command twice
   local cont = self:parse_command(pos, cs).cont
   local csname, n_args
@@ -452,7 +452,7 @@ function ManuscriptConTeXt.init_callbacks.define(self, pos, cs)
   return cont
 end
 
-function ManuscriptConTeXt.init_callbacks.definestartstop(self, pos, cs)
+function ManuscriptContext.init_callbacks.definestartstop(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
   local name
   for r in self:argument_items("name", pos, cs) do
@@ -473,7 +473,7 @@ function ManuscriptConTeXt.init_callbacks.definestartstop(self, pos, cs)
   return cont
 end
 
-function ManuscriptConTeXt.init_callbacks.label(self, pos, cs)
+function ManuscriptContext.init_callbacks.label(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
   local idx = self.label_index
   for r in self:argument_items("reference", pos, cs) do
@@ -489,7 +489,7 @@ function ManuscriptConTeXt.init_callbacks.label(self, pos, cs)
   return cont
 end
 
-function ManuscriptConTeXt.init_callbacks.section(self, pos, cs)
+function ManuscriptContext.init_callbacks.section(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
   for r in self:argument_items("reference", pos, cs) do
     local idx = self.label_index
@@ -517,7 +517,7 @@ function ManuscriptConTeXt.init_callbacks.section(self, pos, cs)
   return cont
 end
 
-function ManuscriptConTeXt.init_callbacks.input(self, pos, cs)
+function ManuscriptContext.init_callbacks.input(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
   local idx = self.child_index
   local template = self.commands[cs].filename or "?"
@@ -539,7 +539,7 @@ end
 
 --* Reference scanning
 
-function ManuscriptConTeXt.scan_references_callbacks.ref(self, pos, cs)
+function ManuscriptContext.scan_references_callbacks.ref(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
   local idx = self.ref_index
   for s in self:argument_items("reference", pos, cs) do
@@ -555,7 +555,7 @@ function ManuscriptConTeXt.scan_references_callbacks.ref(self, pos, cs)
   return cont
 end
 
-function ManuscriptConTeXt.scan_references_callbacks.cite(self, pos, cs)
+function ManuscriptContext.scan_references_callbacks.cite(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
   local idx = self.cite_index
   for s in self:argument_items("reference", pos, cs) do
@@ -571,4 +571,4 @@ function ManuscriptConTeXt.scan_references_callbacks.cite(self, pos, cs)
   return cont
 end
 
-return ManuscriptConTeXt
+return ManuscriptContext

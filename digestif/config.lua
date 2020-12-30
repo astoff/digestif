@@ -9,7 +9,7 @@ local function has_command(name)
   return ok and name or nil
 end
 
-local DIGESTIF_DATA = os.getenv("DIGESTIF_DATA") or os.getenv("DIGESTIFDATA")
+local DIGESTIF_DATA = os.getenv("DIGESTIF_DATA")
 
 if DIGESTIF_DATA then
   config.data_dirs = util.path_list_split(DIGESTIF_DATA)

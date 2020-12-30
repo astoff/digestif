@@ -1,6 +1,6 @@
 local lpeg = require "lpeg"
 local util = require "digestif.util"
-local ManuscriptLaTeX = require "digestif.ManuscriptLaTeX"
+local ManuscriptLatex = require "digestif.ManuscriptLaTeX"
 local Parser = require "digestif.Parser"
 
 local path_join, path_split = util.path_join, util.path_split
@@ -16,7 +16,7 @@ local parser_expl = Parser{
   letter = lpeg.R("az", "AZ") + lpeg.S("_:@"),
 }
 
-local ManuscriptLatexProg = util.class(ManuscriptLaTeX)
+local ManuscriptLatexProg = util.class(ManuscriptLatex)
 
 ManuscriptLatexProg.parser = parser_atletter 
 ManuscriptLatexProg.format = "latex-prog"

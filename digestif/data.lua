@@ -248,17 +248,19 @@ data.generate_tags = generate_tags
 --
 local require_tags
 
-local ref_patt = P"$DIGESTIFDATA/" * C(P(1)^0)
-local ref_split = util.split("/")
-
+local parse_ref = util.matcher(
+  sequence(
+    P"$ref:",
+    C(gobble"#") * P"#",
+    Ct(many(P"/" * C(gobble"/")))))
+p=parse_ref
 local function resolve_refs(tbl, seen)
   seen = seen or {}
   for k, v in pairs(tbl) do
     if type(v) == "string" then
-      local path = ref_patt:match(v)
-      if path then
-        local t = ref_split(path)
-        tbl[k] = nested_get(require_tags(t[1]), table.unpack(t, 2))
+      local loc, path = parse_ref(v)
+      if loc then
+        tbl[k] = nested_get(require_tags(loc), table.unpack(path))
       end
     elseif type(v) == "table" and not seen[v] then
       seen[v] = true

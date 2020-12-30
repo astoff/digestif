@@ -8,15 +8,15 @@ local nested_get, nested_put = util.nested_get, util.nested_put
 local map, update, merge = util.map, util.update, util.merge
 local format_filename_template = util.format_filename_template
 
-local ManuscriptPlainTeX = util.class(Manuscript)
+local ManuscriptPlain = util.class(Manuscript)
 
-ManuscriptPlainTeX.parser = Parser()
-ManuscriptPlainTeX.format = "plain"
-ManuscriptPlainTeX.packages = {}
-ManuscriptPlainTeX.commands = {}
-ManuscriptPlainTeX.environments = {}
-ManuscriptPlainTeX.init_callbacks = {}
-ManuscriptPlainTeX.scan_references_callbacks = {}
-ManuscriptPlainTeX:add_package("plain")
+ManuscriptPlain.parser = Parser()
+ManuscriptPlain.format = "plain"
+ManuscriptPlain.packages = {}
+ManuscriptPlain.commands = {}
+ManuscriptPlain.environments = {}
+ManuscriptPlain.init_callbacks = {}
+ManuscriptPlain.scan_references_callbacks = {}
+ManuscriptPlain:add_package("plain")
 
-return ManuscriptPlainTeX
+return ManuscriptPlain

@@ -8,48 +8,39 @@ local nested_get, nested_put = util.nested_get, util.nested_put
 local map, update, merge = util.map, util.update, util.merge
 local format_filename_template = util.format_filename_template
 
-local ManuscriptLaTeX = util.class(Manuscript)
+local ManuscriptLatex = util.class(Manuscript)
 
-ManuscriptLaTeX.parser = Parser()
-ManuscriptLaTeX.format = "latex"
-ManuscriptLaTeX.packages = {}
-ManuscriptLaTeX.commands = {}
-ManuscriptLaTeX.environments = {}
-ManuscriptLaTeX.init_callbacks = {}
-ManuscriptLaTeX.scan_references_callbacks = {}
-ManuscriptLaTeX:add_package("latex")
+ManuscriptLatex.parser = Parser()
+ManuscriptLatex.format = "latex"
+ManuscriptLatex.packages = {}
+ManuscriptLatex.commands = {}
+ManuscriptLatex.environments = {}
+ManuscriptLatex.init_callbacks = {}
+ManuscriptLatex.scan_references_callbacks = {}
+ManuscriptLatex:add_package("latex")
 
--- ¶ Snippets
+--* Snippets
 
---- Make a snippet for an environment.
+-- Make a snippet for an environment.
 --
--- @param cs The command name
--- @param args An argument list
--- @return The snippet string
-function ManuscriptLaTeX:snippet_env(cs, args)
+-- Arguments:
+--   cs: The command name
+--   args: An argument list
+--   
+-- Returns:
+--   A snippet string
+--
+function ManuscriptLatex:snippet_env(cs, args)
   local argsnippet = args and self:snippet_args(args) or ""
   return "begin{" .. cs .. "}" .. argsnippet .. "\n\t$0\n\\end{" .. cs .. "}"
 end
 
---- Pretty-print an environment signature
---
--- @param cs The command name
--- @param args An argument list, or nil
--- @return A string
---
-function ManuscriptLaTeX:signature_env(cs, args)
+-- Pretty-print an environment signature.
+function ManuscriptLatex:signature_env(cs, args)
   return self:signature_args(args, "\\begin{" .. cs .. "}")
 end
 
--- ¶ Helper functions
-
---@param meta the desired meta string
---@param args a list of arg tables
-local function find_by_meta(meta, args)
-   for i, v in ipairs(args) do
-      if meta == v.meta then return i end
-   end
-end
+--* Helper functions
 
 local function first_mand(args)
    for i, v in ipairs(args) do
@@ -63,9 +54,9 @@ local function first_opt(args)
    end
 end
 
--- ¶ Global scan callbacks
+--* Global scan callbacks
 
-function ManuscriptLaTeX.init_callbacks.label (m, pos, cs)
+function ManuscriptLatex.init_callbacks.label (m, pos, cs)
    local idx = m.label_index
    local args = m.commands[cs].arguments
    local r = m:parse_command(pos, cs)
@@ -84,7 +75,7 @@ function ManuscriptLaTeX.init_callbacks.label (m, pos, cs)
    return r.cont
 end
 
-function ManuscriptLaTeX.init_callbacks.section(self, pos, cs)
+function ManuscriptLatex.init_callbacks.section(self, pos, cs)
   local idx = self.section_index
   for r in self:argument_items(first_mand, pos, cs) do
     idx[#idx + 1] = {
@@ -99,7 +90,7 @@ function ManuscriptLaTeX.init_callbacks.section(self, pos, cs)
   return pos + #cs + 1
 end
 
-function ManuscriptLaTeX.init_callbacks.bibitem (m, pos, cs)
+function ManuscriptLatex.init_callbacks.bibitem (m, pos, cs)
   local idx = m.bib_index
   local args = m.commands[cs].arguments
   local r = m:parse_command(pos, cs)
@@ -117,7 +108,7 @@ function ManuscriptLaTeX.init_callbacks.bibitem (m, pos, cs)
   return r.cont
 end
 
-function ManuscriptLaTeX.init_callbacks.amsrefs_bib(self, pos, cs)
+function ManuscriptLatex.init_callbacks.amsrefs_bib(self, pos, cs)
   local idx = self.bib_index
   local r = self:parse_command(pos, cs)
   if r.incomplete then return r.cont end
@@ -149,9 +140,9 @@ function ManuscriptLaTeX.init_callbacks.amsrefs_bib(self, pos, cs)
   return r.cont
 end
 
-function ManuscriptLaTeX.init_callbacks.input(self, pos, cs)
+function ManuscriptLatex.init_callbacks.input(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
-  local idx = self.child_index -- should this include the known modules, or just the filenames not know in /data?
+  local idx = self.child_index
   local template = self.commands[cs].filename or "?"
   for r in self:argument_items(first_mand, pos, cs) do
     local f = format_filename_template(template, self:substring_stripped(r))
@@ -169,9 +160,9 @@ function ManuscriptLaTeX.init_callbacks.input(self, pos, cs)
   return cont
 end
 
--- ¶ Scan reference callbacks
+--* Scan references callbacks
 
-function ManuscriptLaTeX.scan_references_callbacks.ref(self, pos, cs)
+function ManuscriptLatex.scan_references_callbacks.ref(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
   local idx = self.ref_index
   for r in self:argument_items(first_mand, pos, cs) do
@@ -187,7 +178,7 @@ function ManuscriptLaTeX.scan_references_callbacks.ref(self, pos, cs)
   return cont
 end
 
-function ManuscriptLaTeX.scan_references_callbacks.cite(self, pos, cs)
+function ManuscriptLatex.scan_references_callbacks.cite(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
   local idx = self.cite_index
   for r in self:argument_items(first_mand, pos, cs) do
@@ -203,4 +194,4 @@ function ManuscriptLaTeX.scan_references_callbacks.cite(self, pos, cs)
   return cont
 end
 
-return ManuscriptLaTeX
+return ManuscriptLatex

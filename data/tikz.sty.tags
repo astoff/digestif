@@ -9,7 +9,7 @@ environments = {
     arguments = {
       {
         delimiters = {"[", "]"},
-        keys = "$DIGESTIFDATA/tikz/keys/tikz",
+        keys = "$ref:tikz#/keys/tikz",
         meta = "options",
         optional = true
       },
@@ -20,7 +20,7 @@ environments = {
     arguments = {
       {
         delimiters = {"[", "]"},
-        keys = "$DIGESTIFDATA/tikz/keys/tikz",
+        keys = "$ref:tikz#/keys/tikz",
         meta = "options",
         optional = true
       },

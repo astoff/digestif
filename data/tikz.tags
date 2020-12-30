@@ -49,7 +49,7 @@ commands = {
                "[",
                "]"
             },
-            keys = "$DIGESTIFDATA/tikz/keys/tikz",
+            keys = "$ref:tikz#/keys/tikz",
             meta = "options",
             optional = true
          },
@@ -66,7 +66,7 @@ commands = {
                "[",
                "]"
             },
-            keys = "$DIGESTIFDATA/tikz/keys/tikz",
+            keys = "$ref:tikz#/keys/tikz",
             meta = "options",
             optional = true
          },
@@ -169,7 +169,7 @@ commands = {
                "[",
                "]"
             },
-            keys = "$DIGESTIFDATA/tikz/keys/tikz",
+            keys = "$ref:tikz#/keys/tikz",
             meta = "options",
             optional = true
          }
@@ -631,7 +631,7 @@ commands = {
                "[",
                "]"
             },
-            keys = "$DIGESTIFDATA/tikz/keys/tikz",
+            keys = "$ref:tikz#/keys/tikz",
             meta = "options",
             optional = true
          },
@@ -674,7 +674,7 @@ commands = {
                "[",
                "]"
             },
-            keys = "$DIGESTIFDATA/tikz/keys/tikz",
+            keys = "$ref:tikz#/keys/tikz",
             meta = "options",
             optional = true
          },
@@ -697,7 +697,7 @@ commands = {
                "[",
                "]"
             },
-            keys = "$DIGESTIFDATA/tikz/keys/tikz",
+            keys = "$ref:tikz#/keys/tikz",
             meta = "options",
             optional = true
          },
@@ -728,7 +728,7 @@ commands = {
                "[",
                "]"
             },
-            keys = "$DIGESTIFDATA/tikz/keys/tikz",
+            keys = "$ref:tikz#/keys/tikz",
             meta = "options",
             optional = true
          },
@@ -825,7 +825,7 @@ commands = {
                "[",
                "]"
             },
-            keys = "$DIGESTIFDATA/tikz/keys/tikz",
+            keys = "$ref:tikz#/keys/tikz",
             meta = "options",
             optional = true
          }
@@ -872,7 +872,7 @@ commands = {
    tikzgraphsset = {
       arguments = {
          {
-            keys = "$DIGESTIFDATA/tikz/keys/tikz",
+            keys = "$ref:tikz#/keys/tikz",
             meta = "options"
          }
       },
@@ -932,7 +932,7 @@ commands = {
    tikzset = {
       arguments = {
          {
-            keys = "$DIGESTIFDATA/tikz/keys/tikz",
+            keys = "$ref:tikz#/keys/tikz",
             meta = "options"
          }
       },

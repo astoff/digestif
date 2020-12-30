@@ -8,15 +8,15 @@ local path_join, path_split = util.path_join, util.path_split
 local nested_get, nested_put = util.nested_get, util.nested_put
 local map, update, merge = util.map, util.update, util.merge
 
-local ManuscriptBibTeX = util.class(Manuscript)
+local ManuscriptBibtex = util.class(Manuscript)
 
-ManuscriptBibTeX.parser = Parser()
-ManuscriptBibTeX.format = "bibtex"
-ManuscriptBibTeX.packages = {}
-ManuscriptBibTeX.commands = {}
-ManuscriptBibTeX.environments = {}
+ManuscriptBibtex.parser = Parser()
+ManuscriptBibtex.format = "bibtex"
+ManuscriptBibtex.packages = {}
+ManuscriptBibtex.commands = {}
+ManuscriptBibtex.environments = {}
 
-function ManuscriptBibTeX:__init(args)
+function ManuscriptBibtex:__init(args)
   Manuscript.__init(self, args)
   local bibitems = bibtex.parse(self.src)
   local idx = {}
@@ -33,4 +33,4 @@ function ManuscriptBibTeX:__init(args)
   end
 end
 
-return ManuscriptBibTeX
+return ManuscriptBibtex

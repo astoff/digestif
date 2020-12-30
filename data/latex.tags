@@ -1622,24 +1622,7 @@ commands = {
    },
    chapter = {
       action = "section",
-      arguments = {
-         {
-            literal = "*",
-            meta = "star",
-            optional = true
-         },
-         {
-            delimiters = {
-               "[",
-               "]"
-            },
-            meta = "short title",
-            optional = true
-         },
-         {
-            meta = "title"
-         }
-      },
+      arguments = "$ref:latex#/commands/section/arguments",
       documentation = "info:latex2e#\\chapter",
       section_level = 0, summary = "Start a chapter."
    },
@@ -3619,24 +3602,7 @@ commands = {
    },
    paragraph = {
       action = "section",
-      arguments = {
-         {
-            literal = "*",
-            meta = "star",
-            optional = true
-         },
-         {
-            delimiters = {
-               "[",
-               "]"
-            },
-            meta = "short title",
-            optional = true
-         },
-         {
-            meta = "title"
-         }
-      },
+      arguments = "$ref:latex#/commands/section/arguments",
       documentation = "info:latex2e#\\subsubsection & \\paragraph & \\subparagraph",
       section_level = 5, summary = "Start a paragraph. "
    },
@@ -3693,24 +3659,7 @@ commands = {
    },
    part = {
       action = "section",
-      arguments = {
-         {
-            literal = "*",
-            meta = "star",
-            optional = true
-         },
-         {
-            delimiters = {
-               "[",
-               "]"
-            },
-            meta = "short title",
-            optional = true
-         },
-         {
-            meta = "title"
-         }
-      },
+      arguments = "$ref:latex#/commands/section/arguments",
       documentation = "info:latex2e#\\part",
       section_level = -1, summary = "Start a part."
    },
@@ -4279,7 +4228,8 @@ commands = {
          {
             literal = "*",
             meta = "star",
-            optional = true
+            optional = true,
+            summary = "If present, make an unnumbered heading."
          },
          {
             delimiters = {
@@ -4287,10 +4237,12 @@ commands = {
                "]"
             },
             meta = "short title",
-            optional = true
+            optional = true,
+            summary = "Short title for table of contents and running headers."
          },
          {
-            meta = "title"
+            meta = "title",
+            summary = "The section heading."
          }
       },
       documentation = "info:latex2e#\\section",
@@ -4545,47 +4497,13 @@ commands = {
    },
    subparagraph = {
       action = "section",
-      arguments = {
-         {
-            literal = "*",
-            meta = "star",
-            optional = true
-         },
-         {
-            delimiters = {
-               "[",
-               "]"
-            },
-            meta = "short title",
-            optional = true
-         },
-         {
-            meta = "title"
-         }
-      },
+      arguments = "$ref:latex#/commands/section/arguments",
       documentation = "info:latex2e#\\subsubsection & \\paragraph & \\subparagraph",
       section_level = 6, summary = "Start a subparagraph."
    },
    subsection = {
       action = "section",
-      arguments = {
-         {
-            literal = "*",
-            meta = "star",
-            optional = true
-         },
-         {
-            delimiters = {
-               "[",
-               "]"
-            },
-            meta = "short title",
-            optional = true
-         },
-         {
-            meta = "title"
-         }
-      },
+      arguments = "$ref:latex#/commands/section/arguments",
       documentation = "info:latex2e#\\subsection",
       section_level = 2, summary = "Start a subsection."
    },
@@ -4599,24 +4517,7 @@ commands = {
    },
    subsubsection = {
       action = "section",
-      arguments = {
-         {
-            literal = "*",
-            meta = "star",
-            optional = true
-         },
-         {
-            delimiters = {
-               "[",
-               "]"
-            },
-            meta = "short title",
-            optional = true
-         },
-         {
-            meta = "title"
-         }
-      },
+      arguments = "$ref:latex#/commands/section/arguments",
       documentation = "info:latex2e#\\subsubsection & \\paragraph & \\subparagraph",
       section_level = 4, summary = "Start a subsubsection."
    },

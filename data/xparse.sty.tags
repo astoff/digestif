@@ -79,8 +79,8 @@ commands = {
     },
     summary = "Define a new environment, overriding an existing definition."
   },
-  NewExpandableDocumentCommand     = "$DIGESTIFDATA/xparse.sty/commands/NewDocumentCommand",
-  RenewExpandableDocumentCommand   = "$DIGESTIFDATA/xparse.sty/commands/RenewDocumentCommand",
-  ProvideExpandableDocumentCommand = "$DIGESTIFDATA/xparse.sty/commands/ProvideDocumentCommand",
-  DeclareExpandableDocumentCommand = "$DIGESTIFDATA/xparse.sty/commands/DeclareDocumentCommand" 
+  NewExpandableDocumentCommand     = "$ref:xparse.sty#/commands/NewDocumentCommand",
+  RenewExpandableDocumentCommand   = "$ref:xparse.sty#/commands/RenewDocumentCommand",
+  ProvideExpandableDocumentCommand = "$ref:xparse.sty#/commands/ProvideDocumentCommand",
+  DeclareExpandableDocumentCommand = "$ref:xparse.sty#/commands/DeclareDocumentCommand" 
 }

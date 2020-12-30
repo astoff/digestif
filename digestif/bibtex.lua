@@ -16,8 +16,7 @@ local function ipairs_from(t, i)
   return ipairs(t), t, i - 1
 end
 
--- Parser
--- ======
+--* Parser
 
 local char = P(1)
 local at_sign = P"@"
@@ -72,8 +71,7 @@ local entry = string_entry + comment_entry + preamble_entry + regular_entry
 -- TODO: catch premature end on invalid entry
 local all_entries = Ct((junk * Ct(Cstart * entry * Cstop))^0)
 
--- Translate parse tree
--- ====================
+--* Translate parse tree
 
 -- BibItem class
 local BibItem = {}
@@ -148,8 +146,7 @@ function bibtex.parse(src, options)
   return items
 end
 
--- Deuglify strings
--- ================
+--* Deuglify strings
 
 local tex_symbols = {
   oe = "œ",
@@ -226,8 +223,7 @@ local function deuglify_title (s)
             detexify_symbols(s)))))
 end
 
--- Pretty-printing
--- ===============
+--* Pretty-printing
 
 local split_authors = split(author_sep, token)
 local split_name = split(comma, token)
