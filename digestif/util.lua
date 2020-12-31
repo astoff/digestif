@@ -190,18 +190,22 @@ local function between_balanced(l, r, token) --nicer name?
 end
 util.between_balanced = between_balanced
 
-local function case_fold_char(c)
-  local u = strupper(c) -- FIX: doesn't handle well non-ASCII characters
-  if c == u then
-    return P(c)
-  else
-    return P(c) + P(u)
-  end
-end
-
+-- function case_fold(str)
+--
 -- Return a pattern that matches the given string, ignoring case.
 -- Uppercase characters in the input still match only uppercase.
-local case_fold = matcher(Cf((C(char) / case_fold_char)^1, lpeg_mul))
+-- Indexing case_fold as a table does the same, but for individual
+-- characters only.
+local case_fold = {}
+for i = strbyte"a", strbyte"z" do
+  local c = strchar(i)
+  case_fold[c] = S(c .. strupper(c))
+end
+local cf_patt = Cf((C(char) / case_fold)^1, lpeg_mul)
+setmetatable(case_fold, {
+  __index = function(_, c) return P(c) end,
+  __call = function(_, s) return match(cf_patt, s) end
+})
 util.case_fold = case_fold
 
 --** String functions, with a tendency towards currying
@@ -257,7 +261,7 @@ util.strsub8 = strsub8
 --** Fuzzy matching
 
 local fuzzy_aux_patt
-  = C(uchar) / function(c) return search(I * case_fold_char(c)) end
+  = C(uchar) / function(c) return search(I * case_fold[c]) end
 
 local fuzzy_build_patt = Cf(fuzzy_aux_patt^1, lpeg_mul)
 

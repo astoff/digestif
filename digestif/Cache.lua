@@ -67,7 +67,7 @@ end
 local space = S" \t\r"
 local magic_comment_patt = sequence(
   (space^0 * "%")^1,
-  space^0 * "!" * S"Tt" * S"Ee" * S"Xx",
+  space^0 * "!" * util.case_fold("tex"),
   space^1 * "root",
   space^0 * "=",
   space^0 * C(gobble_until(space^0 * "\n")))
