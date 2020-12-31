@@ -51,6 +51,12 @@ config.extra_snippets = {
   figure = "begin{figure}${1:[placement]}\n\t$0\n\\caption{${2:caption text}}\n\\end{figure}"
 }
 
+-- This allows the user to assign custom actions to generated command
+-- tags.
+config.extra_actions = {
+  eqref = "ref"
+}
+
 config.fuzzy_cite = true
 config.fuzzy_ref = true
 config.info_command = has_command("info")

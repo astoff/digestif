@@ -213,7 +213,7 @@ local function tags_from_manuscript(script, ctan_data)
 end
 
 -- Generate tags from TeX source code (or ConTeXt interface XML file,
--- if appicable).  `name` is a file name found by kpsewhich.
+-- if applicable).  The argument is a file name found by kpsewhich.
 --
 local function generate_tags(name)
   local path = kpsewhich(name)
@@ -275,7 +275,8 @@ local function load_tags(name)
   local path = find_file(config.data_dirs, name .. ".tags")
   if not path then return end
   local tags = {}
-  local ok, message = pcall(loadfile(path, "t", tags))
+  local ok, message = loadfile(path, "t", tags)
+  if ok then ok, message = pcall(ok) end
   if not ok and config.verbose then
     log("Error loading %s.tags: %s", name, message)
     return -- TODO: should throw an error?
@@ -292,9 +293,11 @@ require_tags = function(name)
     if tags then
       loaded_tags[name] = tags
       resolve_refs(tags)
+      local extra_actions = config.extra_actions or {}
       for _, kind in ipairs{"commands", "environments"} do
-        for _, cmd in pairs(tags[kind] or {}) do
+        for cs, cmd in pairs(tags[kind] or {}) do
           if not cmd.package then cmd.package = tags end
+          if extra_actions[cs] then cmd.action = extra_actions[cs] end
         end
       end
     end
@@ -307,17 +310,19 @@ data.require_tags = require_tags
 -- Load all data files, and return them in a table.  This is intended
 -- for debugging and testing only, and depends on luafilesystem.
 local function load_all_tags()
+  local t = {}
   local ok, lfs = pcall(require, "lfs")
   assert(ok, "Function data.load_all() need the luafilesystem library.")
   for _, data_dir in ipairs(config.data_dirs) do
     for path in lfs.dir(data_dir) do
       local pkg = path:match("(.*)%.tags")
       if pkg then
-        assert(require_tags(pkg), "Couldn't load data file " .. path)
+        assert(load_tags(pkg), "Error loading data file " .. path)
+        t[pkg] = require_tags(pkg) or error("Error processing data file " .. path)
       end
     end
   end
-  return loaded_tags
+  return t
 end
 data.load_all = load_all_tags
 

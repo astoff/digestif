@@ -251,10 +251,6 @@ local function gen_tags(data)
 
   }
 
-  -- Don't literally set cmd.package = tags below so that tags remains
-  -- serializable.
-  local link_to_root = {__index = {package = tags}}
-
   for _, cmd in ipairs(command_list) do
     local cs = cmd.cs
     local list = cmd.environment and tags.environments or tags.commands
@@ -266,7 +262,6 @@ local function gen_tags(data)
       }
     }
     cmd.environment, cmd.cs = nil, nil
-    setmetatable(cmd, link_to_root)
     if not list[cs] then
       list[cs] = cmd
     else
