@@ -2,11 +2,13 @@
 
 local lpeg = require "lpeg"
 
+local io, os = io, os
 local co_yield, co_wrap = coroutine.yield, coroutine.wrap
-local strupper, gsub, strsub = string.upper, string.gsub, string.sub
+local strupper, strfind, strsub, strrep = string.upper, string.find, string.sub, string.rep
 local strchar, strbyte, utf8_char = string.char, string.byte, utf8.char
-local format = string.format
-local pack, unpack, move, concat = table.pack, table.unpack, table.move, table.concat
+local format, gsub = string.format, string.gsub
+local pack, unpack, concat = table.pack, table.unpack, table.concat
+local move, sort = table.move, table.sort
 local pairs, getmetatable, setmetatable = pairs, getmetatable, setmetatable
 local P, V, R, S, I = lpeg.P, lpeg.V, lpeg.R, lpeg.S, lpeg.Cp()
 local C, Cs, Cf, Ct, Cc, Cg = lpeg.C, lpeg.Cs, lpeg.Cf, lpeg.Ct, lpeg.Cc, lpeg.Cg
@@ -543,7 +545,7 @@ end
 do
   local control_chars = {}
   for i = 0, 31 do
-    control_chars[string.char(i)] = string.format("\\u%04x", i)
+    control_chars[strchar(i)] = format("\\u%04x", i)
   end
 
   local encode_string = matcher(
@@ -635,6 +637,15 @@ end
 
 --* Inspect and serialize Lua values
 
+-- function inspect(obj, depth)
+--
+-- Return a string representation of `obj`, with at most `depth`
+-- layers of nested tables.  If `obj` consists solely of scalars,
+-- strings and tables and does not exceed the maximum nesting, the
+-- return value is valid Lua code.
+--
+local inspect
+
 local is_lua_identifier = util.matcher(
   C(R("AZ", "az", "__") * R("09", "AZ", "az", "__")^0) * P(-1)
   / function(s) return load("local " .. s) and s end
@@ -645,7 +656,7 @@ local function lua_encode_key(obj)
     if is_lua_identifier(obj) then
       return obj
     else
-      return "[" .. string.format("%q", obj) .. "]"
+      return "[" .. format("%q", obj) .. "]"
     end
   else
     return "[" .. tostring(obj) .. "]"
@@ -653,75 +664,60 @@ local function lua_encode_key(obj)
 end
 
 local function lua_encode_string(obj)
-  if string.find(obj, "\n", 1, true) then
+  if strfind(obj, "\n", 1, true) then
     local delim = ""
-    while string.find(obj, "]" .. delim .. "]", 1, true) do
+    while strfind(obj, "]" .. delim .. "]", 1, true) do
       delim = delim .. "="
     end
     return "[" .. delim .. "[\n" .. obj .. "]" .. delim .. "]"
   else
-    return string.format("%q", obj)
+    return format("%q", obj)
   end
 end
 
--- Return a string representation of obj, with at most max_l layers of
--- nested tables.  If obj consists solely of scalars, strings and
--- tables and does not exceed the maximum nesting, the return value is
--- valid Lua code.
-local function inspect(obj, max_l)
+local function lua_encode_table(obj, depth, d)
   local t = {}
-  local l = 0
-  local max_l = max_l or 20
-  local function newline(i)
-    l = l + (i or 0)
-    t[#t+1] = "\n" .. string.rep("  ", l)
+  local array_keys, hash_keys = {}, {}
+  for i = 1, #obj do
+    array_keys[i] = true
+    t[#t+1] = inspect(obj[i], depth, d+1)
   end
-  local function write(str)
-    t[#t+1] = str
-  end
-  local function do_encode(obj)
-    if l >= max_l then
-      write(type(obj))
-    elseif type(obj) == "table" then
-      if next(obj) == nil then
-        write("{}")
-      else
-        write("{"); newline(1)
-        local array_keys, hash_keys = {}, {}
-        for i = 1, #obj do
-          if i > 1 then
-            write(","); newline()
-          end
-          array_keys[i] = true
-          do_encode(obj[i])
-        end
-        for k in pairs(obj) do
-          if not array_keys[k] then
-            hash_keys[#hash_keys+1] = k
-          end
-        end
-        table.sort(
-          hash_keys,
-          function(v, w) return tostring(v) < tostring(w) end
-        )
-        for i = 1, #hash_keys do
-          local k = hash_keys[i]
-          if i > 1 or #array_keys > 0 then
-            write(","); newline()
-          end
-          local v = obj[k]
-          write(lua_encode_key(k)); write(" = "); do_encode(v)
-        end
-        newline(-1); write("}")
-      end
-    elseif type(obj) == "string" then
-      write(lua_encode_string(obj))
-    else
-      write(tostring(obj))
+  for k in pairs(obj) do
+    if not array_keys[k] then
+      hash_keys[#hash_keys+1] = k
     end
   end
-  do_encode(obj)
-  return table.concat(t)
+  sort(
+    hash_keys,
+    function(v, w) return tostring(v) < tostring(w) end
+  )
+  for i = 1, #hash_keys do
+    local k = hash_keys[i]
+    local v = obj[k]
+    t[#t+1] = lua_encode_key(k) .. " = " .. inspect(v, depth, d+1)
+  end
+  local short = concat(t, ", ")
+  if 2*d + #short > 70 or strfind(short, "\n", 1, true) then
+    local sep = strrep("  ", d)
+    return "{\n  " .. sep .. concat(t, ",\n  " .. sep) .. "\n" .. sep .. "}"
+  else
+    return "{" .. short .. "}"
+  end
+end
+
+inspect = function(obj, depth, d)
+  depth, d = depth or 10, d or 0
+  if type(obj) == "table" and d < depth then
+    return lua_encode_table(obj, depth, d)
+  elseif type(obj) == "string" then
+    if d < depth or #obj < 20 then
+      return lua_encode_string(obj)
+    else
+      return format("string: \"%s...\"", strsub(obj, 1, 9))
+    end
+  else
+    return tostring(obj)
+  end
 end
 util.inspect = inspect
 
