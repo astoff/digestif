@@ -15,6 +15,8 @@ ManuscriptBibtex.format = "bibtex"
 ManuscriptBibtex.packages = {}
 ManuscriptBibtex.commands = {}
 ManuscriptBibtex.environments = {}
+ManuscriptBibtex.init_callbacks = false -- Skip the normal init scan
+ManuscriptBibtex:add_package("plain") -- For basic command completion
 
 function ManuscriptBibtex:__init(args)
   Manuscript.__init(self, args)

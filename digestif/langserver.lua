@@ -130,6 +130,7 @@ end
 local languageId_translation_table = {
   bibtex = "bibtex",
   context = "context",
+  doctex = "latex-prog",
   latex = "latex",
   plain = "plain",
   plaintex = "plain",

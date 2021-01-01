@@ -428,7 +428,7 @@ end
 -- found by the parser ("cs", "mathshift" or "par").
 --
 function Manuscript:scan(callbacks, pos, ...)
-  local patt = self.parser.next_thing
+  local patt = self.parser.scan_patt(callbacks)
   local match = patt.match
   local commands = self.commands
   local src = self.src

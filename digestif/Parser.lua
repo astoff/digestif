@@ -1,5 +1,4 @@
---- Parser class
--- @classmod digestif.Parser
+-- Parser class
 
 local lpeg = require "lpeg"
 local util = require "digestif.util"
@@ -36,8 +35,6 @@ local search = util.search
 local sequence = util.sequence
 local trim = util.trim
 
-local weak_keys = {__mode = "k"}
-
 local default_catcodes = {
   escape = P("\\"),
   bgroup = P("{"),
@@ -57,7 +54,7 @@ local Parser = util.class()
 function Parser:__init(catcodes)
   catcodes = catcodes or default_catcodes
 
-  -- Single characters
+--* Single characters
   local escape    = P(catcodes.escape    or default_catcodes.escape)
   local bgroup    = P(catcodes.bgroup    or default_catcodes.bgroup)
   local egroup    = P(catcodes.egroup    or default_catcodes.egroup)
@@ -70,7 +67,7 @@ function Parser:__init(catcodes)
   local listsep   = P(catcodes.listsep   or default_catcodes.listsep)
   local valsep    = P(catcodes.valsep    or default_catcodes.valsep)
 
-  -- Basic elements
+--* Basic elements
   local blank = space + eol
   local cs = escape * (letter^1 + char)
   local csname = escape * C(letter^1 + char)
@@ -78,14 +75,17 @@ function Parser:__init(catcodes)
   local blank_line = eol * space^0 * eol
   local single_eol = eol * space^0 * -eol
   local comment_line = comment * gobble_until(eol, char)
+  local skip = (space + single_eol + comment_line)^0 -- simulates TeX state S
+  local skip_long = (space + eol + comment_line)^0
   local par = blank_line * (space + eol + comment_line)^0
-  local skipped = (space + single_eol + comment_line)^0
+  local next_par = search(blank_line, comment + char)
+    * (eol + space + comment_line)^0 * I * char -- need this char at the end?
 
   -- These patterns match text delimited by braces.  They succeed on a
   -- incomplete subject string (with the additional incomplete = true
-  -- named capture).  The short variant does not cross paragraph
+  -- named capture).  The second variant does not cross paragraph
   -- boundaries.
-  local group = sequence(
+  local group_long = sequence(
     Iouter_pos,
     P{sequence(bgroup,
                Ipos,
@@ -95,7 +95,7 @@ function Parser:__init(catcodes)
                Icont,
                egroup + is_incomplete)},
     Iouter_cont)
-  local short_group = sequence(
+  local group = sequence(
     Iouter_pos,
     P{sequence(bgroup,
                Ipos,
@@ -107,50 +107,39 @@ function Parser:__init(catcodes)
                egroup + is_incomplete)},
     Iouter_cont)
 
-  -- One thing to which the scanner reacts.
-  local thing = choice(
-    Kcs * csname,
-    mathshift * Kmathshift * (mathshift * Cc"$$" + Cc"$"),
-    par * Kpar * Knil)
-
-  -- Patterns that search ahead
-  local next_thing = search(I * thing * I, comment_line + char)
-  local next_par = search(blank_line, comment + char)
-    * (eol + space + comment_line)^0 * I * char -- need this char at the end?
-
-  -- Trimming, cleaning, and cropping
+--* Trimming, cleaning, and cropping
   local trimmer = blank^0 * C((blank^0 * (char - blank)^1)^0)
   local cleaner = blank^0 * Cs(((blank^1 / " " + true) * (char - blank)^1)^0)
   local comment_block = ((eol * space^0)^-1 * comment_line)^1 -- use the one below?
   -- local comment_block = (comment_line * (Pend + eol * space^0))^0
   local comment_stripper = Cs((comment_block / "" + char)^0)
 
-  -- Parsing lists
-  local skim_unit = comment_line + group/0 + token
-  local skipped_long = (space + eol + comment_line)^0
-  local listsep_skip = listsep * skipped_long
+--* Parsing lists
+  local skim_long = comment_line + group_long/0 + token
+  local listsep_skip = listsep * skip_long
 
-  local list_item = Ct(Ipos * (skim_unit - listsep)^1 * Icont)
-  local list_parser = skipped_long * Ct((listsep_skip^0 * list_item)^0)
+  local list_item = Ct(Ipos * (skim_long - listsep)^1 * Icont)
+  local list_parser = skip_long * Ct((listsep_skip^0 * list_item)^0)
 
-  local list_reader = skipped_long * Ct(
-    (listsep_skip^0 * C((skim_unit - listsep)^1)
+  local list_reader = skip_long * Ct(
+    (listsep_skip^0 * C((skim_long - listsep)^1)
        / trim(space + eol + comment_line, char))^0)
 
-  local key = Ct(Ipos * (skim_unit - listsep - valsep)^1 * Icont)
-  local value = Ct(valsep * skipped_long * Ipos * (skim_unit - listsep)^0 * Icont)
+  local key = Ct(Ipos * (skim_long - listsep - valsep)^1 * Icont)
+  local value = Ct(valsep * skip_long * Ipos * (skim_long - listsep)^0 * Icont)
   local kvlist_item = Ct(Ipos * Cg(key, "key") * Cg(value, "value")^-1 * Icont)
-  local kvlist_parser = skipped_long * Ct((listsep_skip^0 * kvlist_item)^0)
+  local kvlist_parser = skip_long * Ct((listsep_skip^0 * kvlist_item)^0)
 
+--* Parsing command arguments
   local patt_from_arg = function(arg)
-    local ret = skipped
+    local ret = skip
     if arg.delimiters then
       local l, r = arg.delimiters[1], arg.delimiters[2]
       ret = sequence(
         ret, Iouter_pos, l, Ipos,
         many(
           choice(comment_line,
-                 short_group/0,
+                 group/0,
                  token)
             - blank_line - r),
         Icont,
@@ -159,7 +148,7 @@ function Parser:__init(catcodes)
     elseif arg.literal then
       ret = ret * Ipos * P(arg.literal) * Icont
     else -- plain argument
-      ret = ret * (short_group + Ipos * token * Icont)
+      ret = ret * (group + Ipos * token * Icont)
     end
     if arg.optional then
       ret = ret + is_omitted
@@ -167,57 +156,67 @@ function Parser:__init(catcodes)
     return Ct(ret)
   end
 
-  local patt_from_arglist = function(args)
+  local patt_from_args = function(args)
     local ret = Icont
     for i = #args, 1, -1 do
       ret = (patt_from_arg(args[i]) + is_incomplete) * ret
     end
     return Ct(Ipos * ret)
   end
+  patt_from_args = util.memoize1(patt_from_args)
 
-  local patt_store = setmetatable({}, weak_keys)
-
-  self.parse_args = function(arglist, str, pos)
-    local patt = patt_store[arglist]
-    if not patt then
-      patt = patt_from_arglist(arglist)
-      patt_store[arglist] = patt
-    end
-    return match(patt, str, pos)
+  local parse_args = function(args, str, pos)
+    return match(patt_from_args(args), str, pos)
   end
 
-  -- public patterns
+--* Public patterns
   self.group = group
-  self.short_group = short_group
+  self.group_long = group_long
   self.next_par = next_par
   self.comment_line = comment_line
   self.cs = cs
   self.csname = csname
-  self.skipped = skipped
   self.blank_line = blank_line
-  self.next_thing = next_thing
 
-  function self.cs_matcher(prefix)
-    local patt = P(prefix) * letter^0 * Pend
-    return matcher(patt)
-  end
-
-  -- public functions from patterns
+--* Public functions
+  self.parse_args = parse_args
   self.is_blank_line = matcher(space^0 * eol)
-  self.next_nonblank = matcher(skipped * I)
+  self.next_nonblank = matcher(skip * I)
   self.trim = matcher(trimmer) -- replace def of trimmer directly in here?
   self.clean = matcher(cleaner)
   self.strip_comments = matcher(comment_stripper)
   self.skip_to_bracketed = matcher( -- for tikz paths
     search(
       patt_from_arg{delimiters = {"[", "]"}},
-      skim_unit - blank_line)) -- also exclude ";"?
+      skim_long - blank_line)) -- also exclude ";"?
 
-  --- Parse a list.
-  -- @function Parser.parse_list
+  -- Parse a list, return a sequence of ranges
   self.parse_list = matcher(list_parser)
+  -- Parse a list, return the item contents as strings
   self.read_list = matcher(list_reader)
+  -- Parse a key-value list, return their contents as strings
   self.parse_kvlist = matcher(kvlist_parser)
+
+  -- Match a normal control sequence name starting with prefix
+  function self.cs_matcher(prefix)
+    local patt = P(prefix) * letter^0 * Pend
+    return matcher(patt)
+  end
+
+  -- Build a pattern for Manuscript.scan, which looks ahead for one of
+  -- the elements of the set `things`.  A match produces 4 captures: a
+  -- position before the item, the kind of item ("cs", "mathshift" or
+  -- "par"), a detail (e.g., the control sequence if kind is "cs"),
+  -- and a position after the item.
+  --
+  self.scan_patt = function(things)
+    local patt = Kcs * csname
+    if things.mathshift then
+      patt = patt + mathshift * Kmathshift * (mathshift * Cc"$$" + Cc"$")
+    end
+    if things.par then patt = patt + par * Kpar * Knil end
+    return search(I * patt * I, comment_line + char)
+  end
 
 end
 
