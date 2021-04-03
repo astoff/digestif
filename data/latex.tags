@@ -2313,45 +2313,51 @@ commands = {
   ["~"] = {documentation = "info:latex2e#Accents"}
 }
 environments = {
-  abstract = {info_node = "(latex2e)abstract", summary = "Produce an abstract."},
+  abstract = {
+    documentation = "info:latex2e#abstract",
+    summary = "Produce an abstract."
+  },
   array = {
     arguments = {
       {delimiters = {"[", "]"}, meta = "pos", optional = true},
       {meta = "cols"}
     },
-    info_node = "(latex2e)array",
+    documentation = "info:latex2e#array",
     summary = "Math arrays."
   },
-  center = {info_node = "(latex2e)center", summary = "Centered lines."},
+  center = {
+    documentation = "info:latex2e#center",
+    summary = "Centered lines."
+  },
   description = {
     action = "list",
-    info_node = "(latex2e)description",
+    documentation = "info:latex2e#description",
     summary = "Labelled lists."
   },
   displaymath = {
-    info_node = "(latex2e)Math formulas",
+    documentation = "info:latex2e#Math formulas",
     summary = "Formulas that appear on their own line."
   },
   document = {
-    info_node = "(latex2e)document",
+    documentation = "info:latex2e#document",
     summary = "Enclose the whole document."
   },
   enumerate = {
     action = "list",
-    info_node = "(latex2e)enumerate",
+    documentation = "info:latex2e#enumerate",
     summary = "Numbered lists."
   },
   eqnarray = {
-    info_node = "(latex2e)eqnarray",
+    documentation = "info:latex2e#eqnarray",
     summary = "Sequences of aligned equations."
   },
   equation = {
-    info_node = "(latex2e)Math formulas",
+    documentation = "info:latex2e#Math formulas",
     summary = "Displayed equation."
   },
   figure = {
     arguments = {{delimiters = {"[", "]"}, meta = "placement", optional = true}},
-    info_node = "(latex2e)figure",
+    documentation = "info:latex2e#figure",
     summary = "Floating figures."
   },
   ["figure*"] = {
@@ -2359,39 +2365,45 @@ environments = {
   },
   filecontents = {
     arguments = {{meta = "filename"}},
-    info_node = "(latex2e)filecontents",
+    documentation = "info:latex2e#filecontents",
     summary = "Writing multiple files from the source."
   },
   ["filecontents*"] = {
     arguments = {{meta = "filename"}},
-    info_node = "(latex2e)filecontents"
+    documentation = "info:latex2e#filecontents"
   },
-  flushleft = {info_node = "(latex2e)flushleft", summary = "Flushed left lines."},
+  flushleft = {
+    documentation = "info:latex2e#flushleft",
+    summary = "Flushed left lines."
+  },
   flushright = {
-    info_node = "(latex2e)flushright",
+    documentation = "info:latex2e#flushright",
     summary = "Flushed right lines."
   },
   itemize = {
     action = "list",
-    info_node = "(latex2e)itemize",
+    documentation = "info:latex2e#itemize",
     summary = "Bulleted lists."
   },
   letter = {
     arguments = {{meta = "recipient address"}},
-    info_node = "(latex2e)letter",
+    documentation = "info:latex2e#letter",
     summary = "Letters."
   },
   list = {
     action = "list",
     arguments = {{meta = "labeling"}, {meta = "spacing"}},
-    info_node = "(latex2e)list",
+    documentation = "info:latex2e#list",
     summary = "Generic list environment."
   },
   lrbox = {
     arguments = {{meta = "command"}},
     summary = "Environment version of \\sbox."
   },
-  math = {info_node = "(latex2e)Math formulas", summary = "In-line math."},
+  math = {
+    documentation = "info:latex2e#Math formulas",
+    summary = "In-line math."
+  },
   minipage = {
     arguments = {
       {delimiters = {"[", "]"}, meta = "position", optional = true},
@@ -2399,7 +2411,7 @@ environments = {
       {delimiters = {"[", "]"}, meta = "inner-pos", optional = true},
       {meta = "width"}
     },
-    info_node = "(latex2e)minipage",
+    documentation = "info:latex2e#minipage",
     summary = "Miniature page."
   },
   picture = {
@@ -2407,25 +2419,25 @@ environments = {
       {delimiters = {"(", ")"}, meta = "width,height"},
       {delimiters = {"(", ")"}, meta = "xoffset,yoffset"}
     },
-    info_node = "(latex2e)picture",
+    documentation = "info:latex2e#picture",
     summary = "Picture with text, arrows, lines and circles."
   },
   quotation = {
-    info_node = "(latex2e)quotation & quote",
+    documentation = "info:latex2e#quotation & quote",
     summary = "Include a quotation."
   },
   quote = {
-    info_node = "(latex2e)quotation & quote",
+    documentation = "info:latex2e#quotation & quote",
     summary = "Include a quotation."
   },
   sloppypar = {summary = "Environment version of \\sloppy command."},
   tabbing = {
-    info_node = "(latex2e)tabbing",
+    documentation = "info:latex2e#tabbing",
     summary = "Align text arbitrarily."
   },
   table = {
     arguments = {{delimiters = {"[", "]"}, meta = "placement", optional = true}},
-    info_node = "(latex2e)table",
+    documentation = "info:latex2e#table",
     summary = "Floating tables."
   },
   tabular = {
@@ -2433,7 +2445,7 @@ environments = {
       {delimiters = {"[", "]"}, meta = "pos", optional = true},
       {meta = "cols"}
     },
-    info_node = "(latex2e)tabular",
+    documentation = "info:latex2e#tabular",
     summary = "Align text in columns."
   },
   ["tabular*"] = {
@@ -2445,24 +2457,24 @@ environments = {
   },
   thebibliography = {
     arguments = {{meta = "widest-label"}},
-    info_node = "(latex2e)thebibliography",
+    documentation = "info:latex2e#thebibliography",
     summary = "Bibliography or reference list."
   },
   theorem = {
-    info_node = "(latex2e)\\newtheorem",
+    documentation = "info:latex2e#\\newtheorem",
     summary = "Theorems, lemmas, etc."
   },
   titlepage = {
-    info_node = "(latex2e)titlepage",
+    documentation = "info:latex2e#titlepage",
     summary = "For hand crafted title pages."
   },
   trivlist = {summary = "A restricted form of list."},
   verbatim = {
-    info_node = "(latex2e)verbatim",
+    documentation = "info:latex2e#verbatim",
     summary = "Simulating typed input."
   },
   verse = {
-    info_node = "(latex2e)verse",
+    documentation = "info:latex2e#verse",
     summary = "For poetry and other things."
   }
 }
