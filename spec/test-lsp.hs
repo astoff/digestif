@@ -4,11 +4,9 @@ import           Test.Hspec
 import           Control.Monad.IO.Class
 import           Control.Lens
 import           Data.Text
-import           Language.Haskell.LSP.Messages
-import           Language.Haskell.LSP.Test
-import           Language.Haskell.LSP.Types
-import           Language.Haskell.LSP.Types.Lens as LSP
-import           Language.Haskell.LSP.Types.Capabilities as LSP
+import           Language.LSP.Test
+import           Language.LSP.Types
+import           Language.LSP.Types.Lens
 
 digestif_cmd = "digestif"
 fixtures = "spec/fixtures"
@@ -102,24 +100,24 @@ main = hspec $ do
     it "works" $ mySession $ do
       doc <- openDoc "file1.tex" "latex"
       def <- getDefinitions doc (Position 6 6)
-      liftIO $ def `shouldBe` [Location (doc ^. uri) (Range (Position 4 7) (Position 4 16))]
+      liftIO $ def `shouldBe` (InL [Location (doc ^. uri) (Range (Position 4 7) (Position 4 16))])
 
   describe "textDocument/references" $ do
     it "finds references in a single file" $ mySession $ do
       let pos = (Position 6 6)
       doc <- openDoc "file1.tex" "latex"
       defs <- getReferences doc pos True
-      liftIO $ defs `shouldBe` [
+      liftIO $ defs `shouldBe` (Language.LSP.Types.List [
         Location (doc ^. uri) (Range (Position 4 7) (Position 4 16)),
-        Location (doc ^. uri) (Range (Position 7 5) (Position 7 14))]
+        Location (doc ^. uri) (Range (Position 7 5) (Position 7 14))])
 
     it "finds references across files" $ mySession $ do
       doc <- openDoc "root.tex" "latex"
       doc2 <- openDoc "child.tex" "latex"
       defs <- getReferences doc (Position 3 13) True
-      liftIO $ defs `shouldBe` [
+      liftIO $ defs `shouldBe` (Language.LSP.Types.List [
         Location (doc2 ^. uri) (Range (Position 1 7) (Position 1 17)),
-        Location (doc ^. uri) (Range (Position 3 5) (Position 3 15))]
+        Location (doc ^. uri) (Range (Position 3 5) (Position 3 15))])
 
   describe "textDocument/hover" $ do
     it "finds command documentation" $ mySession $ do
