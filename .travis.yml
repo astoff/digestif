@@ -16,7 +16,7 @@ before_install:
   - hererocks env --lua $LUA --luarocks $LUAROCKS
   - source env/bin/activate
   - luarocks install busted
-  - cabal install hspec lsp-test
+  - cabal install lens hspec lsp-test lsp-types
 
 install:
   - luarocks make digestif-dev-1.rockspec
