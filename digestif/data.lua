@@ -338,7 +338,7 @@ local function resolve_uri(uri)
       return make_uri("file", "", path, nil, fragment)
     else
       return make_uri(
-        "https", "texdoc.net", "/texmf-dist/" .. location, nil, fragment)
+        "https", "www.tug.org", "/texlive/Contents/live/texmf-dist/" .. location, nil, fragment)
     end
   elseif scheme == "texdoc" then -- TODO: make obsolete
     return resolve_uri(make_uri("texmf", nil, "doc/" .. location, nil, fragment))
