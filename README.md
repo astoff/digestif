@@ -24,6 +24,10 @@ Features
   For the best results, make sure you have the [LaTeX reference
   manual][latexref] installed as an [info node][info-issues].
 
+- Find definition and references to labels and citations.
+
+- Document outline.
+
 - Multi-file documents are supported via TeXShop-style magic comments.
   Just add a comment like this near the top of each child document:
 
@@ -40,18 +44,20 @@ Features
   match against the label and a fuzzy match against the text around
   the label.
 
-- Jump to definition and find references to labels and citations.
-
-- Works with LaTeX and ConTeXt.  There is also preliminary support for
-  plain TeX and Texinfo.
+- Support for LaTeX, ConTeXt, plain TeX and Texinfo.
 
 - Bibliography support via BibTeX and amsrefs.
+
+- Lua API, independent of the language server protocol, for use in
+  editors capable of loading Lua modules.  See [API on the wiki][api]
+  for details.
 
 Installation and set-up
 -----------------------
 
-Digestif can run on LuaTeX or on a standalone Lua interpreter.
-Correspondingly, there are two ways to install it.
+Digestif has minimal dependencies and can run on LuaTeX or on a
+standalone Lua interpreter.  Correspondingly, there are two ways to
+install it.
 
 - **For LuaTeX with the self-installing script:** The only
   dependencies for this are git and a recent TeX installation. ![easy]
@@ -76,62 +82,53 @@ favorite text editor.
 - **Emacs with the [Eglot] package:** Digestif works out-of-the-box
   with Eglot.  Just install the package (`M-x package-install RET
   eglot RET`), open some TeX document and enable Eglot (`M-x eglot`).
-  Voilà!  Make sure to activate `company-mode` and `yas-minor-mode`
-  before starting up Eglot, if you want any of these features.
+  Voilà!  Make sure to activate `yas-minor-mode` *before* starting up
+  Eglot if you want to have code snippets inserted automatically after
+  choosing a completion candidate.
 
-- **Emacs with the [lsp-mode] package:** Recent versions have built-in
-  support for Digestif.  If you want fuzzy-matching of citations (as
-  in the GIF above), make sure you have the `company-lsp` package
-  installed and add the following to your init file.
+- **Emacs with the [lsp-mode] package:** Just add
 
   ``` emacs-lisp
-  (require 'company-lsp)
-  (add-to-list 'company-lsp-filter-candidates '(digestif . nil))
+  (setq lsp-tex-server 'digestif)
   ```
+
+  to your init file to ensure that Digestif is used.
 
 - **Vim with the [Coc] plugin:** See instructions
   [here](https://github.com/neoclide/coc.nvim/wiki/Language-servers#latex).
 
-Development
------------
-
-Contributions are welcome!  A haphazard roadmap is as follows:
-
-- [x] Support incremental document changes
-- [x] Goto definition
-- [x] Find references
-- [X] Document outline
-- [ ] Rename labels (cross-references and bibitems)
-- [x] Bibliography support: parse bibtex files, etc.
-- [ ] Add cross-reference and code snippet support for plain TeX and
-  Texinfo
-- [ ] Test on more editors (VS Code plugin?)
-- [ ] Linting/diagnostics
-- [X] Extract data files from LaTeX literate code?  For packages using
-      xparse, it is possible to at least obtain the signature of
-      commands systematically.
-- [X] Integrate with texdoc.  We provide links to
-      <http://texdoc.net/>, or to the locally-installed documentation,
-      if present.
-- [ ] Digestif probably runs on macOS, but needs testing.  Some work
-      and testing is need for Windows support.
-- [X] Provide a Lua API, for use in editors capable of loading Lua
-      modules (see [API on the wiki][api])
+Supported TeX packages
+----------------------
 
 Digestif tries to learn about the commands provided by a package by
 looking at its source code, but this has limitations, since the
 typical TeX literate documentation is ostensibly not machine readable.
-Ideally, a detailed “tags” file, listing commands and their signatures
-and docstrings, should be created (semi)manually.  To generate a stub
+
+For full support, a detailed “tags” file should be created for each
+package.  Among other things, this file lists all defined macros
+together with their signatures and docstrings.  To generate a stub
 tags file from a `.sty`, `.cls` or `.dtx` file, use the command
 
 ```
 digestif --generate FILES
 ```
 
-After some manual polishing, these stubs could be added to this
-repository.  The format of the tags files should be more or less self
-explanatory.  See the data folder for examples.
+After filling in the missing details, the resulting tags file can be
+added to this repository (pull requests are welcome!).  The format of
+the tags files should be more or less self explanatory.  See the data
+folder for examples.
+
+License
+-------
+
+The Digestif program and library, that is, everything outside the
+`data` folder, are available under the [MIT license].
+
+Some files in the `data` folder are extracted or adapted from other
+sources, such as source code, manuals or reference materials, and
+therefore may inherit specific licensing details.  At a minimum, they
+are free to use and redistribute.  When no restriction exists, the MIT
+license also applies.
 
 [gif]: https://user-images.githubusercontent.com/6500902/70077785-c5f27100-1601-11ea-9cfb-6e7ebd3c61ae.gif
 [info-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues#info-nodes
@@ -145,3 +142,4 @@ explanatory.  See the data folder for examples.
 [self-install]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif
 [SwiftLaTeX]: https://www.swiftlatex.com
 [easy]: https://user-images.githubusercontent.com/6500902/103299764-9331cc80-49fd-11eb-9a1e-928bfab578ed.png
+[MIT license]: https://opensource.org/licenses/mit-license.html
