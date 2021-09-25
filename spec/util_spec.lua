@@ -151,6 +151,25 @@ describe("Path manipulation", function()
     assert.same({util.path_split("a/b/")}, {"a/b", ""})
     assert.same({util.path_split("abc")}, {"", "abc"})
   end)
+
+  it("normalizes paths", function()
+    assert.same(util.path_normalize("a//b///c"), "a/b/c")
+    assert.same(util.path_normalize("a/b/./c"), "a/b/c")
+    assert.same(util.path_normalize("a/./c"), "a/c")
+    assert.same(util.path_normalize("/a/./c"), "/a/c")
+    assert.same(util.path_normalize("a/../c"), "c")
+    assert.same(util.path_normalize("/a/b/../c"), "/a/c")
+    assert.same(util.path_normalize("/a/b/../../c"), "/c")
+    assert.same(util.path_normalize("../a"), "../a")
+    assert.same(util.path_normalize("a./b"), "a./b")
+    assert.same(util.path_normalize("a../b"), "a../b")
+    -- These are non-standard.  Fix it?
+    assert.same(util.path_normalize("./a"), "./a") -- "a"
+    assert.same(util.path_normalize("//a"), "/a") -- "//a"
+    assert.same(util.path_normalize("a/"), "a/") -- "a"
+    assert.same(util.path_normalize("a/b/.."), "a/b/..") -- "a"
+    assert.same(util.path_normalize("a/b/."), "a/b/.")  -- "a/b"
+  end)
 end)
 
 describe("Try read file", function()

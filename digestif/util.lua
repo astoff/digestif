@@ -10,7 +10,7 @@ local format, gsub = string.format, string.gsub
 local pack, unpack, concat = table.pack, table.unpack, table.concat
 local move, sort = table.move, table.sort
 local pairs, getmetatable, setmetatable = pairs, getmetatable, setmetatable
-local P, V, R, S, I = lpeg.P, lpeg.V, lpeg.R, lpeg.S, lpeg.Cp()
+local P, V, R, S, I, B = lpeg.P, lpeg.V, lpeg.R, lpeg.S, lpeg.Cp(), lpeg.B
 local C, Cs, Cf, Ct, Cc, Cg = lpeg.C, lpeg.Cs, lpeg.Cf, lpeg.Ct, lpeg.Cc, lpeg.Cg
 local match, locale_table = lpeg.match, lpeg.locale()
 
@@ -418,6 +418,25 @@ local function path_split(p)
   return match(path_split_patt, p)
 end
 util.path_split = path_split
+
+local path_norm_double_sep = Cs(search((dir_sep_patt ^ 2) / dir_sep) * P(1)^0)
+local path_norm_dot_patt = Cs(
+  search(((B(dir_sep_patt) + B(-1)) * P"." * dir_sep_patt) / "") * P(1)^0)
+local path_norm_dotdot_patt = Cs(
+  search(((1 - dir_sep_patt)^1 * dir_sep_patt * P".." * dir_sep_patt) / "") * P(1)^0)
+
+-- Normalize a path name, removing repeated separators and "./" and "../"
+local function path_normalize(p)
+  local q = match(path_norm_double_sep, p)
+    or match(path_norm_dot_patt, p)
+    or match(path_norm_dotdot_patt, p)
+  if q then
+    return path_normalize(q)
+  else
+    return p
+  end
+end
+util.path_normalize = path_normalize
 
 if dir_sep == "\\" then
   util.path_list_split = split";"

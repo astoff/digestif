@@ -8,6 +8,7 @@ local util = require "digestif.util"
 local S, C = lpeg.S, lpeg.C
 local sequence, gobble_until = util.sequence, util.gobble_until
 local path_split, path_join = util.path_split, util.path_join
+local path_normalize = util.path_normalize
 local weak_values = {__mode = "v"}
 local io_open = io.open
 
@@ -84,7 +85,7 @@ function Cache:rootname(filename)
     local src = self(filename)
     local val = search_magic_comment_patt:match(src:sub(1, 1000))
     if val then
-      rootname = path_join(path_split(filename), val)
+      rootname = path_normalize(path_join(path_split(filename), val))
     else
       rootname = false
     end
