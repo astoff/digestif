@@ -1,7 +1,7 @@
 if not arg[1] then
    print("Usage: " .. arg[0] .. [[ PATH [--dump]
 
-PATH should point to the base of the pgf distribution (so that PATH/doc exists)
+PATH should point to the base of the pgf distribution (so that PATH/text-en exists)
 ]])
    return
 end
@@ -29,6 +29,54 @@ trim = util.trim()
 blank = S" \t\n"
 clean = util.clean(blank)
 
+tmpout = os.tmpname()
+tmperr = os.tmpname()
+
+pandoc_cmd = "pandoc --reference-links --verbose -f latex -t markdown_strict+tex_math_dollars-raw_html+simple_tables+smart -o" .. tmpout .. " 2> " .. tmperr
+preamble =[[
+\def\meta#1{⟨#1⟩}
+\def\cs#1{\\texttt{\\textbackslash #1}}
+\def\marg#1{\texttt{\{#1\}}}
+\def\oarg#1{\texttt{[#1]}}
+\def\declare#1{#1}
+\def\pageref#1{??}
+\def\opt#1{#1}
+\def\text#1{#1}
+\def\mvar#1{#1}
+\def\declareandlabel#1{\verb|#1|}
+\def\example{}
+\def\pgfname{PGF}
+\def\pdf{PDF}
+\def\makeatletter{}
+\def\tikzname{TikZ}
+\def\noindent{}
+\def\medskip{}
+\def\keyalias#1{}
+
+]]
+
+function pandockify(s)
+  local pd = io.popen(pandoc_cmd, "w")
+  pd:write(preamble)
+  pd:write(s)
+  local exit = pd:close()
+  local ef = io.open(tmperr)
+  local err = ef:read"all"
+--  if err ~= "" then print(err) end
+  ef:close()
+  return exit and io.open(tmpout):read"all", (err ~= "") and err
+end
+
+function deverbify(s)
+  s = replace("\\", "\\textbackslash ")(s)
+  s = replace("&", "\\& ")(s)
+  s = replace("_", "\\_ ")(s)
+  s = replace("#", "\\# ")(s)
+  s = replace("{", "\\{")(s)
+  s = replace("}", "\\}")(s)
+  return "\\texttt{" .. s .. "}"
+end
+
 function pipe(val, funs)
   for i = 1, #funs do
     val = funs[i](val)
@@ -49,7 +97,7 @@ Pgroup = util.between_balanced("{", "}", "\\" * S"{}" + P(1))
 -- read main parts of the book
 
 interesting_envs = {"key", "command", "stylekey", "shape"}
-Pinteresting_envs = choice(unpack(interesting_envs))
+Pinteresting_envs = choice(table.unpack(interesting_envs))
 Pitem = Cp()*P"\\begin{" * C(Pinteresting_envs) * P"}" * Pgroup
 Pitems = Ct(search(Ct(Pitem))^0)
 skipping_examples = surrounded("\\begin{codeexample}", "\\end{codeexample}") + 1
@@ -59,9 +107,10 @@ Penvs = Ct(search(Ct(Penv))^0)
 
 items = {}
 
-for f in lfs.dir(arg[1] .. "doc/text-en") do
+
+for f in lfs.dir(arg[1] .. "text-en") do
   if f:match("%.tex$") then
-    local s = io.open(arg[1] .. "/doc/text-en/" .. f):read"all"
+    local s = io.open(arg[1] .. "/text-en/" .. f):read"all"
     for _, v in ipairs(Pitems:match(s)) do
       local pos, kind, signature = v[1], v[2], v[3]
       local text = Penv:match(s, pos)
@@ -72,6 +121,16 @@ for f in lfs.dir(arg[1] .. "doc/text-en") do
                                    * search(")" * blank^0 * P(-1)), ""),
                          clean})
       if not items[kind] then items[kind] = {} end
+
+      text = replace(surrounded("|","|"), deverbify, skipping_examples)(text)
+      text = replace(C(cs"tikz" * Pgroup), "[PICTURE]", skipping_examples)(text)
+      text = replace(surrounded("\\tikz" * (1-Pletter), ";"), "[PICTURE]", skipping_examples)(text)
+      text = replace("\\begin{codeexample}" * surrounded("[","]"), "\\begin{verbatim}")(text)
+      text = replace("\\end{codeexample}", "\\end{verbatim}")(text)
+      text = replace("\\" * C(P"begin" + "end") * "{" * Pinteresting_envs * "}", "\\%1{comment}")(text)
+      -- local ntext, err = pandockify(text)
+      -- --if not ntext then print(err) end
+      -- if ntext and err then ntext = ntext .. "\n" .. err end
       items[kind][signature] = text
     end
   end
@@ -106,6 +165,7 @@ for sig, text in pairs(items.command) do
   commands[csname] = {}
   if args and #args>0 then commands[csname].arguments = args end
   commands[csname].documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>" .. csname
+  commands[csname].details = pandockify(text)
 end
 
 -- treat keys
@@ -137,6 +197,8 @@ for sig, text in pairs(items.key) do
   local res = {}
   if val then res.meta = val end
   res.documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf." .. key:gsub(" ", ":")
+  pandoc_cmd = "pandoc --verbose -f latex -t plain -o" .. tmpout .. " 2> " .. tmperr
+  res.details = pandockify(text)
   keys[key] = res
 end
 
