@@ -52,6 +52,7 @@ preamble =[[
 \def\noindent{}
 \def\medskip{}
 \def\keyalias#1{}
+\def\ref#1{??}
 
 ]]
 
