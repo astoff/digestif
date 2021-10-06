@@ -165,7 +165,7 @@ for sig, text in pairs(items.command) do
   local csname, args = sigpatt:match(sig)
   commands[csname] = {}
   if args and #args>0 then commands[csname].arguments = args end
-  commands[csname].documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.<CS>" .. csname
+  commands[csname].documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf." .. csname
   commands[csname].details = pandockify(text)
 end
 
