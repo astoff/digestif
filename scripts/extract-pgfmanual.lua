@@ -32,7 +32,7 @@ clean = util.clean(blank)
 tmpout = os.tmpname()
 tmperr = os.tmpname()
 
-pandoc_cmd = "pandoc --reference-links --verbose -f latex -t markdown_strict+tex_math_dollars-raw_html+simple_tables+smart -o" .. tmpout .. " 2> " .. tmperr
+pandoc_cmd = "pandoc --reference-links --verbose -f latex -t plain+tex_math_dollars-raw_html+simple_tables+smart -o" .. tmpout .. " 2> " .. tmperr
 preamble =[[
 \def\meta#1{⟨#1⟩}
 \def\cs#1{\\texttt{\\textbackslash #1}}
@@ -198,7 +198,6 @@ for sig, text in pairs(items.key) do
   local res = {}
   if val then res.meta = val end
   res.documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf." .. key:gsub(" ", ":")
-  pandoc_cmd = "pandoc --verbose -f latex -t plain -o" .. tmpout .. " 2> " .. tmperr
   res.details = pandockify(text)
   keys[key] = res
 end
