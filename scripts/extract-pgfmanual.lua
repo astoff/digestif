@@ -276,12 +276,12 @@ for cs, v in pairs(commands) do
   if cs:match'pgf' then
     pgf.commands[cs] = v
     for _, v in ipairs(v.arguments or {}) do
-      if v.meta == "options" then v.keys = "$DIGESTIFDATA/pgf/keys/pgf" end
+      if v.meta == "options" then v.keys = "$ref:pgf#/keys/pgf" end
     end
   else
     tikz.commands[cs] = v
     for _, v in ipairs(v.arguments or {}) do
-      if v.meta == "options" then v.keys = "$DIGESTIFDATA/tikz/keys/tikz" end
+      if v.meta == "options" then v.keys = "$ref:tikz#/keys/tikz" end
     end
   end
 end
