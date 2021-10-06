@@ -203,7 +203,7 @@ for sig, text in pairs(items.key) do
 end
 
 comments = [[
-Extracted from the PGF manual
+Extracted from the PGF manual version 3.1.9a
 URL: https://github.com/pgf-tikz/pgf/
 Original license: GNU FDL v1.2+ or LPPL 1.3+
 ]]
