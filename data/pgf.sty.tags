@@ -1,6 +1,1 @@
-package = {
-  name = "pgf.sty",
-  dependencies = {
-    "pgf"
-  }
-}
+dependencies = {"pgf"}

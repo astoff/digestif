@@ -1,9 +1,5 @@
-package = {
-  name = "tikz.sty",
-  dependencies = {
-    "tikz"
-  }
-}
+ctan_package = "tikz"
+dependencies = {"tikz"}
 environments = {
   tikzpicture = {
     arguments = {
@@ -14,7 +10,7 @@ environments = {
         optional = true
       },
     },
-    documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.tikzpicture"
+    documentation = "texmf:doc/generic/pgf/pgfmanual.pdf#pgf.tikzpicture"
   },
   scope = {
     arguments = {
@@ -25,7 +21,7 @@ environments = {
         optional = true
       },
     },
-    documentation = "texdoc:generic/pgf/pgfmanual.pdf#pgf.scope"
+    documentation = "texmf:doc/generic/pgf/pgfmanual.pdf#pgf.scope"
   },
 }
 
