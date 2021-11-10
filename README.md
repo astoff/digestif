@@ -52,32 +52,40 @@ Features
   editors capable of loading Lua modules.  See [API on the wiki][api]
   for details.
 
-Installation and set-up
------------------------
+Installation
+------------
 
-Digestif has minimal dependencies and can run on LuaTeX or on a
-standalone Lua interpreter.  Correspondingly, there are two ways to
+#### Prerequisites
+
+Digestif has minimal dependencies and can run on `LuaTeX` or on a
+standalone `Lua` interpreter.  Correspondingly, there are two ways to
 install it.
 
-- **For LuaTeX with the self-installing script:** The only
-  dependencies for this are git and a recent TeX installation. ![easy]
+#### Based on LuaTeX with the Self-Installing Script
+
+The only dependencies for this are git and a recent TeX installation.
+![easy]
 
   1. Download the [digestif][self-install] wrapper script.
   2. Place it in your `$PATH` (say, `~/.local/bin`).
   3. Make it executable (`chmod +x ~/.local/bin/digestif`).
 
-  In the first run, the script will automatically download the
-  package, by default to `~/.digestif`.  To update or uninstall,
-  simply delete that folder.
+In the first run, the script will automatically download the package,
+by default to `~/.digestif`.  To update or uninstall, simply delete
+that folder.
 
-- **For standalone Lua via LuaRocks:** Run `luarocks install
-  digestif`.  This should be done either as root or with the `--local`
-  option, in which case the executable script will land in
-  `~/.luarocks/bin/digestif`; make sure this is in your `$PATH` or
-  adapt your text editor configuration accordingly.
+#### Based on Standalone Lua via LuaRocks
 
-Next, you need to enable Digestif as a language server in your
-favorite text editor.
+Run `luarocks install digestif`.  This should be done either as root
+or with the `--local` option, in which case the executable script will
+land in `~/.luarocks/bin/digestif`; make sure this is in your `$PATH`
+or adapt your text editor configuration accordingly.
+
+Setup
+-----
+
+To enable Digestif as a language server in your favorite text editor,
+do one of the following:
 
 - **Emacs with the [Eglot] package:** Digestif works out-of-the-box
   with Eglot.  Just install the package (`M-x package-install RET
