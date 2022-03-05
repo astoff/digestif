@@ -176,11 +176,11 @@ local function infer_format(path)
   if ext == ".bib" then
     return "bibtex"
   elseif ext == ".sty" or ext == ".cls" then
-    return "latex-prog"
+    return "latex"
   elseif ext == ".xml" and path:match("%Acontext%A") then
     return "context-xml"
   elseif ext == ".tex" then
-    return "latex-prog" -- TODO: should be plain-prog
+    return "latex" -- TODO: should this be plain?
   end
 end
 
