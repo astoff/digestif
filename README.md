@@ -9,9 +9,6 @@ ConTeXt et caterva.  It provides context-sensitive completion,
 documentation, code navigation, and related functionality to any text
 editor that speaks the LSP protocol.
 
-Check it out online: Digestif is the autocompletion engine of the
-[SwiftLaTeX] web-based editor.
-
 ![Mandatory GIF][gif]
 
 Features
@@ -44,7 +41,8 @@ Features
   match against the label and a fuzzy match against the text around
   the label.
 
-- Support for LaTeX, ConTeXt, plain TeX and Texinfo.
+- Support for LaTeX, ConTeXt, plain TeX, DocTeX (`.dtx` files) and
+  Texinfo.
 
 - Bibliography support via BibTeX and amsrefs.
 

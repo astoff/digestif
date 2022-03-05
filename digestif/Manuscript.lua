@@ -30,6 +30,7 @@ local formats = {
   ["bibtex"]     = "digestif.ManuscriptBibTeX",
   ["context"]    = "digestif.ManuscriptConTeXt",
   ["latex"]      = "digestif.ManuscriptLaTeX",
+  ["doctex"]     = "digestif.ManuscriptDoctex",
   ["plain"]      = "digestif.ManuscriptPlainTeX",
   ["texinfo"]    = "digestif.ManuscriptTexinfo"
 }

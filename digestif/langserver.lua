@@ -1,3 +1,4 @@
+
 local config = require "digestif.config"
 local util = require "digestif.util"
 
@@ -130,7 +131,7 @@ end
 local languageId_translation_table = {
   bibtex = "bibtex",
   context = "context",
-  doctex = "latex-prog",
+  doctex = "doctex",
   latex = "latex",
   plain = "plain",
   plaintex = "plain",
