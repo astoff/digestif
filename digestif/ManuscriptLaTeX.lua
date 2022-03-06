@@ -164,6 +164,11 @@ function ManuscriptLatex.init_callbacks.amsrefs_bib(self, pos, cs)
   return r.cont
 end
 
+--** Command definitions, TeX style
+
+ManuscriptLatex.init_callbacks.def =
+  require "digestif.ManuscriptPlainTeX".init_callbacks.def
+
 --** Command and environment definitions, LaTeX style
 
 local to_args = {}

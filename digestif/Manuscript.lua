@@ -372,7 +372,9 @@ local function argument_items(script, sel, pos, cs)
   local args = script.commands[cs].arguments
   if not args then return end
   local i
-  if type(sel) == "string" then
+  if type(sel) == "number" then
+    i = sel
+  elseif type(sel) == "string" then
     for j = 1, #args do
       if args[j].meta == sel then i = j; break end
     end
