@@ -133,7 +133,11 @@ function Parser:__init(catcodes)
 --* Parsing command arguments
   local patt_from_arg = function(arg)
     local ret = skip
-    if arg.delimiters then
+    if arg.delimiters == false then
+      -- This is different from the “plain argument” case in that only
+      -- a single token is allowed.
+      ret = ret * Ipos * token * Icont
+    elseif arg.delimiters then
       local l, r = arg.delimiters[1], arg.delimiters[2]
       ret = sequence(
         ret, Iouter_pos, l, Ipos,
