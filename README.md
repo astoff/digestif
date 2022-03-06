@@ -128,7 +128,7 @@ therefore may inherit specific licensing details.  At a minimum, they
 are free to use and redistribute.  When no restriction exists, the MIT
 license also applies.
 
-[gif]: https://user-images.githubusercontent.com/6500902/70077785-c5f27100-1601-11ea-9cfb-6e7ebd3c61ae.gif
+[gif]: https://raw.githubusercontent.com/astoff/digestif/images/screenshot.gif
 [info-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues#info-nodes
 [installation-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues
 [coc]: https://github.com/neoclide/coc.nvim
@@ -138,6 +138,5 @@ license also applies.
 [lsp]: https://microsoft.github.io/language-server-protocol/
 [api]: https://github.com/astoff/digestif/wiki/API
 [self-install]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif
-[SwiftLaTeX]: https://www.swiftlatex.com
-[easy]: https://user-images.githubusercontent.com/6500902/103299764-9331cc80-49fd-11eb-9a1e-928bfab578ed.png
+[easy]: [gif]: https://raw.githubusercontent.com/astoff/digestif/images/easy.png
 [MIT license]: https://opensource.org/licenses/mit-license.html
