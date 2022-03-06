@@ -680,11 +680,11 @@ function Manuscript:signature_args(args, before)
     if arg.literal then
       l, r = "", ""
     elseif arg.delimiters == false then
-      l, r = "〈", "〉"
+      l, r = "‹", "›"
     elseif arg.delimiters then
       l, r = arg.delimiters[1], arg.delimiters[2]
-      if r == "\n" then r = "⏎" end
-      if l == "" then l, r = " 〈", "〉" .. r end
+      if r == "\n" then r = "⤶" end
+      if l == "" then l, r = "‹", "›" .. r end
     else
       l, r = "{", "}"
     end
@@ -736,10 +736,12 @@ function Manuscript:snippet_args(args, i)
       local meta = arg.meta
       if delims then
         l, r = delims[1], delims[2]
-      elseif delims == nil then
-        l, r = "{", "}"
-      else -- delims == false
+        if l == "" then meta = "‹" .. meta .. "›" end
+      elseif delims == false then
         l, r = "", ""
+        meta = "‹" .. meta .. "›"
+      else -- delims == nil
+        l, r = "{", "}"
       end
       t[#t+1] = l .. "${" .. i .. (meta and ":" .. meta or "") .. "}" .. r
       i = i + 1
