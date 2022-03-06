@@ -140,6 +140,19 @@ local languageId_translation_table = {
   texinfo = "texinfo"
 }
 
+local function languageId_translate(id, filename)
+  local ext = filename:sub(-4)
+  local format = languageId_translation_table[id]
+  if not format then
+    error(("Invalid languageId %q"):format(params.textDocument.languageId))
+  end
+  if format == "latex" and (ext == ".sty" or ext == ".cls") then
+    return "latex-prog"
+  end
+  -- TODO: Handle .code.tex files from PGF, .mkiv files from ConTeXt, etc.
+  return format
+end
+
 --* LSP methods
 
 local methods = {}
@@ -180,10 +193,7 @@ methods["textDocument/didSave"] = function() end
 
 methods["textDocument/didOpen"] = function(params)
   local filename = from_DocumentUri(params.textDocument.uri)
-  local format = languageId_translation_table[params.textDocument.languageId]
-  if not format then
-    error(("Invalid languageId %q"):format(params.textDocument.languageId))
-  end
+  local format = languageId_translate(params.textDocument.languageId, filename)
   tex_format_table[filename] = format
   cache:put(filename, params.textDocument.text)
 end

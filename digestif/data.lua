@@ -175,12 +175,12 @@ local function infer_format(path)
   local ext = path:sub(-4)
   if ext == ".bib" then
     return "bibtex"
-  elseif ext == ".sty" or ext == ".cls" then
-    return "latex"
+  elseif ext == ".sty" or ext == ".cls" or ext == ".ltx" then
+    return "latex-prog"
   elseif ext == ".xml" and path:match("%Acontext%A") then
     return "context-xml"
   elseif ext == ".tex" then
-    return "latex" -- TODO: should this be plain?
+    return "latex-prog"
   end
 end
 

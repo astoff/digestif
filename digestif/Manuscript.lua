@@ -30,6 +30,7 @@ local formats = {
   ["bibtex"]     = "digestif.ManuscriptBibTeX",
   ["context"]    = "digestif.ManuscriptConTeXt",
   ["latex"]      = "digestif.ManuscriptLaTeX",
+  ["latex-prog"] = "digestif.ManuscriptLatexProg",
   ["doctex"]     = "digestif.ManuscriptDoctex",
   ["plain"]      = "digestif.ManuscriptPlainTeX",
   ["texinfo"]    = "digestif.ManuscriptTexinfo"
@@ -48,7 +49,7 @@ local function infer_format(path)
   if ext == ".bib" then
     return "bibtex"
   elseif ext == ".sty" or ext == ".cls" then
-    return "latex"
+    return "latex-prog"
   end
 end
 

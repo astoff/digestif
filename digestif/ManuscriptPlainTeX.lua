@@ -10,7 +10,9 @@ local format_filename_template = util.format_filename_template
 
 local ManuscriptPlain = util.class(Manuscript)
 
-ManuscriptPlain.parser = Parser()
+-- In plain TeX, we can't distinguish between code and document files,
+-- so we pretend @ is always a letter.
+ManuscriptPlain.parser = Parser(letter = lpeg.R("az", "@Z"))
 ManuscriptPlain.format = "plain"
 ManuscriptPlain.packages = {}
 ManuscriptPlain.commands = {}

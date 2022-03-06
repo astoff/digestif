@@ -27,6 +27,7 @@ build = {
     ["digestif.ManuscriptConTeXt"] = "digestif/ManuscriptConTeXt.lua",
     ["digestif.ManuscriptDoctex"] = "digestif/ManuscriptDoctex.lua",
     ["digestif.ManuscriptLaTeX"] = "digestif/ManuscriptLaTeX.lua",
+    ["digestif.ManuscriptLatexProg"] = "digestif/ManuscriptLatexProg.lua",
     ["digestif.ManuscriptPlainTeX"] = "digestif/ManuscriptPlainTeX.lua",
     ["digestif.ManuscriptTexinfo"] = "digestif/ManuscriptTexinfo.lua",
     ["digestif.Parser"] = "digestif/Parser.lua",

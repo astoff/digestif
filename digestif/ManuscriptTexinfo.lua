@@ -1,11 +1,10 @@
-local lpeg = require "lpeg"
 local util = require "digestif.util"
 local Manuscript = require "digestif.Manuscript"
 local Parser = require "digestif.Parser"
 
 local ManuscriptTexinfo = util.class(Manuscript)
 
-ManuscriptTexinfo.parser = Parser({escape = "@", letter = lpeg.R("az", "AZ")})
+ManuscriptTexinfo.parser = Parser({escape = "@"})
 ManuscriptTexinfo.format = "texinfo"
 ManuscriptTexinfo.packages = {}
 ManuscriptTexinfo.commands = {}
