@@ -1,8 +1,10 @@
 Digestif
 ========
 
-[![LuaRocks](https://img.shields.io/luarocks/v/astoff/digestif.svg)](https://luarocks.org/modules/astoff/digestif)
-[![Build Status](https://travis-ci.com/astoff/digestif.svg?branch=master)](https://travis-ci.com/astoff/digestif)
+<p align="center">
+<a href="https://luarocks.org/modules/astoff/digestif"><img src="https://img.shields.io/luarocks/v/astoff/digestif.svg" alt="LuaRocks" /></a>
+<a href="https://travis-ci.com/astoff/digestif"><img src="https://travis-ci.com/astoff/digestif.svg?branch=master" alt="Build Status" /></a>
+</p>
 
 Digestif is a code analyzer, and a [language server][lsp], for LaTeX,
 ConTeXt et caterva.  It provides context-sensitive completion,
@@ -95,6 +97,10 @@ favorite text editor.
 - **Vim with the [Coc] plugin:** See instructions
   [here](https://github.com/neoclide/coc.nvim/wiki/Language-servers#latex).
 
+- **Other editors:** It shouldn't be hard to set up other editors to
+  use Digestif.  Please open an issue if you want to include
+  additional instructions here.
+
 Supported TeX packages
 ----------------------
 
@@ -138,5 +144,5 @@ license also applies.
 [lsp]: https://microsoft.github.io/language-server-protocol/
 [api]: https://github.com/astoff/digestif/wiki/API
 [self-install]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif
-[easy]: [gif]: https://raw.githubusercontent.com/astoff/digestif/images/easy.png
+[easy]: https://raw.githubusercontent.com/astoff/digestif/images/easy.png
 [MIT license]: https://opensource.org/licenses/mit-license.html
