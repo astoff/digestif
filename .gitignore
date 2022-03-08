@@ -1,0 +1,20 @@
+# Ignore subdirectories by default
+*/
+!*/bin
+!*/data
+!*/digesif
+!*/scripts
+!*/spec
+
+TAGS
+.envrc
+.dir-locals.el
+*.lua
+*.tags
+*.tex
+*.sty
+*.dtx
+*.pdf
+*.log
+*.csv
+*.org
