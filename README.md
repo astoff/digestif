@@ -52,60 +52,71 @@ Features
   editors capable of loading Lua modules.  See [API on the wiki][api]
   for details.
 
-Installation and set-up
------------------------
+Installation
+------------
 
 Digestif has minimal dependencies and can run on LuaTeX or on a
 standalone Lua interpreter.  Correspondingly, there are two ways to
 install it.
 
-- **For LuaTeX with the self-installing script:** The only
-  dependencies for this are git and a recent TeX installation. ![easy]
+### LuaTeX with the self-installing script ![easy]
 
-  1. Download the [digestif][self-install] wrapper script.
-  2. Place it in your `$PATH` (say, `~/.local/bin`).
-  3. Make it executable (`chmod +x ~/.local/bin/digestif`).
+The only dependencies for this are git and a recent TeX installation.
 
-  In the first run, the script will automatically download the
-  package, by default to `~/.digestif`.  To update or uninstall,
-  simply delete that folder.
+1. Download the [digestif][self-install] wrapper script.
+2. Place it in your `$PATH` (say, `~/.local/bin`).
+3. Make it executable (`chmod +x ~/.local/bin/digestif`).
 
-- **For standalone Lua via LuaRocks:** Run `luarocks install
-  digestif`.  This should be done either as root or with the `--local`
-  option, in which case the executable script will land in
-  `~/.luarocks/bin/digestif`; make sure this is in your `$PATH` or
-  adapt your text editor configuration accordingly.
+In the first run, the script will automatically download the
+package, by default to `~/.digestif`.  To update or uninstall,
+simply delete that folder.
+
+### Standalone Lua via LuaRocks
+
+Run `luarocks install digestif`.  This should be done either as root
+or with the `--local` option, in which case the executable script will
+land in `~/.luarocks/bin/digestif`; make sure this is in your `$PATH`
+or adapt your text editor configuration accordingly.
+
+Editor setup
+------------
 
 Next, you need to enable Digestif as a language server in your
 favorite text editor.
 
-- **Emacs with the [Eglot] package:** Digestif works out-of-the-box
-  with Eglot.  Just install the package (`M-x package-install RET
-  eglot RET`), open some TeX document and enable Eglot (`M-x eglot`).
-  Voilà!  Some hints:
+### Emacs with the [Eglot] package
 
-  - If you want automatic snippet insertion upon choosing a completion
-    candidate, make sure to activate `yas-minor-mode` *before*
-    starting up Eglot.
+Digestif works out-of-the-box with Eglot.  Just install the package
+(`M-x package-install RET eglot RET`), open some TeX document and
+enable Eglot (`M-x eglot`).  Voilà!  Some hints:
 
-  - Try the [consult-eglot] package to access the index of a multifile
-    project (this is exposed via the the `workspace/symbols` LSP
-    method.)
+- If you want automatic snippet insertion upon choosing a completion
+  candidate, make sure to activate `yas-minor-mode` *before*
+  starting up Eglot.
 
-- **Emacs with the [lsp-mode] package:** Just add
+- Try the [consult-eglot] package to access the index of a multifile
+  project (this is exposed via the the `workspace/symbols` LSP
+  method.)
+
+- The fuzzy completion features is known to work in conjunction with
+  [Company mode].  Other completion UIs may be incompatible.
+
+### Emacs with the [lsp-mode] package
+
+To ensure that Digestif is used, add the following to your init file:
 
   ``` emacs-lisp
   (setq lsp-tex-server 'digestif)
   ```
 
-  to your init file to ensure that Digestif is used.
+### Vim with the [Coc] plugin
 
-- **Vim with the [Coc] plugin:** See instructions
-  [here](https://github.com/neoclide/coc.nvim/wiki/Language-servers#latex).
+See instructions [here](https://github.com/neoclide/coc.nvim/wiki/Language-servers#latex).
 
-- **Other editors:** It shouldn't be hard to set up other editors to
-  use Digestif.  Please open an issue if you want to include
-  additional instructions here.
+### Other editors
+
+It shouldn't be hard to set up other editors to use Digestif.  Please
+open an issue if you want to include additional instructions here.
 
 Supported TeX packages
 ----------------------
@@ -153,3 +164,4 @@ license also applies.
 [easy]: https://raw.githubusercontent.com/astoff/digestif/images/easy.png
 [MIT license]: https://opensource.org/licenses/mit-license.html
 [consult-eglot]: https://github.com/mohkale/consult-eglot/
+[Company mode]: https://company-mode.github.io/
