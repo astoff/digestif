@@ -10,7 +10,7 @@ local resolve_doc_items = require "digestif.data".resolve_doc_items
 local format = string.format
 local co_wrap, co_yield = coroutine.wrap, coroutine.yield
 local concat, sort = table.concat, table.sort
-local infty = math.huge
+local infty, min = math.huge, math.min
 local utf8_len, utf8_offset = utf8.len, utf8.offset
 local nested_get = util.nested_get
 local map_keys, update, extend = util.map_keys, util.update, util.extend
@@ -243,6 +243,9 @@ end
 --
 -- TODO: make len function a parameter
 function Manuscript:line_column_at(pos)
+  -- Out ranges are excluside on the right, Lua is inclusive, so we
+  -- may have pos == 1 + #self.src.
+  pos = min(pos, #self.src)
   local l, line_pos = self:line_number_at(pos)
   local c = utf8_len(self.src, line_pos, pos) or error("Invalid UTF-8")
   return l, c
@@ -1468,13 +1471,12 @@ end
 --* Outline
 
 -- Compute a table of contents for the document.  If loc is false or
--- omitted, this includes the entire document; otherwise, restrict to
+-- omitted, include children of the manuscript; otherwise, restrict to
 -- the current manuscript.
 --
 function Manuscript:outline(loc)
-  local root = loc and self or self.root
   local val = {}
-  for it in root:traverse("section_index", loc and 0) do
+  for it in self:traverse("section_index", loc and 0) do
     local lv = it.level or infty
     local t = val
     while t[#t] and (t[#t].level or -infty) < lv do t = t[#t] end

@@ -113,9 +113,24 @@ local function to_TextEdit(script, pos, old, new)
   }
 end
 
+-- An essentially random assignment of symbol kinds, since LSP doesn't
+-- support custom kinds.
 local to_SymbolKind = {
-  section = 5 -- Class in LSP
+  section = 5,
+  section_index = 5,
+  label_index = 7,
+  bib_index = 20,
+  newcommand_index = 12,
+  newenvironment_index = 12
 }
+
+local function to_SymbolInformation(item, index_name)
+  return {
+    name = item.name,
+    kind = to_SymbolKind[index_name],
+    location = to_Location(item)
+  }
+end
 
 local function to_DocumentSymbol(outline)
   return {
@@ -143,7 +158,7 @@ local function languageId_translate(id, filename)
   local ext = filename:sub(-4)
   local format = languageId_translation_table[id]
   if not format then
-    error(("Invalid languageId %q"):format(id))
+    error(("Invalid LSP language id %q"):format(id))
   end
   if format == "latex" and (ext == ".sty" or ext == ".cls") then
     return "latex-prog"
@@ -175,6 +190,7 @@ methods["initialize"] = function(params)
       definitionProvider = true,
       referencesProvider = true,
       documentSymbolProvider = true,
+      workspaceSymbolProvider = true
     }
   }
 end
@@ -194,10 +210,13 @@ methods["workspace/didChangeConfiguration"] = function(params)
   config.load_from_table(settings)
 end
 
+local open_documents = {} -- Need this only for workspace/symbol method
+
 methods["textDocument/didOpen"] = function(params)
   local filename = from_DocumentUri(params.textDocument.uri)
   local format = languageId_translate(params.textDocument.languageId, filename)
   tex_format_table[filename] = format
+  open_documents[filename] = format
   cache:put(filename, params.textDocument.text)
 end
 
@@ -221,6 +240,7 @@ end
 
 methods["textDocument/didClose"] = function(params)
   local filename = from_DocumentUri(params.textDocument.uri)
+  open_documents[filename] = nil
   cache:forget(filename)
 end
 
@@ -312,6 +332,39 @@ methods["textDocument/documentSymbol"] = function(params)
   local script = from_TextDocumentIdentifier(params.textDocument)
   local outline = script:outline(true) -- local only
   return imap(to_DocumentSymbol, outline)
+end
+
+methods["workspace/symbol"] = function(params)
+  local query, t = params.query, {}
+
+  -- Find all root documents and sort them
+  local root_documents, sorted = {}, {}
+  for filename, format in pairs(open_documents) do
+    local script = cache:manuscript(filename, format)
+    root_documents[script.root.filename] = script.root
+  end
+
+  for filename in pairs(root_documents) do
+    sorted[#sorted+1] = filename
+  end
+  table.sort(sorted)
+
+  -- Gather all entries in all indexes
+  for _, filename in ipairs(sorted) do
+    local script = root_documents[filename]
+    for item, index_name in script:traverse {
+      "section_index",
+      "label_index",
+      "bib_index",
+      "newcommand_index",
+      "newenvironment_index"
+    } do
+      if item.name:find(query, 1, true) then
+        t[#t+1] = to_SymbolInformation(item, index_name)
+      end
+    end
+  end
+  return t
 end
 
 --* RPC functions

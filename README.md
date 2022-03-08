@@ -82,9 +82,15 @@ favorite text editor.
 - **Emacs with the [Eglot] package:** Digestif works out-of-the-box
   with Eglot.  Just install the package (`M-x package-install RET
   eglot RET`), open some TeX document and enable Eglot (`M-x eglot`).
-  Voilà!  Make sure to activate `yas-minor-mode` *before* starting up
-  Eglot if you want to have code snippets inserted automatically after
-  choosing a completion candidate.
+  Voilà!  Some hints:
+
+  - If you want automatic snippet insertion upon choosing a completion
+    candidate, make sure to activate `yas-minor-mode` *before*
+    starting up Eglot.
+
+  - Try the [consult-eglot] package to access the index of a multifile
+    project (this is exposed via the the `workspace/symbols` LSP
+    method.)
 
 - **Emacs with the [lsp-mode] package:** Just add
 
@@ -146,3 +152,4 @@ license also applies.
 [self-install]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif
 [easy]: https://raw.githubusercontent.com/astoff/digestif/images/easy.png
 [MIT license]: https://opensource.org/licenses/mit-license.html
+[consult-eglot]: https://github.com/mohkale/consult-eglot/
