@@ -1,4 +1,3 @@
-
 local config = require "digestif.config"
 local util = require "digestif.util"
 
@@ -144,7 +143,7 @@ local function languageId_translate(id, filename)
   local ext = filename:sub(-4)
   local format = languageId_translation_table[id]
   if not format then
-    error(("Invalid languageId %q"):format(params.textDocument.languageId))
+    error(("Invalid languageId %q"):format(id))
   end
   if format == "latex" and (ext == ".sty" or ext == ".cls") then
     return "latex-prog"
@@ -158,7 +157,6 @@ end
 local methods = {}
 
 methods["initialize"] = function(params)
-  if params.trace == "verbose" then config.verbose = true end
   config.provide_snippets = nested_get(params.capabilities,
     "textDocument", "completion", "completionItem", "snippetSupport")
   return {
@@ -187,9 +185,14 @@ end
 
 methods["shutdown"] = function() return null end
 methods["exit"] = function() os.exit() end
-methods["workspace/didChangeConfiguration"] = function() end
 methods["textDocument/willSave"] = function() end
 methods["textDocument/didSave"] = function() end
+
+methods["workspace/didChangeConfiguration"] = function(params)
+  local settings = params.settings.digestif
+  if type(settings) ~= "table" then return end
+  config.load_from_table(settings)
+end
 
 methods["textDocument/didOpen"] = function(params)
   local filename = from_DocumentUri(params.textDocument.uri)
@@ -428,11 +431,15 @@ Environment variables:
 ]]
 
 local function main(arg)
-  -- Set up data path and check if it worked
+  -- Set up default config.data_dirs and the load user config, if any
   local script_path = util.path_split(arg[0])
   if util.find_file(script_path, "../data/primitives.tags") then
     table.insert(config.data_dirs, util.path_join(script_path, '../data'))
   end
+  config.load_from_file()
+  config.load_from_env()
+
+  -- Check if config.data_dirs was set up correctly
   if not util.find_file(config.data_dirs, "primitives.tags") then
     print("Error: could not find data files at the following locations\n  - "
             .. table.concat(config.data_dirs, "\n  - ")
@@ -440,6 +447,7 @@ local function main(arg)
     os.exit(false)
   end
 
+  -- Read CLI args
   while arg[1] do
     local switch = table.remove(arg, 1)
     if switch == "-v" or switch == "--verbose" then
@@ -462,6 +470,7 @@ local function main(arg)
     log("Digestif started!")
   end
 
+  -- Main language server loop
   while true do process_request() end
 end
 

@@ -39,7 +39,6 @@ function ManuscriptPlain.init_callbacks.def(self, pos, cs)
   end
   if csname then
     local idx = self:get_index "newcommand"
-    util.log_objects(params, parse_params(params))
     idx[#idx+1] = {
       name = csname,
       pos = pos,

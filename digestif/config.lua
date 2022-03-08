@@ -1,5 +1,4 @@
 local util = require "digestif.util"
-local path_join, path_split = util.path_join, util.path_split
 local format = string.format
 
 local config = {}
@@ -9,19 +8,7 @@ local function has_command(name)
   return ok and name or nil
 end
 
-local DIGESTIF_DATA = os.getenv("DIGESTIF_DATA")
-
-if DIGESTIF_DATA then
-  config.data_dirs = util.path_list_split(DIGESTIF_DATA)
-else
-  config.data_dirs = {} -- TODO: What should be the default?
-end
-
-local DIGESTIF_TEXMF = os.getenv("DIGESTIF_TEXMF")
-
-if DIGESTIF_TEXMF then
-  config.texmf_dirs = util.path_list_split(DIGESTIF_TEXMF)
-elseif has_command "kpsewhich" then
+if has_command "kpsewhich" then
   local pipe = io.popen("kpsewhich -var-brace-value=TEXMF")
   local str = pipe:read("l"):gsub("!!", "")
   local ok, exitt, exitc = pipe:close()
@@ -39,11 +26,7 @@ else -- TODO: What should be the default?
   }
 end
 
-local DIGESTIF_TLPDB = os.getenv("DIGESTIF_TLPDB")
-
-if DIGESTIF_TLPDB then
-  config.tlpdb_path = util.path_list_split(DIGESTIF_TLPDB)
-end
+config.data_dirs = {} -- TODO: What should be the default?
 
 config.provide_snippets = false
 config.extra_snippets = {
@@ -60,5 +43,92 @@ config.extra_actions = {
 config.fuzzy_cite = true
 config.fuzzy_ref = true
 config.info_command = has_command("info")
+
+--* Loading user settings
+
+local function is_table(key_type, val_type)
+  return function(obj)
+    if type(obj) ~= "table" then return false end
+    for key, val in pairs(obj) do
+      if type(key) ~= key_type then return false end
+      if type(val) ~= val_type then return false end
+    end
+    return true
+  end
+end
+
+local validators =   {
+  data_dirs = "string",
+  texmf_dirs = "string",
+  tlpdb_path = "string",
+  extra_actions = is_table("string", "string"),
+  extra_snippets = is_table("string", "string"),
+  fuzzy_cite = "boolean",
+  fuzzy_ref = "boolean",
+  info_command = "string",
+  provide_snippets = "boolean",
+  verbose = "boolean"
+}
+
+-- Set config entries found in `tbl`.
+function config.load_from_table(tbl)
+  -- Set verbose option before all others
+  local verbose = tbl.verbose or config.verbose
+  for key, val in pairs(tbl) do
+    local validator, ok = validators[key]
+    if type(validator) == "string" then
+      ok = type(val) == validator
+    elseif type(validator) == "function" then
+      ok = validator(val)
+    end
+    if ok then
+      config[key] = val
+      if verbose then
+        local msg = "Setting configuration option %s = %s"
+        util.log(msg, key, util.inspect(val))
+      end
+    else
+      local msg = "Invalid configuration option: %s = %s"
+      error(format(msg, key, util.inspect(val)))
+    end
+  end
+end
+
+local config_file_name = "digestif.conf"
+local config_file_path = os.getenv("XDG_CONFIG_HOME")
+  or util.path_join(os.getenv("HOME"), ".config")
+
+function config.load_from_file(file)
+  -- Try config file in current dir
+  file = file
+    or util.find_file("", "." .. config_file_name)
+    or util.find_file(config_file_path, config_file_name)
+  if not file then return end
+  local tbl = {}
+  local ok, err = loadfile(file, "t", tbl)
+  if ok then ok, err = pcall(ok) end
+  if not ok then
+    local msg = "Error loading configuration from %s: %s"
+    error(msg, file, err)
+  end
+  config.load_from_table(tbl)
+end
+
+function config.load_from_env()
+  local DIGESTIF_DATA = os.getenv("DIGESTIF_DATA")
+  if DIGESTIF_DATA then
+    config.data_dirs = util.path_list_split(DIGESTIF_DATA)
+  end
+
+  local DIGESTIF_TEXMF = os.getenv("DIGESTIF_TEXMF")
+  if DIGESTIF_TEXMF then
+    config.texmf_dirs = util.path_list_split(DIGESTIF_TEXMF)
+  end
+
+  local DIGESTIF_TLPDB = os.getenv("DIGESTIF_TLPDB")
+  if DIGESTIF_TLPDB then
+    config.tlpdb_path = util.path_list_split(DIGESTIF_TLPDB)
+  end
+end
 
 return config
