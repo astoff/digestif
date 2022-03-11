@@ -3,7 +3,7 @@ local util = require "digestif.util"
 local config = require "digestif.config"
 
 local format, strfind = string.format, string.find
-local concat = table.concat
+local concat, unpack = table.concat, table.unpack
 local popen = io.popen
 local P, C, Cg, Ct = lpeg.P, lpeg.C, lpeg.Cg, lpeg.Ct
 local match = lpeg.match
@@ -195,10 +195,10 @@ local function tags_from_manuscript(script, ctan_data)
   if ctan_data then
     setmetatable(tags, {__index = ctan_data})
   end
-  for _, it in script:index_pairs("child") do
-    local _, basename = path_split(it.name)
-    dependencies[#dependencies+1] = basename
+  for pkg in pairs(script.packages) do
+    dependencies[#dependencies+1] = pkg
   end
+  table.sort(dependencies)
   for _, it in script:index_pairs("newcommand") do
     commands[it.name] = {
       arguments = it.arguments,
@@ -260,7 +260,7 @@ local function resolve_refs(tbl, seen)
     if type(v) == "string" then
       local loc, path = parse_ref(v)
       if loc then
-        tbl[k] = nested_get(require_tags(loc), table.unpack(path))
+        tbl[k] = nested_get(require_tags(loc), unpack(path))
       end
     elseif type(v) == "table" and not seen[v] then
       seen[v] = true

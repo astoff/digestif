@@ -325,7 +325,7 @@ end
 local ctan_package = package:sub(1,-5)
 local comments = format(
   [[
-Extracted from %s.tex
+Extracted from the documentation source (%s.tex)
 URL: https://ctan.org/tex-archive/macros/latex/contrib/%s
 Original license: LPPL v1.3 or later
 ]],
@@ -333,41 +333,42 @@ ctan_package,
 ctan_package
 )
 
-local comments = format(
-  [[
-Extracted from the documentation source (%s.tex)
-URL: https://ctan.org/tex-archive/macros/latex/contrib/%s
-Original license: LPPL v1.3 or later
-]],
-package:sub(1,-5),
-package:sub(1,-5)
-)
-
-documentation = {
+local dependencies = {
+  biblatex = {
+    "blx-case-expl3.sty",
+    "blx-case-latex2e.sty",
+    "etexcmds.sty",
+    "etoolbox.sty",
+    "expl3.sty",
+    "iftex.sty",
+    "ifthen.sty",
+    "infwarerr.sty",
+    "keyval.sty",
+    "kvoptions-patch.sty",
+    "kvoptions.sty",
+    "kvsetkeys.sty",
+    "logreq.sty",
+    "ltxcmds.sty",
+    "pdftexcmds.sty",
+    "url.sty",
+    "xparse.sty"
+  },
   etoolbox = {
-    {
-      summary = "Package documentation",
-      uri = "texmf:doc/latex/etoolbox/etoolbox.pdf"
-    }
+    "etex.sty"
   },
   csquotes = {
-    {
-      summary = "Tutorial on use of the package",
-      uri = "texmf:doc/latex/csquotes/csquotes.pdf"
-    }
-  },
-  biblatex = {
-    {
-      summary = "Package documentation (English)",
-      uri = "texmf:doc/latex/biblatex/biblatex.pdf"
-    }
+    "etoolbox.sty",
+    "keyval.sty"
   }
 }
+
+-- We're no extracting that... yet?
+local options = nil
 
 local f = io.open(package .. ".tags", "w")
 f:write("comments = ", inspect(comments), "\n")
 f:write("ctan_package = ", inspect(ctan_package), "\n")
-f:write("documentation = ", inspect(documentation[ctan_package]), "\n")
+f:write("dependencies = ", inspect(dependencies[ctan_package]), "\n")
 if options and next(options) then
   f:write("options = ", inspect(options), "\n")
 end

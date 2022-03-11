@@ -4,12 +4,7 @@ URL: https://ctan.org/tex-archive/macros/latex/contrib/etoolbox
 Original license: LPPL v1.3 or later
 ]]
 ctan_package = "etoolbox"
-documentation = {
-  {
-    summary = "Package documentation",
-    uri = "texmf:doc/latex/etoolbox/etoolbox.pdf"
-  }
-}
+dependencies = {"etex.sty"}
 commands = {
   AfterEndPreamble = {
     arguments = {{meta = "code"}},

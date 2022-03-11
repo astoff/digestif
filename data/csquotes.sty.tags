@@ -4,12 +4,7 @@ URL: https://ctan.org/tex-archive/macros/latex/contrib/csquotes
 Original license: LPPL v1.3 or later
 ]]
 ctan_package = "csquotes"
-documentation = {
-  {
-    summary = "Tutorial on use of the package",
-    uri = "texmf:doc/latex/csquotes/csquotes.pdf"
-  }
-}
+dependencies = {"etoolbox.sty", "keyval.sty"}
 commands = {
   ["@enablequotes"] = {
     details = [[

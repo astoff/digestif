@@ -4,11 +4,24 @@ URL: https://ctan.org/tex-archive/macros/latex/contrib/biblatex
 Original license: LPPL v1.3 or later
 ]]
 ctan_package = "biblatex"
-documentation = {
-  {
-    summary = "Package documentation (English)",
-    uri = "texmf:doc/latex/biblatex/biblatex.pdf"
-  }
+dependencies = {
+  "blx-case-expl3.sty",
+  "blx-case-latex2e.sty",
+  "etexcmds.sty",
+  "etoolbox.sty",
+  "expl3.sty",
+  "iftex.sty",
+  "ifthen.sty",
+  "infwarerr.sty",
+  "keyval.sty",
+  "kvoptions-patch.sty",
+  "kvoptions.sty",
+  "kvsetkeys.sty",
+  "logreq.sty",
+  "ltxcmds.sty",
+  "pdftexcmds.sty",
+  "url.sty",
+  "xparse.sty"
 }
 commands = {
   AtBeginBibliography = {
