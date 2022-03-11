@@ -448,7 +448,7 @@ local function generate(path)
   local _, basename = util.path_split(path)
   local file = io.open(basename .. ".tags", "w")
   for _, item in ipairs(
-    {"generated", "dependencies", "commands", "environments"})
+    {"generated", "dependencies", "documentation", "commands", "environments"})
   do
     if tags[item] then
       file:write(item, " = ", util.inspect(tags[item]), "\n")

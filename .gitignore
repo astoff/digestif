@@ -1,16 +1,15 @@
 # Ignore subdirectories by default
 */
-!*/bin
-!*/data
-!*/digesif
-!*/scripts
-!*/spec
+!bin/
+!data/
+!digesif/
+!scripts/
+!spec/
 
 TAGS
 .envrc
 .dir-locals.el
 *.lua
-*.tags
 *.tex
 *.sty
 *.dtx
@@ -18,3 +17,6 @@ TAGS
 *.log
 *.csv
 *.org
+
+*.tags
+!data/*.tags

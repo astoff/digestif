@@ -1,0 +1,1288 @@
+comments = [[
+Extracted from the documentation source (etoolbox.tex)
+URL: https://ctan.org/tex-archive/macros/latex/contrib/etoolbox
+Original license: LPPL v1.3 or later
+]]
+ctan_package = "etoolbox"
+documentation = {
+  {
+    summary = "Package documentation",
+    uri = "texmf:doc/latex/etoolbox/etoolbox.pdf"
+  }
+}
+commands = {
+  AfterEndPreamble = {
+    arguments = {{meta = "code"}},
+    details = [[
+```latex
+\AfterEndPreamble{code}
+```
+
+This hook differs from `\AtBeginDocument` in that the `code` is executed
+at the very end of `\begin{document}`, after any `\AtBeginDocument`
+code. Note that commands whose scope has been restricted to the preamble
+with `\@onlypreamble` are no longer available when this hook is
+executed.
+]]
+  },
+  AfterPreamble = {
+    arguments = {{meta = "code"}},
+    details = [[
+```latex
+\AfterPreamble{code}
+```
+
+This hook is a variant of `\AtBeginDocument` which may be used in both
+the preamble and the document body. When used in the preamble, it
+behaves exactely like `\AtBeginDocument`. When used in the document
+body, it immediately executes its `code` argument. `\AtBeginDocument`
+would issue an error in this case. This hook is useful to defer code
+which needs to write to the main `aux` file.
+]]
+  },
+  AtBeginEnvironment = {
+    arguments = {{meta = "environment"}, {meta = "code"}},
+    details = [[
+```latex
+\AtBeginEnvironment{environment}{code}
+```
+
+Appends arbitrary `code` to a hook executed by the `\begin` command at
+the beginning of a given `environment`, immediately before
+`\environment`, inside the group opened by `\begin`.
+]]
+  },
+  BeforeBeginEnvironment = {
+    arguments = {{meta = "environment"}, {meta = "code"}},
+    details = [[
+```latex
+\BeforeBeginEnvironment{environment}{code}
+```
+
+Appends arbitrary `code` to a hook executed at a very early point by the
+`\begin` command, before the group holding the environment is opened.
+]]
+  },
+  DeclareListParser = {
+    arguments = {{meta = "command"}, {meta = "separator"}},
+    details = [[
+```latex
+\DeclareListParser{command}{separator}
+```
+
+This command defines a list parser similar to the `\docsvlist` command
+below, which is defined like this:
+
+    \DeclareListParser{\docsvlist}{,}
+
+Note that the list parsers are sensitive to the category code of the
+`separator`.
+]]
+  },
+  appto = {
+    details = [[
+```latex
+\appto<hook>{code}
+```
+
+This command appends arbitrary `code` to a `hook`. If the `code`
+contains any parameter characters, they need not be doubled. This
+command is robust.
+]]
+  },
+  booltrue = {
+    arguments = {{meta = "name"}},
+    details = [[
+```latex
+\booltrue{name}
+```
+
+Sets the boolean flag `name` to `true`. This command is robust and may
+be prefixed with `\global`. It will issue an error if the flag is
+undefined.
+]]
+  },
+  csappto = {
+    arguments = {{meta = "csname"}, {meta = "code"}},
+    details = [[
+```latex
+\csappto{csname}{code}
+```
+
+Similar to `\appto` except that it takes a control sequence name as its
+first argument.
+]]
+  },
+  csdef = {
+    arguments = {{meta = "csname"}},
+    details = [[
+```latex
+\csdef{csname}<arguments>{replacement text}
+```
+
+Similar to the TeX primitive `\def` except that it takes a control
+sequence name as its first argument. This command is robust and
+corresponds to `\@namedef`.
+]]
+  },
+  csdimdef = {
+    arguments = {{meta = "csname"}, {meta = "dimen expression"}},
+    details = [[
+```latex
+\csdimdef{csname}{dimen expression}
+```
+
+Similar to `\dimdef` except that it takes a control sequence name as its
+first argument.
+]]
+  },
+  cseappto = {
+    arguments = {{meta = "csname"}, {meta = "code"}},
+    details = [[
+```latex
+\cseappto{csname}{code}
+```
+
+Similar to `\eappto` except that it takes a control sequence name as its
+first argument.
+]]
+  },
+  csedef = {
+    arguments = {{meta = "csname"}},
+    details = [[
+```latex
+\csedef{csname}<arguments>{replacement text}
+```
+
+Similar to the TeX primitive `\edef` except that it takes a control
+sequence name as its first argument. This command is robust.
+]]
+  },
+  csepreto = {
+    arguments = {{meta = "csname"}, {meta = "code"}},
+    details = [[
+```latex
+\csepreto{csname}{code}
+```
+
+Similar to `\epreto` except that it takes a control sequence name as its
+first argument.
+]]
+  },
+  csgluedef = {
+    arguments = {{meta = "csname"}, {meta = "glue expression"}},
+    details = [[
+```latex
+\csgluedef{csname}{glue expression}
+```
+
+Similar to `\gluedef` except that it takes a control sequence name as
+its first argument.
+]]
+  },
+  cslet = {
+    arguments = {{meta = "csname"}, {meta = "command"}},
+    details = [[
+```latex
+\cslet{csname}{command}
+```
+
+Similar to the TeX primitive `\let` except that the first argument is a
+control sequence name. If `command` is undefined, `csname` will be
+undefined as well after the assignment. This command is robust and may
+be prefixed with `\global`.
+]]
+  },
+  csletcs = {
+    arguments = {{meta = "csname"}, {meta = "csname"}},
+    details = [[
+```latex
+\csletcs{csname}{csname}
+```
+
+Similar to the TeX primitive `\let` except that both arguments are
+control sequence names. If the second `csname` is undefined, the first
+`csname` will be undefined as well after the assignment. This command is
+robust and may be prefixed with `\global`.
+]]
+  },
+  csmeaning = {
+    arguments = {{meta = "csname"}},
+    details = [[
+```latex
+\csmeaning{csname}
+```
+
+Similar to the TeX primitive `\meaning` but takes a control sequence
+name as its argument. If the control sequence is undefined, this command
+will not implicitly assign a meaning of `\relax` to it.
+]]
+  },
+  csmudef = {
+    arguments = {{meta = "csname"}, {meta = "muglue expression"}},
+    details = [[
+```latex
+\csmudef{csname}{muglue expression}
+```
+
+Similar to `\mudef` except that it takes a control sequence name as its
+first argument.
+]]
+  },
+  csnumdef = {
+    arguments = {{meta = "csname"}, {meta = "integer expression"}},
+    details = [[
+```latex
+\csnumdef{csname}{integer expression}
+```
+
+Similar to `\numdef` except that it takes a control sequence name as its
+first argument.
+]]
+  },
+  cspreto = {
+    arguments = {{meta = "csname"}, {meta = "code"}},
+    details = [[
+```latex
+\cspreto{csname}{code}
+```
+
+Similar to `\preto` except that it takes a control sequence name as its
+first argument.
+]]
+  },
+  csundef = {
+    arguments = {{meta = "csname"}},
+    details = [[
+```latex
+\csundef{csname}
+```
+
+Similar to `\undef` except that it takes a control sequence name as its
+argument. This command is robust and may be prefixed with `\global`.
+]]
+  },
+  defcounter = {
+    arguments = {{meta = "counter"}, {meta = "integer expression"}},
+    details = [[
+```latex
+\defcounter{counter}{integer expression}
+```
+
+Assigns a value to a LaTeX `counter` previously initialized with
+`\newcounter`. This command is similar in concept and syntax to
+`\setcounter` except for two major differences. 1) The second argument
+may be an `integer expression` which will be processed with `\numexpr`.
+The `integer expression` may be any arbitrary code which is valid in
+this context. The value assigned to the `counter` will be the result of
+that calculation. 2) In contrast to `\setcounter`, the assignment is
+local by default but `\defcounter` may be prefixed with `\global`. The
+functional equivalent of `\setcounter` would be `\global``\defcounter`.
+]]
+  },
+  dimdef = {
+    details = [[
+```latex
+\dimdef<command>{dimen expression}
+```
+
+Similar to `\edef` except that the `dimen expression` is processed with
+`\dimexpr`. The `dimen expression` may be any arbitrary code which is
+valid in this context. The replacement text assigned to the `command`
+will be the result of that calculation. If the `command` is undefined,
+it will be initialized to `0pt` before the `dimen expression` is
+processed.
+]]
+  },
+  docsvlist = {
+    arguments = {{meta = "item, item, ..."}},
+    details = [[
+```latex
+\docsvlist{item, item, ...}
+```
+
+This command loops over a comma-separated list of items and executes the
+auxiliary command `\do` for every item in the list, passing the item as
+an argument. In contrast to the `\@for` loop in the LaTeX kernel,
+`\docsvlist` is expandable. With a suitable definition of `\do`, lists
+may be processed in an `\edef` or a comparable context. You may use
+`\listbreak` at the end of the replacement text of `\do` to stop
+processing and discard the remaining items in the list. Whitespace after
+list separators is ignored. If an item contains a comma or starts with a
+space, it must be wrapped in curly braces. The braces will be removed as
+the list is processed. Here is a usage example which prints a
+comma-separated list as an `itemize` environment:
+
+    \begin{itemize}
+    \renewcommand*{\do}[1]{\item #1}
+    \docsvlist{item1, item2, {item3a, item3b}, item4}
+    \end{itemize}
+
+Here is another example:
+
+    \renewcommand*{\do}[1]{* #1\MessageBreak}
+    \PackageInfo{mypackage}{%
+      Example list:\MessageBreak
+      \docsvlist{item1, item2, {item3a, item3b}, item4}}
+
+In this example, the list is written to the log file as part of an
+informational message. The list processing takes place during the
+`\write` operation.
+]]
+  },
+  dolistloop = {
+    arguments = {{meta = "listmacro"}},
+    details = [[
+```latex
+\dolistloop{listmacro}
+```
+
+This command loops over all items in a `listmacro` and executes the
+auxiliary command `\do` for every item in the list, passing the item as
+an argument. The list loop itself is expandable. You may use
+`\listbreak` at the end of the replacement text of `\do` to stop
+processing and discard the remaining items in the list. Here is a usage
+example which prints an internal list called `\mylist` as an `itemize`
+environment:
+
+    \begin{itemize}
+    \renewcommand*{\do}[1]{\item #1}
+    \dolistloop{\mylist}
+    \end{itemize}
+]]
+  },
+  eappto = {
+    details = [[
+```latex
+\eappto<hook>{code}
+```
+
+This command appends arbitrary `code` to a `hook`. The `code` is
+expanded at definition-time. Only the new `code` is expanded, the
+current replacement text of the `hook` is not. This command is robust.
+]]
+  },
+  epreto = {
+    details = [[
+```latex
+\epreto<hook>{code}
+```
+
+Similar to `\eappto` except that the `code` is prepended.
+]]
+  },
+  expandonce = {
+    details = [[
+```latex
+\expandonce<command>
+```
+
+This command expands a `command` once and prevents further expansion of
+the replacement text. This command is expandable.
+]]
+  },
+  forlistloop = {
+    arguments = {{meta = "handler"}, {meta = "listmacro"}},
+    details = [[
+```latex
+\forlistloop{handler}{listmacro}
+```
+
+This command is similar to `\dolistloop` except that `\do` is replaced
+by a `handler` specified at invocation time. The `handler` may also be a
+sequence of commands, provided that the command given last takes the
+item as trailing argument. For example, the following code will prefix
+all items in the internal list `\mylist` with `\item`, count the items
+as the list is processed, and append the item count at the end:
+
+    \newcounter{itemcount}
+    \begin{itemize}
+    \forlistloop{\stepcounter{itemcount}\item}{\mylist}
+    \item Total: \number\value{itemcount} items
+    \end{itemize}
+]]
+  },
+  gluedef = {
+    details = [[
+```latex
+\gluedef<command>{glue expression}
+```
+
+Similar to `\edef` except that the `glue expression` is processed with
+`\glueexpr`. The `glue expression` may be any arbitrary code which is
+valid in this context. The replacement text assigned to the `command`
+will be the result of that calculation. If the `command` is undefined,
+it will be initialized to `0pt plus 0pt minus 0pt` before the
+`glue expression` is processed.
+]]
+  },
+  ifblank = {
+    arguments = {{meta = "string"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifblank{string}{true}{false}
+```
+
+Expands to `true` if the `string` is blank (empty or spaces), and to
+`false` otherwise. The `string` is not expanded in the test.
+]]
+  },
+  ifboolexpr = {
+    arguments = {{meta = "expression"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifboolexpr{expression}{true}{false}
+```
+
+Evaluates the `expression` and executes `true` if it is true, and
+`false` otherwise. The `expression` is evaluated sequentially from left
+to right. The following elements, discussed in more detail below, are
+available in the `expression`: the test operators `togl`, `bool`,
+`test`; the logical operators `not`, `and`, `or`; and the subexpression
+delimiter `(...)`. Spaces, tabs, and line endings may be used freely to
+arrange the `expression` visually. Blank lines are not permissible in
+the `expression`. This command is robust.
+]]
+  },
+  ifcsdimen = {
+    arguments = {{meta = "csname"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifcsdimen{csname}{true}{false}
+```
+
+Similar to `\ifdefdimen` except that it takes a control sequence name as
+its first argument.
+]]
+  },
+  ifcslength = {
+    arguments = {{meta = "csname"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifcslength{csname}{true}{false}
+```
+
+Similar to `\ifdeflength` except that it takes a control sequence name
+as its first argument.
+]]
+  },
+  ifdef = {
+    arguments = {{meta = "control sequence"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifdef{control sequence}{true}{false}
+```
+
+Expands to `true` if the `control sequence` is defined, and to `false`
+otherwise. Note that control sequences will be considered as defined
+even if their meaning is `\relax`. This command is a LaTeX wrapper for
+the e-TeX primitive `\ifdefined`.
+]]
+  },
+  ifdefcounter = {
+    arguments = {{meta = "control sequence"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifdefcounter{control sequence}{true}{false}
+```
+
+Expands to `true` if the `control sequence` is a TeX `\count` register
+allocated with `\newcount`, and to `false` otherwise.
+]]
+  },
+  ifdefempty = {
+    arguments = {{meta = "control sequence"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifdefempty{control sequence}{true}{false}
+```
+
+Expands to `true` if the `control sequence` is defined and is a
+parameterless macro whose replacement text is empty, and to `false`
+otherwise. In contrast to `\ifx`, this test ignores the prefixes of the
+`command`.
+]]
+  },
+  ifdefequal = {
+    arguments = {
+      {meta = "control sequence"},
+      {meta = "control sequence"},
+      {meta = "true"},
+      {meta = "false"}
+    },
+    details = [[
+```latex
+\ifdefequal{control sequence}{control sequence}{true}{false}
+```
+
+Compares two control sequences and expands to `true` if they are equal
+in the sense of `\ifx`, and to `false` otherwise. In contrast to `\ifx`,
+this test will also yield `false` if both control sequences are
+undefined or have a meaning of `\relax`.
+]]
+  },
+  ifdefltxprotect = {
+    arguments = {{meta = "control sequence"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifdefltxprotect{control sequence}{true}{false}
+```
+
+Executes `true` if the `control sequence` is defined and is a LaTeX
+protection shell, and `false` otherwise. This command is robust. It will
+detect commands which have been defined with `\DeclareRobustCommand` or
+by way of a similar technique.
+]]
+  },
+  ifdefmacro = {
+    arguments = {{meta = "control sequence"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifdefmacro{control sequence}{true}{false}
+```
+
+Expands to `true` if the `control sequence` is defined and is a macro,
+and to `false` otherwise.
+]]
+  },
+  ifdefparam = {
+    arguments = {{meta = "control sequence"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifdefparam{control sequence}{true}{false}
+```
+
+Expands to `true` if the `control sequence` is defined and is a macro
+with one or more parameters, and to `false` otherwise.
+]]
+  },
+  ifdefprefix = {
+    arguments = {{meta = "control sequence"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifdefprefix{control sequence}{true}{false}
+```
+
+Expands to `true` if the `control sequence` is defined and is a macro
+prefixed with `\long` and/or `\protected`, and to `false` otherwise.
+Note that `\outer` macros may not be tested.
+]]
+  },
+  ifdefprotected = {
+    arguments = {{meta = "control sequence"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifdefprotected{control sequence}{true}{false}
+```
+
+Expands to `true` if the `control sequence` is defined and is a macro
+prefixed with `\protected`, and to `false` otherwise.
+]]
+  },
+  ifdefstrequal = {
+    arguments = {
+      {meta = "command"},
+      {meta = "command"},
+      {meta = "true"},
+      {meta = "false"}
+    },
+    details = [[
+```latex
+\ifdefstrequal{command}{command}{true}{false}
+```
+
+Performs a category code agnostic string comparison of the replacement
+text of two commands. This command is similar to `\ifdefstring` except
+that both arguments to be compared are macros. This command is robust.
+]]
+  },
+  ifdefstring = {
+    arguments = {
+      {meta = "command"},
+      {meta = "string"},
+      {meta = "true"},
+      {meta = "false"}
+    },
+    details = [[
+```latex
+\ifdefstring{command}{string}{true}{false}
+```
+
+Compares the replacement text of a `command` to a `string` and executes
+`true` if they are equal, and `false` otherwise. Neither the `command`
+nor the `string` is expanded in the test and the comparison is category
+code agnostic. Control sequence tokens in the `string` argument will be
+detokenized and treated as strings. This command is robust. Note that it
+will only consider the replacement text of the `command`. For example,
+this test
+
+    \long\edef\mymacro#1#2{\string&}
+    \ifdefstring{\mymacro}{&}{true}{false}
+
+would yield `true`. The prefix and the parameters of `\mymacro` as well
+as the category codes in the replacement text are ignored.
+]]
+  },
+  ifdefvoid = {
+    arguments = {{meta = "control sequence"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifdefvoid{control sequence}{true}{false}
+```
+
+Expands to `true` if the `control sequence` is undefined, or is a
+control sequence whose meaning is `\relax`, or is a parameterless macro
+whose replacement text is empty, and to `false` otherwise.
+]]
+  },
+  ifdimequal = {
+    arguments = {
+      {meta = "dimen expression"},
+      {meta = "dimen expression"},
+      {meta = "true"},
+      {meta = "false"}
+    },
+    details = [[
+```latex
+\ifdimequal{dimen expression}{dimen expression}{true}{false}
+```
+
+Alternative syntax for `\ifdimcomp{...}{=}{...}{...}{...}`.
+]]
+  },
+  ifdimless = {
+    arguments = {
+      {meta = "dimen expression"},
+      {meta = "dimen expression"},
+      {meta = "true"},
+      {meta = "false"}
+    },
+    details = [[
+```latex
+\ifdimless{dimen expression}{dimen expression}{true}{false}
+```
+
+Alternative syntax for `\ifdimcomp{...}{<}{...}{...}{...}`.
+]]
+  },
+  ifinlist = {
+    arguments = {
+      {meta = "item"},
+      {meta = "listmacro"},
+      {meta = "true"},
+      {meta = "false"}
+    },
+    details = [[
+```latex
+\ifinlist{item}{listmacro}{true}{false}
+```
+
+This command executes `true` if the `item` is included in a `listmacro`,
+and `false` otherwise. Note that this test uses pattern matching based
+on TeX 's argument scanner to check if the search string is included in
+the list. This means that it is usually faster than looping over all
+items in the list, but it also implies that the items must not include
+curly braces which would effectively hide them from the scanner. In
+other words, this macro is most useful when dealing with lists of plain
+strings rather than printable data. When dealing with printable text, it
+is safer to use `\dolistloop` to check if an item is in the list as
+follows:
+
+    \renewcommand*{\do}[1]{%
+      \ifstrequal{#1}{<<item>>}
+        {item found!\listbreak}
+        {}}
+    \dolistloop{\mylist}
+]]
+  },
+  ifinlistcs = {
+    arguments = {
+      {meta = "item"},
+      {meta = "listcsname"},
+      {meta = "true"},
+      {meta = "false"}
+    },
+    details = [[
+```latex
+\ifinlistcs{item}{listcsname}{true}{false}
+```
+
+Similar to `\ifinlist` except that it takes a control sequence name as
+its second argument.
+]]
+  },
+  ifltxcounter = {
+    arguments = {{meta = "name"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifltxcounter{name}{true}{false}
+```
+
+Expands to `true` if `name` is a LaTeX counter allocated with
+`\newcounter`, and to `false` otherwise.
+]]
+  },
+  ifnumcomp = {
+    arguments = {
+      {meta = "integer expression"},
+      {meta = "relation"},
+      {meta = "integer expression"},
+      {meta = "true"},
+      {meta = "false"}
+    },
+    details = [[
+```latex
+\ifnumcomp{integer expression}{relation}{integer expression}{true}{false}
+```
+
+Compares two integer expressions according to `relation` and expands to
+`true` or `false` depending on the result. The `relation` may be `<`,
+`>`, or `=`. Both integer expressions will be processed with `\numexpr`.
+An `integer expression` may be any arbitrary code which is valid in this
+context. All arithmetic expressions may contain spaces. Here are some
+examples:
+
+    \ifnumcomp{<<3>>}{<<>>>}{<<6>>}{true}{<<false>>}
+    \ifnumcomp{<<(7 + 5) / 2>>}{<<=>>}{<<6>>}{<<true>>}{false}
+    \ifnumcomp{<<(7+5) / 4>>}{<<>>>}{<<3*(12-10)>>}{true}{<<false>>}
+    \newcounter{countA}
+    \setcounter{countA}{<<6>>}
+    \newcounter{countB}
+    \setcounter{countB}{<<5>>}
+    \ifnumcomp{<<\value{countA} * \value{countB}/2}>>{<<=>>}{<<15>>}{<<true>>}{false}
+    \ifnumcomp{<<6/2>>}{<<=>>}{<<5/2>>}{<<true>>}{false}
+
+Technically, this command is a LaTeX wrapper for the TeX primitive
+`\ifnum`, incorporating `\numexpr`. Note that `\numexpr` will round the
+result of all integer expressions, i.e. both expressions will be
+processed and rounded prior to being compared. In the last line of the
+above examples, the result of the second expression is 2.5, which is
+rounded to 3, hence `\ifnumcomp` will expand to `true`.
+]]
+  },
+  ifnumgreater = {
+    arguments = {
+      {meta = "integer expression"},
+      {meta = "integer expression"},
+      {meta = "true"},
+      {meta = "false"}
+    },
+    details = [[
+```latex
+\ifnumgreater{integer expression}{integer expression}{true}{false}
+```
+
+Alternative syntax for `\ifnumcomp{...}{>}{...}{...}{...}`.
+]]
+  },
+  ifnumodd = {
+    arguments = {{meta = "integer expression"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifnumodd{integer expression}{true}{false}
+```
+
+Evaluates an integer expression and expands to `true` if the result is
+an odd number, and to `false` otherwise. Technically, this command is a
+LaTeX wrapper for the TeX primitive `\ifodd`, incorporating `\numexpr`.
+]]
+  },
+  ifpatchable = {
+    arguments = {
+      {literal = "*", optional = true},
+      {meta = "command"},
+      {meta = "true"},
+      {meta = "false"}
+    },
+    details = [[
+```latex
+\ifpatchable*{command}{true}{false}
+```
+
+Similar to `\ifpatchable` except that the starred variant does not
+require a search pattern. Use this version to check if a command may be
+patched with `\apptocmd` and `\pretocmd`.
+]]
+  },
+  ifstrequal = {
+    arguments = {
+      {meta = "string"},
+      {meta = "string"},
+      {meta = "true"},
+      {meta = "false"}
+    },
+    details = [[
+```latex
+\ifstrequal{string}{string}{true}{false}
+```
+
+Compares two strings and executes `true` if they are equal, and `false`
+otherwise. The strings are not expanded in the test and the comparison
+is category code agnostic. Control sequence tokens in any of the
+`string` arguments will be detokenized and treated as strings. This
+command is robust.
+]]
+  },
+  ifundef = {
+    arguments = {{meta = "control sequence"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifundef{control sequence}{true}{false}
+```
+
+Expands to `true` if the `control sequence` is undefined, and to `false`
+otherwise. Apart from reversing the logic of the test, this command also
+differs from `\ifdef` in that commands will be considered as undefined
+if their meaning is `\relax`.
+]]
+  },
+  listadd = {
+    arguments = {{meta = "listmacro"}, {meta = "item"}},
+    details = [[
+```latex
+\listadd{listmacro}{item}
+```
+
+This command appends an `item` to a `listmacro`. A blank `item` is not
+added to the list.
+]]
+  },
+  listcsadd = {
+    arguments = {{meta = "listcsname"}, {meta = "item"}},
+    details = [[
+```latex
+\listcsadd{listcsname}{item}
+```
+
+Similar to `\listadd` except that it takes a control sequence name as
+its first argument.
+]]
+  },
+  listcseadd = {
+    arguments = {{meta = "listcsname"}, {meta = "item"}},
+    details = [[
+```latex
+\listcseadd{listcsname}{item}
+```
+
+Similar to `\listeadd` except that it takes a control sequence name as
+its first argument.
+]]
+  },
+  listcsremove = {
+    arguments = {{meta = "listcsname"}, {meta = "item"}},
+    details = [[
+```latex
+\listcsremove{listcsname}{item}
+```
+
+Similar to `\listremove` except that it takes a control sequence name as
+its first argument.
+]]
+  },
+  listeadd = {
+    arguments = {{meta = "listmacro"}, {meta = "item"}},
+    details = [[
+```latex
+\listeadd{listmacro}{item}
+```
+
+Similar to `\listadd` except that the `item` is expanded at
+definition-time. Only the new `item` is expanded, the `listmacro` is
+not. If the expanded `item` is blank, it is not added to the list.
+]]
+  },
+  listremove = {
+    arguments = {{meta = "listmacro"}, {meta = "item"}},
+    details = [[
+```latex
+\listremove{listmacro}{item}
+```
+
+This command removes an `item` from a `listmacro`. A blank `item` is
+ignored.
+]]
+  },
+  mudef = {
+    details = [[
+```latex
+\mudef<command>{muglue expression}
+```
+
+Similar to `\edef` except that the `muglue expression` is processed with
+`\muexpr`. The `muglue expression` may be any arbitrary code which is
+valid in this context. The replacement text assigned to the `command`
+will be the result of that calculation. If the `command` is undefined,
+it will be initialized to `0mu` before the `muglue expression` is
+processed.
+]]
+  },
+  newbool = {
+    arguments = {{meta = "name"}},
+    details = [[
+```latex
+\newbool{name}
+```
+
+Defines a new boolean flag called `name`. If the flag has already been
+defined, this command issues an error. The initial state of newly
+defined flags is `false`. This command is robust.
+]]
+  },
+  newrobustcmd = {
+    arguments = {
+      {literal = "*", optional = true},
+      {meta = "command"},
+      {delimiters = {"[", "]"}, meta = "arguments", optional = true},
+      {
+        delimiters = {"[", "]"},
+        meta = "optarg default",
+        optional = true
+      },
+      {meta = "replacement text"}
+    },
+    details = [[
+```latex
+\newrobustcmd{command}[arguments][optarg default]{replacement text}
+\newrobustcmd*{command}[arguments][optarg default]{replacement text}
+```
+
+The syntax and behavior of this command is similar to `\newcommand`
+except that the newly defined `command` will be robust. The behavior of
+this command differs from the `\DeclareRobustCommand` command from the
+LaTeX kernel in that it issues an error rather than just an
+informational message if the `command` is already defined. Since it uses
+e-TeX 's low-level protection mechanism rather than the corresponding
+higher-level LaTeX facilities, it does not require an additional macro
+to implement the &lt;robustness>.
+]]
+  },
+  newtoggle = {
+    arguments = {{meta = "name"}},
+    details = [[
+```latex
+\newtoggle{name}
+```
+
+Defines a new boolean flag called `name`. If the flag has already been
+defined, this command issues an error. The initial state of newly
+defined flags is `false`. This command is robust.
+]]
+  },
+  notbool = {
+    arguments = {{meta = "name"}, {meta = "not true"}, {meta = "not false"}},
+    details = [[
+```latex
+\notbool{name}{not true}{not false}
+```
+
+Similar to `\ifbool` but negates the test.
+]]
+  },
+  nottoggle = {
+    arguments = {{meta = "name"}, {meta = "not true"}, {meta = "not false"}},
+    details = [[
+```latex
+\nottoggle{name}{not true}{not false}
+```
+
+Similar to `\iftoggle` but negates the test.
+]]
+  },
+  numdef = {
+    details = [[
+```latex
+\numdef<command>{integer expression}
+```
+
+Similar to `\edef` except that the `integer expression` is processed
+with `\numexpr`. The `integer expression` may be any arbitrary code
+which is valid in this context. The replacement text assigned to the
+`command` will be the result of that calculation. If the `command` is
+undefined, it will be initialized to `0` before the `integer expression`
+is processed.
+]]
+  },
+  patchcmd = {
+    arguments = {
+      {delimiters = {"[", "]"}, meta = "prefix", optional = true},
+      {meta = "command"},
+      {meta = "search"},
+      {meta = "replace"},
+      {meta = "success"},
+      {meta = "failure"}
+    },
+    details = [[
+```latex
+\patchcmd[prefix]{command}{search}{replace}{success}{failure}
+```
+
+This command extracts the replacement text of a `command`, replaces
+`search` with `replace`, and reassembles the `command`. The pattern
+match is category code agnostic and matches the first occurence of the
+`search` pattern in the replacement text of the `command` to be patched.
+Note that the patching process involves detokenizing the replacement
+text of the `command` and retokenizing it under the current category
+code regime after patching. The category code of the @ sign is
+temporarily set to 11. If the replacement text of the `command` includes
+any tokens with non-standard category codes, the respective category
+codes must be adjusted prior to patching. If the code to be replaced or
+inserted refers to the parameters of the `command` to be patched, the
+parameter characters need not be doubled. If an optional `prefix` is
+specified, it replaces the prefixes of the `command`. An empty `prefix`
+argument strips all prefixes from the `command`. The assignment is
+local. This command implicitly performs the equivalent of an
+`\ifpatchable` test prior to patching. If this test succeeds, the
+command applies the patch and executes `success`. If the test fails, it
+executes `failure` without modifying the original `command`. This
+command is robust.
+]]
+  },
+  preto = {
+    details = [[
+```latex
+\preto<hook>{code}
+```
+
+Similar to `\appto` except that the `code` is prepended.
+]]
+  },
+  pretocmd = {
+    arguments = {
+      {meta = "command"},
+      {meta = "code"},
+      {meta = "success"},
+      {meta = "failure"}
+    },
+    details = [=[
+```latex
+\pretocmd{command}{code}{success}{failure}
+```
+
+This command is similar to `\apptocmd` except that the `code` is
+inserted at the beginning of the replacement text of the `command`. If
+the `command` is a parameterless macro, it behaves like `\preto` from
+section [\[aut:hok:app\]][1]. In contrast to `\preto`, `\pretocmd` may
+also be used to patch commands with parameters. In this case, it will
+detokenize the replacement text of the `command`, apply the patch, and
+retokenize it under the current category code regime. The category code
+of the @ sign is temporarily set to 11. The `code` may refer to the
+parameters of the `command`. The assignment is local. If patching
+succeeds, this command executes `success`. If patching fails, it
+executes `failure` without modifying the original `command`. This
+command is robust.
+
+  [1]: #aut:hok:app
+]=]
+  },
+  ["protected@cseappto"] = {
+    details = [[
+```latex
+\protected@cseappto<hook>{code}
+```
+
+Similar to `\protected@eappto` except that it takes a control sequence
+name as its first argument.
+]]
+  },
+  ["protected@csedef"] = {
+    arguments = {{meta = "csname"}},
+    details = [[
+```latex
+\protected@csedef{csname}<arguments>{replacement text}
+```
+
+Similar to `\csedef` except that LaTeX 's protection mechanism is
+temporarily enabled. To put it in other words: this command is similar
+to the LaTeX kernel command `\protected@edef` except that it takes a
+control sequence name as its first argument. This command is robust.
+]]
+  },
+  ["protected@csepreto"] = {
+    details = [[
+```latex
+\protected@csepreto<hook>{code}
+```
+
+Similar to `\protected@epreto` except that it takes a control sequence
+name as its first argument.
+]]
+  },
+  ["protected@eappto"] = {
+    details = [[
+```latex
+\protected@eappto<hook>{code}
+```
+
+Similar to `\eappto` except that LaTeX 's protection mechanism is
+temporarily enabled.
+]]
+  },
+  ["protected@epreto"] = {
+    details = [[
+```latex
+\protected@epreto<hook>{code}
+```
+
+Similar to `\epreto` except that LaTeX 's protection mechanism is
+temporarily enabled.
+]]
+  },
+  protecting = {
+    arguments = {{meta = "code"}},
+    details = [[
+```latex
+\protecting{code}
+```
+
+This command applies LaTeX 's protection mechanism, which normally
+requires prefixing each fragile command with `\protect`, to an entire
+chunk of arbitrary `code`. Its behavior depends on the current state of
+`\protect`. Note that the braces around the `code` are mandatory even if
+it is a single token.
+]]
+  },
+  providerobustcmd = {
+    arguments = {
+      {literal = "*", optional = true},
+      {meta = "command"},
+      {delimiters = {"[", "]"}, meta = "arguments", optional = true},
+      {
+        delimiters = {"[", "]"},
+        meta = "optarg default",
+        optional = true
+      },
+      {meta = "replacement text"}
+    },
+    details = [[
+```latex
+\providerobustcmd*{command}[arguments][optarg default]{replacement text}
+```
+
+The syntax and behavior of this command is similar to `\providecommand`
+except that the newly defined `command` will be robust. Note that this
+command will provide a robust definition of the `command` only if it is
+undefined. It will not make an already defined `command` robust.
+]]
+  },
+  renewrobustcmd = {
+    arguments = {
+      {literal = "*", optional = true},
+      {meta = "command"},
+      {delimiters = {"[", "]"}, meta = "arguments", optional = true},
+      {
+        delimiters = {"[", "]"},
+        meta = "optarg default",
+        optional = true
+      },
+      {meta = "replacement text"}
+    },
+    details = [[
+```latex
+\renewrobustcmd*{command}[arguments][optarg default]{replacement text}
+```
+
+The syntax and behavior of this command is similar to `\renewcommand`
+except that the redefined `command` will be robust.
+]]
+  },
+  rmntonum = {
+    arguments = {{meta = "numeral"}},
+    details = [[
+```latex
+\rmntonum{numeral}
+```
+
+The TeX primitive `\romannumeral` converts an integer to a Roman numeral
+but TeX or LaTeX provide no command which goes the opposite way.
+`\rmntonum` fills this gap. It takes a Roman numeral as its argument and
+converts it to the corresponding integer. Since it is expandable, it may
+also be used in counter assignments or arithmetic tests:
+
+    <<\rmntonum>>{<<mcmxcv>>}
+    \setcounter{counter}{<<\rmntonum>>{<<CXVI>>}}
+    \ifnumless{<<\rmntonum>>{<<mcmxcviii>>}}{2000}{true}{false}
+
+The `numeral` argument must be a literal string. It will be detokenized
+prior to parsing. The parsing of the numeral is case-insensitive and
+whitespace in the argument is ignored. If there is an invalid token in
+the argument, `\rmntonum` will expand to `-1`; an empty argument will
+yield an empty string. Note that `\rmntonum` will not check the numeral
+for formal validity. For example, both `V` and `VX` would yield `5`,
+`IC` would yield `99`, etc.
+]]
+  },
+  robustify = {
+    arguments = {{meta = "command"}},
+    details = [[
+```latex
+\robustify{command}
+```
+
+Redefines a `command` defined with `\newcommand` such that it is robust,
+without altering its parameters, its prefixes, or its replacement text.
+If the `command` has been defined with `\DeclareRobustCommand`, this
+will be detected automatically and LaTeX 's high-level protection
+mechanism will be replaced by the corresponding low-level e-TeX feature.
+]]
+  },
+  setbool = {
+    arguments = {{meta = "name"}, {meta = "value"}},
+    details = [[
+```latex
+\setbool{name}{value}
+```
+
+Sets the boolean flag `name` to `value` which may be either `true` or
+`false`. This command is robust and may be prefixed with `\global`. It
+will issue an error if the flag is undefined.
+]]
+  },
+  settoggle = {
+    arguments = {{meta = "name"}, {meta = "value"}},
+    details = [[
+```latex
+\settoggle{name}{value}
+```
+
+Sets the boolean flag `name` to `value` which may be either `true` or
+`false`. This command is robust and may be prefixed with `\global`. It
+will issue an error if the flag is undefined.
+]]
+  },
+  toggletrue = {
+    arguments = {{meta = "name"}},
+    details = [[
+```latex
+\toggletrue{name}
+```
+
+Sets the boolean flag `name` to `true`. This command is robust and may
+be prefixed with `\global`. It will issue an error if the flag is
+undefined.
+]]
+  },
+  undef = {
+    details = [[
+```latex
+\undef<command>
+```
+
+Clears a `command` such that e-TeX 's `\ifdefined` and `\ifcsname` tests
+will consider it as undefined. This command is robust and may be
+prefixed with `\global`.
+]]
+  },
+  whileboolexpr = {
+    arguments = {{meta = "expression"}, {meta = "code"}},
+    details = [[
+```latex
+\whileboolexpr{expression}{code}
+```
+
+Evaluates the `expression` like `\ifboolexpr` and repeatedly executes
+the `code` while the expression is true. The `code` may be any valid TeX
+or LaTeX code. This command is robust.
+]]
+  }
+}

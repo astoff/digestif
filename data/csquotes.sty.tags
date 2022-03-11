@@ -1,0 +1,1116 @@
+comments = [[
+Extracted from the documentation source (csquotes.tex)
+URL: https://ctan.org/tex-archive/macros/latex/contrib/csquotes
+Original license: LPPL v1.3 or later
+]]
+ctan_package = "csquotes"
+documentation = {
+  {
+    summary = "Tutorial on use of the package",
+    uri = "texmf:doc/latex/csquotes/csquotes.pdf"
+  }
+}
+commands = {
+  ["@enablequotes"] = {
+    details = [[
+```latex
+\@enablequotes
+```
+
+This command enables all characters allocated as active quotes. It also
+restores their definitions if they were disabled or accidentally
+overwritten. With single-byte encodings, this command (re)defines all
+allocated characters and makes them active. With UTF-8 encoding, it
+redefines the internal macro used by the `inputenc` package to typeset
+the respective UTF-8 sequence (`\u8:``character`). UTF-8 characters in
+the range 0--127 are handled as with single-byte encodings. When using a
+TeX engine with native UTF-8 support, such as XeTeX , all characters are
+handled as with single-byte encodings.
+]]
+  },
+  ["@verbatimquotes"] = {
+    details = [[
+```latex
+\@verbatimquotes
+```
+
+For verbatim environments and similar applications, use this command
+rather than `\@disablequotes`. It redefines the active quotes in a way
+that is better suited for verbatim typesetting. With single-byte
+encodings, it will do one of the following things. (1) If a character is
+in the range 0--127, it is redefined such that it expands to itself with
+category code 12. (2) If a character is in the range 128--255, there are
+two possibilities. (a) If it had already been active when it was
+allocated, its former definition is restored. (b) If it had not been
+active before, it is redefined such that it expands to itself with its
+former category code.
+
+Characters in the range 0--127 are added to the `\dospecials` list.
+Characters in the range 128--255 remain active, permitting the
+`inputenc` package to typeset them verbatim (due to case 2a, which
+implies that you must load `inputenc` before allocating active quotes).
+Case 2b is usually undesirable in verbatim environments. If `inputenc`
+is loaded, however, this should not happen. With UTF-8 encoding, this
+command restores the former definition of the internal macro used by the
+`inputenc` package to typeset the respective UTF-8 sequence. UTF-8
+characters in the range 0--127 are handled as with single-byte
+encodings. When using a TeX engine with native UTF-8 support, such as
+XeTeX , all characters are handled as with single-byte encodings.
+
+Due to case 1, `\@verbatimquotes` itself is independent of any
+`\dospecials` processing. You may typeset all active quotes verbatim by
+using this command exclusively. The advantage of this approach is that
+it does not require any category code changes, hence this command may
+also be used to modify an argument after it has been read. Also note
+that the standard LaTeX verbatim environments as well as all
+environments provided by or defined via the packages `verbatim`,
+`fancyvrb`, `moreverb`, and `alltt` are catered for automatically. This
+also applies to the `\verb` command and the `shortvrb` package.
+]]
+  },
+  BlockquoteDisable = {
+    arguments = {{meta = "code"}},
+    details = [[
+```latex
+\BlockquoteDisable{code}
+```
+
+The `code` may be arbitrary LaTeX code which redefines vulnerable
+commands locally such that they work differently during the trial pass.
+The `code` itself should obviously not include any global assignments.
+This solution should be considered as a last ressort but may be the
+quickest way to fix a vulnerable package. Note that there is no need to
+escape parameter characters by doubling them in the `code` argument.
+Simply use this command like `\AtBeginDocument` and similar hooks.
+]]
+  },
+  DeclareAutoPunct = {
+    arguments = {{meta = "characters"}},
+    details = [[
+```latex
+\DeclareAutoPunct{characters}
+```
+
+This command defines the punctuation marks to be considered by the
+quotation commands as they scan ahead for punctuation. Note that
+`characters` is an undelimited list of characters. Valid `characters`
+are period, comma, semicolon, colon, exclamation and question mark. The
+default setting is:
+
+    {}
+    \DeclareAutoPunct{.,;:!?}
+
+This definition is restored automatically whenever the `autopunct`
+package option is set to `true`. Executing `\DeclareAutoPunctuation{}`
+is equivalent to setting `autopunct=false`, i.e. it disables this
+feature.
+]]
+  },
+  DeclarePlainStyle = {
+    arguments = {{meta = "opening outer mark"}, {meta = "closing outer mark"}},
+    details = [[
+```latex
+\DeclarePlainStyle{opening outer mark}{closing outer mark}\\
+```
+
+opening inner markclosing inner mark
+
+This command may be used in the configuration file or in the document
+preamble. By default, outer quotations get straight double quotes and
+inner quotations straight single quotes. See ?? for additional hints
+concerning PDF strings.
+]]
+  },
+  DeclareQuoteAlias = {
+    arguments = {
+      {delimiters = {"[", "]"}, meta = "variant", optional = true},
+      {meta = "style"},
+      {meta = "alias"}
+    },
+    details = [[
+```latex
+\DeclareQuoteAlias[variant]{style}{alias}
+\DeclareQuoteAlias{first-level alias}{second-level alias}
+```
+
+This command may be used in the configuration file or in the document
+preamble. The alias may point to a backend style or to another alias.
+Most language aliases refer to a backend style, but some point to an
+intermediate alias instead. If the alias is defined for the sake of the
+`babel` or the `polyglossia` package, its name must be identical to the
+language name used by `babel`/`polyglossia`, i.e. the expansion of
+`\languagename`. See ?? for an illustration of how quote styles,
+aliases, and package options interact. A list of all aliases defined by
+default is given in ??.
+]]
+  },
+  DeclareQuoteGlyph = {
+    arguments = {{meta = "encoding"}, {meta = "position"}},
+    details = [[
+```latex
+\DeclareQuoteGlyph{encoding}{position}
+```
+
+
+]]
+  },
+  DeclareQuoteOption = {
+    arguments = {{meta = "style"}},
+    details = [[
+```latex
+\DeclareQuoteOption{style}
+```
+
+When using the new option, the name of the quote style will serve as the
+key. The value may be any style variant defined for the respective
+style. The package option will select a variant by defining an alias
+pointing to the desired backend style. This command is available in the
+configuration file only. See ?? for an illustration of how quote styles,
+aliases, and package options interact.
+]]
+  },
+  DeclareQuoteStyle = {
+    arguments = {
+      {delimiters = {"[", "]"}, meta = "variant", optional = true},
+      {meta = "style"},
+      {delimiters = {"[", "]"}, meta = "outer init", optional = true},
+      {delimiters = {"[", "]"}, meta = "inner init", optional = true}
+    },
+    details = [[
+```latex
+\DeclareQuoteStyle[variant]{style}[outer init][inner init]\\
+```
+
+opening outer mark\[middle outer mark\]closing outer mark\[kern\]  
+opening inner mark\[middle inner mark\]closing inner mark
+
+This command may be used in the configuration file or in the document
+preamble. The term &lt;outer> refers to the first quotation level,
+&lt;inner> means quotations within another quotation. A &lt;middle mark>
+is a quotation mark inserted at the beginning of every paragraph within
+a quotation spanning multiple paragraphs. In most cases, the arguments
+defining the quotation marks will simply contain one of the commands
+listed in ??. If both an outer and an inner quotation begin or end
+simultaneously, the kerning specified by the value `kern` will be
+inserted between the adjoining quotation marks. While this value can be
+given in any unit known to TeX , it is advisable to use the relative,
+font-dependent unit &lt;em> instead of absolute units such as points,
+inches, or millimeters. Note that `kern` is used as a fallback value
+only. If the font provides kerning data for the respective pair of
+quotation marks the font's kerning takes precedence. `outer init` and
+`inner init` are all-purpose hooks initializing the quote style.
+Selecting a quote style will make these hooks available to all quotation
+commands without expanding them. The execution of `outer init` will take
+place immediately before the opening outer quote is inserted, but inside
+the group formed by the quotation. `inner init` is executed before the
+opening inner quote is inserted. It is advisable to avoid any global
+assignments in this context to prevent interference with other styles.
+Whenever `inner init` is used `outer init` has to be given as well, even
+if the argument is empty. Refer to ?? for a list of all predefined quote
+styles and their variants. These are the backend styles only, see also
+?? for a list of language aliases. See ?? for some examples as well as
+an illustration of how quote styles, aliases, and package options
+interact.
+]]
+  },
+  EnableQuotes = {
+    details = [[
+```latex
+\EnableQuotes
+```
+
+Enables all active quotes by redefining the allocated characters and
+making them active. It also restores them when disabled, set to
+verbatim, or overwritten.
+]]
+  },
+  ExecuteQuoteOptions = {
+    arguments = {{meta = "key=value,\\,... "}},
+    details = [[
+```latex
+\ExecuteQuoteOptions{key=value,\,... }
+```
+
+This command permits presetting package options in the configuration
+file. It may also be used in the document preamble.
+]]
+  },
+  MakeAutoQuote = {
+    arguments = {
+      {literal = "*", optional = true},
+      {meta = "character 1"},
+      {meta = "character 2"}
+    },
+    details = [[
+```latex
+\MakeAutoQuote*{character 1}{character 2}
+```
+
+All active quotes defined with `\MakeAutoQuote` work like `\enquote`.
+Those defined with `\MakeOuterQuote` and `\MakeInnerQuote` cover only a
+part of this functionality. The former correspond to the outer level of
+`\enquote` whereas the latter correspond to the starred version.
+`\MakeAutoQuote*` is similar to `\MakeInnerQuote`, i.e. it corresponds
+to `\enquote*`.
+]]
+  },
+  MakeBlockQuote = {
+    arguments = {
+      {meta = "character 1"},
+      {meta = "delimiter"},
+      {meta = "character 2"}
+    },
+    details = [[
+```latex
+\MakeBlockQuote{character 1}{delimiter}{character 2}
+```
+
+The arguments are checked for validity, see ?? for details. All active
+quotes defined with `\MakeBlockQuote` behave essentially the same as
+`\blockquote`, but the handling of the citation is slightly different.
+`character 1` will serve as the opening mark in the source file,
+`character 2` as the closing one. The character indicated by the middle
+argument `delimiter` will serve as a delimiter separating the quoted
+text from the citation which is given last as the active quotes are
+used:
+
+    \MakeBlockQuote{<}{|}{>}
+    ...
+    <text|citation>
+
+If the delimiter is omitted, the entire text between the opening and the
+closing mark will be treated as quotation text.
+]]
+  },
+  MakeForeignBlockQuote = {
+    arguments = {
+      {meta = "lang"},
+      {meta = "character 1"},
+      {meta = "delimiter"},
+      {meta = "character 2"}
+    },
+    details = [[
+```latex
+\MakeForeignBlockQuote{lang}{character 1}{delimiter}{character 2}
+```
+
+The active quotes defined with this command are similar in concept and
+function to `\foreignblockquote`. The behavior of the delimiter
+character is similar to `\MakeBlockQuote`.
+]]
+  },
+  MakeForeignQuote = {
+    arguments = {
+      {literal = "*", optional = true},
+      {meta = "lang"},
+      {meta = "character 1"},
+      {meta = "character 2"}
+    },
+    details = [[
+```latex
+\MakeForeignQuote{lang}{character 1}{character 2}
+\MakeForeignQuote*{lang}{character 1}{character 2}
+```
+
+The active quotes defined with the above commands are similar in concept
+and function to `\foreignquote` and `\foreignquote*`, respectively.
+]]
+  },
+  MakeHybridBlockQuote = {
+    arguments = {
+      {meta = "lang"},
+      {meta = "character 1"},
+      {meta = "delimiter"},
+      {meta = "character 2"}
+    },
+    details = [[
+```latex
+\MakeHybridBlockQuote{lang}{character 1}{delimiter}{character 2}
+```
+
+The active quotes defined with this command are similar in concept and
+function to `\hybridblockquote`. The behavior of the delimiter character
+is similar to `\MakeBlockQuote`.
+]]
+  },
+  MakeHyphenQuote = {
+    arguments = {
+      {literal = "*", optional = true},
+      {meta = "lang"},
+      {meta = "character 1"},
+      {meta = "character 2"}
+    },
+    details = [[
+```latex
+\MakeHyphenQuote*{lang}{character 1}{character 2}
+```
+
+The active quotes defined with the above commands are similar in concept
+and function to `\hyphenquote` and `\hyphenquote*`, respectively.
+]]
+  },
+  MakeInnerQuote = {
+    arguments = {{meta = "character"}},
+    details = [[
+```latex
+\MakeOuterQuote{character}
+\MakeInnerQuote{character}
+```
+
+`\MakeAutoQuote` defines active quotes which toggle between outer and
+inner quotations automatically. The two mandatory arguments serve as
+opening and closing mark and must be distinct:
+]]
+  },
+  MakeOuterQuote = {
+    arguments = {{meta = "character"}},
+    details = "$ref:csquotes.sty#/commands/MakeInnerQuote/details"
+  },
+  SetBlockEnvironment = {
+    arguments = {{meta = "environment"}},
+    details = [[
+```latex
+\SetBlockThreshold{integer}
+\SetBlockEnvironment{environment}
+\SetCiteCommand{command}
+```
+
+`\SetBlockThreshold` defines the number of lines or words the block
+quotation facilities use as a threshold when determining whether a
+quotation should be typeset in inline or in display mode. The default is
+three. `\SetBlockEnvironment` specifies the environment used for block
+and display quotations. It takes the name of an existing environment as
+its argument. The default is the `quote` environment provided by most
+document classes. The argument to `\SetCiteCommand` specifies a
+replacement for `\cite` which will be used by all integrated quotation
+facilities to handle citations. It must be a single command which takes
+one or two optional arguments followed by a mandatory one, the citation
+key. The default is `\cite`. The citation commands of the `natbib`,
+`jurabib`, and `biblatex` packages, which take two optional arguments,
+are supported.
+]]
+  },
+  SetBlockThreshold = {
+    arguments = {{meta = "integer"}},
+    details = "$ref:csquotes.sty#/commands/SetBlockEnvironment/details"
+  },
+  SetCiteCommand = {
+    arguments = {{meta = "command"}},
+    details = "$ref:csquotes.sty#/commands/SetBlockEnvironment/details"
+  },
+  VerbatimQuotes = {
+    details = [[
+```latex
+\VerbatimQuotes
+```
+
+Switches to verbatim active quotes. All active quotes will be printed
+verbatim until their default behavior is restored with `\EnableQuotes`.
+]]
+  },
+  blockcquote = {
+    arguments = {
+      {delimiters = {"[", "]"}, meta = "prenote", optional = true},
+      {delimiters = {"[", "]"}, meta = "postnote", optional = true},
+      {meta = "key"},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true},
+      {meta = "text"}
+    },
+    details = [[
+```latex
+\blockcquote[prenote][postnote]{key}[punct]{text}<tpunct>
+```
+
+The difference between `\blockcquote` and `\blockquote` is that there
+are three citation arguments instead of one. The handling of these
+citation arguments is similar to `\textcquote`; see ?? for details. Also
+see ?? on how to customize block quotations.
+]]
+  },
+  blockquote = {
+    arguments = {
+      {delimiters = {"[", "]"}, meta = "cite", optional = true},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true},
+      {meta = "text"}
+    },
+    details = [[
+```latex
+\blockquote[cite][punct]{text}<tpunct>
+```
+
+This command determines the length of the `text`. If the length exceeds
+a certain threshold, the `text` will be typeset in display mode, i.e. as
+a block quotation. If not, `\blockquote` will behave like `\textquote`.
+Depending on the `thresholdtype` option, the threshold may be based on
+the number of lines required to typeset the `text` or on the number of
+words in the `text`. If the `parthreshold` option has been enabled, any
+explicit paragraph or line break in the `text` will trigger the
+threshold, i.e. it will be typeset in display mode regardless of its
+length. The default threshold setup is three lines with `parthreshold`
+enabled. The default environment used for display quotations is the
+`quote` environment. See ?? on how to change these parameters. Note that
+`csquotes` will force inline quotations in footnotes, parboxes,
+minipages, and floats by default. Use the `csdisplay` option from ?? to
+change this behavior. The optional arguments `cite` and `punct` specify
+the citation and any terminal punctuation of the `text`. `tpunct`
+denotes trailing punctuation after the command. If the `autopunct`
+option is enabled, the quotation commands will scan ahead for
+punctuation marks immediately following their last argument and can move
+them around if required. See ?? on how to change the way these arguments
+are handled and ?? for reasons why you may want to specify the
+punctuation as a separate argument.
+]]
+  },
+  closeautoquote = {
+    details = [[
+```latex
+\openautoquote Opens a nestable quotation.
+\closeautoquote Closes a nestable quotation.
+```
+
+
+]]
+  },
+  closeinnerquote = {
+    details = [[
+```latex
+\openinnerquote Opens an inner quotation.
+\closeinnerquote Closes an inner quotation.
+```
+
+
+]]
+  },
+  enquote = {
+    arguments = {{literal = "*", optional = true}, {meta = "text"}},
+    details = [[
+```latex
+\enquote{text}
+\enquote*{text}
+```
+
+Like all quotation facilities, this command is context sensitive.
+Depending on the nesting level, it will toggle between outer and inner
+quotation marks with plain and nested quotations. The starred version of
+this command skips directly to the inner level. If multilingual support
+is enabled, the style of all quotation marks will be adapted to the
+current language.
+]]
+  },
+  foreignblockcquote = {
+    arguments = {
+      {meta = "lang"},
+      {delimiters = {"[", "]"}, meta = "prenote", optional = true},
+      {delimiters = {"[", "]"}, meta = "postnote", optional = true},
+      {meta = "key"},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true},
+      {meta = "text"}
+    },
+    details = [[
+```latex
+\foreignblockcquote{lang}[prenote][postnote]{key}[punct]{text}<tpunct>
+```
+
+This command combines `\blockcquote` with `\foreignlanguage`. Long
+quotations will be wrapped in an `otherlanguage*` environment. The
+handling of the citation arguments is similar to `\textcquote`.
+]]
+  },
+  foreignblockquote = {
+    arguments = {
+      {meta = "lang"},
+      {delimiters = {"[", "]"}, meta = "cite", optional = true},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true},
+      {meta = "text"}
+    },
+    details = [[
+```latex
+\foreignblockquote{lang}[cite][punct]{text}<tpunct>
+```
+
+This command behaves like `\foreignquote` if the quotation is short. If
+it exceeds the threshold, it will be wrapped in an `otherlanguage*`
+environment which is in turn wrapped in a block quotation environment.
+The arguments are handled as with `\blockquote`.
+]]
+  },
+  foreignquote = {
+    arguments = {{literal = "*", optional = true}, {meta = "lang"}, {meta = "text"}},
+    details = [[
+```latex
+\foreignquote{lang}{text}
+\foreignquote*{lang}{text}
+```
+
+This command combines `\enquote` with `\foreignlanguage`. It switches
+hyphenation patterns and enables the extra definitions provided by
+`babel`/`polyglossia` for `lang`, which must be a language name known to
+the respective package. The quotation marks will match the language of
+the quoted piece of text.
+]]
+  },
+  foreigntextcquote = {
+    arguments = {
+      {literal = "*", optional = true},
+      {meta = "lang"},
+      {delimiters = {"[", "]"}, meta = "prenote", optional = true},
+      {delimiters = {"[", "]"}, meta = "postnote", optional = true},
+      {meta = "key"},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true},
+      {meta = "text"}
+    },
+    details = [[
+```latex
+\foreigntextcquote{lang}[prenote][postnote]{key}[punct]{text}<tpunct>
+\foreigntextcquote*{lang}[prenote][postnote]{key}[punct]{text}<tpunct>
+```
+
+This command combines `\textcquote` with `\foreignlanguage`. The
+handling of the arguments is similar to `\textcquote`.
+]]
+  },
+  foreigntextquote = {
+    arguments = {
+      {literal = "*", optional = true},
+      {meta = "lang"},
+      {delimiters = {"[", "]"}, meta = "cite", optional = true},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true},
+      {meta = "text"}
+    },
+    details = [[
+```latex
+\foreigntextquote{lang}[cite][punct]{text}<tpunct>
+\foreigntextquote*{lang}[cite][punct]{text}<tpunct>
+```
+
+This command combines `\textquote` with `\foreignlanguage`. Apart from
+the language, the arguments are handled as with `\textquote`.
+]]
+  },
+  hybridblockcquote = {
+    arguments = {
+      {meta = "lang"},
+      {delimiters = {"[", "]"}, meta = "prenote", optional = true},
+      {delimiters = {"[", "]"}, meta = "postnote", optional = true},
+      {meta = "key"},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true},
+      {meta = "text"}
+    },
+    details = [[
+```latex
+\hybridblockcquote{lang}[prenote][postnote]{key}[punct]{text}<tpunct>
+```
+
+This command behaves like `\hyphenblockcquote` if the quotation is
+short, and like `\foreignblockquote` if it is long. The handling of the
+citation arguments is similar to `\textcquote`.
+]]
+  },
+  hybridblockquote = {
+    arguments = {
+      {meta = "lang"},
+      {delimiters = {"[", "]"}, meta = "cite", optional = true},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true},
+      {meta = "text"}
+    },
+    details = [[
+```latex
+\hybridblockquote{lang}[cite][punct]{text}<tpunct>
+```
+
+This command behaves like `\hyphenquote` if the quotation is short. If
+it exceeds the threshold, the command behaves like `\foreignblockquote`.
+In other words, it combines features of `\foreignblockquote` and
+`\hyphenblockquote`. The arguments are handled as with `\blockquote`.
+]]
+  },
+  hyphenquote = {
+    arguments = {{literal = "*", optional = true}, {meta = "lang"}, {meta = "text"}},
+    details = [[
+```latex
+\hyphenquote*{lang}{text}
+```
+
+This command combines `\enquote` with the `hyphenrules` environment,
+that is, it merely switches hyphenation patterns. The quotation marks
+will match the language of the text surrounding the quotation.
+]]
+  },
+  hyphentextcquote = {
+    arguments = {
+      {literal = "*", optional = true},
+      {meta = "lang"},
+      {delimiters = {"[", "]"}, meta = "prenote", optional = true},
+      {delimiters = {"[", "]"}, meta = "postnote", optional = true},
+      {meta = "key"},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true},
+      {meta = "text"}
+    },
+    details = [[
+```latex
+\hyphentextcquote*{lang}[prenote][postnote]{key}[punct]{text}<tpunct>
+```
+
+This command combines `\textcquote` with the `hyphenrules` environment.
+The handling of the arguments is similar to `\textcquote`.
+]]
+  },
+  hyphentextquote = {
+    arguments = {
+      {literal = "*", optional = true},
+      {meta = "lang"},
+      {delimiters = {"[", "]"}, meta = "cite", optional = true},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true},
+      {meta = "text"}
+    },
+    details = [[
+```latex
+\hyphentextquote*{lang}[cite][punct]{text}<tpunct>
+```
+
+This command combines `\textquote` with the `hyphenrules` environment.
+Apart from the language, the arguments are handled as with `\textquote`.
+]]
+  },
+  ifblockquote = {
+    arguments = {{meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifblockquote{true}{false}
+```
+
+Expands to `true` in all block and display quotations, and to `false`
+otherwise.
+]]
+  },
+  ifpunctmark = {
+    arguments = {{meta = "character"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifpunctmark{character}{true}{false}
+```
+
+Expands to `true` if preceeded by the punctuation mark `character`, and
+to `false` otherwise. The `character` may be a period, a comma, a
+semicolon, a colon, an exclamation mark, or a question mark. Note that
+this test is only available in the definition of the hooks from ??.
+]]
+  },
+  ifterm = {
+    arguments = {{meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\ifterm{true}{false}
+```
+
+Expands to `true` if preceeded by a terminal punctuation mark (period,
+exclamation mark, or question mark), and to `false` otherwise. Note that
+this test is only available in the definition of the hooks from ??.
+]]
+  },
+  iftextpunct = {
+    arguments = {{meta = "text"}, {meta = "true"}, {meta = "false"}},
+    details = [[
+```latex
+\iftextpunct{text}{true}{false}
+```
+
+Executes `true` if the `text` ends with any punctuation mark, and to
+`false` otherwise. This command is robust.
+]]
+  },
+  initiquote = {
+    details = [[
+```latex
+\initoquote Executes the outer initialization hook.
+\initiquote Executes the inner initialization hook.
+```
+
+
+]]
+  },
+  initoquote = {details = "$ref:csquotes.sty#/commands/initiquote/details"},
+  mkbegdispquote = {
+    arguments = {{meta = "punct"}, {meta = "cite"}},
+    details = [[
+```latex
+\mkbegdispquote{punct}{cite}
+\mkenddispquote{punct}{cite}
+```
+
+The `\mkbegdispquote` and `\mkenddispquote` hooks are used by
+`displayquote` and related environments from ??. These hooks take two
+arguments:
+
+#1  
+The `punct` argument passed to the `\begin` line of the environment. If
+there is no `punct` argument, this parameter is empty.
+
+#2  
+The `cite` argument passed to the environment, wrapped in `\mkcitation`.
+If there is no `cite` argument, this parameter is empty. With integrated
+quotation environments, this parameter is the citation code, wrapped in
+`\mkccitation`.
+
+By default, `\mkenddispquote` adds the `punct` argument as well as the
+`cite` argument or the citation code at the very end of the quotation.
+`\mkbegdispquote` does not insert anything be default. This is
+equivalent to the following definition:
+
+    \newcommand{<<\mkbegdispquote>>}[2]{}
+    \newcommand{<<\mkenddispquote>>}[2]{#1#2}
+
+See ?? for practical examples.
+]]
+  },
+  mkcitation = {
+    arguments = {{meta = "cite"}},
+    details = [[
+```latex
+\mkcitation{cite}
+```
+
+All facilities which take a `cite` argument will pass it to the
+`\mkcitation` hook, which may be redefined to format the citation.
+`\mkcitation` will only be executed if there is a citation. The default
+behavior is to separate the citation from the preceding text by an
+interword space and enclose it in parentheses. This is equivalent to the
+following definition:
+
+    [showspaces=true]
+    \newcommand*{<<\mkcitation>>}[1]{ (#1)}
+]]
+  },
+  mkenddispquote = {
+    arguments = {{meta = "punct"}, {meta = "cite"}},
+    details = "$ref:csquotes.sty#/commands/mkbegdispquote/details"
+  },
+  mktextquote = {
+    arguments = {
+      {meta = "open"},
+      {meta = "text"},
+      {meta = "close"},
+      {meta = "punct"},
+      {meta = "tpunct"},
+      {meta = "cite"}
+    },
+    details = [[
+```latex
+\mktextquote{open}{text}{close}{punct}{tpunct}{cite}
+```
+
+The `\mktextquote` hook controls the layout of all text quotations. This
+hook is used by `\textquote` and related commands from ??. `\blockquote`
+and related commands from ?? use this hook for short quotations. It
+takes six arguments which may be arranged according to the desired
+output:
+
+#1  
+The opening quotation mark.
+
+#2  
+The `text` argument of the command.
+
+#3  
+The closing quotation mark.
+
+#4  
+The optional `punct` argument of the command. If there is no `punct`
+argument, this parameter is empty.
+
+#5  
+Trailing `tpunct` punctuation immediately after the command. If there is
+no such punctuation or if the `autopunct` feature is disabled, this
+parameter is empty.
+
+#6  
+The optional `cite` argument of the command, wrapped in `\mkcitation`.
+If there is no `cite` argument, this parameter is empty. With integrated
+quotation commands, this parameter is the citation code, wrapped in
+`\mkccitation`.
+
+By default, `\mktextquote` encloses the `punct` argument in the
+quotation marks along with the `text` and inserts the `cite` argument or
+the citation code before any trailing `tpunct` punctuation. This is
+equivalent to the following definition:
+
+    \newcommand{<<\mktextquote>>}[6]{#1#2#4#3#6#5}
+
+The way in which `\mktextquote` hooks into the formatting process is
+best seen when looking at an example. The commands
+
+    \textquote[<<cite>>]{<<short quote>>}
+    \textcquote[<<55>>]{<<key1>>}[<<.>>]{<<short quote>>}
+    \blockcquote[<<87>>]{<<key2>>}{<<short quote>>}<<.>>
+
+would execute `\mktextquote` with the following arguments:
+
+    \mktextquote{open}{<<short quote>>}{close}{}{}{\mkcitation{<<cite>>}}
+    \mktextquote{open}{<<short quote>>}{close}{<<.>>}{}{\mkccitation{\cite[<<55>>]{<<key1>>}}}
+    \mktextquote{open}{<<short quote>>}{close}{}{<<.>>}{\mkccitation{\cite[<<87>>]{<<key2>>}}}
+
+where `\cite` is the command selected with `\SetCiteCommand` and
+`open`/`close` are internal macros which print the opening and closing
+quotation marks. Note that these internal macros are fully-fledged
+markup elements with grouping and nesting control. They must be placed
+in the correct order, otherwise `csquotes` will report errors about
+unbalanced groups or invalidly nested quotations. Since the `text`
+should obviously be enclosed in the quotation marks, the parameter order
+`#1#2#3` is effectively fixed. The parameters `#4`, `#5`, `#6` may be
+placed freely.
+]]
+  },
+  openautoquote = {details = "$ref:csquotes.sty#/commands/closeautoquote/details"},
+  openinnerquote = {details = "$ref:csquotes.sty#/commands/closeinnerquote/details"},
+  setquotestyle = {
+    arguments = {
+      {delimiters = {"[", "]"}, meta = "variant", optional = true},
+      {meta = "style"}
+    },
+    details = [[
+```latex
+\setquotestyle[variant]{style}
+\setquotestyle{alias}
+\setquotestyle*
+```
+
+The regular form of this command selects a quote style and disables
+multilingual support. Its mandatory argument may be a quote style or an
+alias. If it is a quote style, the optional argument indicates the style
+variant. The starred version, which takes no arguments, enables
+multilingual support. Please refer to ?? for a list of available styles,
+style variants, and language aliases.
+]]
+  },
+  textciquote = {
+    details = [[
+```latex
+\textciquote Prints the closing inner quotation mark.
+\textmiquote Prints the middle inner quotation mark.
+```
+
+
+]]
+  },
+  textcoquote = {
+    details = [[
+```latex
+\textooquote Prints the opening outer quotation mark of the currently active quote style.
+\textcoquote Prints the closing outer quotation mark.
+\textmoquote Prints the middle outer quotation mark.
+```
+
+
+]]
+  },
+  textcquote = {
+    arguments = {
+      {literal = "*", optional = true},
+      {delimiters = {"[", "]"}, meta = "prenote", optional = true},
+      {delimiters = {"[", "]"}, meta = "postnote", optional = true},
+      {meta = "key"},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true},
+      {meta = "text"}
+    },
+    details = [[
+```latex
+\textcquote[prenote][postnote]{key}[punct]{text}<tpunct>
+\textcquote*[prenote][postnote]{key}[punct]{text}<tpunct>
+```
+
+The `text` may be any arbitrary piece of text to be enclosed in
+quotation marks. The optional arguments `cite` and `punct` specify the
+citation and any terminal punctuation of `text`. `tpunct` denotes
+trailing punctuation after the command. If the `autopunct` option is
+enabled, the quotation commands will scan ahead for punctuation marks
+immediately following their last argument and can move them around if
+required. See ?? on how to change the way these arguments are handled
+and ?? for reasons why you may want to specify the punctuation as a
+separate argument. The starred version of this command skips directly to
+the inner quotation level. The remaining arguments are handed over to
+`\cite`. Note that `\cite` normally supports one optional argument only.
+`prenote` is only available in conjunction with the `natbib`, `jurabib`,
+and `biblatex` packages. How these arguments are handled depends on the
+citation command. With `natbib` and `biblatex`, `prenote` is in fact a
+notice such as &lt;see>. With jurabib, this argument has a different
+function by default. The argument `postnote`, which is always available,
+indicates the citation postnote. This is usually a page number. `key` is
+the citation key. See ?? on how to customize the citation.
+]]
+  },
+  textelp = {
+    arguments = {{literal = "*", optional = true}, {meta = "text"}},
+    details = [[
+```latex
+\textelp{}
+\textelp{text}
+\textelp*{text}
+```
+
+When used with an empty `text` argument, this command prints an ellipsis
+symbol to indicate the omission of material from the quoted material.
+When used with a non-empty argument, the ellipsis symbol is followed by
+the `text` enclosed in square brackets to indicate that the `text` has
+been added after the omitted material. The starred version reverts the
+order, i.e. it prints the `text` followed by an ellipsis symbol to
+indicate that the `text` has been added before the omitted material. In
+sum, there are three ways to use this command:
+
+    [escapechar={\%},escapebegin={\rmfamily}]
+    \textelp{}  %= \textelp{} %
+    \textelp{text}  %= \textelp{text} %
+    \textelp*{text} %= \textelp*{text} %
+
+The insertion of text or individual letters may be indicated with the
+following command:
+]]
+  },
+  textins = {
+    arguments = {{literal = "*", optional = true}, {meta = "text"}},
+    details = [[
+```latex
+\textins*{text}
+```
+
+By default, `\textins` will enclose the `text` added to the quoted
+material in square brackets. The starred version is intended for minor
+changes, such as the capitalization of a word, which are required to
+adapt the quoted material to the new context in which it is quoted.
+
+    [escapechar={\%},escapebegin={\rmfamily}]
+    \textins{text}  %= \textins{text} %
+    \textins*{T}ext %= \textins*{T}ext %
+
+The deletion of individual letters may be indicated with the following
+command:
+]]
+  },
+  textmiquote = {details = "$ref:csquotes.sty#/commands/textciquote/details"},
+  textmoquote = {details = "$ref:csquotes.sty#/commands/textcoquote/details"},
+  textooquote = {details = "$ref:csquotes.sty#/commands/textcoquote/details"},
+  textquote = {
+    arguments = {
+      {literal = "*", optional = true},
+      {delimiters = {"[", "]"}, meta = "cite", optional = true},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true},
+      {meta = "text"}
+    },
+    details = [[
+```latex
+\textquote[cite][punct]{text}<tpunct>
+\textquote*[cite][punct]{text}<tpunct>
+```
+
+The `text` may be any arbitrary piece of text to be enclosed in
+quotation marks. The optional arguments `cite` and `punct` specify the
+citation and any terminal punctuation of `text`. `tpunct` denotes
+trailing punctuation after the command. If the `autopunct` option is
+enabled, the quotation commands will scan ahead for punctuation marks
+immediately following their last argument and can move them around if
+required. See ?? on how to change the way these arguments are handled
+and ?? for reasons why you may want to specify the punctuation as a
+separate argument. The starred version of this command skips directly to
+the inner quotation level. Here are some usage examples:
+
+    \textquote{...}
+    \textquote[][.]{...}
+    \textquote[Doe 1990, 67]{...}
+    \textquote[{\cite[67]{doe90}}]{...}
+
+Note the use of the optional arguments in the examples above. As seen in
+the second example, `cite` is required whenever `punct` is used, even if
+it is empty. Also keep in mind that an optional argument containing
+square brackets must be wrapped in an additional pair of curly braces as
+shown in the last example. When working with automated citations, you
+might also want to learn about the integrated quotation facilities
+presented in ??.
+]]
+  },
+  unspace = {
+    details = [[
+```latex
+\unspace
+```
+
+Removes preceding whitespace, i.e. removes all skips and penalties from
+the end of the current horizontal list.
+]]
+  }
+}
+environments = {
+  displaycquote = {
+    arguments = {
+      {delimiters = {"[", "]"}, meta = "prenote", optional = true},
+      {delimiters = {"[", "]"}, meta = "postnote", optional = true},
+      {meta = "key"},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true}
+    },
+    details = [[
+```latex
+\begin{displaycquote}[prenote][postnote]{key}[punct] ... \end{displaycquote}
+```
+
+The difference between `displaycquote` and its more basic counterpart is
+that there are three citation arguments instead of one. The placement of
+the citation is similar to `displayquote`. The handling of the citation
+arguments is similar to `\textcquote`, see ?? for details. See ?? on how
+to customize this environment. Also see ?? on how to change the way the
+optional arguments are handled and ?? for reasons why you may want to
+specify the punctuation as a separate argument. There are two
+environments which combine `displaycquote` with the language switches of
+the `babel` or the `polyglossia` package:
+]]
+  },
+  displayquote = {
+    arguments = {
+      {delimiters = {"[", "]"}, meta = "cite", optional = true},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true}
+    },
+    details = [[
+```latex
+\begin{displayquote}[cite][punct] ... \end{displayquote}
+```
+
+The optional arguments `cite` and `punct` specify the citation and any
+terminal punctuation of the quotation. See ?? on how to customize this
+environment. Also see ?? on how to change the way the optional arguments
+are handled and ?? for reasons why you may want to specify the
+punctuation as a separate argument. Trailing white space at the end of
+the environment is removed automatically. There are two additional
+environments which combine `displayquote` with the language switches of
+the `babel` or the `polyglossia` package:
+]]
+  },
+  hyphendisplaycquote = {
+    arguments = {
+      {meta = "lang"},
+      {delimiters = {"[", "]"}, meta = "prenote", optional = true},
+      {delimiters = {"[", "]"}, meta = "postnote", optional = true},
+      {meta = "key"},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true}
+    },
+    details = [[
+```latex
+\begin{hyphendisplaycquote}{lang}[prenote][postnote]{key}[punct] ... \end{hyphendisplaycquote}
+```
+
+This environment combines `displaycquote` with `hyphenrules`. Apart from
+the language, the arguments are handled as with `displaycquote`.
+]]
+  },
+  hyphendisplayquote = {
+    arguments = {
+      {meta = "lang"},
+      {delimiters = {"[", "]"}, meta = "cite", optional = true},
+      {delimiters = {"[", "]"}, meta = "punct", optional = true}
+    },
+    details = [[
+```latex
+\begin{hyphendisplayquote}{lang}[cite][punct] ... \end{hyphendisplayquote}
+```
+
+This environment combines `displayquote` with `hyphenrules`. Apart from
+the language, the arguments are handled as with `displayquote`.
+]]
+  }
+}
