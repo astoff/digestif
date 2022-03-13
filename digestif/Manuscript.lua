@@ -939,6 +939,7 @@ function Manuscript.completion_handlers.ref(self, ctx, pos)
         text = label.name,
         annotation = short_ctx,
         summary = label.manuscript:label_context_long(label),
+        fuzzy_score = score < infty and score or nil
       }
       scores[r[#r]] = score
     end
@@ -966,7 +967,8 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
       scores[item.name] = score
       r[#r+1] = {
         text = item.name,
-        annotation = item.text
+        annotation = item.text,
+        fuzzy_score = score < infty and score or nil
       }
     end
   end

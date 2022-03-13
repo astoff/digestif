@@ -262,10 +262,9 @@ util.strsub8 = strsub8
 
 --** Fuzzy matching
 
-local fuzzy_aux_patt
-  = C(uchar) / function(c) return search(I * case_fold[c]) end
-
-local fuzzy_build_patt = Cf(fuzzy_aux_patt^1, lpeg_mul)
+local fuzzy_build_patt = Cf(
+  (C(uchar) / function(c) return search(I * case_fold[c]) end)^1,
+  lpeg_mul)
 
 -- Return a function that fuzzy-matches against a string.
 -- Higher values of the "penalty parameter" p0 reduce the relative
@@ -278,7 +277,9 @@ local fuzzy_build_patt = Cf(fuzzy_aux_patt^1, lpeg_mul)
 -- - p0: penalty parameter for computing scores, default is 2
 --
 local function fuzzy_matcher(str, p0)
+  if str == "" then return function() return 1 end end
   p0 = p0 or 2
+  local best_score = #str / (p0 + 1) -- Score of a prefix match
   local search_patt = Ct(match(fuzzy_build_patt, str))
   return function(s, i)
     local score, old_pos, matches = 0, 0, match(search_patt, s, i)
@@ -288,7 +289,7 @@ local function fuzzy_matcher(str, p0)
       score = score + 1 / (p0 + pos - old_pos)
       old_pos = pos
     end
-    return score
+    return score / best_score
   end
 end
 util.fuzzy_matcher = fuzzy_matcher
