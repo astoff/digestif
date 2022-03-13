@@ -4,6 +4,7 @@ local Manuscript = require "digestif.Manuscript"
 local Parser = require "digestif.Parser"
 
 local path_join, path_split = util.path_join, util.path_split
+local path_normalize = util.path_normalize
 local nested_get, nested_put = util.nested_get, util.nested_put
 local map, update, merge = util.map, util.update, util.merge
 local format_filename_template = util.format_filename_template
@@ -66,9 +67,8 @@ function ManuscriptLatex.init_callbacks.input(self, pos, cs)
     local f = format_filename_template(template, self:substring_stripped(r))
     local ok = self:add_package(f)
     if not ok then
-      f = path_join(path_split(self.filename), f)
       idx[#idx + 1] = {
-        name = f,
+        name = path_normalize(path_join(path_split(self.filename), f)),
         pos = r.pos,
         cont = r.cont,
         manuscript = self

@@ -5,6 +5,7 @@ local Parser = require "digestif.Parser"
 local co_wrap, co_yield = coroutine.wrap, coroutine.yield
 local merge = util.merge
 local path_join, path_split = util.path_join, util.path_split
+local path_normalize = util.path_normalize
 local format_filename_template = util.format_filename_template
 local table_move, table_insert = table.move, table.insert
 
@@ -520,9 +521,8 @@ function ManuscriptContext.init_callbacks.input(self, pos, cs)
     local f = format_filename_template(template, self:substring_stripped(r))
     local ok = self:add_package(f)
     if not ok then
-      f = path_join(path_split(self.filename), f)
       idx[#idx + 1] = {
-        name = f,
+        name = path_normalize(path_join(path_split(self.filename), f)),
         pos = r.pos,
         cont = r.cont,
         manuscript = self
