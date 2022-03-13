@@ -10,10 +10,10 @@ end
 
 if has_command "kpsewhich" then
   local pipe = io.popen("kpsewhich -var-brace-value=TEXMF")
-  local str = pipe:read("l"):gsub("!!", "")
+  local output = pipe:read("l")
   local ok, exitt, exitc = pipe:close()
   if ok and exitt == "exit" and exitc == 0 then
-    config.texmf_dirs = util.path_list_split(str)
+    config.texmf_dirs = util.path_list_split(output:gsub("!!", ""))
   elseif config.verbose then
     util.log("Error running kpsewhich (%s %d)", exitt, exitc)
   end
