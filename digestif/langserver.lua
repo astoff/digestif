@@ -1,6 +1,8 @@
 local config = require "digestif.config"
 local util = require "digestif.util"
 
+local floor = math.floor
+local format = string.format
 local imap, nested_get, lines = util.imap, util.nested_get, util.lines
 local parse_uri, make_uri = util.parse_uri, util.make_uri
 local log = util.log
@@ -26,10 +28,10 @@ local cache = setmetatable({}, {
     __index = function () error "Server not initialized!" end
 })
 
--- a place to store the tex_format/languageId of open files
-local tex_format_table = setmetatable({}, {
+-- a place to store the file name and texformat of open documents
+local open_documents = setmetatable({}, {
   __index = function(_, k)
-    error(("Trying to access unopened file %s"):format(k))
+    error(format("Trying to access unopened document %s", k))
   end
 })
 
@@ -67,15 +69,15 @@ end
 
 local function from_TextDocumentIdentifier(arg)
   local filename = from_DocumentUri(arg.uri)
-  local format = tex_format_table[filename]
-  local script = cache:manuscript(filename, format)
+  local texformat = open_documents[filename]
+  local script = cache:manuscript(filename, texformat)
   return script
 end
 
 local function from_TextDocumentPositionParams(arg)
   local filename = from_DocumentUri(arg.textDocument.uri)
-  local format = tex_format_table[filename]
-  local script = cache:manuscript(filename, format)
+  local texformat = open_documents[filename]
+  local script = cache:manuscript(filename, texformat)
   local l, c = arg.position.line + 1, arg.position.character + 1
   return script, script:position_at(l, c)
 end
@@ -156,15 +158,15 @@ local languageId_translation_table = {
 
 local function languageId_translate(id, filename)
   local ext = filename:sub(-4)
-  local format = languageId_translation_table[id]
-  if not format then
+  local texformat = languageId_translation_table[id]
+  if not texformat then
     error(("Invalid LSP language id %q"):format(id))
   end
-  if format == "latex" and (ext == ".sty" or ext == ".cls") then
+  if texformat == "latex" and (ext == ".sty" or ext == ".cls") then
     return "latex-prog"
   end
   -- TODO: Handle .code.tex files from PGF, .mkiv files from ConTeXt, etc.
-  return format
+  return texformat
 end
 
 --* LSP methods
@@ -210,13 +212,10 @@ methods["workspace/didChangeConfiguration"] = function(params)
   config.load_from_table(settings)
 end
 
-local open_documents = {} -- Need this only for workspace/symbol method
-
 methods["textDocument/didOpen"] = function(params)
   local filename = from_DocumentUri(params.textDocument.uri)
-  local format = languageId_translate(params.textDocument.languageId, filename)
-  tex_format_table[filename] = format
-  open_documents[filename] = format
+  local texformat = languageId_translate(params.textDocument.languageId, filename)
+  open_documents[filename] = texformat
   cache:put(filename, params.textDocument.text)
 end
 
@@ -281,23 +280,30 @@ methods["textDocument/completion"] = function(params)
   local script, pos = from_TextDocumentPositionParams(params)
   local candidates = script:complete(pos)
   if not candidates then return null end
-  local result = {}
+  local long_format = config.lsp_long_candidates
+    and config.lsp_long_candidates[candidates.kind]
+  local items = {}
   for i, cand in ipairs(candidates) do
     local snippet = config.provide_snippets and cand.snippet
-    result[i] = {
-      label = cand.text,
-      filterText = candidates.prefix, -- Workaround to allow “flex matching”
-      sortText=("%05x"):format(i), -- Workaround to avoid client re-sorting
+    local fuzzy_score = cand.fuzzy_score or nil
+    local annotation = cand.annotation
+    local long_label = long_format and annotation
+      and format(long_format, cand.text, annotation)
+    items[i] = {
+      label = long_label or cand.text,
+      sortText = fuzzy_score and format("~%03d", floor(1000 * (1 - fuzzy_score))),
       documentation = cand.summary,
-      detail = cand.annotation,
+      detail = not long_label and cand.annotation or nil,
       insertTextFormat = snippet and 2 or 1,
-      textEdit = to_TextEdit(script,
-                             candidates.pos,
-                             candidates.prefix,
-                             snippet or cand.text)
+      textEdit = to_TextEdit(
+        script,
+        candidates.pos,
+        candidates.prefix,
+        snippet or cand.text
+      )
     }
   end
-  return result
+  return items
 end
 
 methods["textDocument/definition"] = function(params)
@@ -339,8 +345,8 @@ methods["workspace/symbol"] = function(params)
 
   -- Find all root documents and sort them
   local root_documents, sorted = {}, {}
-  for filename, format in pairs(open_documents) do
-    local script = cache:manuscript(filename, format)
+  for filename, texformat in pairs(open_documents) do
+    local script = cache:manuscript(filename, texformat)
     root_documents[script.root.filename] = script.root
   end
 
@@ -457,7 +463,7 @@ local function generate(path)
   local i, j = 0, 0
   for _ in pairs(tags.commands) do i = i + 1 end
   for _ in pairs(tags.environments) do j = j + 1 end
-  print(string.format(
+  print(format(
           "Generated %s.tags \twith %3i commands and %3i environments.",
           basename, i, j))
 end

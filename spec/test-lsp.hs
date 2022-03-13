@@ -40,39 +40,39 @@ main = hspec $ do
     it "completes local labels" $ mySession $ do
       doc <- openDoc "file1.tex" "latex"
       item:_ <- getCompletions doc (Position 5 7)
-      liftIO $ item ^. label `shouldBe` "somelabel"
+      liftIO $ item ^. label `shouldSatisfy` isPrefixOf "somelabel"
 
     it "completes label from included file" $ mySession $ do
       doc <- openDoc "root.tex" "latex"
       item:_ <- getCompletions doc (Position 2 8)
-      liftIO $ item ^. label `shouldBe` "childlabel"
+      liftIO $ item ^. label `shouldSatisfy` isPrefixOf "childlabel"
 
     it "completes label from root file" $ mySession $ do
       doc <- openDoc "child.tex" "latex"
       item:_ <- getCompletions doc (Position 2 8)
-      liftIO $ item ^. label `shouldBe` "rootlabel"
+      liftIO $ item ^. label `shouldSatisfy` isPrefixOf "rootlabel"
 
     it "completes citation from thebibliography environment" $ mySession $ do
       doc <- openDoc "file1.tex" "latex"
       item:_ <- getCompletions doc (Position 9 10)
-      liftIO $ item ^. label `shouldBe` "somebibitem"
+      liftIO $ item ^. label `shouldSatisfy` isPrefixOf "somebibitem"
 
     it "completes citation from bibtex file" $ mySession $ do
       doc <- openDoc "child.tex" "latex"
       item:_ <- getCompletions doc (Position 3 8)
       liftIO $ do
-        item ^. label `shouldBe` "somepaper"
-        item ^. detail `shouldBe` Just "Thor 1999; Some great paper"
+        item ^. label `shouldSatisfy` isPrefixOf "somepaper"
+        item ^. detail `shouldBe` Nothing
 
     it "completes label wth fuzzy match" $ mySession $ do
       doc <- openDoc "file2.tex" "latex"
       item:_ <- getCompletions doc (Position 2 10)
-      liftIO $ item ^. label `shouldBe` "somelabel"
+      liftIO $ item ^. label `shouldSatisfy` isPrefixOf "somelabel"
 
     it "completes citation wth fuzzy match" $ mySession $ do
       doc <- openDoc "file2.tex" "latex"
       item:_ <- getCompletions doc (Position 10 10)
-      liftIO $ item ^. label `shouldBe` "somepaper"
+      liftIO $ item ^. label `shouldSatisfy` isPrefixOf "somepaper"
 
   describe "textDocument/completion with inconsistent root information" $ do
     it "works when root doesn't exist" $ mySession $ do
@@ -87,14 +87,14 @@ main = hspec $ do
       let changeEv = TextDocumentContentChangeEvent (Just (Range (Position 0 14) (Position 0 18))) (Just 4) "nonexistent"
       changeDoc doc [changeEv]
       item:_ <- getCompletions doc (Position 4 8)
-      liftIO $ item ^. label `shouldBe` "childlabel"
+      liftIO $ item ^. label `shouldSatisfy` isPrefixOf "childlabel"
 
     it "works when root doesn't refer back to child" $ mySession $ do
       doc <- openDoc "child.tex" "latex"
       let edit = TextEdit (Range (Position 0 14) (Position 0 18)) "file1"
       changeDoc doc [TextDocumentContentChangeEvent (Just (Range (Position 0 14) (Position 0 18))) (Just 4) "file1"]
       item:_ <- getCompletions doc (Position 4 8)
-      liftIO $ item ^. label `shouldBe` "childlabel"
+      liftIO $ item ^. label `shouldSatisfy` isPrefixOf "childlabel"
 
   describe "textDocument/definition" $
     it "works" $ mySession $ do

@@ -44,6 +44,14 @@ config.fuzzy_cite = true
 config.fuzzy_ref = true
 config.info_command = has_command("info")
 
+-- For candidates of these kinds, include the annotation in the
+-- candidate label.  The values of this table are a string which is
+-- formatted with two arguments, the candidate text and annotation.
+config.lsp_long_candidates = {
+  label = "%-12s    %s",
+  bibitem = "%-12s    %s",
+}
+
 --* Loading user settings
 
 local function is_table(key_type, val_type)
