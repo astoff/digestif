@@ -6,6 +6,10 @@ local util = require "digestif.util"
 local require_data = require "digestif.data".require
 local get_info = require "digestif.data".get_info
 local resolve_doc_items = require "digestif.data".resolve_doc_items
+local path_join, path_split = util.path_join, util.path_split
+local path_normalize = util.path_normalize
+local find_file = util.find_file
+local format_filename_template = util.format_filename_template
 
 local format = string.format
 local co_wrap, co_yield = coroutine.wrap, coroutine.yield
@@ -1351,6 +1355,29 @@ end
 
 Manuscript.find_definition_handlers["end"]
   = Manuscript.find_definition_handlers.begin
+
+function Manuscript.find_definition_handlers.input(self, ctx)
+  local template
+  if ctx.arg then
+    template = nested_get(ctx, "parent", "data", "filename") or "?"
+  elseif ctx.item then
+    template = nested_get(ctx, "parent", "parent", "data", "filename") or "?"
+  else
+    return
+  end
+  local basename = format_filename_template(template, self:substring(ctx))
+  local filename = find_file(path_split(self.filename), basename)
+  if not filename then return end
+  local child = self:find_manuscript(path_normalize(filename))
+  if child then
+    return {
+      pos = 1,
+      cont = 1,
+      manuscript = child,
+      kind = "manuscript"
+    }
+  end
+end
 
 --* Find references
 
