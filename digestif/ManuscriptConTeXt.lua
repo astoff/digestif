@@ -373,6 +373,12 @@ if ctx_tags then
     end
   end
 
+  -- Add start/stop commands
+  for env, cmd in pairs(environments) do
+    commands["start" .. env] = cmd
+    commands["stop" .. env] = {}
+  end
+
 end
 
 --* ManuscriptContext class
