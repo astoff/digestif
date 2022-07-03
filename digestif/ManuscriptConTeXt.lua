@@ -493,6 +493,35 @@ end
 
 function ManuscriptContext.init_callbacks.section(self, pos, cs)
   local cont = self:parse_command(pos, cs).cont
+  for r in self:argument_items("assignments", pos, cs) do
+    local assigns = self:parse_kvlist(r)
+    for i = 1, #assigns do
+      local key = self:substring_stripped(assigns[i].key)
+      local val = assigns[i].value
+      if key == "reference" then
+        local idx = self.label_index
+        idx[#idx + 1] = {
+          name = self:substring_stripped(val),
+          pos = val.pos,
+          cont = val.cont,
+          outer_pos = pos,
+          outer_cont = cont,
+          manuscript = self
+        }
+      elseif key == "title" then
+        local idx = self.section_index
+        idx[#idx + 1] = {
+          name = self:substring_stripped(val),
+          level = self.commands[cs].section_level,
+          pos = val.pos,
+          cont = val.cont,
+          outer_pos = pos,
+          outer_cont = cont,
+          manuscript = self
+        }
+      end
+    end
+  end
   for r in self:argument_items("reference", pos, cs) do
     local idx = self.label_index
     idx[#idx + 1] = {
