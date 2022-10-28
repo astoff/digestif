@@ -3,7 +3,7 @@ Digestif
 
 <p align="center">
 <a href="https://luarocks.org/modules/astoff/digestif"><img src="https://img.shields.io/luarocks/v/astoff/digestif.svg" alt="LuaRocks" /></a>
-<a href="https://travis-ci.com/astoff/digestif"><img src="https://travis-ci.com/astoff/digestif.svg?branch=master" alt="Build Status" /></a>
+<a href="https://app.travis-ci.com/astoff/digestif"><img src="https://app.travis-ci.com/astoff/digestif.svg?branch=master" alt="Build Status" /></a>
 </p>
 
 Digestif is a code analyzer, and a [language server][lsp], for LaTeX,
