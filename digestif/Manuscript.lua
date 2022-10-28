@@ -539,7 +539,7 @@ local function local_scan_parse_keys(m, context, pos)
       local key = m:substring_trimmed(it.key)
       context = {
         key = key,
-        data = nested_get(context.data.keys, key), -- or fetch context-dependent keys, say on a usepackage
+        data = nested_get(context.data, "keys", key), -- or fetch context-dependent keys, say on a usepackage
         pos = it.pos,
         cont = it.cont,
         parent = context
@@ -549,7 +549,7 @@ local function local_scan_parse_keys(m, context, pos)
         local value = m:substring_trimmed(v)
         context = {
           value = value,
-          data = nested_get(context.data.values, value), -- what if "value" is command-like?
+          data = nested_get(context.data, "values", value), -- what if "value" is command-like?
           pos = v.pos,
           cont = v.cont,
           parent = context
