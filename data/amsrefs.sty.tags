@@ -167,13 +167,49 @@ commands= {
       },
       {
         meta = "type",
-        values = {
-          "article",
-          "book",
-          "misc",
-          "report",
-          "thesis",
-          "webpage"
+        keys = {
+          article = {
+            details = [[
+A relatively short but self-contained item that is typically published
+as part of a larger collection, such as a journal, a conference
+proceedings, an edited collection published as a book, or even as part
+of a World Wide Web document.
+]]
+          },
+          book = {
+            details = [[
+A written work by one or more authors where the authors share credit
+for the work as a whole.  For compatibility with BibTeX, the following
+entry types are available as aliases for book: collection,
+proceedings, manual, and unpublished.
+]]
+          },
+          misc = {
+            details = [[
+Anything that doesn’t fit into one of the other types.
+]]
+          },
+          report = {
+            details = [[
+A technical report, white paper, or the like. Similar to an article
+but usually published and distributed by an organization such as a
+university or corporation whose primary business is usually not
+publishing.  Also known as a techreport.
+]]
+          },
+          thesis = {
+            details = [[
+Like report but produced by the author for an educational institution
+to satisfy the requirements for a degree.  Not (normally) produced by
+a commercial publisher for sale.
+]]
+          },
+          webpage = {
+            details = [[
+An online resource. It is limited to the following fields: accessdate,
+author, date, note, subtitle, title, url.
+]]
+          }
         }
       },
       {
