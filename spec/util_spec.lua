@@ -131,10 +131,10 @@ end)
 
 describe("Fuzzy matching", function()
   it("does fuzzy matching", function()
-    local f = util.fuzzy_matcher("Abc")   
+    local f = util.fuzzy_matcher("Abc")
     assert(f"Abxc" > f"Axbxc")
     assert.truthy(f"ABC")
-    assert.falsy(f"abc")
+    assert.falsy(f"abc" or false)
   end)
 end)
 
