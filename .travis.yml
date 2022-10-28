@@ -1,26 +1,22 @@
-dist: bionic
-language: haskell
-ghc: 8.6
+dist: jammy
+language: python
+python: 3.10
 
 env:
   - LUA=5.3 LUAROCKS=3.0
   - LUA=5.4 LUAROCKS=3.0
-
-cache:
-  directories:
-  - $HOME/.ghc
-  - $HOME/.cabal
+  - LUA=5.4 LUAROCKS=latest CJSON=1
 
 before_install:
-  - pip install --user hererocks
+  - pip install hererocks==0.25.1 -r spec/requirements.txt
   - hererocks env --lua $LUA --luarocks $LUAROCKS
   - source env/bin/activate
   - luarocks install busted
-  - cabal install lens hspec lsp-test lsp-types
+  - if [ -n "$CJSON" ]; then luarocks install lua-cjson; fi
 
 install:
   - luarocks make digestif-dev-1.rockspec
 
 script:
   - busted --exclude-tags=ctx
-  - runhaskell spec/test-lsp.hs
+  - pytest spec

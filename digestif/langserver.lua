@@ -226,9 +226,6 @@ methods["textDocument/didChange"] = function(params)
     if change.range then
       local pos, cont
       pos, cont, p0, l0 = from_Range(src, change.range, p0, l0)
-      if change.rangeLength ~= utf8.len(src, pos, cont - 1) then
-        error("Range length mismatch in textdocument/didChange operation")
-      end
       src = src:sub(1, pos - 1) .. change.text .. src:sub(cont)
     else
       src = change.text
