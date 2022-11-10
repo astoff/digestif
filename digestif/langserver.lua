@@ -193,6 +193,10 @@ methods["initialize"] = function(params)
       referencesProvider = true,
       documentSymbolProvider = true,
       workspaceSymbolProvider = true
+    },
+    serverInfo = {
+      name = "Digestif",
+      version = config.version
     }
   }
 end
@@ -466,16 +470,17 @@ local function generate(path)
 end
 
 local usage = [[
-Usage: digestif [-h] [-v] [-g FILES]
+Usage: digestif [--version] [-h] [-v] [-g FILES]
 ]]
 
 local help = [[
 Digestif is a language server for TeX
 
 Optional arguments:
-  -v, --verbose          Enable log output to stderr
   -g, --generate FILES   Generate data file stubs for FILES
-  -h, --help             Display this message and quit
+  -h, --help             Display this message and exit
+  -v, --verbose          Enable log output to stderr
+  --version              Show version information
 
 Environment variables:
   DIGESTIF_DATA          Paths to look for data files
@@ -514,6 +519,9 @@ local function main(arg)
     elseif switch == "-h" or switch == "--help" then
       print(usage)
       print(help)
+      os.exit()
+    elseif switch == "--version" then
+      print("Digestif " .. config.version)
       os.exit()
     else
       print(usage)

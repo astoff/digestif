@@ -2,21 +2,21 @@
 */
 !bin/
 !data/
-!digesif/
+!digestif/
 !scripts/
 !spec/
 
 TAGS
 .envrc
 .dir-locals.el
-*.lua
-*.tex
-*.sty
-*.dtx
-*.pdf
-*.log
-*.csv
-*.org
+/*.lua
+/*.tex
+/*.sty
+/*.dtx
+/*.pdf
+/*.log
+/*.csv
+/*.org
 
 *.tags
 !data/*.tags

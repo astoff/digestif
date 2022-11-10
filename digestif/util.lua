@@ -473,6 +473,16 @@ local function find_file(path, name, read)
 end
 util.find_file = find_file
 
+--* OS utilities
+
+-- Return `name` if an executable with that name exists, nil
+-- otherwise.
+local function has_command(name)
+  local ok = os.execute(format("command -v %q > /dev/null", name))
+  return ok and name or nil
+end
+util.has_command = has_command
+
 --* URI manipulation
 
 local percent_decode = replace(

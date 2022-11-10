@@ -3,12 +3,13 @@ local format = string.format
 
 local config = {}
 
-local function has_command(name)
-  local ok = os.execute(format("command -v %q > /dev/null", name))
-  return ok and name or nil
+config.version = "0.4"
+local pre_version = os.getenv("DIGESTIF_PRERELEASE")
+if pre_version then
+  config.version = config.version .. "-" .. pre_version
 end
 
-if has_command "kpsewhich" then
+if util.has_command("kpsewhich") then
   local pipe = io.popen("kpsewhich -var-brace-value=TEXMF")
   local output = pipe:read("l")
   local ok, exitt, exitc = pipe:close()
@@ -42,7 +43,7 @@ config.extra_actions = {
 
 config.fuzzy_cite = true
 config.fuzzy_ref = true
-config.info_command = has_command("info")
+config.info_command = util.has_command("info")
 
 -- For candidates of these kinds, include the annotation in the
 -- candidate label.  The values of this table are a string which is
