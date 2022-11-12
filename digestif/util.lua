@@ -475,13 +475,15 @@ util.find_file = find_file
 
 --* OS utilities
 
+local is_command_cmd = dir_sep == "\\" and "WHERE /Q %q" or ">/dev/null command -v %q"
+
 -- Return `name` if an executable with that name exists, nil
 -- otherwise.
-local function has_command(name)
-  local ok = os.execute(format("command -v %q > /dev/null", name))
+local function is_command(name)
+  local ok = os.execute(format(is_command_cmd, name))
   return ok and name or nil
 end
-util.has_command = has_command
+util.is_command = is_command
 
 --* URI manipulation
 
