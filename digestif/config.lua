@@ -103,16 +103,7 @@ function config.load_from_table(tbl)
   end
 end
 
-local config_file_name = "digestif.conf"
-local config_file_path = os.getenv("XDG_CONFIG_HOME")
-  or util.path_join(os.getenv("HOME"), ".config")
-
 function config.load_from_file(file)
-  -- Try config file in current dir
-  file = file
-    or util.find_file("", "." .. config_file_name)
-    or util.find_file(config_file_path, config_file_name)
-  if not file then return end
   local tbl = {}
   local ok, err = loadfile(file, "t", tbl)
   if ok then ok, err = pcall(ok) end

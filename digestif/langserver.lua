@@ -497,7 +497,6 @@ local function main(arg)
   if util.find_file(script_path, "../data/primitives.tags") then
     table.insert(config.data_dirs, util.path_join(script_path, '../data'))
   end
-  config.load_from_file()
   config.load_from_env()
 
   -- Check if config.data_dirs was set up correctly
