@@ -46,7 +46,7 @@ Features
 - Support for LaTeX, ConTeXt, plain TeX, DocTeX (`.dtx` files) and
   Texinfo.
 
-- Bibliography support via BibTeX and amsrefs.
+- Bibliography support via BibTeX, BibLaTeX and amsrefs.
 
 - Lua API, independent of the language server protocol, for use in
   editors capable of loading Lua modules.  See [API on the wiki][api]
@@ -98,9 +98,6 @@ enable Eglot (`M-x eglot`).  Voilà!  Some hints:
 - Try the [consult-eglot] package to access the index of a multifile
   project (this is exposed via the the `workspace/symbols` LSP
   method.)
-
-- The fuzzy completion features is known to work in conjunction with
-  [Company mode].  Other completion UIs may be incompatible.
 
 ### Emacs with the [lsp-mode] package
 
