@@ -28,23 +28,29 @@ local cache = setmetatable({}, {
     __index = function () error "Server not initialized!" end
 })
 
--- a place to store the file name and texformat of open documents
+-- A place to store the file name and texformat of open documents.
 local open_documents = setmetatable({}, {
   __index = function(_, k)
     error(format("Trying to access unopened document %s", k))
   end
 })
 
--- TODO: deal with weird path separators
 local function from_DocumentUri(str)
   local scheme, auth, path, query, fragment = parse_uri(str)
   if scheme ~= "file" or (auth and auth ~= "") or query or fragment then
     error("Invalid or unsupported URI: " .. str)
   end
+  if util.os_type == "windows" and path:find("^/%a:") then
+    path = path:sub(2)
+  end
   return path
 end
 
 local function to_DocumentUri(str)
+  if util.os_type == "windows" then
+    str = str:gsub("[/\\]", "/")
+    if str:find("^%a:") then str = "/" .. str end
+  end
   return make_uri("file", "", str)
 end
 
@@ -384,8 +390,10 @@ local function log_error(err)
   return err
 end
 
+local crlf = util.os_type == "windows" and "\n" or "\r\n"
+
 local function write_msg(msg)
-  io.write("Content-Length: ", #msg, "\r\n\r\n", msg)
+  io.write("Content-Length: ", #msg, crlf, crlf, msg)
   io.flush()
 end
 
@@ -406,17 +414,17 @@ local function rpc_send(id, result, error_code)
     json_encode({
         jsonrpc = "2.0",
         id = id,
-        result = not error_code and result,
+        result = not error_code and result or nil,
         error = error_code and {code = error_code, message = result}
   }))
 end
 
 local function rpc_receive()
   local msg = read_msg()
-  local success, request = xpcall(json_decode, log_error, msg)
-  if not success then
+  local ok, request = xpcall(json_decode, log_error, msg)
+  if not ok then
     rpc_send(null, request, -32700)
-    return
+    os.exit(false)
   end
   return request.id, request.method, request.params
 end
@@ -430,8 +438,8 @@ local function process_request()
   local id, method_name, params = rpc_receive()
   local method = methods[method_name]
   if method then
-    local success, result = xpcall(method, log_error, params)
-    if success then
+    local ok, result = xpcall(method, log_error, params)
+    if ok then
       if id then rpc_send(id, result) end
     else
       rpc_send(id, result, 1)
@@ -449,7 +457,9 @@ local function generate(path)
   local generate_tags = require "digestif.data".generate_tags
   local tags = generate_tags(path)
   if not tags then
-    print("Error: can't find ‘" .. path .. "’ or can't generate tags from it.")
+    io.stderr:write(
+      format("Error: can't find '%s' or can't generate tags from it.\n", path)
+    )
     os.exit(false)
   end
   local _, basename = util.path_split(path)
@@ -464,9 +474,10 @@ local function generate(path)
   local i, j = 0, 0
   for _ in pairs(tags.commands) do i = i + 1 end
   for _ in pairs(tags.environments) do j = j + 1 end
-  print(format(
-          "Generated %s.tags \twith %3i commands and %3i environments.",
-          basename, i, j))
+  io.stderr:write(
+    format("Generated %15s.tags with %3i commands and %3i environments.\n",
+           basename, i, j)
+  )
 end
 
 local usage = [[
@@ -501,9 +512,11 @@ local function main(arg)
 
   -- Check if config.data_dirs was set up correctly
   if not util.find_file(config.data_dirs, "primitives.tags") then
-    print("Error: could not find data files at the following locations\n  - "
-            .. table.concat(config.data_dirs, "\n  - ")
-            .. "\nSet the DIGESTIF_DATA environment variable to fix this.")
+    io.stderr:write(
+      "Error: could not find data files at the following locations:\n  - "
+      .. table.concat(config.data_dirs, "\n  - ")
+      .. "\nSet the DIGESTIF_DATA environment variable to fix this.\n"
+    )
     os.exit(false)
   end
 
@@ -516,15 +529,15 @@ local function main(arg)
       for i = 1, #arg do generate(arg[i]) end
       os.exit()
     elseif switch == "-h" or switch == "--help" then
-      print(usage)
-      print(help)
+      io.write(usage)
+      io.write(help)
       os.exit()
     elseif switch == "--version" then
-      print("Digestif " .. config.version)
+      io.write(format("Digestif %s\n", config.version))
       os.exit()
     else
-      print(usage)
-      print("Invalid option: " .. switch)
+      io.stderr:write(usage)
+      io.stderr:write(format("Invalid option: %s\n", switch))
       os.exit(false)
     end
   end

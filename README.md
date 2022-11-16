@@ -63,7 +63,8 @@ install it.
 
 The only dependencies for this are git and a recent TeX installation.
 
-1. Download the [digestif][self-install] wrapper script.
+1. Download the [digestif][self-install-sh] wrapper script (or, on
+   Windows, [digestif.cmd][self-install-cmd]).
 2. Place it in your `$PATH` (say, `~/.local/bin`).
 3. Make it executable (`chmod +x ~/.local/bin/digestif`).
 
@@ -160,7 +161,8 @@ license also applies.
 [lsp-mode]: https://github.com/emacs-lsp/lsp-mode
 [lsp]: https://microsoft.github.io/language-server-protocol/
 [api]: https://github.com/astoff/digestif/wiki/API
-[self-install]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif
+[self-install-sh]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif
+[self-install-cmd]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif.cmd
 [easy]: https://raw.githubusercontent.com/astoff/digestif/images/easy.png
 [MIT license]: https://opensource.org/licenses/mit-license.html
 [consult-eglot]: https://github.com/mohkale/consult-eglot/

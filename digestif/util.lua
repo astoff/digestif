@@ -36,7 +36,7 @@ local function imap(f, t)
 end
 util.imap = imap
 
--- Return a table with entries (k, f(k)), where v ranges over the keys
+-- Return a table with entries (k, f(k)), where k ranges over the keys
 -- of t and all its __index parents.
 local function map_keys(f, t)
   local mt = getmetatable(t)
@@ -375,19 +375,38 @@ local function memoize(fun)
 end
 util.memoize = memoize
 
+--* OS utilities
+
+if package.config:sub(1, 1) == "\\" then
+  util.os_type = "windows"
+else
+  util.os_type = "posix"
+end
+
+local is_command_cmd = util.os_type == "windows"
+  and "WHERE /Q %q"
+  or ">/dev/null command -v %q"
+
+-- Return `name` if an executable with that name exists, nil
+-- otherwise.
+local function is_command(name)
+  local ok = os.execute(format(is_command_cmd, name))
+  return ok and name or nil
+end
+util.is_command = is_command
+
 --* Path and file manipulation
 
-local dir_sep = package.config:sub(1, 1)
-local dir_sep_patt, path_is_abs_patt
+local dir_sep, dir_sep_patt, path_is_abs_patt
 
-if dir_sep == "/" then
-  dir_sep_patt = P"/"
-  path_is_abs_patt = dir_sep_patt
-elseif dir_sep == "\\" then -- TODO: test this case
-  dir_sep_patt = S"\\/"
+if util.os_type == "windows" then
+  dir_sep = "/"
+  dir_sep_patt = S"/\\"
   path_is_abs_patt = (alpha * P":")^-1 * dir_sep_patt
 else
-  error "Invalid directory separator found in package.config"
+  dir_sep = "/"
+  dir_sep_patt = P"/"
+  path_is_abs_patt = dir_sep_patt
 end
 
 -- Concatenate two paths.  If the second is absolute, the first one is
@@ -433,13 +452,15 @@ local function path_normalize(p)
     or match(path_norm_dotdot_patt, p)
   if q then
     return path_normalize(q)
+  elseif util.os_type == "windows" then
+    return p:gsub("\\", "/")
   else
     return p
   end
 end
 util.path_normalize = path_normalize
 
-if dir_sep == "\\" then
+if util.os_type == "windows" then
   util.path_list_split = split";"
 else
   util.path_list_split = split":"
@@ -473,18 +494,6 @@ local function find_file(path, name, read)
 end
 util.find_file = find_file
 
---* OS utilities
-
-local is_command_cmd = dir_sep == "\\" and "WHERE /Q %q" or ">/dev/null command -v %q"
-
--- Return `name` if an executable with that name exists, nil
--- otherwise.
-local function is_command(name)
-  local ok = os.execute(format(is_command_cmd, name))
-  return ok and name or nil
-end
-util.is_command = is_command
-
 --* URI manipulation
 
 local percent_decode = replace(
@@ -493,7 +502,7 @@ local percent_decode = replace(
 )
 
 local percent_encode = replace(
-  char - (alnum + S"-._~/="),
+  char - (alnum + S"-./:=_~"),
   function(s) return format("%%%X", strbyte(s)) end
 )
 

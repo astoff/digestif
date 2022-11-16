@@ -1,17 +1,20 @@
 from pathlib import Path
 from urllib.parse import urlparse
+from urllib.request import url2pathname
 
 import pytest
 import pytest_lsp
 from pytest_lsp import ClientServerConfig
 from pytest_lsp.client import Client, Location, MarkupKind, Position, Range
 
+BIN_DIR = Path(__file__).parents[1].joinpath("bin")
 FIXTURE_DIR = Path(__file__).parent.joinpath("fixtures")
 
 
 @pytest_lsp.fixture(
     config=ClientServerConfig(
-        server_command=["digestif"], root_uri=FIXTURE_DIR.as_uri()
+        server_command=["lua", BIN_DIR / "digestif", "-v"],
+        root_uri=FIXTURE_DIR.as_uri(),
     ),
 )
 async def client():
@@ -19,7 +22,7 @@ async def client():
 
 
 def open_doc(client, file, language):
-    root = Path(urlparse(client.root_uri).path)
+    root = Path(url2pathname(urlparse(client.root_uri).path))
     doc = root.joinpath(file)
     with open(doc) as f:
         contents = f.read()
