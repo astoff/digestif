@@ -1,0 +1,103 @@
+ctan_package = "cleveref"
+commands = {
+  Cpageref = "$ref:cleveref.sty#/commands/cpageref",
+  Cpagerefrange = "$ref:cleveref.sty#/commands/cpagerefrange",
+  Cref = "$ref:cleveref.sty#/commands/cref",
+  Crefformat = {arguments = "$ref:cleveref.sty#/commands/crefformat/arguments"},
+  Crefmultiformat = {arguments = "$ref:cleveref.sty#/commands/crefmultiformat/arguments"},
+  Crefname = {
+    arguments = {{meta = "type"}, {meta = "singular"}, {meta = "plural"}}
+  },
+  Crefrange = "$ref:cleveref.sty#/commands/crefrange",
+  Crefrangeformat = {arguments = "$ref:cleveref.sty#/commands/crefformat/arguments"},
+  Crefrangemultiformat = {arguments = "$ref:cleveref.sty#/commands/crefmultiformat/arguments"},
+  cpageref = {
+    action = "ref",
+    arguments = {
+      {
+        literal = "*",
+        meta = "star",
+        optional = true,
+        summary = "Do not create a hyperlink."
+      },
+      {list = true, meta = "key"}
+    },
+    summary = "Refer to a page number."
+  },
+  cpagerefrange = {
+    action = "ref",
+    arguments = {
+      {
+        literal = "*",
+        meta = "star",
+        optional = true,
+        summary = "Do not create hyperlinks."
+      },
+      {meta = "key1"},
+      {meta = "key2"}
+    },
+    summary = "Refer to a range of page numbers."
+  },
+  cref = {
+    action = "ref",
+    arguments = {
+      {
+        literal = "*",
+        meta = "star",
+        optional = true,
+        summary = "Do not create a hyperlink."
+      },
+      {list = true, meta = "key"}
+    },
+    summary = "Refer to a section, figure or similar."
+  },
+  crefalias = {arguments = {{meta = "counter"}, {meta = "type"}}},
+  crefdefaultlabelformat = {arguments = "$ref:cleveref.sty#/commands/crefformat/arguments"},
+  crefformat = {arguments = {{meta = "type"}, {meta = "format"}}},
+  creflabelformat = {arguments = "$ref:cleveref.sty#/commands/crefformat/arguments"},
+  crefmultiformat = {
+    arguments = {
+      {meta = "type"},
+      {meta = "first"},
+      {meta = "second"},
+      {meta = "middle"},
+      {meta = "last"}
+    }
+  },
+  crefname = {
+    arguments = {{meta = "type"}, {meta = "singluar"}, {meta = "plural"}}
+  },
+  crefrange = {
+    action = "ref",
+    arguments = {
+      {
+        literal = "*",
+        meta = "star",
+        optional = true,
+        summary = "Do not create hyperlinks."
+      },
+      {meta = "key1"},
+      {meta = "key2"}
+    },
+    summary = "Refer to a range of sections, figures or similar."
+  },
+  crefrangeformat = {arguments = "$ref:cleveref.sty#/commands/crefformat/arguments"},
+  crefrangelabelformat = {arguments = "$ref:cleveref.sty#/commands/crefformat/arguments"},
+  crefrangemultiformat = {arguments = "$ref:cleveref.sty#/commands/crefmultiformat/arguments"},
+  labelcpageref = "$ref:cleveref.sty#/commands/cpageref",
+  labelcref = "$ref:cleveref.sty#/commands/cref",
+  labelcrefformat = {arguments = "$ref:cleveref.sty#/commands/crefformat/arguments"},
+  labelcrefmultiformat = {arguments = "$ref:cleveref.sty#/commands/crefmultiformat/arguments"},
+  labelcrefrangeformat = {arguments = "$ref:cleveref.sty#/commands/crefformat/arguments"},
+  labelcrefrangemultiformat = {arguments = "$ref:cleveref.sty#/commands/crefmultiformat/arguments"},
+  lcnamecref = {arguments = {{meta = "#1"}}},
+  lcnamecrefs = {arguments = {{meta = "#1"}}},
+  nameCref = "$ref:cleveref.sty#/commands/namecref",
+  nameCrefs = "$ref:cleveref.sty#/commands/namecref",
+  namecref = {
+    action = "ref",
+    arguments = {{meta = "key"}},
+    summary = "Print the name of reference (section, figure, etc.)."
+  },
+  namecrefs = "$ref:cleveref.sty#/commands/namecref"
+}

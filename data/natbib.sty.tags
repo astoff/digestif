@@ -1,0 +1,34 @@
+ctan_package = "natbib"
+commands = {
+  Citealp = "$ref:natbib.sty#/commands/cite",
+  Citealt = "$ref:natbib.sty#/commands/cite",
+  Citeauthor = "$ref:natbib.sty#/commands/cite",
+  Citep = "$ref:natbib.sty#/commands/cite",
+  Citet = "$ref:natbib.sty#/commands/cite",
+  cite = {
+    action = "cite",
+    arguments = {
+      {delimiters = {"[", "]"}, meta = "prenote", optional = true},
+      {delimiters = {"[", "]"}, meta = "postnote", optional = true},
+      {list = true, meta = "keys"}
+    },
+    summary = "Refer to a bibliography item."
+  },
+  citealp = "$ref:natbib.sty#/commands/cite",
+  citealt = "$ref:natbib.sty#/commands/cite",
+  citeauthor = "$ref:natbib.sty#/commands/cite",
+  citeauthoryear = "$ref:natbib.sty#/commands/cite",
+  citefullauthor = "$ref:natbib.sty#/commands/cite",
+  citename = "$ref:natbib.sty#/commands/cite",
+  citenum = "$ref:natbib.sty#/commands/cite",
+  citep = "$ref:natbib.sty#/commands/cite",
+  citepalias = "$ref:natbib.sty#/commands/cite",
+  citestarts = "$ref:natbib.sty#/commands/cite",
+  citestyle = {arguments = {{meta = "style"}}},
+  citet = "$ref:natbib.sty#/commands/cite",
+  citetalias = "$ref:natbib.sty#/commands/cite",
+  citetext = {arguments = {{meta = "text"}}},
+  citeyear = "$ref:natbib.sty#/commands/cite",
+  citeyearpar = "$ref:natbib.sty#/commands/cite",
+  shortcites = "$ref:natbib.sty#/commands/cite"
+}

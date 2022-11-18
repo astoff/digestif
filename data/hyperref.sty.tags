@@ -1,0 +1,45 @@
+ctan_package = "hyperref"
+commands = {
+  autopageref = "$ref:hyperref.sty#/commands/pageref",
+  autoref = "$ref:hyperref.sty#/commands/ref",
+  href = {
+    arguments = {
+      {delimiters = {"[", "]"}, meta = "options", optional = true},
+      {meta = "URL"},
+      {meta = "text"}
+    },
+    summary = "Create a hyperlink."
+  },
+  nolinkurl = {
+    arguments = {{meta = "URL"}},
+    summary = "Typeset an URL like `\\url`, but without a hyperlink."
+  },
+  pageref = {
+    arguments = {
+      {
+        literal = "*",
+        meta = "star",
+        optional = true,
+        summary = "Do not create a hyperlink."
+      },
+      {list = true, meta = "key"}
+    },
+    documentation = "info:latex2e#\\pageref",
+    summary = "Refer to a page number."
+  },
+  ref = {
+    action = "ref",
+    arguments = {
+      {
+        literal = "*",
+        meta = "star",
+        optional = true,
+        summary = "Do not create a hyperlink."
+      },
+      {list = true, meta = "key"}
+    },
+    documentation = "info:latex2e#\\ref",
+    summary = "Refer to a section, figure or similar."
+  },
+  url = {arguments = {{meta = "URL"}}, summary = "Typeset an URL."}
+}
