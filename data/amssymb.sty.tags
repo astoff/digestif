@@ -6,7 +6,7 @@ Original license: LPPL 1.3c
 
 package = {
   name = "amssymb",
-  documentation = "texdoc:fonts/amsfonts/amssymb.pdf"
+  documentation = "texmf:doc/fonts/amsfonts/amssymb.pdf"
 }
 
 commands = {

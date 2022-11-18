@@ -58,7 +58,7 @@ save_from_table("unicode-math.sty.lua", {
                   comments=header,
                   package = {
                     name = "unicode-math.sty",
-                    documentation = "texdoc:latex/unicode-math/unicode-math.pdf"
+                    documentation = "texmf:doc/latex/unicode-math/unicode-math.pdf"
                   },
                   commands=collections.um},
                 {"comments", "package"})

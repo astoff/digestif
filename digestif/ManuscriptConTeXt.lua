@@ -309,7 +309,7 @@ if ctx_tags then
   ctx_tags.documentation = {
     [1] = {
       summary = "ConTeXt Mark IV: an excursion",
-      uri = "texdoc:context/documents/general/manuals/ma-cb-en.pdf"
+      uri = "texmf:doc/context/documents/general/manuals/ma-cb-en.pdf"
     },
     [2] = {
       summary = "ConTeXt documentation library",

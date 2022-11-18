@@ -516,12 +516,14 @@ local uri_patt = sequence(
 util.parse_uri = matcher(uri_patt)
 
 local function make_uri(scheme, authority, path, query, fragment)
-  local uri = scheme .. ":"
-  if authority then uri = uri .. "//" .. authority end
-  uri = uri .. percent_encode(path)
-  if query then uri = uri .. "?" .. percent_encode(query) end
-  if fragment then uri = uri .. "#" .. percent_encode(fragment) end
-  return uri
+  local t = {}
+  util.log_objects(scheme, authority, path, query, fragment)
+  if scheme then t[#t+1] = scheme; t[#t+1] = ":" end
+  if authority then t[#t+1] = "//"; t[#t+1] = authority end
+  if path then t[#t+1] = percent_encode(path) end
+  if query then t[#t+1] = "?"; t[#t+1] = percent_encode(query) end
+  if fragment then t[#t+1] = "#"; t[#t+1] = percent_encode(fragment) end
+  return concat(t)
 end
 util.make_uri = make_uri
 

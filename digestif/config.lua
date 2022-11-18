@@ -29,6 +29,11 @@ end
 
 config.data_dirs = {} -- TODO: What should be the default?
 
+-- Location of a complete texmf distribution, used for instance to
+-- find documentation not installed locally.  Passed to format with
+-- one argument, the percent-encoded name of a file.
+config.external_texmf = "https://www.tug.org/texlive/Contents/live/texmf-dist/%s"
+
 config.provide_snippets = false
 
 -- Table mapping command names to the snippet to be used, overriding

@@ -8,15 +8,15 @@ dependencies = {"primitives"}
 documentation = {
   {
     summary = "A (Not So) Short Introduction to LaTeX 2ε",
-    uri = "texdoc:latex/lshort-english/lshort.pdf"
+    uri = "texmf:doc/latex/lshort-english/lshort.pdf"
   },
   {
     summary = "LaTeX 2ε for authors",
-    uri = "texdoc:latex/base/usrguide.pdf"
+    uri = "texmf:doc/latex/base/usrguide.pdf"
   },
   {
     summary = "LaTeX 2ε for class and package writers",
-    uri = "texdoc:latex/base/clsguide.pdf"
+    uri = "texmf:doc/latex/base/clsguide.pdf"
   }
 }
 commands = {
