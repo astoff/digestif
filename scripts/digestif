@@ -21,5 +21,4 @@ fi
 
 export LUA_PATH="$DIGESTIF_HOME/?.lua"
 export DIGESTIF_PRERELEASE="$(git -C "$DIGESTIF_HOME" rev-parse --short HEAD)"
-
-"$LUA" "$DIGESTIF_HOME/bin/digestif" "$@"
+exec "$LUA" "$DIGESTIF_HOME/bin/digestif" "$@"
