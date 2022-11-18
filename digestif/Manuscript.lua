@@ -821,24 +821,24 @@ function Manuscript.completion_handlers.cs(self, ctx)
   for cs in pairs(map_keys(self.parser.cs_matcher(prefix), commands)) do
     local cmd = commands[cs]
     local args = cmd.arguments
-    local user_snippet = extra_snippets[cs]
+    local snippet = extra_snippets[cs] or cmd.snippet
     ret[#ret+1] = {
       text = cs,
       summary = cmd.summary,
       annotation = args and self:signature_args(args) or cmd.symbol,
-      snippet = user_snippet or args and self:snippet_cmd(cs, args)
+      snippet = snippet or args and self:snippet_cmd(cs, args)
     }
   end
   for env in pairs(map_keys(matcher(prefix), environments)) do
     local cmd = environments[env]
     local args = cmd.arguments
-    local user_snippet = extra_snippets[env]
+    local snippet = extra_snippets[env] or cmd.snippet
     local annotation = args and self:signature_args(args)
     ret[#ret+1] = {
       text = env,
       summary = cmd.summary,
       annotation = (annotation and annotation .. " " or "") .. "(environment)",
-      snippet = user_snippet or self:snippet_env(env, args)
+      snippet = snippet or self:snippet_env(env, args)
     }
   end
   table.sort(ret, function(x,y) return x.text < y.text end)

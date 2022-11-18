@@ -591,7 +591,8 @@ commands = {
   begin = {
     action = "begin",
     arguments = {{meta = "environment name"}},
-    documentation = "info:latex2e#Environments"
+    documentation = "info:latex2e#Environments",
+    snippet = "begin{${1:environment}}$0\n\\end{$1}"
   },
   beta = {documentation = "info:latex2e#Math symbols", symbol = "β"},
   bf = {documentation = "info:latex2e#Font styles"},
@@ -1586,7 +1587,7 @@ commands = {
   pagestyle = {
     arguments = {{meta = "style"}},
     documentation = "info:latex2e#\\pagestyle",
-    summary = "\9\9Change the headings/footings style."
+    summary = "Change the headings/footings style."
   },
   paperheight = {documentation = "info:latex2e#Page layout parameters"},
   paperwidth = {documentation = "info:latex2e#Page layout parameters"},
@@ -2358,10 +2359,14 @@ environments = {
   figure = {
     arguments = {{delimiters = {"[", "]"}, meta = "placement", optional = true}},
     documentation = "info:latex2e#figure",
+    snippet = "begin{figure}${1:[placement]}\n\t$0\n\\caption{${2:caption text}}\n\\end{figure}",
     summary = "Floating figures."
   },
   ["figure*"] = {
-    arguments = {{delimiters = {"[", "]"}, meta = "placement", optional = true}}
+    arguments = {{delimiters = {"[", "]"}, meta = "placement", optional = true}},
+    documentation = "info:latex2e#figure",
+    snippet = "begin{figure*}${1:[placement]}\n\t$0\n\\caption{${2:caption text}}\n\\end{figure*}",
+    summary = "Floating figure spanning both text columns."
   },
   filecontents = {
     arguments = {{meta = "filename"}},

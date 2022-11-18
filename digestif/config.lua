@@ -30,10 +30,10 @@ end
 config.data_dirs = {} -- TODO: What should be the default?
 
 config.provide_snippets = false
-config.extra_snippets = {
-  begin = "begin{${1:environment}}$0\n\\end{$1}",
-  figure = "begin{figure}${1:[placement]}\n\t$0\n\\caption{${2:caption text}}\n\\end{figure}"
-}
+
+-- Table mapping command names to the snippet to be used, overriding
+-- the default.
+config.extra_snippets = {}
 
 -- This allows the user to assign custom actions to generated command
 -- tags.
