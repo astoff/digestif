@@ -182,6 +182,9 @@ local methods = {}
 methods["initialize"] = function(params)
   config.provide_snippets = nested_get(params.capabilities,
     "textDocument", "completion", "completionItem", "snippetSupport")
+  if params.initializationOptions then
+    config.load_from_table(params.initializationOptions)
+  end
   return {
     capabilities = {
       textDocumentSync = {
