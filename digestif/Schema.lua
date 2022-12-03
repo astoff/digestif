@@ -140,7 +140,7 @@ function Schema:validate(obj)
       if i == len then return false, "Alternatives: no match" end
     end
   end
-  return true    
+  return true
 end
 
 function Schema:assert(obj)
@@ -151,7 +151,7 @@ function Schema:assert_fail(obj)
   assert(not self:validate(obj))
 end
 
-schema_of_schema = Schema {
+local schema_of_schema = Schema {
   fields = {
     description = {
       type = "string",

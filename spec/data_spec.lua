@@ -1,15 +1,22 @@
 local Schema = require "digestif.Schema"
 local data = require "digestif.data"
 require "digestif.config".data_dirs = {"./data"}
-require "digestif.config".verbose = true
 
-documentation_schema = Schema{
+local documentation_schema = Schema{
   description = "Hyperlink to documentation (texdoc, info, web, etc.)",
-  type = "string",
-  optional = true
+  optional = true,
+  [1] = {type = "string"},
+  [2] = {
+    items = {
+      fields = {
+        summary = {type = "string"},
+        uri = {type = "string"}
+      }
+    }
+  },
 }
 
-key_schema = Schema{
+local key_schema = Schema{
   description = "Description of a valid key (possibly with values) to be passed as argument",
   fields = {
     summary = {
@@ -38,7 +45,7 @@ key_schema = Schema{
 }
 key_schema.fields.keys.values = key_schema
 
-argument_schema = Schema{
+local argument_schema = Schema{
   description = "Description of a command argument",
   fields = {
     meta = {
@@ -82,7 +89,7 @@ argument_schema = Schema{
   }
 }
 
-command_schema = Schema{
+local command_schema = Schema{
   fields = {
     summary = {
       description = "A short (one line) description of the command",
@@ -102,25 +109,32 @@ command_schema = Schema{
   }
 }
 
-datafile_schema = Schema{
+local datafile_schema = Schema{
   fields = {
-    comments = {
-      description = "Metadata for the data file",
+    ctan_package = {
+      description = "Package name on CTAN",
       type = "string",
-      optional = true -- should be present, with license info
+      optional = true
     },
+    dependencies = {
+      description = "A list of dependencies of the package",
+      items = {type = "string"},
+      optional = true
+    },
+    documentation = documentation_schema,
     package = {
       description = "Information about the TeX component described by the data file",
       fields = {
         dependencies = {
           description = "A list of dependencies of the package",
-          items = {enum = datafiles},
+          items = {type = "string"},
           optional = true
         },
         documentation = documentation_schema,
         name = {
           description = "Name of the package",
-          type = "string"
+          type = "string",
+          optional = true
         }
       },
       optional = true
