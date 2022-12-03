@@ -33,7 +33,7 @@ local loaded_tags = {}
 local ctan_package, ctan_package_of -- to be defined
 
 local tlpdb_path = config.tlpdb_path
-  and find_file(config.tldb_path)
+  and find_file(config.tlpdb_path)
   or find_file(config.texmf_dirs, "../tlpkg/texlive.tlpdb")
 
 if tlpdb_path then
@@ -41,7 +41,7 @@ if tlpdb_path then
   local _, tlpdb_text = find_file(tlpdb_path, nil, true)
 
   if config.verbose then
-    log("Reading TLPDB from " .. tlpdb_path)
+    log("Reading TLPDB from '%s'", tlpdb_path)
   end
 
   local Peol = P"\n"
@@ -75,10 +75,10 @@ if tlpdb_path then
                Ct(many( -- collect several docfile entries in a list
                     search( -- looking for the interesting ones only
                       Ct( -- parse one docfile entry
-                        sequence(
-                          Peol * " RELOC/",                                      -- discard the file line marker
-                          Cg(gobble(" ", 1 - Peol) / "texmf:%0", "uri"),   -- collect the uri,
-                          Cg(P" details=\"" * C(gobble"\""), "summary"))), -- but only if details exist
+                        sequence( -- collect URI, but only if details field exist
+                          Peol * " RELOC/",
+                          Cg(gobble(" ", 1 - Peol) / "texmf:%0", "uri"),
+                          Cg(P" details=\"" * C(gobble"\""), "summary"))),
                       within_files))))),
         "documentation"),
       Cg( -- find runfiles section or give up
@@ -120,7 +120,7 @@ else
 
   ctan_package = function() end
   ctan_package_of = function() end
-  if config.verbose then log("TLPDB not found ") end
+  if config.verbose then log("TLPDB not found") end
 
 end
 
@@ -221,9 +221,7 @@ local function generate_tags(name)
   if not path then return end
   local texformat = infer_format(path)
   if not texformat then return end
-  if config.verbose then
-    log("Generating tags from ‘%s’", path)
-  end
+  if config.verbose then log("Generating tags: %s", path) end
   local pkg = ctan_package_of(name)
   if texformat == "context-xml" then
     -- The function below is defined and monkey-patched in
@@ -272,10 +270,11 @@ end
 -- Load a tags file from the data directory.
 local function load_tags(name)
   if strfind(name, "..", 1, true) then return end -- bad file name
-  local path = find_file(config.data_dirs, name .. ".tags")
+  local path, str = find_file(config.data_dirs, name .. ".tags", true)
   if not path then return end
+  if config.verbose then log("Loading tags: %s", path) end
   local tags = {}
-  local ok, message = loadfile(path, "t", tags)
+  local ok, message = load(str, path, "t", tags)
   if ok then ok, message = pcall(ok) end
   if not ok and config.verbose then
     log("Error loading %s.tags: %s", name, message)

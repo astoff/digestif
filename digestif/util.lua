@@ -1,6 +1,7 @@
 -- Assorted utility functions
 
 local lpeg = require "lpeg"
+local zip = pcall(require, "zip") and require "zip"
 
 local io, os = io, os
 local co_yield, co_wrap = coroutine.yield, coroutine.wrap
@@ -482,14 +483,22 @@ local function find_file(path, name, read)
       local p, s = find_file(path[i], name, read)
       if p then return p, s end
     end
+    return
+  end
+  local file
+  local zipfile = zip and name and zip.open(path)
+  if zipfile then
+    path = path .. "#" .. name
+    file = zipfile:open(name)
+    zipfile:close()
   else
     if name then path = path_join(path, name) end
-    local f = io.open(path)
-    if f then
-      local str = read and f:read("a")
-      f:close()
-      return path, str
-    end
+    file = io.open(path)
+  end
+  if file then
+    local str = read and file:read("*a")
+    file:close()
+    return path, str
   end
 end
 util.find_file = find_file
@@ -517,7 +526,6 @@ util.parse_uri = matcher(uri_patt)
 
 local function make_uri(scheme, authority, path, query, fragment)
   local t = {}
-  util.log_objects(scheme, authority, path, query, fragment)
   if scheme then t[#t+1] = scheme; t[#t+1] = ":" end
   if authority then t[#t+1] = "//"; t[#t+1] = authority end
   if path then t[#t+1] = percent_encode(path) end

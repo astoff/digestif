@@ -506,21 +506,21 @@ Environment variables:
 ]]
 
 local function main(arg)
-  -- Set up default config.data_dirs and the load user config, if any
-  local script_path = util.path_split(arg[0])
-  if util.find_file(script_path, "../data/primitives.tags") then
-    table.insert(config.data_dirs, util.path_join(script_path, '../data'))
-  end
+  -- Set up default config.data_dirs, if needed
   config.load_from_env()
-
-  -- Check if config.data_dirs was set up correctly
-  if not util.find_file(config.data_dirs, "primitives.tags") then
-    io.stderr:write(
-      "Error: could not find data files at the following locations:\n  - "
-      .. table.concat(config.data_dirs, "\n  - ")
-      .. "\nSet the DIGESTIF_DATA environment variable to fix this.\n"
-    )
-    os.exit(false)
+  if #config.data_dirs == 0 then
+    for _, dir in ipairs{
+      util.path_split(debug.getinfo(1).source:match("^@(.*)")),
+      util.path_split(arg[0]),
+      nil
+    } do
+      local f = io.open(util.path_join(dir, "../data/primitives.tags"))
+      if f then
+        f:close()
+        config.data_dirs = {util.path_join(dir, "../data")}
+        break
+      end
+    end
   end
 
   -- Read CLI args
@@ -545,11 +545,18 @@ local function main(arg)
     end
   end
 
-  if config.verbose then
-    log("Digestif started!")
+  -- Check if config.data_dirs was set up correctly
+  if not util.find_file(config.data_dirs, "primitives.tags") then
+    io.stderr:write(
+      "Error: could not find data files at the following locations:\n\t"
+      .. table.concat(config.data_dirs, "\n\t")
+      .. "\nSet the DIGESTIF_DATA environment variable to fix this.\n"
+    )
+    os.exit(false)
   end
 
   -- Main language server loop
+  if config.verbose then log("Digestif started!") end
   while true do process_request() end
 end
 

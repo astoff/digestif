@@ -1341,7 +1341,6 @@ end
 function Manuscript.find_definition_handlers.begin(self, ctx)
   local name = self:substring(ctx)
   for item in self.root:traverse "newenvironment_index" do
-    util.log("Compare %s %s", item.name, name)
     if name == item.name then
       return {
         pos = item.pos,

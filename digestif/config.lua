@@ -14,7 +14,10 @@ if util.is_command("kpsewhich") then
   local output = pipe:read("l")
   local ok, exitt, exitc = pipe:close()
   if ok and exitt == "exit" and exitc == 0 then
-    config.texmf_dirs = util.path_list_split(output:gsub("!!", ""))
+    config.texmf_dirs = util.imap(
+      function (s) return s:gsub("^!!", "") end,
+      util.path_list_split(output)
+    )
   elseif config.verbose then
     util.log("Error running kpsewhich (%s %d)", exitt, exitc)
   end
@@ -72,16 +75,17 @@ local function is_table(key_type, val_type)
 end
 
 local validators =   {
-  data_dirs = "string",
-  texmf_dirs = "string",
-  tlpdb_path = "string",
+  data_dirs = is_table("number", "string"),
   extra_actions = is_table("string", "string"),
   extra_snippets = is_table("string", "string"),
   fuzzy_cite = "boolean",
   fuzzy_ref = "boolean",
   info_command = "string",
+  lsp_long_candidates = is_table("string", "string"),
   provide_snippets = "boolean",
-  verbose = "boolean"
+  texmf_dirs = is_table("number", "string"),
+  tlpdb_path = "string",
+  verbose = "boolean",
 }
 
 -- Set config entries found in `tbl`.
@@ -133,6 +137,19 @@ function config.load_from_env()
   local DIGESTIF_TLPDB = os.getenv("DIGESTIF_TLPDB")
   if DIGESTIF_TLPDB then
     config.tlpdb_path = util.path_list_split(DIGESTIF_TLPDB)
+  end
+end
+
+function config.check_data(dir)
+  if not dir then
+    for _, dir in ipairs(config.data_dirs) do
+      if config.check_data(dir) then return true end
+    end
+  end
+  local f = io.open(util.path_join(dir, "primitives.tags"))
+  if f then
+    f:close()
+    return true
   end
 end
 
