@@ -1,8 +1,10 @@
-comments = [[
-Extracted from the documentation source (etoolbox.tex)
-URL: https://ctan.org/tex-archive/macros/latex/contrib/etoolbox
-Original license: LPPL v1.3 or later
-]]
+-- Copyright 2007-2011 Philipp Lehman
+-- Copyright 2015-2020 Joseph Wright
+-- Copyright 2022 Augusto Stoffel
+-- SPDX-License-Identifier: LPPL-1.3c+
+--
+-- Adapted form the etoolbox package documentation, which can be found
+-- at https://ctan.org/pkg/etoolbox.
 ctan_package = "etoolbox"
 dependencies = {"etex.sty"}
 commands = {

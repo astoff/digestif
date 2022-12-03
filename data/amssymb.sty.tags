@@ -1,14 +1,14 @@
-comments = [[
-Extracted from the unicode-math package source
-URL: https://github.com/wspr/unicode-math/
-Original license: LPPL 1.3c
-]]
-
-package = {
-  name = "amssymb",
-  documentation = "texmf:doc/fonts/amsfonts/amssymb.pdf"
-}
-
+-- Copyright 2006-2019  Will Robertson
+-- Copyright 2010-2017  Philipp Stephani
+-- Copyright 2011-2017  Joseph Wright
+-- Copyright 2012-2015  Khaled Hosny
+-- Copyright 2022 Augusto Stoffel
+-- SPDX-License-Identifier: LPPL-1.3c+
+--
+-- Adapted from the file unicode-math-table.tex, part of the
+-- unicode-math package, which can be found at
+-- https://ctan.org/pkg/unicode-math.
+ctan_package = "amsfonts"
 commands = {
   Bbbk = {
     summary = "mathematical double-struck small k",

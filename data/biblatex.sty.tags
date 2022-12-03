@@ -1,8 +1,11 @@
-comments = [[
-Extracted from the documentation source (biblatex.tex)
-URL: https://ctan.org/tex-archive/macros/latex/contrib/biblatex
-Original license: LPPL v1.3 or later
-]]
+-- Copyright 2006-2012 Philipp Lehman
+-- Copyright 2012-2022 Philipp Lehman, Joseph Wright, Audrey Boruvka,
+--   Philip Kime
+-- Copyright 2022 Augusto Stoffel
+-- SPDX-License-Identifier: LPPL-1.3c
+--
+-- Adapted from the biblatex package documentation, which can be found
+-- at https://github.com/plk/biblatex.
 ctan_package = "biblatex"
 dependencies = {
   "blx-case-expl3.sty",

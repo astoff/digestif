@@ -1,11 +1,11 @@
-comments = [[
-Source: amsrefs documentatin
-URL: https://ctan.org/pkg/hyperref
-Original license: LPPL 1.3
-]]
+-- Copyright 2001-2004, 2007, 2008, 2010-2013 American Mathematical Society
+-- Copyright 2022 Augusto Stoffel
+-- SPDX-License-Identifier: LPPL-1.3c+
+--
+-- Adapted from the amsrefs package documentation, which can be found
+-- at https://ctan.org/pkg/amsrefs.
+ctan_package = "amsrefs"
 package = {
-  documentation = "texinfo:latex/amsrefs/amsrdoc.pdf",
-  name = "amsrefs",
   options = {
     alphabetic = {
       details = [[
