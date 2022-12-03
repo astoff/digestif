@@ -140,14 +140,9 @@ folder for examples.
 License
 -------
 
-The Digestif program and library, that is, everything outside the
-`data` folder, are available under the [MIT license].
-
-Some files in the `data` folder are extracted or adapted from other
-sources, such as source code, manuals or reference materials, and
-therefore may inherit specific licensing details.  At a minimum, they
-are free to use and redistribute.  When no restriction exists, the MIT
-license also applies.
+Digestif is available under the [GNU General Public License][GPL],
+version 3 or later.  For some files in the [data](./data) directory, a
+different license applies.  See [LICENSE](./LICENSE) for details.
 
 [gif]: https://raw.githubusercontent.com/astoff/digestif/images/screenshot.gif
 [info-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues#info-nodes
@@ -161,6 +156,6 @@ license also applies.
 [self-install-sh]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif
 [self-install-cmd]: https://raw.githubusercontent.com/astoff/digestif/master/scripts/digestif.cmd
 [easy]: https://raw.githubusercontent.com/astoff/digestif/images/easy.png
-[MIT license]: https://opensource.org/licenses/mit-license.html
+[GPL]: https://www.gnu.org/licenses/gpl-3.0.txt
 [consult-eglot]: https://github.com/mohkale/consult-eglot/
 [Company mode]: https://company-mode.github.io/
