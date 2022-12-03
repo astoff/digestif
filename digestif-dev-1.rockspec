@@ -2,7 +2,7 @@ package = "digestif"
 version = "dev-1"
 source = {
   url = "git://github.com/astoff/digestif",
-  branch = "master"
+  branch = "main"
 }
 description = {
   summary = "A code analyzer for TeX",
