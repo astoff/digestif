@@ -2,8 +2,9 @@ Digestif
 ========
 
 <p align="center">
-<a href="https://luarocks.org/modules/astoff/digestif"><img src="https://img.shields.io/luarocks/v/astoff/digestif.svg" alt="LuaRocks" /></a>
-<a href="https://app.travis-ci.com/astoff/digestif"><img src="https://app.travis-ci.com/astoff/digestif.svg?branch=master" alt="Build Status" /></a>
+<a href="https://app.travis-ci.com/astoff/digestif"><img src="https://app.travis-ci.com/astoff/digestif.svg?branch=main" alt="Build Status"></a>
+<a href="https://ctan.org/pkg/digestif"><img alt="CTAN" src="https://img.shields.io/ctan/v/digestif?color=blue"></a>
+<a href="https://luarocks.org/modules/astoff/digestif"><img alt="LuaRocks" src="https://img.shields.io/luarocks/v/astoff/digestif?color=blue"></a>
 </p>
 
 Digestif is a code analyzer, and a [language server][lsp], for LaTeX,
@@ -11,7 +12,7 @@ ConTeXt et caterva.  It provides context-sensitive completion,
 documentation, code navigation, and related functionality to any text
 editor that speaks the LSP protocol.
 
-![Mandatory GIF][gif]
+<p align="center"><img src="https://raw.githubusercontent.com/astoff/digestif/images/screenshot.gif" alt="Madatory GIF"></p>
 
 Features
 --------
@@ -134,18 +135,17 @@ digestif --generate FILES
 
 After filling in the missing details, the resulting tags file can be
 added to this repository (pull requests are welcome!).  The format of
-the tags files should be more or less self explanatory.  See the data
-folder for examples.
+the tags files should be more or less self explanatory.  See the
+[data](./data) folder for examples.
 
 License
 -------
 
 Digestif is available under the [GNU General Public License][GPL],
 version 3 or later.  For some files in the [data](./data) directory, a
-different (free) license applies.  See [LICENSE](./LICENSE) for
+different (free) license applies.  See [LICENSE.md](./LICENSE.md) for
 details.
 
-[gif]: https://raw.githubusercontent.com/astoff/digestif/images/screenshot.gif
 [info-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues#info-nodes
 [installation-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues
 [coc]: https://github.com/neoclide/coc.nvim

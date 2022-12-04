@@ -3,7 +3,7 @@ local lfs = require"lfs"
 local out = io.tmpfile()
 
 -- Keep initial segment unchanged
-for line in io.open("LICENSE"):lines() do
+for line in io.open("LICENSE.md"):lines() do
   if line == "---" then
     out:write("---\n\n")
     break
@@ -40,9 +40,9 @@ for _, fname in ipairs(fnames) do
   end
 end
 
--- Write back to LICENSE
+-- Write back to LICENSE.md
 out:seek("set")
-local f = io.open("LICENSE", "w")
+local f = io.open("LICENSE.md", "w")
 for line in out:lines() do
   f:write(line, "\n")
 end
