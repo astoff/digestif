@@ -401,15 +401,14 @@ local function write_msg(msg)
 end
 
 local function read_msg()
-  local headers, msg = {}, nil
-  for h in io.lines() do
-    if h == "" or h == "\r" then break end
-    local k, v = string.match(h, "^([%a%-]+): (.*)")
+  local headers = {}
+  for line in io.lines() do
+    if line == "" or line == "\r" then break end
+    local k, v = string.match(line, "^([%a%-]+): (.*)")
     if k then headers[k] = v end
   end
-  local len = tonumber(headers["Content-Length"])
-  if len then msg = io.read(len) end
-  return msg, headers
+  local len = tonumber(headers["Content-Length"]) or 0
+  return io.read(len), headers
 end
 
 local function rpc_send(id, result, error_code)
@@ -427,6 +426,10 @@ local function rpc_receive()
   local ok, request = xpcall(json_decode, log_error, msg)
   if not ok then
     rpc_send(null, request, -32700)
+    os.exit(false)
+  end
+  if type(request) ~= "table" or type(request.method) ~= "string" then
+    rpc_send(null, "Invalid request", -32600)
     os.exit(false)
   end
   return request.id, request.method, request.params
