@@ -12,7 +12,7 @@ description = {
     run as a plug-in to many different text editors.
   ]],
   homepage = "https://github.com/astoff/digestif/",
-  license = "MIT"
+  license = "GPLv3+ and other free licenses"
 }
 dependencies = {
   "lua >= 5.3",

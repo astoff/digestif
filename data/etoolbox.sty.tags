@@ -3,8 +3,8 @@
 -- Copyright 2022 Augusto Stoffel
 -- SPDX-License-Identifier: LPPL-1.3c+
 --
--- Adapted form the etoolbox package documentation, which can be found
--- at https://ctan.org/pkg/etoolbox.
+-- Adapted form the etoolbox package documentation, which can be found at
+-- https://ctan.org/pkg/etoolbox.
 ctan_package = "etoolbox"
 dependencies = {"etex.sty"}
 commands = {

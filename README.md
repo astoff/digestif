@@ -142,7 +142,8 @@ License
 
 Digestif is available under the [GNU General Public License][GPL],
 version 3 or later.  For some files in the [data](./data) directory, a
-different license applies.  See [LICENSE](./LICENSE) for details.
+different (free) license applies.  See [LICENSE](./LICENSE) for
+details.
 
 [gif]: https://raw.githubusercontent.com/astoff/digestif/images/screenshot.gif
 [info-issues]: https://github.com/astoff/digestif/wiki/Common-installation-issues#info-nodes

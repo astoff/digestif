@@ -4,8 +4,8 @@
 -- Copyright 2022 Augusto Stoffel
 -- SPDX-License-Identifier: LPPL-1.3c
 --
--- Adapted from the biblatex package documentation, which can be found
--- at https://github.com/plk/biblatex.
+-- Adapted from the biblatex package documentation, which can be found at
+-- https://ctan.org/pkg/biblatex.
 ctan_package = "biblatex"
 dependencies = {
   "blx-case-expl3.sty",

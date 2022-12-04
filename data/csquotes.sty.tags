@@ -3,8 +3,8 @@
 -- Copyright 2022 Augusto Stoffel
 -- SPDX-License-Identifier: LPPL-1.3c+
 --
--- Adapted from the csquotes package documentation, which can be found
--- at https://ctan.org/pkg/csquotes.
+-- Adapted from the csquotes package documentation, which can be found at
+-- https://ctan.org/pkg/csquotes.
 ctan_package = "csquotes"
 dependencies = {"etoolbox.sty", "keyval.sty"}
 commands = {

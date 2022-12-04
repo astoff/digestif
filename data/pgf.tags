@@ -3,7 +3,7 @@
 -- SPDX-License-Identifier: GFDL-1.2-or-later or LPPL-1.3c+
 --
 -- Adapted from the PGF manual, version 3.1.9a, which can be found at
--- https://github.com/pgf-tikz/pgf/.
+-- https://ctan.org/pkg/pgf.
 ctan_package = "pgf"
 documentation = {{summary = "PGF Manual", uri = "texmf:doc/generic/pgf/pgfmanual.pdf"}}
 commands = {

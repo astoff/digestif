@@ -2,8 +2,8 @@
 -- Copyright 2022 Augusto Stoffel
 -- SPDX-License-Identifier: LPPL-1.3c+
 --
--- Adapted from the amsrefs package documentation, which can be found
--- at https://ctan.org/pkg/amsrefs.
+-- Adapted from the amsrefs package documentation, which can be found at
+-- https://ctan.org/pkg/amsrefs.
 ctan_package = "amsrefs"
 package = {
   options = {

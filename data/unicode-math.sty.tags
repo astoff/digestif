@@ -5,9 +5,8 @@
 -- Copyright 2022 Augusto Stoffel
 -- SPDX-License-Identifier: LPPL-1.3c+
 --
--- Adapted from the file unicode-math-table.tex, part of
--- the unicode-math package, which can be found at
--- https://github.com/wspr/unicode-math/
+-- Adapted from the file unicode-math-table.tex, part of the unicode-math
+-- package, which can be found at https://ctan.org/pkg/unicode-math.
 ctan_package = "unicode-math"
 commands = {
    APLboxquestion = {

@@ -3,10 +3,10 @@
 -- Copyright 1988, 1994, 2007 Stephen Gilmore
 -- Copyright 1994, 1995, 1996 Torsten Martinsen
 -- Copyright 2022 Augusto Stoffel
--- SPDX-License-Identifier: GFDL
+-- SPDX-License-Identifier: GFDL-old-style
 --
--- Adapted from the LaTeX2e Unofficial Reference Manual, which can be
--- found at https://latexref.xyz/.
+-- Adapted from the LaTeX2e Unofficial Reference Manual, which can be found at
+-- https://latexref.xyz/.
 ctan_package = "latex"
 dependencies = {"primitives"}
 documentation = {
