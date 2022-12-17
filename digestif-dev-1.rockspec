@@ -17,6 +17,7 @@ description = {
 dependencies = {
   "lua >= 5.3",
   "lpeg >= 1.0",
+  "luafilesystem >= 1.8",
 }
 build = {
   type = "builtin",

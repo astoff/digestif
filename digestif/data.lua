@@ -1,3 +1,4 @@
+local lfs = require "lfs"
 local lpeg = require "lpeg"
 local util = require "digestif.util"
 local config = require "digestif.config"
@@ -124,49 +125,59 @@ else
 
 end
 
---* kpathsea emulation
+--* Indexing of TeX input files
 
--- function kpsewhich(name)
---
--- Like the kpsewhich command, return the full path of tex input file
--- name.  We use luatex's kpse bindings if available, and parse the
--- system's ls-R files otherwise.
---
-local kpsewhich
-
-if kpse then -- we're on luatex
-
-  local kpse_obj = kpse.new("luatex")
-
-  function kpsewhich(name)
-    return kpse_obj:find_file(name, "tex")
-  end
-
-else -- on plain lua, we look for ls-R files
-
-  local texmf_files = {}
-  local texmf_dirs = config.texmf_dirs
-  local dir_patt = P"./" * C(gobble(":" * P(-1)))
-  for i = 1, #texmf_dirs do
-    local texmf_dir = texmf_dirs[i]
-    local listing_path = find_file(texmf_dir, "ls-R")
-    if listing_path then
+-- Table mapping TeX input file names to the directory where it is
+-- located.
+local texmf_index = {}
+do
+  local dir_patt = C(P"."^-2 * P"/" * gobble(":" * P(-1)))
+  for _, texmf_dir in ipairs(config.texmf_dirs) do
+    local clock = config.verbose and os.clock()
+    local ls_file = io.open(path_join(texmf_dir, "ls-R"))
+    if ls_file then
       local current_dir
-      for line in io.lines(listing_path) do
-        local subdir = match(dir_patt, line)
-        if subdir then
-          current_dir = path_join(texmf_dir, subdir)
-        elseif current_dir and not texmf_files[line] then
-          texmf_files[line] = path_join(current_dir, line)
+      for name in ls_file:lines() do
+        if name ~= "" then
+          local subdir = match(dir_patt, name)
+          if subdir then
+            current_dir = path_join(texmf_dir, subdir)
+          elseif current_dir and not texmf_index[name] then
+            texmf_index[name] = current_dir
+          end
         end
       end
+      ls_file:close()
+    else
+      local function recur(current_dir, max_depth)
+        local ok, iter, dir_obj = pcall(lfs.dir, current_dir)
+        if not ok then return end
+        for name in iter, dir_obj do
+          if name ~= "." and name ~= ".." then
+            local path = path_join(current_dir, name)
+            local mode = lfs.attributes(path, "mode")
+            if mode == "directory" then
+              if max_depth > 0 then
+                recur(path, max_depth - 1)
+              end
+            elseif mode == "file" then
+              if not texmf_index[name] then
+                texmf_index[name] = current_dir
+              end
+            end
+          end
+        end
+      end
+      recur(texmf_dir, 10)
+    end
+    if clock then
+      log(
+        "Scanned %s%s in %0.3f ms",
+        texmf_dir, ls_file and "/ls-R" or "",
+        1000*(os.clock() - clock)
+      )
     end
   end
-
-  function kpsewhich(name)
-    return texmf_files[name]
-  end
-
 end
 
 --* Generate tags from the user's TeX installation
@@ -213,12 +224,13 @@ local function tags_from_manuscript(script, ctan_data)
 end
 
 -- Generate tags from TeX source code (or ConTeXt interface XML file,
--- if applicable).  The argument is a file name found by kpsewhich.
+-- if applicable).  The argument is TeX input file name.
 --
 local function generate_tags(name)
-  local path = kpsewhich(name)
-  path = path and find_file(config.texmf_dirs, path)
-  if not path then return end
+  local dir = texmf_index[name]
+  local path = dir and path_join(dir, name)
+  local f = path and io.open(path)
+  if f then f:close() else return end
   local texformat = infer_format(path)
   if not texformat then return end
   if config.verbose then log("Generating tags: %s", path) end
@@ -251,7 +263,7 @@ local parse_ref = util.matcher(
     P"$ref:",
     C(gobble"#") * P"#",
     Ct(many(P"/" * C(gobble"/")))))
-p=parse_ref
+
 local function resolve_refs(tbl, seen)
   seen = seen or {}
   for k, v in pairs(tbl) do
@@ -310,8 +322,6 @@ data.require_tags = require_tags
 -- for debugging and testing only, and depends on luafilesystem.
 local function load_all_tags()
   local t = {}
-  local ok, lfs = pcall(require, "lfs")
-  assert(ok, "Function data.load_all() need the luafilesystem library.")
   for _, data_dir in ipairs(config.data_dirs) do
     for path in lfs.dir(data_dir) do
       local pkg = path:match("(.*)%.tags")
