@@ -809,6 +809,7 @@ end
 
 Manuscript.completion_handlers = {}
 
+--** Command and environment name completion
 function Manuscript.completion_handlers.cs(self, ctx)
   local commands, environments = self.commands, self.environments
   local extra_snippets = config.extra_snippets
@@ -845,6 +846,28 @@ function Manuscript.completion_handlers.cs(self, ctx)
   return ret
 end
 
+function Manuscript.completion_handlers.begin(self, ctx, pos)
+  local environments = self.environments
+  local prefix = self:substring(ctx.pos, pos - 1)
+  local has_prefix = matcher(prefix)
+  local r = {
+    pos = ctx.pos,
+    prefix = prefix,
+    kind = "environment"
+  }
+  for env in pairs(map_keys(has_prefix, environments)) do
+    local cmd = environments[env]
+    r[#r+1] = {
+      text = env,
+      summary = cmd.summary,
+    }
+  end
+  return r
+end
+
+Manuscript.completion_handlers["end"] = Manuscript.completion_handlers.begin
+
+--** Key/value completion
 function Manuscript.completion_handlers.key(self, ctx, pos)
    local prefix = self:substring(ctx.pos, pos - 1)
    local len = #prefix
@@ -887,26 +910,7 @@ function Manuscript.completion_handlers.value(self, ctx, pos)
    return r
 end
 
-function Manuscript.completion_handlers.begin(self, ctx, pos)
-  local environments = self.environments
-  local prefix = self:substring(ctx.pos, pos - 1)
-  local has_prefix = matcher(prefix)
-  local r = {
-    pos = ctx.pos,
-    prefix = prefix,
-    kind = "environment"
-  }
-  for env in pairs(map_keys(has_prefix, environments)) do
-    local cmd = environments[env]
-    r[#r+1] = {
-      text = env,
-      summary = cmd.summary,
-    }
-  end
-  return r
-end
-
-Manuscript.completion_handlers["end"] = Manuscript.completion_handlers.begin
+--** Cross-reference and citation completion
 
 -- Get a short piece of text around a label.  If there is a recognized
 -- command ending right before the label, the context starts there.
