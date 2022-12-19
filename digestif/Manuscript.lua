@@ -1,9 +1,11 @@
 -- Manuscript class
+local lfs = require "lfs"
 
 local config = require "digestif.config"
 local util = require "digestif.util"
 
 local require_data = require "digestif.data".require
+local ctan_package_of = require "digestif.data".ctan_package_of
 local get_info = require "digestif.data".get_info
 local resolve_doc_items = require "digestif.data".resolve_doc_items
 local path_join, path_split = util.path_join, util.path_split
@@ -991,6 +993,58 @@ function Manuscript.completion_handlers.cite(self, ctx, pos)
     end
   end
   sort(r, cmp)
+  return r
+end
+
+--** File name completion
+function Manuscript.completion_handlers.input(self, ctx, pos)
+  local template
+  if ctx.arg then
+    template = nested_get(ctx, "parent", "data", "filename") or "?"
+  elseif ctx.item then
+    template = nested_get(ctx, "parent", "parent", "data", "filename") or "?"
+  else
+    return
+  end
+  local pre, post = template:match("([^?]*)%?(.*)")
+  local i_pre, i_post = #pre + 1, -1 - #post
+  local prefix = self:substring(ctx.pos, pos - 1)
+  local has_prefix = matcher(pre..prefix)
+  local has_suffix = matcher(post)
+  local match = function(s)
+    return has_suffix(s, -#post) and has_prefix(s)
+  end
+  local r = {
+    pos = ctx.pos,
+    prefix = prefix,
+    kind = "file"
+  }
+  -- Candidate from TeX directories.  Don't try that if the command
+  -- expects the literal file name.
+  if template ~= "?" then
+    for name, _ in pairs(require "digestif.data".texmf_index) do
+      if match(name) then
+        local pkg = ctan_package_of(name)
+        r[#r+1] = {
+          text = name:sub(i_pre, i_post),
+          summary = pkg and pkg.summary
+        }
+      end
+    end
+  end
+  -- Candidates from current directory
+  local ok, iter, dir_obj = pcall(lfs.dir, ".")
+  if ok then
+    for name in iter, dir_obj do
+      if match(name) and lfs.attributes(name, "mode") == "file" then
+        r[#r+1] = {
+          text = name:sub(i_pre, i_post)
+        }
+      end
+    end
+  end
+  -- Sort candidates
+  table.sort(r, function(a, b) return a.text < b.text end)
   return r
 end
 

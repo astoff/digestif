@@ -124,6 +124,7 @@ else
   if config.verbose then log("TLPDB not found") end
 
 end
+data.ctan_package_of = ctan_package_of
 
 --* Indexing of TeX input files
 
@@ -179,6 +180,7 @@ do
     end
   end
 end
+data.texmf_index = texmf_index
 
 --* Generate tags from the user's TeX installation
 

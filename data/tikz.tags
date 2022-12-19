@@ -2103,7 +2103,8 @@ Sections ?? to ??.
     documentation = "texmf:doc/generic/pgf/pgfmanual.pdf#pgf.back/usegdlibrary"
   },
   usetikzlibrary = {
-    arguments = {{meta = "list of libraries"}},
+    arguments = {{meta = "list of libraries", list=true}},
+    action="input", filename="tikzlibrary?.code.tex",
     details = [[
 Once TikZ has been loaded, you can use this command to load further
 libraries. The list of libraries should contain the names of libraries
