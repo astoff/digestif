@@ -1160,6 +1160,30 @@ function Manuscript.help_handlers.ref(self, ctx)
   }
 end
 
+function Manuscript.help_handlers.input(self, ctx)
+  local name = self:substring(ctx)
+  local template
+  if ctx.arg then
+    template = nested_get(ctx, "parent", "data", "filename") or "?"
+  elseif ctx.item then
+    template = nested_get(ctx, "parent", "parent", "data", "filename") or "?"
+  else
+    return
+  end
+  local pre, post = template:match("([^?]*)%?(.*)")
+  local filename = pre .. name .. post
+  local data = ctan_package_of(filename)
+  if not data then return end
+  local docstring = self:make_docstring("file", filename, data)
+  return {
+    pos = ctx.pos,
+    cont = ctx.cont,
+    kind = "file",
+    summary = data.summary,
+    details = docstring,
+  }
+end
+
 function Manuscript.help_handlers.begin(self, ctx)
   local env_name = self:substring(ctx)
   local data = self.environments[env_name]
@@ -1244,6 +1268,9 @@ function Manuscript:make_docstring_header(kind, name, data)
     ret = self:signature_env(name, data.arguments)
   elseif kind == "key" and data.meta then
     ret = ret .. " = " .. data.meta
+  elseif kind == "file" then
+    local pkg = ctan_package_of(name)
+    ret = pkg and pkg.ctan_package or name
   end
   if data.summary then
     ret = "`" .. ret .. "`: " .. data.summary
@@ -1289,11 +1316,11 @@ local function make_docstring_details(data)
   local details = data.details
   local doc_field = data.documentation
   if details then
-    return "# Details\n\n" .. details
+    return "# Details\n\n" .. details .. (details:sub(-1) == "\n" and "" or "\n")
   elseif type(doc_field) == "string" and doc_field:match"^info:" then
     local str, node, subnode = get_info(doc_field)
     if str then
-      return format("# Info: (%s)%s\n\n```Info\n%s```", node, subnode, str)
+      return format("# Info: (%s)%s\n\n```Info\n%s```\n", node, subnode, str)
     end
   else
     return
@@ -1301,8 +1328,8 @@ local function make_docstring_details(data)
 end
 
 function Manuscript:make_docstring_docs(kind, name, data)
-  local item_doc = data.documentation
-  local pkg = data.package
+  local item_doc = kind ~= "file" and data.documentation
+  local pkg = kind == "file" and data or data.package
   local pkg_doc = pkg and pkg.documentation
   local t = {"# Documentation\n"}
   if pkg and pkg.ctan_package then
@@ -1311,10 +1338,17 @@ function Manuscript:make_docstring_docs(kind, name, data)
     elseif kind == "cs" then
       name = self:signature_cmd(name)
     end
-    t[#t+1] = format(
-      "`%s` is defined in the [%s](https://www.ctan.org/pkg/%s) package.\n",
-      name, pkg.ctan_package, pkg.ctan_package
-    )
+    if kind == "file" then
+      t[#t+1] = format(
+        "`%s` is part of the [%s](https://www.ctan.org/pkg/%s) package.\n",
+        name, pkg.ctan_package, pkg.ctan_package
+      )
+    else
+      t[#t+1] = format(
+        "`%s` is defined in the [%s](https://www.ctan.org/pkg/%s) package.\n",
+        name, pkg.ctan_package, pkg.ctan_package
+      )
+    end
   end
   if item_doc then
     extend(t, resolve_doc_items(item_doc))
