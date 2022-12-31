@@ -78,7 +78,7 @@ local search_magic_comment_patt = util.choice(
 
 -- Determine the root path of a document from magic comments.
 function Cache:rootname(filename)
-  local _, cookie = self(filename) -- warm up
+  local _, cookie = self(filename) -- luacheck: ignore cookie (warm up the cache)
   local props = assert(self.store[filename])
   local rootname = props.rootname
   if rootname == nil then

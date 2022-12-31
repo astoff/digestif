@@ -142,8 +142,8 @@ end
 
 function config.check_data(dir)
   if not dir then
-    for _, dir in ipairs(config.data_dirs) do
-      if config.check_data(dir) then return true end
+    for _, data_dir in ipairs(config.data_dirs) do
+      if config.check_data(data_dir) then return true end
     end
   end
   local f = io.open(util.path_join(dir, "primitives.tags"))

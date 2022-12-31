@@ -8,7 +8,7 @@ local require_data = require "digestif.data".require
 local ctan_package_of = require "digestif.data".ctan_package_of
 local get_info = require "digestif.data".get_info
 local resolve_doc_items = require "digestif.data".resolve_doc_items
-local path_join, path_split = util.path_join, util.path_split
+local path_split = util.path_split
 local path_normalize = util.path_normalize
 local find_file = util.find_file
 local format_filename_template = util.format_filename_template
@@ -681,7 +681,7 @@ end
 --   (of length twice that of args) indicating the positions of each
 --   argument within that string.
 --
-function Manuscript:signature_args(args, before)
+function Manuscript:signature_args(args, before) -- luacheck: ignore self
   if not args then return before or "", {} end
   local t, p, pos = {before}, {}, 1 + (before and #before or 0)
   for i = 1, #args do
@@ -729,7 +729,7 @@ Manuscript.signature_env = Manuscript.signature_cmd
 -- Returns:
 --   The formatted snippet, as a string, without the $0 placeholder.
 --
-function Manuscript:snippet_args(args, i)
+function Manuscript:snippet_args(args, i) -- luacheck: ignore self
   if not args then return "" end
   i = i or 1
   local t = {}

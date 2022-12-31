@@ -28,7 +28,7 @@ local function collect(s)
   local top = {}
   table.insert(stack, top)
   local ni,c,label,xarg, empty
-  local i, j = 1, 1
+  local i, j = 1, 1 -- luacheck: ignore j
   while true do
     ni,j,c,label,xarg, empty = string.find(s, "<(%/?)([%w:]+)(.-)(%/?)>", i)
     if not ni then break end
@@ -290,7 +290,7 @@ end
 local function tags_from_xml(file, pkg)
   local ok, str = util.find_file(file, nil, true)
   if not ok then return end
-  local ok, data = pcall(collect, str)
+  local ok, data = pcall(collect, str) -- luacheck: ignore ok
   if not ok then return end
   return setmetatable(gen_tags(data), {__index = pkg})
 end

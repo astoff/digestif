@@ -5,8 +5,7 @@ local Parser = require "digestif.Parser"
 
 local path_join, path_split = util.path_join, util.path_split
 local path_normalize = util.path_normalize
-local nested_get, nested_put = util.nested_get, util.nested_put
-local map, update, merge = util.map, util.update, util.merge
+local merge = util.merge
 local format_filename_template = util.format_filename_template
 
 local ManuscriptLatex = util.class(Manuscript)
@@ -49,7 +48,7 @@ local function first_mand(args)
    end
 end
 
-local function first_opt(args)
+local function first_opt(args) -- luacheck: ignore first_opt
    for i, v in ipairs(args) do
       if v.optional  then return i end
    end

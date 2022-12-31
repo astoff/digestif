@@ -151,7 +151,7 @@ function Schema:assert_fail(obj)
   assert(not self:validate(obj))
 end
 
-local schema_of_schema = Schema {
+local schema_of_schema = Schema { -- luacheck: ignore schema_of_schema
   fields = {
     description = {
       type = "string",

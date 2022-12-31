@@ -301,7 +301,7 @@ local line_patt = I * (search(I * eol) * I + P(true))
 
 local function lines(s, i, n)
   return co_wrap(function()
-    local n, i, j, k = n or 1, match(line_patt, s, i)
+    local n, i, j, k = n or 1, match(line_patt, s, i) -- luacheck: ignore n i
     while k do
       co_yield(n, i, j - 1)
       n, i, j, k = n + 1, match(line_patt, s, k)
@@ -641,10 +641,10 @@ do
       t[n] = encode_number(obj)
       return n + 1
     elseif obj_type == "table" then
-      local v = obj[1]
-      if v ~= nil then
+      local v1 = obj[1]
+      if v1 ~= nil then
         t[n] = "["
-        n = do_encode(v, t, n + 1)
+        n = do_encode(v1, t, n + 1)
         for i = 2, #obj do
           t[n] = ","
           n = do_encode(obj[i], t, n + 1)
@@ -658,7 +658,7 @@ do
         t[n + 1] = encode_string(k)
         t[n + 2] = "\":"
         n = do_encode(v, t, n + 3)
-        for k, v in next, obj, k do
+        for k, v in next, obj, k do -- luacheck: ignore k v
           t[n] = ",\""
           t[n + 1] = encode_string(k)
           t[n + 2] = "\":"

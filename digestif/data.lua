@@ -10,11 +10,11 @@ local P, C, Cg, Ct = lpeg.P, lpeg.C, lpeg.Cg, lpeg.Ct
 local match = lpeg.match
 local many, sequence = util.many, util.sequence
 local gobble, search = util.gobble, util.search
-local nested_get, extend = util.nested_get, util.extend
+local nested_get = util.nested_get
 local find_file = util.find_file
 local parse_uri, make_uri = util.parse_uri, util.make_uri
 local log = util.log
-local path_split, path_join = util.path_split, util.path_join
+local path_join = util.path_join
 
 local data = {}
 local loaded_tags = {}

@@ -1,12 +1,7 @@
-local lpeg = require "lpeg"
 local util = require "digestif.util"
 local Manuscript = require "digestif.Manuscript"
 local Parser = require "digestif.Parser"
 local bibtex = require "digestif.bibtex"
-
-local path_join, path_split = util.path_join, util.path_split
-local nested_get, nested_put = util.nested_get, util.nested_put
-local map, update, merge = util.map, util.update, util.merge
 
 local ManuscriptBibtex = util.class(Manuscript)
 
