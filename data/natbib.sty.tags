@@ -1,34 +1,618 @@
+-- natbib package: Copyright 1993-2010 Patrick W Daly
+-- SPDX-License-Identifier: LPPL-1.0+
+
+-- natbib.sty.tags:
+-- SPDX-License-Identifier: LPPL-1.3c+
+-- Adapted from the natbib package documentation, which can be found at
+-- https://ctan.org/pkg/natbib
 ctan_package = "natbib"
+
+-- 5 Package Options
+options = {
+  round = {
+    summary = "for round parentheses (default)"
+  },
+  square = {
+    summary = "for square brackets"
+  },
+  angle = {
+    summary = "for angle brackets"
+  },
+  semicolon = {
+    summary = "separate multiple citations with semi-colons (default)"
+  },
+  colon = {
+    summary = "same as `semicolon`"
+  },
+  comma = {
+    summary = "use commas as separators"
+  },
+  authoryear = {
+    summary = "for author-year citations (default)"
+  },
+  numbers = {
+    summary = "for numerical citations"
+  },
+  super = {
+    summary = "for superscripted numerical citations"
+  },
+  sort = {
+    summary = "orders multiple citations into the sequence of the list of references"
+  },
+  ["sort&compress"] = {
+    summary = "as `sort` but multiple numerical citations are compressed if possible"
+  },
+  compress = {
+    summary = "compress without sorting"
+  },
+  longnamesfirst = {
+    summary = "makes the first citation of any reference the equivalent of the starred variant"
+  },
+  sectionbib = {
+    "redefines `\\thebibliography` to issue `\\section*` instead of `\\chapter*`"
+  },
+  nonamebreak = {
+    summary = "keeps all the authors' names in a citation on one line"
+  },
+  merge = {
+    summary = "allow the * prefix to the citation key and for merging"
+  },
+  elide = {
+    summary = "elide common elements of merged references"
+  },
+  mcite = {
+    summary = "elide common elements of merged references"
+  }
+}
+
 commands = {
-  Citealp = "$ref:natbib.sty#/commands/cite",
-  Citealt = "$ref:natbib.sty#/commands/cite",
-  Citeauthor = "$ref:natbib.sty#/commands/cite",
-  Citep = "$ref:natbib.sty#/commands/cite",
-  Citet = "$ref:natbib.sty#/commands/cite",
+
+  -- 2.3 Basic Citation Commands
   cite = {
     action = "cite",
     arguments = {
+      {literal = "*", optional = true},
       {delimiters = {"[", "]"}, meta = "prenote", optional = true},
       {delimiters = {"[", "]"}, meta = "postnote", optional = true},
       {list = true, meta = "keys"}
     },
-    summary = "Refer to a bibliography item."
+    summary = "Refer to a bibliography item.",
+    details = [[
+```latex
+\cite[prenote][postnote]{key}
+\cite*[prenote][postnote]{key}
+```
+
+`\cite` (without notes) is the same as `\citet` in author-year mode,
+whereas in numerical mode, it is the same as `\citep`.  The starred
+version, as well as the one or two optional notes, may also be used.
+This syntax has been retained for compatibility, but is no longer
+encouraged.
+
+* `\cite{jon90}`          => Jones et al., (1990)
+* `\cite[]{jon90}`        => (Jones et al., 1990)
+* `\cite[chap.~2]{jon90}` => (Jones et al., 1990, chap. 2)
+* `\cite*{jon90}`         => Jones, Baker, and Williams, (1990)
+* `\cite*[]{jon90}`       => (Jones, Baker, and Williams, 1990)]]
   },
-  citealp = "$ref:natbib.sty#/commands/cite",
-  citealt = "$ref:natbib.sty#/commands/cite",
-  citeauthor = "$ref:natbib.sty#/commands/cite",
-  citeauthoryear = "$ref:natbib.sty#/commands/cite",
-  citefullauthor = "$ref:natbib.sty#/commands/cite",
-  citename = "$ref:natbib.sty#/commands/cite",
-  citenum = "$ref:natbib.sty#/commands/cite",
-  citep = "$ref:natbib.sty#/commands/cite",
-  citepalias = "$ref:natbib.sty#/commands/cite",
-  citestarts = "$ref:natbib.sty#/commands/cite",
+
+  citep = {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/cite/arguments",
+    summary = "Refer to a bibliography item in parenthetical form.",
+    details = [[
+```latex
+\citep[prenote][postnote]{key}
+\citep*[prenote][postnote]{key}
+```
+
+Basic command for a parenthetical citation.  The starred version prints
+the full author list, and not just the abbreviated one.  These macros
+may take one or two optional arguments to add some text before and
+after the citation.  Multiple citations may be made by including more
+than one citation key in the \cite command argument.
+
+* `\citep{jon90}`               => (Jones et al., 1990)
+* `\citep[chap.~2]{jon90}`      => (Jones et al., 1990, chap. 2)
+* `\citep[see][]{jon90}`        => (see Jones et al., 1990)
+* `\citep[see][chap.~2]{jon90}` => (see Jones et al., 1990, chap. 2)
+* `\citep*{jon90}`              => (Jones, Baker, and Williams, 1990)
+* `\citep{jon90,jam91}`         => (Jones et al., 1990; James et al. 1991)
+* `\citep{jon90,jon91}`         => (Jones et al., 1990, 1991)
+* `\citep{jon90a,jon90b}`       => (Jones et al., 1990a,b)
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text, as shown above.]]
+  },
+
+  citet = {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/cite/arguments",
+    summary = "Refer to a bibliography item in textual form.",
+    details = [[
+```latex
+\citet[prenote][postnote]{key}
+\citet*[prenote][postnote]{key}
+```
+
+Basic command for a textual citation.  The starred version prints the
+full author list, and not just the abbreviated one.  These macros may
+take one or two optional arguments to add some text before and after
+the citation.  Multiple citations may be made by including more than
+one citation key in the \cite command argument.
+
+* `\citet{jon90}`               => Jones et al. (1990)
+* `\citet[chap.~2]{jon90}`      => Jones et al. (1990, chap. 2)
+* `\citet[see][]{jon90}`        => Jones et al. (see 1990)
+* `\citet[see][chap.~2]{jon90}` => Jones et al. (see 1990, chap. 2)
+* `\citet*{jon90}`              => Jones, Baker, and Williams (1990)
+* `\citet{jon90,jam91}`         => Jones et al. (1990); James et al. (1991)
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text, as shown above.]]
+  },
+
+  -- 2.4 Extended Citation Commands
+
+  citealp = {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/cite/arguments",
+    summary = "Refer to a bibliography item.",
+    details = [[
+```latex
+\citalp[prenote][postnote]{key}
+\citalp*[prenote][postnote]{key}
+```
+
+Alternative from of `\citep` without parentheses.  The starred version
+prints the full author list, and not just the abbreviated one.  These
+macros may take one or two optional arguments to add some text before
+and after the citation.  Multiple citations may be made by including
+more than one citation key in the \cite command argument.
+
+* `\citealp{jon90}`         => Jones et al., 1990
+* `\citealp*{jon90}`        => Jones, Baker, and Williams, 1990
+* `\citealp{jon90,jam91}`   => Jones et al., 1990; James et al. 1991
+* `\citealp[pg.~32]{jon90}` => Jones et al., 1990, pg. 32
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text.]]
+  },
+
+  citealt = {
+    action = "cite",
+    arguments =  "$ref:natbib.sty#/commands/cite/arguments",
+    summary = "Refer to a bibliography item.",
+    details = [[
+```latex
+\citealt[prenote][postnote]{key}
+\citealt*[prenote][postnote]{key}
+```
+
+Alternative from of `\citet` without parentheses.  The starred version
+prints the full author list, and not just the abbreviated one.  These
+macros may take one or two optional arguments to add some text before
+and after the citation.  Multiple citations may be made by including
+more than one citation key in the \cite command argument.
+
+* `\citealt{jon90}`  => Jones et al. 1990
+* `\citealt*{jon90}` => Jones et al. 1990
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text.]]
+  },
+
+  citenum = {
+    action = "cite",
+    arguments = {{meta = "key"}},
+    summary = "Print the citation number.",
+    details = [[
+```latex
+\citenum{key}
+```
+
+This command prints the citation number, without parentheses, even in
+author-year mode, and without raising it in superscript mode.  This is
+intended to be able to refer to citation numbers without
+superscripting them.
+
+`\citenum{jon90}` => 11]]
+  },
+
+  citetext = {
+    arguments = {{meta = "text"}},
+    summary = "Insert text in the current citation parentheses.",
+    details = [[
+```latex
+\citetext{text}
+```
+
+This command allows arbitrary text to be placed in the current
+citation parentheses. This may be used in combination with
+`\citealp`.  For example,
+
+* `\citetext{see \citealp{jon90}, or even better \citealp{jam91}}`
+=> (see Jones et al., 1990, or even better James et al., 1991)]]
+  },
+
+  citeauthor = {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/cite/arguments",
+    summary = "Refer to a bibliography item.",
+    details = [[
+```latex
+\citeauthor[prenote][postnote]{key}
+\citeauthor*[prenote][postnote]{key}
+```
+
+Refer to the authors without the year.  Mostly useful in author-year
+schemes.  The starred version prints the full author list, and not
+just the abbreviated one.  These macros may take one or two optional
+arguments to add some text before and after the citation.  Multiple
+citations may be made by including more than one citation key in the
+\cite command argument.
+
+* `\citeauthor{jon90}`  => Jones et al.
+* `\citeauthor*{jon90}` => Jones, Baker, and Williams
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text.]]
+  },
+
+  citefullauthor =  {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/citeyear/arguments",
+    summary = "Refer to a bibliography item.",
+    details = [[
+```latex
+\citefullauthor[prenote][postnote]{key}
+```
+
+Refer to the full list of authors without the year.  Mostly useful in
+author-year schemes.  This macro is equivalent to `\citeauthor*`:
+
+`\citefullauthor{jon90}` => Jones, Baker, and Williams
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text.]]
+  },
+
+  citeyear = {
+    action = "cite",
+    arguments = {
+      {delimiters = {"[", "]"}, meta = "prenote", optional = true},
+      {delimiters = {"[", "]"}, meta = "postnote", optional = true},
+      {list = true, meta = "key"}
+    },
+    summary = "Refer to a bibliography item.",
+    details = [[
+```latex
+\citeyear[prenote][postnote]{key}
+```
+
+Refer to the year of a citation.  Mostly useful in author-year
+schemes.:
+
+`\citeyear{jon90}` => 1990
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text.]]
+  },
+
+  citeyearpar = {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/citeyear/arguments",
+    summary = "Refer to a bibliography item.",
+    details = [[
+```latex
+\citeyearpar[prenote][postnote]{key}
+```
+
+Refer to the year of a citation printed in parentheses.  Mostly useful
+in author-year schemes.:
+
+`\citeyearpar{jon90}` => (1990)
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text.]]
+  },
+
+  -- 2.5 Forcing Upper Cased Name
+
+  Citep = {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/cite/arguments",
+    summary = "Refer to a bibliography item in parenthetical form.",
+    details = [[
+```latex
+\Citep[prenote][postnote]{key}
+\Citep*[prenote][postnote]{key}
+```
+
+Like `\citep` with the first letter uppercased.  The starred version
+prints the full author list, and not just the abbreviated one.  These
+macros may take one or two optional arguments to add some text before
+and after the citation.  Multiple citations may be made by including
+more than one citation key in the \cite command argument.
+
+* `\citep{dRob98}` => (della Robbia, 1990)
+* `\Citep{dRob98}` => (Della Robbia, 1990)
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text.]]
+  },
+
+  Citet = {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/cite/arguments",
+    summary = "Refer to a bibliography item in textual form.",
+    details = [[
+```latex
+\Citet[prenote][postnote]{key}
+\Citet*[prenote][postnote]{key}
+```
+
+Like `\citet` with the first letter uppercased.  The starred version
+prints the full author list, and not just the abbreviated one.  These
+macros may take one or two optional arguments to add some text before
+and after the citation.  Multiple citations may be made by including
+more than one citation key in the \cite command argument.
+
+* `\citet{dRob98}` => della Robbia (1998)
+* `\Citet{dRob98}` => Della Robbia (1998)
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text.]]
+  },
+
+  Citealp = {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/cite/arguments",
+    summary = "Refer to a bibliography item.",
+    details = [[
+```latex
+\Citealp[prenote][postnote]{key}
+\Citealp*[prenote][postnote]{key}
+```
+
+Like `\citealp` with the first letter uppercased.  The starred version
+prints the full author list, and not just the abbreviated one.  These
+macros may take one or two optional arguments to add some text before
+and after the citation.  Multiple citations may be made by including
+more than one citation key in the \cite command argument.
+
+* `\citealp{dRob98}` => della Robbia, 1998
+* `\Citealp{dRob98}` => Della Robbia, 1998
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text.]]
+  },
+
+  Citealt = {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/cite/arguments",
+    summary = "Refer to a bibliography item.",
+    details = [[
+```latex
+\Citealt[prenote][postnote]{key}
+\Citealt*[prenote][postnote]{key}
+```
+
+Like `\citealt` with the first letter uppercased.  The starred version
+prints the full author list, and not just the abbreviated one.  These
+macros may take one or two optional arguments to add some text before
+and after the citation.  Multiple citations may be made by including
+more than one citation key in the \cite command argument.
+
+* `\citealt{dRob98}` => della Robbia 1998
+* `\Citealt{dRob98}` => Della Robbia 1998
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text.]]
+  },
+
+  Citeauthor = {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/cite/arguments",
+    summary = "Refer to a bibliography item.",
+    details = [[
+```latex
+\Citeauthor[prenote][postnote]{key}
+\Citeauthor*[prenote][postnote]{key}
+```
+
+Like `\citeauthor` with the first letter uppercased.  Mostly useful in
+author-year schemes.  The starred version prints the full author list,
+and not just the abbreviated one.  These macros may take one or two
+optional arguments to add some text before and after the citation.
+Multiple citations may be made by including more than one citation key
+in the \cite command argument.
+
+* `\citeauthor{dRob98}` => della Robbia
+* `\Citeauthor{dRob98}` => Della Robbia
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text.]]
+  },
+
+  -- 2.6 Citation Aliasing
+
+  defcitealias = {
+    action = "bibitem",
+    arguments = {
+      {meta = "key"},
+      {meta = "replacement"}
+    },
+    summary = "Create an alias to a bibliography item.",
+    details = [[
+```latex
+\defcitealias{key}{replacement}
+```
+
+This command creates a special designation for a reference, i.e. Paper I.
+Such aliases can be defined like this:
+
+`\defcitealias{jon90}{Paper~I}`]]
+  },
+
+  citetalias = {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/citeyear/arguments",
+    summary = "Refer to a bibliography alias in textual form.",
+    details = [[
+```latex
+\citetalias[prenote][postnote]{key}
+
+```
+
+Like `\citet` but for aliases.  This macro may take one or two
+optional arguments to add some text before and after the citation.
+Multiple citations may be made by including more than one citation key
+in the \cite command argument.
+
+* `\defcitealias{jon90}{Paper~I}`
+* `\citetalias{jon90}` => Paper I
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text.]]
+  },
+
+  citepalias = {
+    action = "cite",
+    arguments = "$ref:natbib.sty#/commands/cite/arguments",
+    summary = "Refer to a bibliography alias in parenthetical form.",
+    details = [[
+```latex
+\citepalias[prenote][postnote]{key}
+```
+
+Like `\citep` but for aliases.  This macro may take one or two
+optional arguments to add some text before and after the citation.
+Multiple citations may be made by including more than one citation key
+in the \cite command argument.
+
+* `\defcitealias{jon90}{Paper~I}`
+* `\citepalias{jon90}` => (Paper I)
+
+Note that a single optional text is a post-note, while two are the pre-
+and post-notes.  To have only a pre-note, it is necessary to provide
+an empty post-note text, as shown above.]]
+  },
+
+  -- 2.9 Selecting Citation Punctuation
+
+  setcitestyle = {
+    arguments = {
+      {meta = "citestyle",
+       keys = {
+         authoryear = {
+           summary = "citation mode, corresponds to fourth argument of `\\bibpunct`."
+         },
+         numbers = {
+           summary = "citation mode, corresponds to fourth argument of `\\bibpunct`."
+         },
+         super = {
+           summary = "citation mode, corresponds to fourth argument of `\\bibpunct`."
+         },
+         round = {
+           summary = "braces, corresponds to first and second arguments of `\\bibpunct`"
+         },
+         square = {
+           summary = "braces, corresponds to first and second arguments of `\\bibpunct`"
+         },
+         open = {
+           summary = "braces, corresponds to first and second arguments of `\\bibpunct`"
+         },
+         close = {
+           summary = "braces, corresponds to first and second arguments of `\\bibpunct`"
+         },
+         semicolon = {
+           summary = "between citations, corresponds to third argument of `\\bibpunct`"
+         },
+         comma = {
+           summary = "between citations, corresponds to third argument of `\\bibpunct`"
+         },
+         citesep = {
+           summary = "between citations, corresponds to third argument of `\\bibpunct`"
+         },
+         aysep = {
+           summary = "between years with common author, corresponds to fifth argument of `\\bibpunct`"
+         },
+         yysep = {
+           summary = "between years with common author, corresponds to sixth argument of `\\bibpunct`"
+         },
+         notesep = {
+           summary = "Text before post-note, corresponds to optional argument of `\\bibpunct`"
+         }
+       }
+      }
+    },
+    summary = "Command for setting the citation style.",
+    details = [[
+```latex
+\setcitestyle{key=val}
+```
+
+Command for setting the citation style with key=val pairs.]]
+  },
+
+  bibpunct = {
+    arguments = {
+      {meta = "before postnote",
+       optional = true, delimiters = {"[", "]"}},
+      {meta = "opening bracket"},
+      {meta = "closing bracket"},
+      {meta = "between citations"},
+      {meta = "style"},
+      {meta = "between names&year"},
+      {meta = "between years for suppressed author lists"}
+    },
+    summary = "Older command for setting the citation style.",
+    details = [[
+```latex
+\bibpunct[before-postnote]{open}{close]{between}{style}{author-year}{between-years}
+```
+
+Command for setting the citation style.  This command is superseded by
+`\setcitestyle`.]]
+  },
+
+  -- 2.10 Predefining a citation style
   citestyle = {arguments = {{meta = "style"}}},
-  citet = "$ref:natbib.sty#/commands/cite",
-  citetalias = "$ref:natbib.sty#/commands/cite",
-  citetext = {arguments = {{meta = "text"}}},
-  citeyear = "$ref:natbib.sty#/commands/cite",
-  citeyearpar = "$ref:natbib.sty#/commands/cite",
-  shortcites = "$ref:natbib.sty#/commands/cite"
+
+  -- 2.18 Long Author List on First Citation
+  shortcites = {
+    action = "cite",
+    arguments = {{meta = "key", list = true,}},
+    summary = "Print short list of authors on first citation.",
+    details = [[
+```latex
+\shortcites{key}
+```
+
+When the package option `longnamesfirst` is given, the full author
+list is printed with the first citation of any reference, and
+afterwards only the abbreviated list.  Some references have so many
+authors that you want to suppress the automatic long list only for
+them.  In this case, issue
+
+`\shortcites{key}`
+
+before the first citations, and those included in key-list will have a
+short list on their first citation.]]
+  }
 }
