@@ -1,8 +1,6 @@
--- natbib package: Copyright 1993-2010 Patrick W Daly
--- SPDX-License-Identifier: LPPL-1.0+
-
--- natbib.sty.tags:
+-- Copyright 1993-2010 Patrick W Daly
 -- SPDX-License-Identifier: LPPL-1.3c+
+--
 -- Adapted from the natbib package documentation, which can be found at
 -- https://ctan.org/pkg/natbib
 ctan_package = "natbib"
