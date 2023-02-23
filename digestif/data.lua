@@ -14,7 +14,7 @@ local nested_get = util.nested_get
 local find_file = util.find_file
 local parse_uri, make_uri = util.parse_uri, util.make_uri
 local log = util.log
-local path_join = util.path_join
+local path_join, path_split = util.path_join, util.path_split
 
 local data = {}
 local loaded_tags = {}
@@ -364,7 +364,16 @@ local function resolve_doc_items(items)
   local t = {}
   for _, item in ipairs(items) do
     if type(item) == "string" then
-      t[#t+1] = format("- <%s>", resolve_uri(item))
+      local uri = resolve_uri(item)
+      local scheme, _, location, _, fragment = parse_uri(uri)
+      if scheme == "info" then
+        t[#t+1] = format("- Info node [%s(%s)](%s)", location, fragment, uri)
+      elseif scheme == "file" then
+        local _, filename = path_split(location)
+        t[#t+1] = format("- [%s](%s)", filename, uri)
+      else
+        t[#t+1] = format("- <%s>", uri)
+      end
     else
       t[#t+1] = format("- [%s](%s)", item.summary, resolve_uri(item.uri))
     end
