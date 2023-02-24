@@ -12,26 +12,30 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10"]
+        lua-version: ["5.3", "5.4"]
+        luarocks-version: ["3.0"]
     steps:
     - uses: actions/checkout@v3
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python
       uses: actions/setup-python@v3
       with:
-        python-version: ${{ matrix.python-version }}
+        python-version: "3.10"
     - name: Install dependencies
       run: |
         pip install hererocks==0.25.1 -r spec/requirements.txt
-        hererocks env --lua $LUA --luarocks $LUAROCKS
-        source env/bin/activate
+        hererocks .venv --lua ${{ matrix.lua-version }} --luarocks ${{ matrix.luarocks-version }}
+        source .venv/bin/activate
         luarocks install busted
         if [ -n "$CJSON" ]; then luarocks install lua-cjson; fi
     - name: Make rock
       run: |
+        source .venv/bin/activate
         luarocks make digestif-dev-1.rockspec
     - name: Busted
       run: |
+        source .venv/bin/activate
         busted --exclude-tags=ctx
     - name: Integration tests
       run: |
+        source .venv/bin/activate
         pytest spec
