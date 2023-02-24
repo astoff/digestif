@@ -12,17 +12,19 @@ ConTeXt et caterva.  It provides context-sensitive completion,
 documentation, code navigation, and related functionality to any text
 editor that speaks the LSP protocol.
 
-<p align="center"><img src="https://raw.githubusercontent.com/astoff/digestif/images/screenshot.gif" alt="Madatory GIF"></p>
-
 Features
 --------
 
 - Completion for commands, environments, key-value options (for
   instance, TikZ options), cross-references and citations.
 
+  <p align="center"><img src="https://raw.githubusercontent.com/astoff/digestif/images/completion.png"></p>
+
 - Popup help messages, including command signature and documentation.
   For the best results, make sure you have the [LaTeX reference
   manual][latexref] installed as an [info node][info-issues].
+
+  <p align="center"><img src="https://raw.githubusercontent.com/astoff/digestif/images/help.png"></p>
 
 - Find definition and references to labels and citations.
 
@@ -37,12 +39,16 @@ Features
 
 - Digestif is fuzzy!  For citations, it tries an exact match against
   the BibTeX identifier and a fuzzy match against author and title.
-  In the GIF above, the user types `groalhom`, which matches
+  In the picture below, the user typed `groalhom`, which matches
   **Gro**thendieck's “Sur quelques points d'**al**gébre
   **hom**ologique”; selecting this inserts the BibTeX identifier
-  `Tohoku`.  Similarly, for cross-references, Digestif tries an exact
-  match against the label and a fuzzy match against the text around
-  the label.
+  `Tohoku`.
+
+  <p align="center"><img src="https://raw.githubusercontent.com/astoff/digestif/images/cite.png"></p>
+
+  Similarly, for cross-references, Digestif tries an exact match
+  against the label and a fuzzy match against the text around the
+  label.
 
 - Support for LaTeX, ConTeXt, plain TeX, DocTeX (`.dtx` files) and
   Texinfo.
