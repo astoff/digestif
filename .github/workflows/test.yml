@@ -4,8 +4,6 @@ on: [push]
 
 env:
   PIP_PROGRESS_BAR: "off"
-  LUA: "5.3"
-  LUAROCKS: "3.0"
 
 jobs:
   test:
@@ -13,7 +11,6 @@ jobs:
     strategy:
       matrix:
         lua-version: ["5.3", "5.4"]
-        luarocks-version: ["3.0"]
         json-library: ["builtin", "cjson"]
     steps:
     - uses: actions/checkout@v3
@@ -24,7 +21,7 @@ jobs:
     - name: Install dependencies
       run: |
         pip install hererocks==0.25.1 -r spec/requirements.txt
-        hererocks .venv --lua ${{ matrix.lua-version }} --luarocks ${{ matrix.luarocks-version }}
+        hererocks .venv --lua ${{ matrix.lua-version }} --luarocks latest
         source .venv/bin/activate
         luarocks install busted
         if [ ${{ matrix.json-library }} == "cjson" ]; then luarocks install lua-cjson; fi
