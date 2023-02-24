@@ -112,6 +112,10 @@ To ensure that Digestif is used, add the following to your init file:
 
 See instructions [here](https://github.com/neoclide/coc.nvim/wiki/Language-servers#latex).
 
+### Sublime Text with the [LSP](https://packagecontrol.io/packages/LSP) package
+
+See instructions [here](https://lsp.sublimetext.io/language_servers/#digestif).
+
 ### Other editors
 
 It shouldn't be hard to set up other editors to use Digestif.  Please
