@@ -4,8 +4,17 @@ from urllib.request import url2pathname
 
 import pytest
 import pytest_lsp
+from lsprotocol.types import (
+    Location,
+    MarkupKind,
+    Position,
+    Range,
+    ReferenceContext,
+    ReferenceParams,
+    TextDocumentIdentifier,
+)
 from pytest_lsp import ClientServerConfig
-from pytest_lsp.client import Client, Location, MarkupKind, Position, Range
+from pytest_lsp.client import LanguageClient
 
 BIN_DIR = Path(__file__).parents[1].joinpath("bin")
 FIXTURE_DIR = Path(__file__).parent.joinpath("fixtures")
@@ -34,7 +43,7 @@ def open_doc(client, file, language):
 
 
 @pytest.mark.asyncio
-async def test_completion_latex(client: Client):
+async def test_completion_latex(client: LanguageClient):
     "Complete a built-in command."
     doc_uri = open_doc(client, "file1.tex", "latex")
     result = await client.completion_request(doc_uri, 3, 7)
@@ -44,7 +53,7 @@ async def test_completion_latex(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_completion_from_package(client: Client):
+async def test_completion_from_package(client: LanguageClient):
     "Complete a command loaded from a package."
     doc_uri = open_doc(client, "using-tikz.tex", "latex")
     result = await client.completion_request(doc_uri, 1, 8)
@@ -52,7 +61,7 @@ async def test_completion_from_package(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_completion_tikz_option(client: Client):
+async def test_completion_tikz_option(client: LanguageClient):
     "Complete a TikZ option."
     doc_uri = open_doc(client, "using-tikz.tex", "latex")
     result = await client.completion_request(doc_uri, 3, 40)
@@ -63,7 +72,7 @@ async def test_completion_tikz_option(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_completion_label(client: Client):
+async def test_completion_label(client: LanguageClient):
     "Complete a label defined in the current file."
     doc_uri = open_doc(client, "file1.tex", "latex")
     result = await client.completion_request(doc_uri, 5, 7)
@@ -72,7 +81,7 @@ async def test_completion_label(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_completion_label_from_child(client: Client):
+async def test_completion_label_from_child(client: LanguageClient):
     "Complete a label defined in an included file, referenced in the root file."
     doc_uri = open_doc(client, "root.tex", "latex")
     result = await client.completion_request(doc_uri, 2, 8)
@@ -80,7 +89,7 @@ async def test_completion_label_from_child(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_completion_label_from_root(client: Client):
+async def test_completion_label_from_root(client: LanguageClient):
     "Complete a label defined in the root file, referenced in an included file."
     doc_uri = open_doc(client, "child.tex", "latex")
     result = await client.completion_request(doc_uri, 2, 8)
@@ -88,7 +97,7 @@ async def test_completion_label_from_root(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_completion_thebibliography(client: Client):
+async def test_completion_thebibliography(client: LanguageClient):
     "Complete a citation defined in 'thebibliogprahy' environment."
     doc_uri = open_doc(client, "file1.tex", "latex")
     result = await client.completion_request(doc_uri, 9, 10)
@@ -97,7 +106,7 @@ async def test_completion_thebibliography(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_completion_bibtex(client: Client):
+async def test_completion_bibtex(client: LanguageClient):
     "Complete a citation defined in a bibtex file."
     doc_uri = open_doc(client, "child.tex", "latex")
     result = await client.completion_request(doc_uri, 3, 8)
@@ -107,7 +116,7 @@ async def test_completion_bibtex(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_completion_citation_fuzzy(client: Client):
+async def test_completion_citation_fuzzy(client: LanguageClient):
     "Complete a citation defined in 'thebibliogprahy' environment."
     doc_uri = open_doc(client, "file2.tex", "latex")
     result = await client.completion_request(doc_uri, 10, 10)
@@ -119,7 +128,7 @@ async def test_completion_citation_fuzzy(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_completion_no_root(client: Client):
+async def test_completion_no_root(client: LanguageClient):
     "Try to complete locally when root document doesn't exist."
     doc_uri = open_doc(client, "child.tex", "latex")
     client.notify_did_change(doc_uri, text="xxxx", line=0, character=14)
@@ -128,7 +137,7 @@ async def test_completion_no_root(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_completion_broken_root(client: Client):
+async def test_completion_broken_root(client: LanguageClient):
     "Try to complete locally when root doesn't refer back to child."
     doc_uri = open_doc(client, "child.tex", "latex")
     client.notify_did_change(doc_uri, text="file1.tex\n", line=0, character=14)
@@ -137,7 +146,7 @@ async def test_completion_broken_root(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_completion_from_root_no_root(client: Client):
+async def test_completion_from_root_no_root(client: LanguageClient):
     "Try to complete label from root document when it doesn't exist."
     doc_uri = open_doc(client, "child.tex", "latex")
     result = await client.completion_request(doc_uri, 2, 8)
@@ -151,10 +160,10 @@ async def test_completion_from_root_no_root(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_definition(client: Client):
+async def test_definition(client: LanguageClient):
     "Find the definition Try to complete locally when root doesn't refer back to child."
     doc_uri = open_doc(client, "file1.tex", "latex")
-    result = await client.definition_request(doc_uri, Position(line=7, character=6))
+    result = await client.definition_request(doc_uri, 7, 6)
     assert result == Location(
         uri=doc_uri,
         range=Range(
@@ -167,69 +176,55 @@ async def test_definition(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_references(client: Client):
+async def test_references(client: LanguageClient):
     "Find references in a single file."
     doc_uri = open_doc(client, "file1.tex", "latex")
-    result = await client.send_request(
-        "textDocument/references",
-        {
-            "textDocument": {"uri": doc_uri},
-            "position": Position(line=7, character=6),
-            "context": {"includeDeclaration": True},
-        },
+    result = await client.text_document_references_request(
+        ReferenceParams(
+            context=ReferenceContext(include_declaration=True),
+            text_document=TextDocumentIdentifier(uri=doc_uri),
+            position=Position(line=7, character=6),
+        )
     )
     assert len(result) == 2
-    assert (
-        result[0]
-        == Location(
-            uri=doc_uri,
-            range=Range(
-                start=Position(line=4, character=7), end=Position(line=4, character=16)
-            ),
-        ).dict()
+    assert result[0] == Location(
+        uri=doc_uri,
+        range=Range(
+            start=Position(line=4, character=7), end=Position(line=4, character=16)
+        ),
     )
-    assert (
-        result[1]
-        == Location(
-            uri=doc_uri,
-            range=Range(
-                start=Position(line=7, character=5), end=Position(line=7, character=14)
-            ),
-        ).dict()
+    assert result[1] == Location(
+        uri=doc_uri,
+        range=Range(
+            start=Position(line=7, character=5), end=Position(line=7, character=14)
+        ),
     )
 
 
 @pytest.mark.asyncio
-async def test_references_across_files(client: Client):
+async def test_references_across_files(client: LanguageClient):
     "Find references across file."
     root_uri = open_doc(client, "root.tex", "latex")
     child_uri = open_doc(client, "child.tex", "latex")
-    result = await client.send_request(
-        "textDocument/references",
-        {
-            "textDocument": {"uri": root_uri},
-            "position": Position(line=3, character=13),
-            "context": {"includeDeclaration": True},
-        },
+    result = await client.text_document_references_request(
+        ReferenceParams(
+            context=ReferenceContext(include_declaration=True),
+            text_document=TextDocumentIdentifier(uri=root_uri),
+            position=Position(line=3, character=13),
+        )
     )
     assert len(result) == 2
-    assert (
-        result[0]
-        == Location(
-            uri=child_uri,
-            range=Range(
-                start=Position(line=1, character=7), end=Position(line=1, character=17)
-            ),
-        ).dict()
+    assert result[0] == Location(
+        uri=child_uri,
+        range=Range(
+            start=Position(line=1, character=7), end=Position(line=1, character=17)
+        ),
     )
-    assert (
-        result[1]
-        == Location(
-            uri=root_uri,
-            range=Range(
-                start=Position(line=3, character=5), end=Position(line=3, character=15)
-            ),
-        ).dict()
+    assert result[1] == Location(
+        uri=root_uri,
+        range=Range(
+            start=Position(line=3, character=5), end=Position(line=3, character=15)
+        ),
     )
 
 
@@ -237,20 +232,20 @@ async def test_references_across_files(client: Client):
 
 
 @pytest.mark.asyncio
-async def test_hover_command(client: Client):
+async def test_hover_command(client: LanguageClient):
     "Find command documentation."
     doc_uri = open_doc(client, "file2.tex", "latex")
-    result = await client.hover_request(doc_uri, Position(line=1, character=5))
+    result = await client.hover_request(doc_uri, 1, 5)
     assert result.contents.kind == MarkupKind.Markdown
     assert result.contents.value.startswith("`\\relax`:")
     assert "do nothing" in result.contents.value
 
 
 @pytest.mark.asyncio
-async def test_hover_label(client: Client):
+async def test_hover_label(client: LanguageClient):
     "Find context around a label."
     doc_uri = open_doc(client, "file2.tex", "latex")
-    result = await client.hover_request(doc_uri, Position(line=0, character=5))
+    result = await client.hover_request(doc_uri, 0, 5)
     assert result.contents.kind == MarkupKind.Markdown
     assert result.contents.value.startswith("`somelabel`:")
     assert "Lorem ipsum" in result.contents.value
