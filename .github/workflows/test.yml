@@ -1,0 +1,37 @@
+name: Test
+
+on: [push]
+
+env:
+  PIP_PROGRESS_BAR: "off"
+  LUA: "5.3"
+  LUAROCKS: "3.0"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.8", "3.9", "3.10"]
+    steps:
+    - uses: actions/checkout@v3
+    - name: Set up Python ${{ matrix.python-version }}
+      uses: actions/setup-python@v3
+      with:
+        python-version: ${{ matrix.python-version }}
+    - name: Install dependencies
+      run: |
+        pip install hererocks==0.25.1 -r spec/requirements.txt
+        hererocks env --lua $LUA --luarocks $LUAROCKS
+        source env/bin/activate
+        luarocks install busted
+        if [ -n "$CJSON" ]; then luarocks install lua-cjson; fi
+    - name: Make rock
+      run: |
+        luarocks make digestif-dev-1.rockspec
+    - name: Busted
+      run: |
+        busted --exclude-tags=ctx
+    - name: Integration tests
+      run: |
+        pytest spec
