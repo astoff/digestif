@@ -2,7 +2,7 @@ Digestif
 ========
 
 <p align="center">
-<a href="https://app.travis-ci.com/astoff/digestif"><img src="https://app.travis-ci.com/astoff/digestif.svg?branch=main" alt="Build Status"></a>
+<a href="https://github.com/astoff/digestif/actions/workflows/test.yml"><img src="https://github.com/astoff/digestif/actions/workflows/test.yml/badge.svg"></a>
 <a href="https://ctan.org/pkg/digestif"><img alt="CTAN" src="https://img.shields.io/ctan/v/digestif?color=blue"></a>
 <a href="https://luarocks.org/modules/astoff/digestif"><img alt="LuaRocks" src="https://img.shields.io/luarocks/v/astoff/digestif?color=blue"></a>
 </p>
