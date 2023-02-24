@@ -21,6 +21,7 @@ else
 end
 
 --* Convert LSP API objects to/from internal representations
+local length_fun, offset_fun = utf8.len, utf8.offset
 
 -- This will be a digestif.Cache object.  Its initialization is
 -- deferred to `initialized` method.
@@ -61,7 +62,7 @@ local function from_Position(str, position, p0, l0)
   if l0 and l0 > l then p0, l0 = nil, nil end
   for n, i in lines(str, p0, l0) do
     if n == l then
-      return utf8.offset(str, c, i), i, l
+      return offset_fun(str, c, i), i, l
     end
   end
 end
@@ -85,13 +86,13 @@ local function from_TextDocumentPositionParams(arg)
   local texformat = open_documents[filename]
   local script = cache:manuscript(filename, texformat)
   local l, c = arg.position.line + 1, arg.position.character + 1
-  return script, script:position_at(l, c)
+  return script, script:position_at(l, c, offset_fun)
 end
 
 local function to_Range(item)
   local script = item.manuscript
-  local l1, c1 = script:line_column_at(item.pos)
-  local l2, c2 = script:line_column_at(item.cont)
+  local l1, c1 = script:line_column_at(item.pos, length_fun)
+  local l2, c2 = script:line_column_at(item.cont, length_fun)
   return {
     start = {line = l1 - 1, character = c1 - 1},
     ["end"] = {line = l2 - 1, character = c2 - 1},
@@ -110,8 +111,8 @@ local function to_MarkupContent(str)
 end
 
 local function to_TextEdit(script, pos, old, new)
-  local l, c_start = script:line_column_at(pos)
-  local c_end = c_start + utf8.len(old)
+  local l, c_start = script:line_column_at(pos, length_fun)
+  local c_end = c_start + length_fun(old)
   return {
     range = {
       start = {line = l - 1, character = c_start - 1},
@@ -185,8 +186,37 @@ methods["initialize"] = function(params)
   if params.initializationOptions then
     config.load_from_table(params.initializationOptions)
   end
+  local enc, encodings = nil, nested_get(params.capabilities, "general", "positionEncodings")
+  for _, e in ipairs(encodings or {}) do
+    if e == "utf-32" then
+      enc = e
+      break
+    elseif e == "utf-8" then
+      enc = e
+      length_fun = function(s, i, j)
+        if i then
+          j = j or #s
+          if i < 1 or j < i then error("Invalid offset") end
+          return j - i + 1
+        else
+          return #s
+        end
+      end
+      offset_fun = function(s, n, i)
+        i = i or n < 0 and #s + 1 or 1
+        local v = n + (i or 1) - 1
+        if v < 1 or v > #s + 1 then error("Invalid offset") end
+        return v
+        end
+      break
+    end
+  end
+  if not enc and config.verbose then
+    log("Digestif and you editor couldn't agree on a fully supported position encoding")
+  end
   return {
     capabilities = {
+      positionEncoding = enc,
       textDocumentSync = {
         openClose = true,
         change = 2

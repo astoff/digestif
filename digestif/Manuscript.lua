@@ -246,23 +246,23 @@ end
 
 -- Compute the line and column number (both 1-based) at the given
 -- position.
---
--- TODO: make len function a parameter
-function Manuscript:line_column_at(pos)
-  -- Out ranges are excluside on the right, Lua is inclusive, so we
+-- `length_fun` should be utf8.len or a similar function adapted to
+-- other text encodings.
+function Manuscript:line_column_at(pos, length_fun)
+  -- Our ranges are exclusive on the right, Lua is inclusive, so we
   -- may have pos == 1 + #self.src.
   pos = min(pos, #self.src)
   local l, line_pos = self:line_number_at(pos)
-  local c = utf8_len(self.src, line_pos, pos) or error("Invalid UTF-8")
+  local c = length_fun(self.src, line_pos, pos) or error("Invalid offset")
   return l, c
 end
 
 -- Compute the source position at the given line an column.
---
--- TODO: make offset function a parameter
-function Manuscript:position_at(line, col)
+-- `offset_fun` should be utf8.offset or a similar function adapted to
+-- other text encodings.
+function Manuscript:position_at(line, col, offset_fun)
   local line_pos = self.lines[line] or error("Position out of bounds")
-  return utf8_offset(self.src, col, line_pos) or error("Position out of bounds")
+  return offset_fun(self.src, col, line_pos) or error("Position out of bounds")
 end
 
 
