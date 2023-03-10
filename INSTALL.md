@@ -59,12 +59,12 @@ Packaging for a TeX distribution
 --------------------------------
 
 For an installation depending only on the `texlua` interpreter from
-LuaTeX (which already includes all other dependencies except cjson),
+LuaTeX (which bundles all dependencies except the optional cjson),
 create a zip file containing `digestif/*.lua` and `data/*.tags` (no
 subdirectories), place it anywhere kpathsearch will find it and use
 the `bin/digestif.texlua` executable script.  For instance:
 
-    zip -j digestif.zip digestif/*.lua tags/*.tags
+    zip -j digestif.zip digestif/*.lua data/*.tags
     install -Dt $TEXMF/scripts digestif.zip
     install bin/digestif.texlua $PREFIX/bin/digestif
 
