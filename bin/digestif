@@ -1,2 +1,5 @@
 #!/usr/bin/env lua
+-- Remove relative directories from package path
+package.path = package.path:gsub("%f[^\0;]%.[^;]*", ""):gsub(";+", ";"):gsub("^;", ""):gsub(";$", "")
+package.cpath = package.cpath:gsub("%f[^\0;]%.[^;]*", ""):gsub(";+", ";"):gsub("^;", ""):gsub(";$", "")
 require "digestif.langserver".main(arg)
