@@ -391,7 +391,7 @@ local is_command_cmd = util.os_type == "windows"
 -- Return `name` if an executable with that name exists, nil
 -- otherwise.
 local function is_command(name)
-  local ok, err = pcall(os.execute, format(is_command_cmd, name)))
+  local ok, err = pcall(os.execute, format(is_command_cmd, name))
   return err == 0 and ok and name or nil
 end
 util.is_command = is_command

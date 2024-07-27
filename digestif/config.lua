@@ -37,37 +37,29 @@ elseif util.is_command("mtxrun") then
   local output = pipe:read("l")
   local ok, exitt, exitc = pipe:close()
   if ok and exitt == "exit" and exitc == 0 then
-    util.log("TEXMF dirs: %s", output)
     local texmf_dirs = util.split("!!")(output)
-    util.log("TEXMF dirs: %s", util.inspect(texmf_dirs))
     config.texmf_dirs = {}
-    for _, dir in ipairs(texmf_dirs) do
-      if dir == "home" then
-        pipe = io.popen("mtxrun --expand-path home")
+    -- let's get values of the values home, selfautoparent and selfautodir 
+    local prefixes = {}
+    for _, prefix in pairs({"home", "selfautoparent", "selfautodir"}) do
+      pipe = io.popen("mtxrun --expand-path "..prefix)
         output = pipe:read("l")
         ok, exitt, exitc = pipe:close()
         if ok and exitt == "exit" and exitc == 0 then
-          table.insert(config.texmf_dirs, output)
-        end
-      elseif dir == "selfautoparent" then
-        pipe = io.popen("mtxrun --expand-path selfautoparent")
-        output = pipe:read("l")
-        ok, exitt, exitc = pipe:close()
-        if ok and exitt == "exit" and exitc == 0 then
-          table.insert(config.texmf_dirs, output)
-        end
-      else
-        table.insert(config.texmf_dirs, dir)
-      end
+          prefixes[prefix] = output
+        end  
     end
-
-    util.log("TEXMF dirs: %s", util.inspect(config.texmf_dirs))
-
+    -- iterating over texmf_dirs and replacing prefixes with actual values
+    for _, dir in ipairs(texmf_dirs) do
+      for prefix, value in pairs(prefixes) do
+        dir = dir:gsub(prefix, value)
+        dir = dir:gsub(":", "/")
+      end
+      table.insert(config.texmf_dirs, dir)
+    end
   elseif config.verbose then
     util.log("Error running mtxrun (%s %d)", exitt, exitc)
   end
-
-
 else -- TODO: What should be the default?
   config.texmf_dirs = {
     "/usr/local/share/texmf",
