@@ -2,4 +2,14 @@
 -- Remove relative directories from package path
 package.path = package.path:gsub("%f[^\0;]%.[^;]*", ""):gsub(";+", ";"):gsub("^;", ""):gsub(";$", "")
 package.cpath = package.cpath:gsub("%f[^\0;]%.[^;]*", ""):gsub(";+", ";"):gsub("^;", ""):gsub(";$", "")
+
+-- this looks like peculiarity of LuaTeX and ConTeXt specifically its script runner
+-- when I run 'texlua <name> $@' it passes the name of the script as the first argument
+
+-- if first element of arg matches the full path of this file name, remove it
+local fullpath = debug.getinfo(1,"S").source:sub(2)
+if arg[1] == fullpath then
+  table.remove(arg, 1)
+end
+
 require "digestif.langserver".main(arg)
