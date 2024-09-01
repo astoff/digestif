@@ -21,6 +21,45 @@ if util.is_command("kpsewhich") then
   elseif config.verbose then
     util.log("Error running kpsewhich (%s %d)", exitt, exitc)
   end
+elseif util.is_command("mtxrun") then
+-- this is a standalone ConTeXt installation
+-- make sure to run 'mtxrun --generate'
+-- we run 
+--    mtxrun --expand-path TEXMF
+-- it returns stuff like this 
+-- home:texmf:!!selfautoparent:texmf-project:!!selfautoparent:texmf-fonts:!!selfautoparent:texmf-local:!!selfautoparent:texmf-modules:!!selfautoparent:texmf-context:!!selfautoparent:texmf-osx-64:!!selfautoparent:texmf
+-- we need to split it on !! and then replace vars 'home' and 'selfautoparent' with the actual values
+-- to get this values we run 
+-- mtxrun --expand-path home 
+-- mtxrun --expand-path selfautoparent
+-- we need to run this commands in the same directory where mtxrun is located
+  local pipe = io.popen("mtxrun --expand-path TEXMF")
+  local output = pipe:read("l")
+  local ok, exitt, exitc = pipe:close()
+  if ok and exitt == "exit" and exitc == 0 then
+    local texmf_dirs = util.split("!!")(output)
+    config.texmf_dirs = {}
+    -- let's get values of the values home, selfautoparent and selfautodir 
+    local prefixes = {}
+    for _, prefix in pairs({"home", "selfautoparent", "selfautodir"}) do
+      pipe = io.popen("mtxrun --expand-path "..prefix)
+        output = pipe:read("l")
+        ok, exitt, exitc = pipe:close()
+        if ok and exitt == "exit" and exitc == 0 then
+          prefixes[prefix] = output
+        end  
+    end
+    -- iterating over texmf_dirs and replacing prefixes with actual values
+    for _, dir in ipairs(texmf_dirs) do
+      for prefix, value in pairs(prefixes) do
+        dir = dir:gsub(prefix, value)
+        dir = dir:gsub(":", "/")
+      end
+      table.insert(config.texmf_dirs, dir)
+    end
+  elseif config.verbose then
+    util.log("Error running mtxrun (%s %d)", exitt, exitc)
+  end
 else -- TODO: What should be the default?
   config.texmf_dirs = {
     "/usr/local/share/texmf",
