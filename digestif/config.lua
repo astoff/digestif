@@ -3,7 +3,7 @@ local format = string.format
 
 local config = {}
 
-config.version = "0.5.1"
+config.version = "0.6"
 local pre_version = os.getenv("DIGESTIF_PRERELEASE")
 if pre_version then
   config.version = config.version .. "-" .. pre_version

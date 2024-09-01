@@ -1,4 +1,4 @@
-package = "digestif"    
+package = "digestif"
 version = "dev-1"
 source = {
   url = "git://github.com/astoff/digestif",
