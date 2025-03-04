@@ -122,6 +122,10 @@ See instructions [here](https://github.com/neoclide/coc.nvim/wiki/Language-serve
 
 See instructions [here](https://lsp.sublimetext.io/language_servers/#digestif).
 
+### Neovim using the [nvim-lspconfig](https://github.com/neovim/nvim-lspconfig) plugin
+
+See instructions [here](https://github.com/neovim/nvim-lspconfig/blob/master/doc/configs.md#digestif).
+
 ### Other editors
 
 It shouldn't be hard to set up other editors to use Digestif.  Please
