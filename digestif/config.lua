@@ -9,28 +9,9 @@ if pre_version then
   config.version = config.version .. "-" .. pre_version
 end
 
-if util.is_command("kpsewhich") then
-  local pipe = io.popen("kpsewhich -var-brace-value=TEXMF")
-  local output = pipe:read("l")
-  local ok, exitt, exitc = pipe:close()
-  if ok and exitt == "exit" and exitc == 0 then
-    config.texmf_dirs = util.imap(
-      function (s) return s:gsub("^!!", "") end,
-      util.path_list_split(output)
-    )
-  elseif config.verbose then
-    util.log("Error running kpsewhich (%s %d)", exitt, exitc)
-  end
-else -- TODO: What should be the default?
-  config.texmf_dirs = {
-    "/usr/local/share/texmf",
-    "/usr/share/texmf",
-    "/usr/share/texlive/texmf-local",
-    "/usr/share/texlive/texmf-dist",
-  }
-end
-
-config.data_dirs = {} -- TODO: What should be the default?
+-- TODO: What should be the default?
+config.texmf_dirs = {}
+config.data_dirs = {}
 
 -- Location of a complete texmf distribution, used for instance to
 -- find documentation not installed locally.  Passed to format with
@@ -129,15 +110,38 @@ function config.load_from_env()
     config.data_dirs = util.path_list_split(DIGESTIF_DATA)
   end
 
+  local ok, kpse = pcall(function() return _G.kpse.new("texlua") end)
+  kpse = ok and kpse or nil
   local DIGESTIF_TEXMF = os.getenv("DIGESTIF_TEXMF")
   if DIGESTIF_TEXMF then
     config.texmf_dirs = util.path_list_split(DIGESTIF_TEXMF)
+  elseif kpse then
+    local paths = kpse:expand_braces(kpse:var_value("TEXMF"))
+    config.texmf_dirs = util.imap(
+      function(s) return s:gsub("^!!", "") end,
+      util.path_list_split(paths)
+    )
+  elseif util.is_command("kpsewhich") then
+    local pipe = io.popen("kpsewhich -var-brace-value=TEXMF")
+    local paths = pipe:read("l")
+    local ok, exitt, exitc = pipe:close()
+    if ok and exitt == "exit" and exitc == 0 then
+      config.texmf_dirs = util.imap(
+        function(s) return s:gsub("^!!", "") end,
+        util.path_list_split(paths)
+      )
+    elseif config.verbose then
+      util.log("Error running kpsewhich (%s %d)", exitt, exitc)
+    end
+  end
+  if #config.texmf_dirs == 0 then
+      util.log("Couldn't initialize DIGESTIF_TEXMF")
   end
 
   local DIGESTIF_TLPDB = os.getenv("DIGESTIF_TLPDB")
   if DIGESTIF_TLPDB then
     config.tlpdb_path = util.path_list_split(DIGESTIF_TLPDB)
-  end
+  end -- TODO: copy rest of init from data.lua
 end
 
 function config.check_data(dir)
