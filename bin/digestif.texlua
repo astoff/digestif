@@ -5,10 +5,9 @@ package.cpath = package.cpath:gsub("%f[^\0;]%.[^;]*", ""):gsub(";+", ";"):gsub("
 -- Use an invalid directory name in order not to allow kpse to search
 -- in the current directory.
 os.setenv("TEXMFDOTDIR", package.config:find("^\\") and "NUL" or "/dev/null")
-kpse.set_program_name("luatex")
-local zip = require "zip"
-local archive = kpse.find_file("digestif.zip", "texmfscripts")
+local archive = kpse.new("texlua"):find_file("digestif.zip", "texmfscripts")
   or error("Can't find 'digestif.zip' archive")
+local zip = require "zip"
 local function digestif_searcher(modname)
   local submod = modname:match("^digestif%.(.+)")
   if not submod then return end
